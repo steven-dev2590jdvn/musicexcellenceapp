@@ -1,4 +1,4 @@
-name: Build iOS IPA
+name: Build iOS Device IPA
 
 on:
   workflow_dispatch:
@@ -8,11 +8,9 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
 
@@ -22,25 +20,33 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Add iOS platform
+      - name: Add iOS Platform
         run: cordova platform add ios
 
-      - name: Build iOS
-        run: cordova build ios --release
+      - name: Build Cordova Project
+        run: cordova prepare ios
 
-      - name: Find .app file
+      - name: Build for iPhone Device
         run: |
-          APP_PATH=$(find platforms/ios -name "*.app" | head -n 1)
-          echo "APP_PATH=$APP_PATH" >> $GITHUB_ENV
+          cd platforms/ios
 
-      - name: Create IPA
+          xcodebuild \
+            -workspace "Music Excellence.xcworkspace" \
+            -scheme "Music Excellence" \
+            -configuration Release \
+            -destination generic/platform=iOS \
+            CODE_SIGNING_ALLOWED=NO \
+            clean build
+
+      - name: Package IPA
         run: |
           mkdir Payload
-          cp -R "$APP_PATH" Payload/
-          zip -r MusicExcellence.ipa Payload
+          cp -R "platforms/ios/build/Release-iphoneos/Music Excellence.app" Payload/
+          cd Payload
+          zip -r ../MusicExcellence.ipa .
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
         with:
-          name: MusicExcellence-iOS-IPA
+          name: MusicExcellence-IPA
           path: MusicExcellence.ipa

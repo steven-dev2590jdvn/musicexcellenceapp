@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Manager Dashboard</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --p:#3B82F6;--s:#8B5CF6;--bg:#0F0F23;--card:rgba(26,26,46,.9);
+  --txt:#FFF;--dim:#94A3B8;--ok:#10B981;--warn:#F59E0B;--err:#EF4444;--acc:#06B6D4
+}
+body{font-family:Inter,sans-serif;background:linear-gradient(135deg,var(--bg) 0%,#1A1A2E 50%,#16213E 100%);color:var(--txt);font-weight:600;min-height:100vh;overflow-x:hidden}
+@keyframes slideIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+@keyframes modalIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:scale(1)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.container{max-width:480px;margin:0 auto;padding:20px 16px 40px;min-height:100vh}
+/* --- HEADER --- */
+.header{text-align:center;margin-bottom:14px;animation:slideIn .6s ease}
+.title{font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--p),var(--s));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px}
+.subtitle{color:var(--dim);font-size:14px;font-weight:400}
+/* --- NO MANAGER CARD --- */
+.no-manager-card{background:var(--card);border:1px solid rgba(59,130,246,.2);border-radius:20px;padding:40px 24px;text-align:center;animation:slideIn .6s ease}
+.no-manager-icon{display:block;margin:0 auto 20px;width:80px;height:80px;opacity:.5}
+.no-manager-card h3{font-size:20px;font-weight:800;margin-bottom:10px;color:var(--dim)}
+.no-manager-card p{color:var(--dim);font-size:14px;font-weight:400;line-height:1.6;max-width:280px;margin:0 auto 24px}
+/* --- MANAGER CARD --- */
+.manager-card{background:var(--card);border:1px solid rgba(59,130,246,.25);border-radius:16px;padding:14px;margin-bottom:10px;backdrop-filter:blur(20px);box-shadow:0 8px 32px rgba(0,0,0,.4);animation:slideIn .6s ease;position:relative;overflow:hidden}
+.manager-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--p),var(--s))}
+/* --- AVATAR AREA --- */
+.avatar-area{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.avatar-wrap{width:64px;height:64px;border-radius:50%;overflow:hidden;border:2px solid var(--p);flex-shrink:0;background:#1a1a2e;box-shadow:0 4px 20px rgba(59,130,246,.3)}
+.manager-details{flex:1}
+.manager-name{font-size:16px;font-weight:800;margin-bottom:2px}
+.manager-agency{color:var(--dim);font-size:11px;margin-bottom:6px}
+.stars-row{display:flex;align-items:center;gap:3px}
+.star-svg{width:16px;height:16px}
+.star-svg.filled{fill:var(--warn)}
+.star-svg.empty{fill:rgba(245,158,11,.25)}
+.rare-badge{background:linear-gradient(45deg,#FFD700,#FFA500);color:#000;padding:3px 8px;border-radius:8px;font-size:9px;font-weight:800;text-transform:uppercase;margin-left:6px}
+/* --- STATS GRID --- */
+.stats-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:10px}
+.stat-box{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:8px 6px;text-align:center}
+.stat-val{font-size:14px;font-weight:800;color:var(--p);margin-bottom:2px}
+.stat-lbl{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+/* --- RELATIONSHIP BAR --- */
+.rel-section{margin-bottom:12px}
+.rel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.rel-label{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.rel-level{font-size:12px;font-weight:700}
+.rel-bar-track{height:8px;background:rgba(255,255,255,.08);border-radius:4px;overflow:hidden}
+.rel-bar-fill{height:100%;border-radius:4px;transition:width .6s ease}
+/* --- FEATURE GRID --- */
+.feature-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.feature-btn{background:rgba(30,40,70,.85);border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:12px 10px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .25s ease;position:relative;overflow:hidden;text-align:left;width:100%}
+.feature-btn:hover:not(.locked){border-color:var(--p);background:rgba(59,130,246,.12);transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.2)}
+.feature-btn:active{transform:translateY(0)}
+.feature-btn.payola-btn{border-color:rgba(239,68,68,.3);background:rgba(50,20,20,.8)}
+.feature-btn.payola-btn:hover{border-color:var(--err);background:rgba(239,68,68,.12)}
+.feature-btn-content{display:flex;justify-content:space-between;align-items:center;width:100%}
+.feature-btn.locked .feature-btn-content{filter:blur(3px);opacity:.4;pointer-events:none}
+.feature-btn-title{font-weight:800;font-size:11px;text-transform:uppercase;letter-spacing:.4px;line-height:1.4;color:#fff}
+.feature-btn-icon{width:26px;height:26px;flex-shrink:0;margin-left:6px;fill:rgba(255,255,255,.8)}
+.lock-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-radius:16px;background:rgba(0,0,0,.15)}
+.lock-icon{width:22px;height:22px;fill:var(--dim)}
+.lock-text{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+/* --- BUTTONS --- */
+.btn{width:100%;padding:11px;border:none;border-radius:12px;font-family:inherit;font-weight:700;font-size:13px;cursor:pointer;transition:all .25s ease;color:#fff}
+.btn-primary{background:linear-gradient(135deg,var(--p),var(--s))}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(59,130,246,.4)}
+.btn-danger{background:linear-gradient(135deg,var(--err),#DC2626);margin-bottom:10px}
+.btn-danger:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(239,68,68,.3)}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+/* --- MODAL --- */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(12px);display:none;z-index:1000;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal-box{background:#141428;border:1px solid rgba(59,130,246,.3);border-radius:22px;padding:26px;max-width:420px;width:100%;animation:modalIn .3s ease;box-shadow:0 20px 60px rgba(0,0,0,.7);max-height:90vh;overflow-y:auto;position:relative}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--p),var(--s));border-radius:22px 22px 0 0}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.modal-title{font-size:18px;font-weight:800}
+.modal-close{background:none;border:none;color:var(--dim);cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px}
+.modal-close:hover{background:rgba(255,255,255,.08);color:#fff}
+/* --- PROMO OPTIONS --- */
+.promo-grid{display:grid;gap:10px}
+.promo-item{background:rgba(255,255,255,.04);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s ease}
+.promo-item:hover{border-color:var(--p);background:rgba(59,130,246,.1)}
+.promo-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.promo-name{font-weight:700;font-size:15px}
+.promo-cost{color:var(--acc);font-weight:800;font-size:14px}
+.promo-desc{color:var(--dim);font-size:13px;margin-bottom:5px}
+.promo-boost{color:var(--ok);font-size:12px;font-weight:600}
+/* --- RELATIONSHIP MODAL --- */
+.rel-actions{display:grid;gap:10px;margin-top:14px}
+.rel-action-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:14px;text-align:left;width:100%}
+.rel-action-btn:hover{border-color:var(--p);background:rgba(59,130,246,.1)}
+.rel-action-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rel-action-info h4{font-size:14px;font-weight:700;margin-bottom:3px}
+.rel-action-info p{font-size:12px;color:var(--dim);font-weight:400}
+.clingy-warning{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:12px;margin-top:12px;font-size:12px;color:var(--err);text-align:center;font-weight:600;display:none}
+/* --- PAYOLA MODAL --- */
+.song-select-grid{display:grid;gap:8px;max-height:200px;overflow-y:auto;margin-bottom:14px}
+.song-select-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;cursor:pointer;transition:all .2s ease;display:flex;align-items:center;gap:10px}
+.song-select-item:hover,.song-select-item.selected{border-color:var(--err);background:rgba(239,68,68,.1)}
+.song-check{width:18px;height:18px;border:2px solid var(--dim);border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.song-select-item.selected .song-check{background:var(--err);border-color:var(--err)}
+.risk-meter{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.25);border-radius:12px;padding:14px;margin-bottom:14px}
+.risk-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.risk-label{font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.risk-value{font-weight:800;font-size:15px;color:var(--err)}
+.risk-bar-track{height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden}
+.risk-bar-fill{height:100%;background:linear-gradient(90deg,var(--ok),var(--warn),var(--err));border-radius:3px;transition:width .4s}
+/* --- ADVISOR MODAL --- */
+.advisor-tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.advisor-tab{padding:10px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:transparent;color:var(--dim);font-family:inherit;font-weight:600;font-size:13px;cursor:pointer;transition:all .2s}
+.advisor-tab.active{background:rgba(59,130,246,.15);border-color:var(--p);color:#fff}
+.advisor-content{display:none}
+.advisor-content.active{display:block}
+.advisor-textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;color:#fff;font-family:inherit;font-size:14px;resize:vertical;min-height:90px;margin-bottom:10px}
+.advisor-textarea:focus{outline:none;border-color:var(--p)}
+.advisor-response{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:14px;font-size:13px;color:var(--txt);line-height:1.6;margin-top:12px;display:none;font-weight:400}
+.advisor-loading{display:none;text-align:center;padding:20px;color:var(--dim);font-size:13px}
+.eligible-songs-list{display:grid;gap:6px;max-height:160px;overflow-y:auto;margin-bottom:12px}
+.eligible-song{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:10px;font-size:13px}
+.eligible-song span{color:var(--dim);font-size:11px}
+/* --- NOTIFICATION --- */
+.notif{position:fixed;top:16px;right:16px;background:var(--card);border:1px solid rgba(59,130,246,.3);border-radius:12px;padding:14px 18px;max-width:300px;animation:slideIn .3s ease;z-index:9999;box-shadow:0 8px 32px rgba(0,0,0,.5);word-wrap:break-word;font-size:13px}
+.notif.success{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.1)}
+.notif.error{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.1)}
+.notif.warn{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.1)}
+/* --- GENERIC MODAL BTNS --- */
+.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:16px}
+.modal-btn{padding:13px;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;transition:all .2s}
+.modal-btn:hover{transform:translateY(-1px)}
+.modal-btn-confirm{background:linear-gradient(135deg,var(--err),#DC2626);color:#fff}
+.modal-btn-cancel{background:rgba(255,255,255,.08);color:var(--txt);border:1px solid rgba(255,255,255,.15)}
+/* --- INFO BOX --- */
+.info-box{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:12px;font-size:12px;color:var(--dim);font-weight:400;line-height:1.5;margin-bottom:14px}
+/* Scrollbar */
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+</style>
+</head>
+<body>
+<div class="container">
+
+<!-- HEADER -->
+<div class="header">
+  <h1 class="title">Manager Dashboard</h1>
+  <p class="subtitle" id="header-subtitle">Your music career partner</p>
+</div>
+
+<!-- NO MANAGER STATE -->
+<div id="no-manager" class="no-manager-card" style="display:none">
+  <svg class="no-manager-icon" viewBox="0 0 24 24" fill="rgba(148,163,184,.4)">
+    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+  </svg>
+  <h3>No Manager</h3>
+  <p>You don't have a manager yet. Keep advancing weeks and a manager will reach out to offer representation!</p>
+  <button class="btn btn-ghost" onclick="goBack()" style="margin-top:8px">← Back to Home</button>
+</div>
+
+<!-- ACTIVE MANAGER SECTION -->
+<div id="manager-section" style="display:none">
+
+  <!-- Manager Card -->
+  <div class="manager-card">
+    <div class="avatar-area">
+      <div class="avatar-wrap" id="manager-avatar"></div>
+      <div class="manager-details">
+        <div class="manager-name" id="manager-name">—</div>
+        <div class="manager-agency" id="manager-agency">—</div>
+        <div class="stars-row" id="manager-stars"></div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-box">
+        <div class="stat-val" id="stat-commission">0%</div>
+        <div class="stat-lbl">Commission</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-weeks">0</div>
+        <div class="stat-lbl">Weeks Left</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-val" id="stat-relationship">50%</div>
+        <div class="stat-lbl">Relationship</div>
+      </div>
+    </div>
+
+    <!-- Relationship Bar -->
+    <div class="rel-section">
+      <div class="rel-header">
+        <span class="rel-label">Relationship</span>
+        <span class="rel-level" id="rel-level-text" style="color:var(--acc)">Neutral</span>
+      </div>
+      <div class="rel-bar-track">
+        <div class="rel-bar-fill" id="rel-bar" style="width:50%;background:linear-gradient(90deg,var(--p),var(--acc))"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Feature Grid (8 buttons) -->
+  <div class="feature-grid">
+
+    <!-- 1. Manager Promo -->
+    <button class="feature-btn" onclick="openManagerPromo()">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Manager<br>Promo</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.66 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg>
+      </div>
+    </button>
+
+    <!-- 2. Promo Campaigns (level 3+) -->
+    <button class="feature-btn" id="btn-promo-campaigns" onclick="handleFeature('promo-campaigns',3)">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Promo<br>Campaigns</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+      </div>
+      <div class="lock-overlay" id="lock-promo-campaigns" style="display:none">
+        <svg class="lock-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span class="lock-text">Level 3+</span>
+      </div>
+    </button>
+
+    <!-- 3. Tap 3 - Brand Deals (level 3+, coming soon) -->
+    <button class="feature-btn" id="btn-tap3" onclick="handleFeature('tap3',3)">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Brand<br>Deals</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M11.5 2C6.81 2 3 5.81 3 10.5S6.81 19 11.5 19h.5v3c4.86-2.34 8-7 8-11.5C20 5.81 16.19 2 11.5 2zm1 14.5h-2v-2h2v2zm0-4h-2c0-3.25 3-3 3-5 0-1.1-.9-2-2-2s-2 .9-2 2h-2c0-2.21 1.79-4 4-4s4 1.79 4 4c0 2.5-3 2.75-3 5z"/></svg>
+      </div>
+      <div class="lock-overlay" id="lock-tap3" style="display:none">
+        <svg class="lock-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span class="lock-text">Level 3+</span>
+      </div>
+    </button>
+
+    <!-- 4. Tap 4 - Media Training (level 3+, coming soon) -->
+    <button class="feature-btn" id="btn-tap4" onclick="handleFeature('tap4',3)">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Social<br>Schedule</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13zM9 12H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zM9 16H7v2h2v-2zm4 0h-2v2h2v-2z"/></svg>
+      </div>
+      <div class="lock-overlay" id="lock-tap4" style="display:none">
+        <svg class="lock-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span class="lock-text">Level 3+</span>
+      </div>
+    </button>
+
+    <!-- 5. Tour Deals (level 3+) -->
+    <button class="feature-btn" id="btn-tap5" onclick="handleFeature('tap5',3)">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Tour<br>Deals</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M20 4H4c-1.11 0-2 .89-2 2v12c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+      </div>
+      <div class="lock-overlay" id="lock-tap5" style="display:none">
+        <svg class="lock-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span class="lock-text">Level 3+</span>
+      </div>
+    </button>
+
+    <!-- 6. Manager Advisor (level 3+) -->
+    <button class="feature-btn" id="btn-advisor" onclick="handleFeature('advisor',3)">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Manager<br>Advisor</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.47 11.43L12 18l-2.47-4.57C8.57 12.55 8 11.33 8 10c0-2.21 1.79-4 4-4s4 1.79 4 4c0 1.33-.57 2.55-1.53 3.43z"/></svg>
+      </div>
+      <div class="lock-overlay" id="lock-advisor" style="display:none">
+        <svg class="lock-icon" viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span class="lock-text">Level 3+</span>
+      </div>
+    </button>
+
+    <!-- 7. Relationships -->
+    <button class="feature-btn" onclick="openRelationships()">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Relation-<br>ships</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+      </div>
+    </button>
+
+    <!-- 8. Payola -->
+    <button class="feature-btn payola-btn" onclick="openPayola()">
+      <div class="feature-btn-content">
+        <span class="feature-btn-title">Payola</span>
+        <svg class="feature-btn-icon" viewBox="0 0 24 24" style="fill:var(--err)"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      </div>
+    </button>
+
+  </div>
+
+  <!-- Bottom actions -->
+  <button class="btn btn-danger" onclick="showTerminateModal()">Terminate Contract</button>
+  <button class="btn btn-ghost" onclick="goBack()">← Back to Home</button>
+
+</div><!-- /manager-section -->
+</div><!-- /container -->
+
+
+<!-- =================== MODALS =================== -->
+
+<!-- MANAGER PROMO MODAL -->
+<div class="modal-overlay" id="modal-promo">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Manager Promo</span>
+      <button class="modal-close" onclick="closeModal('modal-promo')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="info-box">Your manager handles promotion for a % boost. These are separate from self-purchased promos and run through your manager's network.</div>
+    <div class="promo-grid" id="promo-options-list"></div>
+  </div>
+</div>
+
+<!-- PROMO CAMPAIGNS MODAL (navigates to promo.html) -->
+<div class="modal-overlay" id="modal-campaigns">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Promo Campaigns</span>
+      <button class="modal-close" onclick="closeModal('modal-campaigns')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="info-box">Launch full marketing campaigns with your manager's connections. These are larger, longer-term promotional pushes.</div>
+    <button class="btn btn-primary" onclick="window.location.href='promo.html'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle"><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+      Go to Promo Hub
+    </button>
+  </div>
+</div>
+
+<!-- COMING SOON MODAL -->
+<div class="modal-overlay" id="modal-coming-soon">
+  <div class="modal-box" style="text-align:center">
+    <div class="modal-header" style="justify-content:flex-end;margin-bottom:8px">
+      <button class="modal-close" onclick="closeModal('modal-coming-soon')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="var(--acc)" style="margin-bottom:16px"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+    <h3 style="font-size:18px;margin-bottom:10px" id="coming-soon-title">Feature Coming Soon</h3>
+    <p style="color:var(--dim);font-size:14px;font-weight:400">This feature is in development and will be available in a future update. Stay tuned!</p>
+    <button class="btn btn-ghost" onclick="closeModal('modal-coming-soon')" style="margin-top:18px">Got it</button>
+  </div>
+</div>
+
+<!-- LOCK MODAL -->
+<div class="modal-overlay" id="modal-locked">
+  <div class="modal-box" style="text-align:center">
+    <div class="modal-header" style="justify-content:flex-end;margin-bottom:8px">
+      <button class="modal-close" onclick="closeModal('modal-locked')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <svg width="60" height="60" viewBox="0 0 24 24" fill="var(--warn)" style="margin-bottom:16px"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+    <h3 style="font-size:18px;margin-bottom:10px">Feature Locked</h3>
+    <p style="color:var(--dim);font-size:14px;font-weight:400;line-height:1.6">This feature requires a <strong style="color:var(--warn)">Level 3+ Manager</strong>.<br><br>Sign with a more experienced manager — look out for offers from Maria Chen (Level 3), David Kumar (Level 4), or Sarah Williams (Level 5).</p>
+    <button class="btn btn-ghost" onclick="closeModal('modal-locked')" style="margin-top:18px">OK</button>
+  </div>
+</div>
+
+<!-- RELATIONSHIPS MODAL -->
+<div class="modal-overlay" id="modal-relationships">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Relationship</span>
+      <button class="modal-close" onclick="closeModal('modal-relationships')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:32px;font-weight:900;color:var(--p);margin-bottom:6px" id="rel-modal-pct">50%</div>
+      <div style="font-size:14px;color:var(--dim)" id="rel-modal-level">Neutral</div>
+      <div style="margin:14px 0;height:10px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden">
+        <div id="rel-modal-bar" style="height:100%;background:linear-gradient(90deg,var(--err),var(--warn),var(--ok));border-radius:5px;transition:width .5s ease"></div>
+      </div>
+      <div class="info-box" id="rel-effect-text" style="text-align:left">Good relationship improves your manager's efficiency.</div>
+    </div>
+
+    <div class="rel-actions">
+      <button class="rel-action-btn" onclick="openRelScenario('hangout')">
+        <div class="rel-action-icon" style="background:rgba(16,185,129,.15)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--ok)"><path d="M16.5 13c-1.2 0-3.07.34-4.5 1-1.43-.67-3.3-1-4.5-1C5.33 13 1 14.08 1 16.25V19h22v-2.75c0-2.17-4.33-3.25-6.5-3.25zm-4 4.5h-10v-1.25c0-.54 2.56-1.75 5-1.75s5 1.21 5 1.75V17.5zm9 0H14v-1.25c0-.46-.2-.86-.52-1.22.88-.3 1.96-.53 3.02-.53 2.44 0 5 1.21 5 1.75V17.5zM7.5 12c1.93 0 3.5-1.57 3.5-3.5S9.43 5 7.5 5 4 6.57 4 8.5 5.57 12 7.5 12zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm9 5.5c1.93 0 3.5-1.57 3.5-3.5S18.43 5 16.5 5 13 6.57 13 8.5s1.57 3.5 3.5 3.5zm0-5.5c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2z"/></svg>
+        </div>
+        <div class="rel-action-info">
+          <h4>Hang Out</h4>
+          <p>Spend time with your manager. Improves relationship (+6 to +10)</p>
+        </div>
+      </button>
+
+      <button class="rel-action-btn" onclick="openRelScenario('call')">
+        <div class="rel-action-icon" style="background:rgba(59,130,246,.15)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--p)"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        </div>
+        <div class="rel-action-info">
+          <h4>Call Them</h4>
+          <p>Quick check-in. Small boost (+2 to +3). Don't overdo it!</p>
+        </div>
+      </button>
+
+      <button class="rel-action-btn" onclick="openRelScenario('gift')">
+        <div class="rel-action-icon" style="background:rgba(245,158,11,.15)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="var(--warn)"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.36C18 2.5 15.5 0 12.36 0c-1.7 0-3.2.9-4.1 2.28L12 6H8.5L6.18 2.28C5.28.9 3.78 0 2.08 0H2.07C-.07 0-1.57 2.5-1.57 4.64-1.57 5.12-1.46 5.56-1.39 6H-4v2h24V6h-4zm-8 0L8.73 2.89C9.22 2.03 10.17 1.5 11.18 1.5c1.55 0 2.82 1.27 2.82 2.82 0 .73-.29 1.41-.75 1.92L11.18 8 10 6h2zm-8 0H2.08c-1.55 0-2.82-1.27-2.82-2.82 0-1.55 1.27-2.82 2.82-2.82 1 0 1.96.53 2.45 1.39L6 6H4zM4 8v14h7v-7h2v7h7V8H4z"/></svg>
+        </div>
+        <div class="rel-action-info">
+          <h4>Send a Gift</h4>
+          <p>Give a gift ($2,000). Strong boost (+12 to +15)</p>
+        </div>
+      </button>
+    </div>
+
+    <div class="clingy-warning" id="clingy-warning">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;vertical-align:middle"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      You're being too clingy! Too many contacts this week is hurting your relationship.
+    </div>
+  </div>
+</div>
+
+<!-- RELATIONSHIP SCENARIO MODAL -->
+<div class="modal-overlay" id="modal-rel-scenario">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" id="rs-title">Situation</span>
+      <button class="modal-close" onclick="closeModal('modal-rel-scenario')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div style="background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:14px;margin-bottom:18px;font-size:13px;color:var(--txt);font-weight:400;line-height:1.7" id="rs-body"></div>
+    <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">What do you do?</div>
+    <div id="rs-choices"></div>
+  </div>
+</div>
+
+<!-- PAYOLA MODAL -->
+<div class="modal-overlay" id="modal-payola">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" style="color:var(--err)">Payola — Illegal</span>
+      <button class="modal-close" onclick="closeModal('modal-payola')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="info-box" style="border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.06);color:var(--err)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right:4px;vertical-align:middle"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>
+      ILLEGAL ACTIVITY — High Detection Risk. Getting caught causes severe fines and reputation damage.
+    </div>
+
+    <div class="risk-meter" id="payola-risk-meter">
+      <div class="risk-row">
+        <span class="risk-label">Detection Chance</span>
+        <span class="risk-value" id="payola-risk-pct">35%</span>
+      </div>
+      <div class="risk-bar-track">
+        <div class="risk-bar-fill" id="payola-risk-bar" style="width:35%"></div>
+      </div>
+      <div style="color:var(--dim);font-size:11px;margin-top:6px" id="payola-risk-note">Level 2 manager: moderate protection</div>
+    </div>
+
+    <p style="color:var(--dim);font-size:13px;margin-bottom:10px;font-weight:400">Select a song to boost with illegal streams:</p>
+    <div class="song-select-grid" id="payola-song-list"></div>
+
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;background:rgba(255,255,255,.04);border-radius:10px;padding:12px">
+      <div>
+        <div style="font-size:13px;color:var(--dim)">Cost</div>
+        <div style="font-size:18px;font-weight:800;color:var(--warn)">$75,000</div>
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:13px;color:var(--dim)">Potential Boost</div>
+        <div style="font-size:18px;font-weight:800;color:var(--ok)" id="payola-boost-text">+5M – 12M</div>
+      </div>
+    </div>
+
+    <button class="btn" id="payola-execute-btn" style="background:linear-gradient(135deg,var(--err),#DC2626)" onclick="executePayola()">
+      Execute Payola
+    </button>
+  </div>
+</div>
+
+<!-- MANAGER ADVISOR MODAL -->
+<div class="modal-overlay" id="modal-advisor">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Manager Advisor</span>
+      <button class="modal-close" onclick="closeModal('modal-advisor')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="info-box">Your manager advises you — they do not control your decisions. Ask for advice on releases or award submissions.</div>
+
+    <div class="advisor-tabs">
+      <button class="advisor-tab active" onclick="switchAdvisorTab('release')">Release Advice</button>
+      <button class="advisor-tab" onclick="switchAdvisorTab('awards')">Awards Advice</button>
+    </div>
+
+    <!-- Release Advice Tab -->
+    <div class="advisor-content active" id="tab-release">
+      <p style="color:var(--dim);font-size:13px;font-weight:400;margin-bottom:10px">Describe your unreleased music ideas and your manager will advise which to prioritize:</p>
+      <textarea class="advisor-textarea" id="release-input" placeholder="e.g. I have 3 songs ready: a dark rap track about success, a pop love ballad, and an upbeat summer anthem..."></textarea>
+      <button class="btn btn-primary" onclick="askAdvisor('release')" style="font-size:14px;padding:13px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7z"/></svg>
+        Ask Manager
+      </button>
+    </div>
+
+    <!-- Awards Advice Tab -->
+    <div class="advisor-content" id="tab-awards">
+      <p style="color:var(--dim);font-size:13px;font-weight:400;margin-bottom:10px">Awards-eligible songs this year (released within the last 52 weeks withms):</p>
+      <div class="eligible-songs-list" id="awards-eligible-list"></div>
+      <textarea class="advisor-textarea" id="awards-input" placeholder="Which song should I submit for best new artist / song of the year?"></textarea>
+      <button class="btn btn-primary" onclick="askAdvisor('awards')" style="font-size:14px;padding:13px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        Ask Manager
+      </button>
+    </div>
+
+    <div class="advisor-loading" id="advisor-loading">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--p)" style="animation:pulse 1.2s infinite;margin-bottom:8px"><path d="M12 4V2C6.48 2 2 6.48 2 12h2c0-4.41 3.59-8 8-8zm0 16c-4.41 0-8-3.59-8-8H2c0 5.52 4.48 10 10 10v-2zm0-2c-3.31 0-6-2.69-6-6H4c0 4.42 3.58 8 8 8v-2zm0-12c3.31 0 6 2.69 6 6h2c0-4.42-3.58-8-8-8v2z"/></svg>
+      <div style="color:var(--dim);font-size:13px">Manager is thinking...</div>
+    </div>
+    <div class="advisor-response" id="advisor-response"></div>
+  </div>
+</div>
+
+<!-- TERMINATE MODAL -->
+<div class="modal-overlay" id="modal-terminate">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title" style="color:var(--err)">Terminate Contract</span>
+      <button class="modal-close" onclick="closeModal('modal-terminate')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <p style="color:var(--dim);font-size:14px;font-weight:400;line-height:1.6;margin-bottom:8px">Are you sure you want to terminate your management contract? This cannot be undone and you'll become an independent artist again.</p>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-confirm" onclick="terminateContract()">Terminate</button>
+      <button class="modal-btn modal-btn-cancel" onclick="closeModal('modal-terminate')">Cancel</button>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- CONTRACT NEGOTIATION MODAL -->
+<div class="modal-overlay" id="modal-contract-negotiation">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Sign Contract</span>
+    </div>
+    <div id="contract-manager-name" style="font-size:18px;font-weight:800;margin-bottom:2px"></div>
+    <div id="contract-manager-agency" style="color:var(--dim);font-size:13px;margin-bottom:18px"></div>
+
+    <div class="info-box">Increase the yearly advance to lower your commission. Minimum commission is 5%.</div>
+
+    <!-- Advance slider -->
+    <div style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:8px">
+        <span style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px">Yearly Advance</span>
+        <span id="contract-advance-display" style="font-weight:800;color:var(--acc)"></span>
+      </div>
+      <input type="range" id="contract-advance-slider" min="0" max="100" value="0"
+        oninput="updateContractSlider()"
+        style="width:100%;accent-color:var(--acc)">
+    </div>
+
+    <!-- Commission display -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px">
+      <span style="font-size:12px;color:var(--dim)">Their commission</span>
+      <span id="contract-commission-display" style="font-weight:800;font-size:18px;color:var(--err)"></span>
+    </div>
+
+    <!-- Duration -->
+    <div style="margin-bottom:16px">
+      <div style="font-size:12px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Contract Duration</div>
+      <select id="contract-duration-select" onchange="updateContractSlider()"
+        style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:12px;color:#fff;font-family:inherit;font-size:14px">
+        <option value="4 weeks">4 Weeks</option>
+        <option value="3 months">3 Months</option>
+        <option value="6 months">6 Months</option>
+        <option value="1 year">1 Year</option>
+        <option value="2 years">2 Years</option>
+        <option value="3 years">3 Years</option>
+        <option value="forever" selected>Forever (until terminated)</option>
+      </select>
+    </div>
+
+    <!-- Summary -->
+    <div style="background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:14px;margin-bottom:18px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--dim)">Advance</span><span id="contract-summary-advance" style="font-weight:700"></span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:6px"><span style="color:var(--dim)">Commission</span><span id="contract-summary-commission" style="font-weight:700;color:var(--err)"></span></div>
+      <div style="display:flex;justify-content:space-between"><span style="color:var(--dim)">Duration</span><span id="contract-summary-duration" style="font-weight:700"></span></div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="modal-btn" style="background:linear-gradient(135deg,var(--ok),#059669);color:#fff" onclick="signManagerContract()">Sign Contract</button>
+      <button class="modal-btn modal-btn-cancel" onclick="localStorage.removeItem('pendingManagerOffer');window.location.href='music.html'">Decline</button>
+    </div>
+  </div>
+</div>
+<!-- BRAND DEALS MODAL -->
+<div class="modal-overlay" id="modal-brand-deals">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Brand Deals</span>
+      <button class="modal-close" onclick="closeModal('modal-brand-deals')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="info-box">Sign with brands for a guaranteed payout. Tag them in posts on Vibetok and Instaify.</div>
+    <div id="brand-deals-list" class="promo-grid"></div>
+    <div id="brand-active-section" style="margin-top:14px;display:none">
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Active Deals</div>
+      <div id="brand-active-list" class="promo-grid"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SOCIAL SCHEDULE MODAL -->
+<div class="modal-overlay" id="modal-social-schedule">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Social Schedule</span>
+      <button class="modal-close" onclick="closeModal('modal-social-schedule')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div id="schedule-cal-section">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+        <button onclick="schedPrevMonth()" style="background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px">&lt;</button>
+        <span id="sched-month-label" style="font-weight:700;font-size:15px"></span>
+        <button onclick="schedNextMonth()" style="background:rgba(255,255,255,.08);border:none;color:#fff;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px">&gt;</button>
+      </div>
+      <div id="sched-cal-grid" style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:14px"></div>
+    </div>
+    <div id="schedule-post-form" style="display:none">
+      <div style="font-size:12px;color:var(--dim);margin-bottom:10px">Date: <strong id="sched-date-label" style="color:var(--p)"></strong></div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--dim);text-transform:uppercase;margin-bottom:6px">Platform</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <button id="sched-btn-vt" onclick="selectSchedPlatform('vibetok')" style="padding:10px;border:1px solid rgba(254,44,85,.4);border-radius:10px;background:rgba(254,44,85,.1);color:#fff;cursor:pointer;font-weight:700;font-size:12px">Vibetok</button>
+          <button id="sched-btn-ig" onclick="selectSchedPlatform('instaify')" style="padding:10px;border:1px solid rgba(124,58,237,.4);border-radius:10px;background:rgba(124,58,237,.1);color:#fff;cursor:pointer;font-weight:700;font-size:12px">Instaify</button>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:11px;color:var(--dim);text-transform:uppercase;margin-bottom:6px">Caption</div>
+        <textarea id="sched-caption" style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px;color:#fff;font-family:inherit;font-size:14px;resize:vertical;min-height:70px" placeholder="What's the vibe?"></textarea>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:11px;color:var(--dim);text-transform:uppercase;margin-bottom:6px">Image (optional)</div>
+        <div id="sched-img-preview" style="display:none;margin-bottom:8px;border-radius:8px;overflow:hidden"><img id="sched-img-el" style="width:100%;height:110px;object-fit:cover"></div>
+        <input type="file" id="sched-img-input" hidden accept="image/*" onchange="handleSchedImg(event)">
+        <button onclick="document.getElementById('sched-img-input').click()" style="width:100%;padding:10px;border:1px dashed rgba(255,255,255,.2);border-radius:10px;background:transparent;color:var(--dim);cursor:pointer;font-size:13px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="margin-right:6px;vertical-align:middle"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+          Upload Image
+        </button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <button onclick="schedulePost()" class="btn btn-primary" style="font-size:13px;padding:11px">Schedule</button>
+        <button onclick="document.getElementById('schedule-post-form').style.display='none';document.getElementById('schedule-cal-section').style.display='block'" class="btn btn-ghost" style="font-size:13px">Back</button>
+      </div>
+    </div>
+    <div style="margin-top:16px">
+      <div style="font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Upcoming</div>
+      <div id="sched-upcoming-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- TOUR DEALS MODAL -->
+<div class="modal-overlay" id="modal-tour-deals">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Tour Deals</span>
+      <button class="modal-close" onclick="closeModal('modal-tour-deals')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+    <div class="info-box">Companies offer to sponsor your tour — you perform, they fund it and keep the revenue. Pure exposure, zero cost to you.</div>
+    <div id="tour-deals-list" class="promo-grid"></div>
+  </div>
+</div>
+
+<!-- TOUR CONTRACT MODAL -->
+<div class="modal-overlay" id="modal-tour-contract">
+  <div class="modal-box" style="max-width:440px">
+    <div class="modal-header">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span id="tc-icon"></span>
+        <div>
+          <div class="modal-title" style="font-size:15px" id="tc-company-name">—</div>
+          <div style="font-size:11px;color:var(--dim);font-weight:400">OFFICIAL TOUR AGREEMENT</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-tour-contract')">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>
+
+    <div style="background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.2);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">Parties to this Agreement</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="color:var(--dim)">Artist</span><span style="font-weight:700" id="tc-artist-name">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px">
+        <span style="color:var(--dim)">Promoter</span><span style="font-weight:700" id="tc-company-name2">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px">
+        <span style="color:var(--dim)">Effective Date</span><span style="font-weight:700" id="tc-date">—</span>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Tour Terms</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px">
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:3px">Territory</div>
+        <div style="font-size:12px;font-weight:700" id="tc-territory">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:3px">Duration</div>
+        <div style="font-size:12px;font-weight:700" id="tc-duration">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:3px">Performances</div>
+        <div style="font-size:12px;font-weight:700" id="tc-shows">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px">
+        <div style="font-size:10px;color:var(--dim);margin-bottom:3px">Venue Capacity</div>
+        <div style="font-size:12px;font-weight:700" id="tc-capacity">—</div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Ticket Pricing (Set by Promoter)</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:14px">
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--dim);margin-bottom:4px">DISCOUNT</div>
+        <div style="font-size:15px;font-weight:800;color:var(--p)" id="tc-ticket-discount">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--dim);margin-bottom:4px">GENERAL</div>
+        <div style="font-size:15px;font-weight:800;color:var(--acc)" id="tc-ticket-general">—</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px;text-align:center">
+        <div style="font-size:9px;color:var(--dim);margin-bottom:4px">VIP</div>
+        <div style="font-size:15px;font-weight:800;color:var(--warn)" id="tc-ticket-vip">—</div>
+      </div>
+    </div>
+
+    <div style="font-size:10px;color:var(--dim);text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px">Compensation Breakdown</div>
+    <div style="background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+        <span style="color:var(--dim)">Gross Tour Revenue</span>
+        <span style="font-weight:700;color:var(--dim)" id="tc-gross-revenue">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px">
+        <span style="color:var(--dim)">Artist Signing Guarantee</span>
+        <span style="font-weight:800;color:var(--ok)" id="tc-signing-fee">—</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:7px">
+        <span style="color:var(--dim)">Management Commission</span>
+        <span style="font-weight:700;color:var(--err)" id="tc-manager-cut">—</span>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,.08);margin:8px 0"></div>
+      <div style="display:flex;justify-content:space-between;font-size:15px">
+        <span style="font-weight:800">You Receive</span>
+        <span style="font-weight:900;color:var(--ok)" id="tc-your-fee">—</span>
+      </div>
+    </div>
+
+    <div style="background:rgba(239,68,68,.05);border:1px solid rgba(239,68,68,.15);border-radius:10px;padding:12px;margin-bottom:16px;font-size:11px;color:var(--dim);font-weight:400;line-height:1.8">
+      <strong style="color:var(--err);font-size:11px">Key Terms:</strong><br>
+      § The Promoter retains all box-office and merchandise revenue.<br>
+      § Artist may not headline competing tours in <span id="tc-territory2"></span> during <span id="tc-yr-notice">—</span>.<br>
+      § One (1) tour deal may be signed per calendar year.<br>
+      § Cancellation after signing forfeits 50% of the signing fee.
+    </div>
+
+    <button id="tc-sign-btn" onclick="signTourContract()" class="btn btn-primary" style="font-size:14px;padding:13px">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="margin-right:8px;vertical-align:middle"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+      Sign Contract
+    </button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// DATA
+// ============================================================
+const MANAGERS = [
+  {id:1, name:"Alex Rivera",    agency:"SoundWave Management",  rating:2, commission:10, promotionPower:0.15, isRare:false},
+  {id:2, name:"Maria Chen",     agency:"Velocity Records",      rating:3, commission:8,  promotionPower:0.25, isRare:false},
+  {id:3, name:"David Kumar",    agency:"Elite Music Group",     rating:4, commission:6,  promotionPower:0.40, isRare:false},
+  {id:4, name:"Sarah Williams", agency:"Platinum Artists",      rating:5, commission:5,  promotionPower:0.60, isRare:true}
+];
+
+let currentManager = null;
+let currentContract = null;
+let selectedPayolaSong = null;
+
+const MANAGER_BASE_ADVANCE = {1: 180000, 2: 1100000, 3: 2800000, 4: 7500000};
+
+function showContractNegotiation(offer) {
+  const m = offer.manager;
+  const baseAdvance = MANAGER_BASE_ADVANCE[m.rating] || 180000;
+  window._pendingOffer = offer;
+
+  document.getElementById('contract-manager-name').textContent = m.name;
+  document.getElementById('contract-manager-agency').textContent = m.agency;
+  document.getElementById('contract-advance-display').textContent = formatMoney(baseAdvance) + '/yr';
+  document.getElementById('contract-commission-display').textContent = '12%';
+
+  document.getElementById('contract-advance-slider').value = 0;
+  document.getElementById('contract-duration-select').value = 'forever';
+  updateContractSlider();
+
+  openModal('modal-contract-negotiation');
+}
+
+function updateContractSlider() {
+  const offer = window._pendingOffer;
+  if (!offer) return;
+  const m = offer.manager;
+  const baseAdvance = MANAGER_BASE_ADVANCE[m.rating] || 180000;
+  const sliderVal = parseInt(document.getElementById('contract-advance-slider').value);
+  const advance = Math.round(baseAdvance + (sliderVal / 100) * baseAdvance * 2);
+  const commission = parseFloat((12 - (sliderVal / 100) * 7).toFixed(1));
+
+  document.getElementById('contract-advance-display').textContent = formatMoney(advance) + '/yr';
+  document.getElementById('contract-commission-display').textContent = commission + '%';
+  document.getElementById('contract-summary-advance').textContent = formatMoney(advance) + ' per year';
+  document.getElementById('contract-summary-commission').textContent = commission + '% of earnings';
+
+  const dur = document.getElementById('contract-duration-select').value;
+  const durText = dur === 'forever' ? 'Until terminated' : dur;
+  document.getElementById('contract-summary-duration').textContent = durText;
+}
+
+function signManagerContract() {
+  const offer = window._pendingOffer;
+  if (!offer) return;
+  const m = offer.manager;
+  const baseAdvance = MANAGER_BASE_ADVANCE[m.rating] || 180000;
+  const sliderVal = parseInt(document.getElementById('contract-advance-slider').value);
+  const advance = Math.round(baseAdvance + (sliderVal / 100) * baseAdvance * 2);
+  const commission = parseFloat((12 - (sliderVal / 100) * 7).toFixed(1));
+  const durVal = document.getElementById('contract-duration-select').value;
+
+  let weeksLeft;
+  if (durVal === 'forever') weeksLeft = 999999;
+  else if (durVal === '4 weeks') weeksLeft = 4;
+  else if (durVal === '3 months') weeksLeft = 13;
+  else if (durVal === '6 months') weeksLeft = 26;
+  else if (durVal === '1 year') weeksLeft = 52;
+  else if (durVal === '2 years') weeksLeft = 104;
+  else if (durVal === '3 years') weeksLeft = 156;
+  else weeksLeft = 52;
+
+  const contract = {
+    managerId: m.id,
+    weeksLeft,
+    startWeek: offer.offerDate,
+    commission,
+    promotionPower: m.promotionPower,
+    yearlyAdvance: advance,
+    duration: durVal
+  };
+
+  const money = parseFloat(localStorage.getItem('money')) || 0;
+  if (money < advance) {
+    showNotif(`You need ${formatMoney(advance)} for the first year advance. You only have ${formatMoney(money)}.`, 'error');
+    return;
+  }
+
+  localStorage.setItem('managerContract', JSON.stringify(contract));
+  localStorage.removeItem('pendingManagerOffer');
+  localStorage.setItem('money', (money - advance).toString());
+
+  window._pendingOffer = null;
+  closeModal('modal-contract-negotiation');
+  showNotif(`Signed with ${m.name}! ${commission}% commission · ${formatMoney(advance)}/yr advance`, 'success');
+  setTimeout(() => init(), 800);
+}
+
+// ============================================================
+// CARTOON AVATAR SVGs
+// ============================================================
+function getManagerAvatar(id) {
+  // Each manager gets a unique, distinct cartoon SVG
+  const avatars = {
+    1: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs><radialGradient id="bg1" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#1e3a6e"/><stop offset="100%" stop-color="#0f1f3d"/></radialGradient></defs>
+      <circle cx="100" cy="100" r="100" fill="url(#bg1)"/>
+      <!-- Body/suit -->
+      <ellipse cx="100" cy="192" rx="60" ry="30" fill="#1a2d52"/>
+      <rect x="72" y="148" width="56" height="55" fill="#1a2d52" rx="6"/>
+      <rect x="89" y="150" width="22" height="52" fill="#f0f4ff"/>
+      <polygon points="89,150 100,162 100,150" fill="#dc2626"/>
+      <polygon points="111,150 100,162 100,150" fill="#dc2626"/>
+      <!-- Neck -->
+      <rect x="88" y="133" width="24" height="20" fill="#c07a40"/>
+      <!-- Ears -->
+      <ellipse cx="57" cy="118" rx="9" ry="11" fill="#c07a40"/>
+      <ellipse cx="143" cy="118" rx="9" ry="11" fill="#c07a40"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="113" rx="46" ry="48" fill="#c07a40"/>
+      <!-- Hair: short dark styled -->
+      <path d="M54,105 Q56,60 100,57 Q144,60 146,105 Q140,74 100,72 Q60,74 54,105Z" fill="#1a0900"/>
+      <path d="M54,98 Q50,85 55,74 Q58,68 65,66" stroke="#1a0900" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <path d="M146,98 Q150,85 145,74 Q142,68 135,66" stroke="#1a0900" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <!-- Eyebrows (thick, confident) -->
+      <path d="M76,101 Q85,96 95,101" stroke="#1a0900" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <path d="M105,101 Q115,96 124,101" stroke="#1a0900" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+      <!-- Eyes whites -->
+      <ellipse cx="84" cy="111" rx="10" ry="9" fill="white"/>
+      <ellipse cx="116" cy="111" rx="10" ry="9" fill="white"/>
+      <circle cx="86" cy="112" r="6" fill="#2d1200"/>
+      <circle cx="118" cy="112" r="6" fill="#2d1200"/>
+      <circle cx="88" cy="110" r="2" fill="white"/>
+      <circle cx="120" cy="110" r="2" fill="white"/>
+      <!-- Nose -->
+      <path d="M96,119 Q100,128 104,119" stroke="#a06030" stroke-width="2" fill="none"/>
+      <path d="M93,126 Q100,130 107,126" stroke="#a06030" stroke-width="2" fill="none"/>
+      <!-- Confident smirk -->
+      <path d="M88,134 Q97,142 108,136" stroke="#a06030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Stubble -->
+      <ellipse cx="100" cy="137" rx="18" ry="7" fill="#9a5020" opacity="0.18"/>
+    </svg>`,
+
+    2: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs><radialGradient id="bg2" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#2d1b4e"/><stop offset="100%" stop-color="#1a0f2e"/></radialGradient></defs>
+      <circle cx="100" cy="100" r="100" fill="url(#bg2)"/>
+      <!-- Body -->
+      <ellipse cx="100" cy="194" rx="62" ry="28" fill="#3d2060"/>
+      <rect x="70" y="148" width="60" height="55" fill="#3d2060" rx="6"/>
+      <path d="M84,148 Q100,155 116,148 Q116,170 100,175 Q84,170 84,148Z" fill="#e8d5f0"/>
+      <!-- Pearl necklace hint -->
+      <ellipse cx="100" cy="151" rx="16" ry="4" fill="none" stroke="#f0e0ff" stroke-width="2" stroke-dasharray="3,2"/>
+      <!-- Neck -->
+      <rect x="88" y="133" width="24" height="18" fill="#f0ccaa"/>
+      <!-- Long straight hair sides (before ears so ears show) -->
+      <rect x="46" y="92" width="16" height="65" fill="#0d0600" rx="8"/>
+      <rect x="138" y="92" width="16" height="65" fill="#0d0600" rx="8"/>
+      <!-- Ears -->
+      <ellipse cx="58" cy="115" rx="9" ry="10" fill="#f0ccaa"/>
+      <ellipse cx="142" cy="115" rx="9" ry="10" fill="#f0ccaa"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="111" rx="46" ry="48" fill="#f0ccaa"/>
+      <!-- Hair top/front: straight black -->
+      <path d="M54,100 Q55,55 100,52 Q145,55 146,100 Q140,68 100,66 Q60,68 54,100Z" fill="#0d0600"/>
+      <rect x="54" y="60" width="92" height="28" fill="#0d0600" rx="4"/>
+      <!-- Bangs/fringe -->
+      <path d="M60,88 Q80,95 100,90 Q120,95 140,88" stroke="#0d0600" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <!-- Eyebrows -->
+      <path d="M78,99 Q86,95 95,99" stroke="#0d0600" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M105,99 Q114,95 122,99" stroke="#0d0600" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Eyes: almond shaped -->
+      <ellipse cx="85" cy="109" rx="11" ry="8" fill="white"/>
+      <ellipse cx="115" cy="109" rx="11" ry="8" fill="white"/>
+      <ellipse cx="86" cy="110" rx="7" ry="6" fill="#0d0600"/>
+      <ellipse cx="116" cy="110" rx="7" ry="6" fill="#0d0600"/>
+      <circle cx="88" cy="108" r="2" fill="white"/>
+      <circle cx="118" cy="108" r="2" fill="white"/>
+      <!-- Eyelashes -->
+      <path d="M74,104 Q80,100 85,102" stroke="#0d0600" stroke-width="1.5" fill="none"/>
+      <path d="M104,104 Q110,100 115,102" stroke="#0d0600" stroke-width="1.5" fill="none"/>
+      <!-- Nose (small, delicate) -->
+      <path d="M97,117 Q100,124 103,117" stroke="#c8a080" stroke-width="1.5" fill="none"/>
+      <path d="M94,123 Q100,126 106,123" stroke="#c8a080" stroke-width="1.5" fill="none"/>
+      <!-- Professional smile -->
+      <path d="M88,132 Q100,141 112,132" stroke="#c8a080" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- Blush -->
+      <ellipse cx="70" cy="118" rx="13" ry="7" fill="rgba(255,100,130,0.15)"/>
+      <ellipse cx="130" cy="118" rx="13" ry="7" fill="rgba(255,100,130,0.15)"/>
+    </svg>`,
+
+    3: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs><radialGradient id="bg3" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#1a3050"/><stop offset="100%" stop-color="#0d1e35"/></radialGradient></defs>
+      <circle cx="100" cy="100" r="100" fill="url(#bg3)"/>
+      <!-- Body/formal suit -->
+      <ellipse cx="100" cy="194" rx="60" ry="28" fill="#1a2d50"/>
+      <rect x="72" y="150" width="56" height="53" fill="#1a2d50" rx="6"/>
+      <rect x="89" y="152" width="22" height="52" fill="#dbeafe"/>
+      <rect x="96" y="152" width="8" height="52" fill="#3B82F6" opacity="0.4"/>
+      <!-- Neck -->
+      <rect x="88" y="134" width="24" height="20" fill="#9a6a3a"/>
+      <!-- Ears -->
+      <ellipse cx="57" cy="118" rx="9" ry="11" fill="#9a6a3a"/>
+      <ellipse cx="143" cy="118" rx="9" ry="11" fill="#9a6a3a"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="114" rx="46" ry="48" fill="#9a6a3a"/>
+      <!-- Hair: neat professional -->
+      <path d="M56,106 Q60,60 100,58 Q140,60 144,106 Q138,76 100,74 Q62,76 56,106Z" fill="#100800"/>
+      <path d="M56,100 Q52,86 58,74 Q62,66 72,62" stroke="#100800" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <path d="M144,100 Q148,86 142,74 Q138,66 128,62" stroke="#100800" stroke-width="10" fill="none" stroke-linecap="round"/>
+      <!-- Distinct side parting -->
+      <path d="M72,64 Q82,70 85,82" stroke="#1a0e00" stroke-width="3" fill="none"/>
+      <!-- Eyebrows (neat) -->
+      <path d="M76,102 Q85,97 95,102" stroke="#100800" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <path d="M105,102 Q115,97 124,102" stroke="#100800" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <!-- Eyes -->
+      <ellipse cx="84" cy="112" rx="10" ry="9" fill="white"/>
+      <ellipse cx="116" cy="112" rx="10" ry="9" fill="white"/>
+      <circle cx="86" cy="113" r="6" fill="#100800"/>
+      <circle cx="118" cy="113" r="6" fill="#100800"/>
+      <circle cx="88" cy="111" r="2" fill="white"/>
+      <circle cx="120" cy="111" r="2" fill="white"/>
+      <!-- GLASSES (distinctive feature) -->
+      <rect x="73" y="107" width="22" height="14" rx="5" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+      <rect x="105" y="107" width="22" height="14" rx="5" fill="none" stroke="#3B82F6" stroke-width="2.5"/>
+      <line x1="95" y1="114" x2="105" y2="114" stroke="#3B82F6" stroke-width="2"/>
+      <line x1="73" y1="113" x2="64" y2="116" stroke="#3B82F6" stroke-width="2"/>
+      <line x1="127" y1="113" x2="136" y2="116" stroke="#3B82F6" stroke-width="2"/>
+      <!-- Nose -->
+      <path d="M97,120 Q100,129 103,120" stroke="#7a5030" stroke-width="1.8" fill="none"/>
+      <path d="M94,127 Q100,131 106,127" stroke="#7a5030" stroke-width="1.8" fill="none"/>
+      <!-- Thoughtful smile -->
+      <path d="M88,136 Q100,144 112,138" stroke="#7a5030" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </svg>`,
+
+    4: `<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%">
+      <defs>
+        <radialGradient id="bg4" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#3d2800"/><stop offset="100%" stop-color="#1e1400"/></radialGradient>
+        <linearGradient id="goldHair" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFD700"/><stop offset="100%" stop-color="#B8860B"/></linearGradient>
+      </defs>
+      <circle cx="100" cy="100" r="100" fill="url(#bg4)"/>
+      <!-- Star accent -->
+      <path d="M100,8 l3,9 h9 l-7,5 3,9 -8-6 -8,6 3-9 -7-5 h9Z" fill="#FFD700" opacity="0.6"/>
+      <!-- Body/luxury blazer -->
+      <ellipse cx="100" cy="195" rx="62" ry="28" fill="#2d1b00"/>
+      <rect x="70" y="148" width="60" height="55" fill="#2d1b00" rx="6"/>
+      <path d="M84,148 Q100,158 116,148 Q116,172 100,178 Q84,172 84,148Z" fill="#fef3c7"/>
+      <!-- Gold chain hint -->
+      <ellipse cx="100" cy="155" rx="18" ry="5" fill="none" stroke="#FFD700" stroke-width="2" opacity="0.7"/>
+      <!-- Neck -->
+      <rect x="88" y="133" width="24" height="19" fill="#ffe0be"/>
+      <!-- Long wavy hair (before ears) -->
+      <!-- Side hair waves -->
+      <path d="M46,88 Q40,110 42,130 Q44,150 48,165" stroke="url(#goldHair)" stroke-width="15" fill="none" stroke-linecap="round"/>
+      <path d="M154,88 Q160,110 158,130 Q156,150 152,165" stroke="url(#goldHair)" stroke-width="15" fill="none" stroke-linecap="round"/>
+      <!-- Ears -->
+      <ellipse cx="57" cy="114" rx="9" ry="10" fill="#ffe0be"/>
+      <!-- Gold earrings -->
+      <circle cx="57" cy="127" r="4" fill="#FFD700"/>
+      <ellipse cx="143" cy="114" rx="9" ry="10" fill="#ffe0be"/>
+      <circle cx="143" cy="127" r="4" fill="#FFD700"/>
+      <!-- Head -->
+      <ellipse cx="100" cy="110" rx="46" ry="48" fill="#ffe0be"/>
+      <!-- Wavy blonde hair top -->
+      <path d="M54,98 Q52,55 100,50 Q148,55 146,98 Q142,65 100,63 Q58,65 54,98Z" fill="url(#goldHair)"/>
+      <!-- Wave detail on top -->
+      <path d="M54,88 Q65,80 80,86 Q95,92 100,84 Q105,76 120,82 Q135,88 146,82" stroke="#B8860B" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <!-- Eyebrows (arched, elegant) -->
+      <path d="M77,99 Q86,93 96,98" stroke="#8B6914" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M104,98 Q114,93 123,99" stroke="#8B6914" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Eyes: blue-green -->
+      <ellipse cx="85" cy="108" rx="11" ry="9" fill="white"/>
+      <ellipse cx="115" cy="108" rx="11" ry="9" fill="white"/>
+      <ellipse cx="86" cy="109" rx="7" ry="6.5" fill="#1a6b8a"/>
+      <ellipse cx="116" cy="109" rx="7" ry="6.5" fill="#1a6b8a"/>
+      <circle cx="89" cy="107" r="2.5" fill="white"/>
+      <circle cx="119" cy="107" r="2.5" fill="white"/>
+      <!-- Eyelashes (lush) -->
+      <path d="M74,102 Q79,97 85,100" stroke="#8B6914" stroke-width="1.8" fill="none"/>
+      <path d="M104,102 Q109,97 115,100" stroke="#8B6914" stroke-width="1.8" fill="none"/>
+      <!-- Nose (refined) -->
+      <path d="M97,116 Q100,124 103,116" stroke="#d4a090" stroke-width="1.5" fill="none"/>
+      <path d="M93,122 Q100,126 107,122" stroke="#d4a090" stroke-width="1.5" fill="none"/>
+      <!-- Confident full smile -->
+      <path d="M85,132 Q100,144 115,132 Q100,140 85,132Z" fill="#c07080" opacity="0.7"/>
+      <path d="M85,132 Q100,144 115,132" stroke="#c07080" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- Blush (glamorous) -->
+      <ellipse cx="68" cy="117" rx="14" ry="8" fill="rgba(255,100,130,0.2)"/>
+      <ellipse cx="132" cy="117" rx="14" ry="8" fill="rgba(255,100,130,0.2)"/>
+    </svg>`
+  };
+  return avatars[id] || avatars[1];
+}
+
+// ============================================================
+// RELATIONSHIP HELPERS
+// ============================================================
+function getRelationship(managerId) {
+  return parseFloat(localStorage.getItem(`rel_${managerId}`) || '50');
+}
+function setRelationship(managerId, val) {
+  val = Math.max(0, Math.min(100, val));
+  localStorage.setItem(`rel_${managerId}`, val.toString());
+  return val;
+}
+function getRelLevel(pct) {
+  if (pct <= 15) return {name:'Hostile',    color:'#EF4444'};
+  if (pct <= 35) return {name:'Cold',       color:'#F59E0B'};
+  if (pct <= 55) return {name:'Neutral',    color:'#94A3B8'};
+  if (pct <= 70) return {name:'Friendly',   color:'#06B6D4'};
+  if (pct <= 85) return {name:'Close',      color:'#10B981'};
+  return              {name:'Best Friends', color:'#8B5CF6'};
+}
+function getInteractionsThisWeek(managerId) {
+  const week = localStorage.getItem('currentWeek') || '1';
+  const key = `rel_interactions_${managerId}_w${week}`;
+  return parseInt(localStorage.getItem(key) || '0');
+}
+function addInteraction(managerId) {
+  const week = localStorage.getItem('currentWeek') || '1';
+  const key = `rel_interactions_${managerId}_w${week}`;
+  const count = getInteractionsThisWeek(managerId) + 1;
+  localStorage.setItem(key, count.toString());
+  return count;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  const pendingOffer = JSON.parse(localStorage.getItem('pendingManagerOffer'));
+  if (pendingOffer) {
+    showContractNegotiation(pendingOffer);
+    return;
+  }
+  const contract = JSON.parse(localStorage.getItem('managerContract') || 'null');
+  if (!contract || contract.weeksLeft <= 0) {
+    document.getElementById('no-manager').style.display = 'block';
+    return;
+  }
+  currentContract = contract;
+  currentManager = MANAGERS.find(m => m.id === contract.managerId);
+  if (!currentManager) {
+    document.getElementById('no-manager').style.display = 'block';
+    return;
+  }
+  document.getElementById('manager-section').style.display = 'block';
+  renderManagerCard();
+  applyLockStates();
+}
+
+function renderManagerCard() {
+  // Avatar
+  document.getElementById('manager-avatar').innerHTML = getManagerAvatar(currentManager.id);
+  document.getElementById('manager-name').textContent = currentManager.name;
+  document.getElementById('manager-agency').textContent = currentManager.agency;
+  if (currentManager.isRare) {
+    const badge = document.createElement('span');
+    badge.className = 'rare-badge';
+    badge.textContent = 'RARE';
+    document.getElementById('manager-agency').after(badge);
+  }
+
+  // Stars
+  const starsEl = document.getElementById('manager-stars');
+  starsEl.innerHTML = '';
+  for (let i = 1; i <= 5; i++) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('viewBox','0 0 24 24');
+    svg.setAttribute('class', i <= currentManager.rating ? 'star-svg filled' : 'star-svg empty');
+    svg.innerHTML = '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>';
+    starsEl.appendChild(svg);
+  }
+
+  // Stats
+  document.getElementById('stat-commission').textContent = currentContract.commission + '%';
+  document.getElementById('stat-weeks').textContent = currentContract.weeksLeft;
+
+  // Relationship
+  const rel = getRelationship(currentManager.id);
+  const level = getRelLevel(rel);
+  document.getElementById('stat-relationship').textContent = Math.round(rel) + '%';
+  document.getElementById('rel-bar').style.width = rel + '%';
+  document.getElementById('rel-level-text').textContent = level.name;
+  document.getElementById('rel-level-text').style.color = level.color;
+
+  // Header subtitle
+  document.getElementById('header-subtitle').textContent = `Managed by ${currentManager.name}`;
+}
+
+function applyLockStates() {
+  const lockedFeatures = ['promo-campaigns','tap3','tap4','tap5','advisor'];
+  const unlocked = currentManager.rating >= 3;
+
+  lockedFeatures.forEach(feat => {
+    const btn = document.getElementById(`btn-${feat.replace('-','')}`);
+    const lockEl = document.getElementById(`lock-${feat}`);
+    if (!btn || !lockEl) return;
+    if (!unlocked) {
+      btn.classList.add('locked');
+      lockEl.style.display = 'flex';
+    } else {
+      btn.classList.remove('locked');
+      lockEl.style.display = 'none';
+    }
+  });
+}
+
+// ============================================================
+// FEATURE HANDLER
+// ============================================================
+function handleFeature(feature, requiredRating) {
+  if (currentManager.rating < requiredRating) {
+    openModal('modal-locked');
+    return;
+  }
+  switch(feature) {
+    case 'promo-campaigns': openModal('modal-campaigns'); break;
+    case 'tap3': openBrandDeals(); break;
+    case 'tap4': openSocialSchedule(); break;
+    case 'tap5': openTourDeals(); break;
+    case 'advisor': openAdvisorModal(); break;
+  }
+}
+
+// ============================================================
+// MANAGER PROMO
+// ============================================================
+function openManagerPromo() {
+  const promoOptions = [
+    {name:'Social Media Blitz', cost:5000,  boostPct: Math.round(currentManager.promotionPower * 0.08 * 100),  desc:'Manager pushes your music across social platforms'},
+{name:'Radio Campaign',     cost:15000, boostPct: Math.round(currentManager.promotionPower * 0.13 * 100),  desc:'Get airtime on radio stations via manager contacts'},
+{name:'Playlist Push',      cost:25000, boostPct: Math.round(currentManager.promotionPower * 0.20 * 100),  desc:'Manager secures editorial playlist features'},
+{name:'Full Promo Package', cost:50000, boostPct: Math.round(currentManager.promotionPower * 0.25 * 100),  desc:'Complete 360° marketing campaign'}
+  ];
+
+  const list = document.getElementById('promo-options-list');
+  list.innerHTML = '';
+  promoOptions.forEach(opt => {
+    const div = document.createElement('div');
+    div.className = 'promo-item';
+    div.innerHTML = `
+      <div class="promo-row">
+        <span class="promo-name">${opt.name}</span>
+        <span class="promo-cost">$${opt.cost.toLocaleString()}</span>
+      </div>
+      <div class="promo-desc">${opt.desc}</div>
+      <div class="promo-boost">+${opt.boostPct}% stream boost for 2 weeks</div>
+    `;
+    div.onclick = () => purchaseManagerPromo(opt);
+    list.appendChild(div);
+  });
+  openModal('modal-promo');
+}
+
+function purchaseManagerPromo(opt) {
+  const lastPromoWeek = parseInt(localStorage.getItem('lastManagerPromoWeek') || '0');
+  const currentWeek = parseInt(localStorage.getItem('currentWeek') || '1');
+  if (lastPromoWeek === currentWeek) {
+    showNotif('Already ran a manager promo this week. Come back next week!', 'warn');
+    return;
+  }
+  const money = parseFloat(localStorage.getItem('money') || '0');
+  if (money < opt.cost) {
+    showNotif(`Need $${opt.cost.toLocaleString()} — you only have $${formatMoney(money)}`, 'error');
+    return;
+  }
+  localStorage.setItem('money', (money - opt.cost).toString());
+  localStorage.setItem('lastManagerPromoWeek', currentWeek.toString());
+
+  // Add to active promotions on each song
+  let songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+  const boost = opt.boostPct / 100;
+  songs.forEach(s => {
+    if (!s.activePromos) s.activePromos = [];
+    s.activePromos.push({multiplier: 1 + boost, weeksLeft: 2, weeklyCost: 0, source: 'manager'});
+  });
+  localStorage.setItem('releasedSongs', JSON.stringify(songs));
+  closeModal('modal-promo');
+  const failed = Math.random() < 0.32;
+  if (failed) {
+    showNotif(`${opt.name} fell through — your manager couldn't pull it off this time. Money lost.`, 'error');
+    return;
+  }
+  showNotif(`${opt.name} activated! +${opt.boostPct}% boost for 2 weeks`, 'success');
+}
+
+// ============================================================
+// RELATIONSHIPS
+// ============================================================
+function openRelationships() {
+  const rel = getRelationship(currentManager.id);
+  const level = getRelLevel(rel);
+  const interCount = getInteractionsThisWeek(currentManager.id);
+  const isClingy = interCount >= 4;
+
+  document.getElementById('rel-modal-pct').textContent = Math.round(rel) + '%';
+  document.getElementById('rel-modal-level').textContent = level.name;
+  document.getElementById('rel-modal-level').style.color = level.color;
+  document.getElementById('rel-modal-bar').style.width = rel + '%';
+
+  // Relationship effect info
+  let effectText = 'Keep building your relationship for better collaboration.';
+  if (rel > 85) effectText = `Best Friends! Your manager gives you ${currentManager.commission - 1}% commission discount and boosts promo by +10%.`;
+  else if (rel > 70) effectText = 'Close relationship! Your manager is extra invested in your career.';
+  else if (rel < 20) effectText = 'Hostile! Your manager is disengaged and may leave early.';
+  document.getElementById('rel-effect-text').textContent = effectText;
+
+  document.getElementById('clingy-warning').style.display = isClingy ? 'block' : 'none';
+  openModal('modal-relationships');
+}
+
+const REL_SCENARIOS = {
+  hangout: [
+    { title:'Studio Session Invite',
+      body:'[MGR] texts: "I\'ve booked time at Electric Lady Studios tonight — come through, I want to hear your new direction." Do you go?',
+      choices:[
+        {label:'Show up ready',       desc:'Go with new material prepared',   delta:[8,12]},
+        {label:'Drop by casually',    desc:'Swing by for an hour',            delta:[4,7]},
+        {label:'Cancel last minute',  desc:'Something came up',               delta:[-5,-2]}
+      ]},
+    { title:'Industry Dinner',
+      body:'[MGR] invites you to a private dinner with label execs at a rooftop restaurant. "This could open doors," they say.',
+      choices:[
+        {label:'Attend and network hard', desc:'Make an impression all night', delta:[10,14]},
+        {label:'Attend, keep low profile',desc:'Show up, leave early',         delta:[5,8]},
+        {label:"Can't make it",           desc:'Send a polite excuse',          delta:[-3,-1]}
+      ]},
+    { title:'Golf Round',
+      body:'[MGR] asks you to join them and two other clients for golf on Saturday. Not your thing — but it\'s bonding time.',
+      choices:[
+        {label:'Go and enjoy it',  desc:'Laugh through the bad shots', delta:[7,10]},
+        {label:'Go but stay quiet',desc:'Show up, not really into it', delta:[3,5]},
+        {label:'Hard pass',        desc:'You don\'t golf, full stop',  delta:[-2,0]}
+      ]}
+  ],
+  call: [
+    { title:'Check-In Call',
+      body:'You feel like touching base. [MGR] is probably in back-to-back meetings but you could try calling…',
+      choices:[
+        {label:'Call and keep it brief',    desc:'2 minutes, quick update',    delta:[2,3]},
+        {label:'Send a voice note instead', desc:'Less intrusive',             delta:[1,2]},
+        {label:'Call and chat long',        desc:'Catch up for 30 min',        delta:[-1,1]}
+      ]},
+    { title:'Ask About New Offer',
+      body:'You heard there may be a label deal being discussed. Call [MGR] to ask directly?',
+      choices:[
+        {label:'Call and ask professionally', desc:'"Any label updates you can share?"', delta:[2,4]},
+        {label:'Mention it casually',         desc:'Bring it up at the end of a call',  delta:[1,3]},
+        {label:'Demand answers',              desc:'Push hard for details',              delta:[-4,-2]}
+      ]}
+  ],
+  gift: [
+    { title:'Send a Gift',
+      body:'You want to show [MGR] some appreciation. What do you send? All options cost $2,000.',
+      choices:[
+        {label:'Rare bottle of whiskey',   desc:'Personal and thoughtful',       delta:[13,16], cost:2000},
+        {label:'Custom merch package',     desc:'Your branded stuff',             delta:[10,13], cost:2000},
+        {label:'Spa day voucher',          desc:'They need a break anyway',       delta:[11,15], cost:2000}
+      ]},
+    { title:"Manager's Birthday",
+      body:"Your assistant reminds you — it's [MGR]'s birthday today. You haven't done anything yet.",
+      choices:[
+        {label:'Gift + heartfelt note', desc:'$2,000 + personal message',   delta:[15,18], cost:2000},
+        {label:'Just send a text',      desc:'Quick happy birthday',         delta:[3,5]},
+        {label:'Forget it entirely',    desc:'You\'ve been busy',            delta:[-6,-3]}
+      ]}
+  ]
+};
+
+function openRelScenario(type) {
+  const interCount = getInteractionsThisWeek(currentManager.id);
+  if (interCount >= 4) {
+    doRelAction(type);
+    return;
+  }
+  const pool     = REL_SCENARIOS[type];
+  const scenario = pool[Math.floor(Math.random() * pool.length)];
+  const mgr      = currentManager.name;
+
+  document.getElementById('rs-title').textContent = scenario.title;
+  document.getElementById('rs-body').textContent  = scenario.body.replace(/\[MGR\]/g, mgr);
+
+  const btnsEl = document.getElementById('rs-choices');
+  btnsEl.innerHTML = '';
+  scenario.choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'rel-action-btn';
+    btn.style.cssText = 'margin-bottom:8px;display:flex;width:100%';
+    btn.innerHTML = `
+      <div class="rel-action-icon" style="background:rgba(59,130,246,.15)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="var(--p)"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+      </div>
+      <div class="rel-action-info">
+        <h4>${c.label}</h4>
+        <p>${c.desc}${c.cost ? ` · $${c.cost.toLocaleString()}` : ''}</p>
+      </div>`;
+    btn.onclick = () => resolveRelScenario(c);
+    btnsEl.appendChild(btn);
+  });
+
+  openModal('modal-rel-scenario');
+}
+
+function resolveRelScenario(choice) {
+  if (choice.cost) {
+    const money = parseFloat(localStorage.getItem('money') || '0');
+    if (money < choice.cost) { showNotif(`Need $${choice.cost.toLocaleString()} for this!`, 'error'); return; }
+    localStorage.setItem('money', (money - choice.cost).toString());
+  }
+  addInteraction(currentManager.id);
+  const [min, max] = choice.delta;
+  const delta = min + Math.floor(Math.random() * (max - min + 1));
+  let rel = getRelationship(currentManager.id);
+  rel = setRelationship(currentManager.id, rel + delta);
+  const level = getRelLevel(rel);
+
+  document.getElementById('rel-modal-pct').textContent = Math.round(rel) + '%';
+  document.getElementById('rel-modal-level').textContent = level.name;
+  document.getElementById('rel-modal-level').style.color = level.color;
+  document.getElementById('rel-modal-bar').style.width = rel + '%';
+  document.getElementById('stat-relationship').textContent = Math.round(rel) + '%';
+  document.getElementById('rel-bar').style.width = rel + '%';
+  document.getElementById('rel-level-text').textContent = level.name;
+  document.getElementById('rel-level-text').style.color = level.color;
+
+  closeModal('modal-rel-scenario');
+  const sign = delta >= 0 ? '+' : '';
+  showNotif(`${choice.label} — Relationship ${sign}${delta}%`, delta >= 0 ? 'success' : 'warn');
+}
+
+function doRelAction(type) {
+  const interCount = addInteraction(currentManager.id);
+  const isClingy = interCount > 3;
+  let rel = getRelationship(currentManager.id);
+  let delta = 0;
+  let msg = '';
+
+  if (isClingy) {
+    // Clingy penalty
+    delta = -(3 + Math.floor(Math.random() * 3));
+    msg = `Too clingy! Your manager feels pressured. Relationship dropped ${Math.abs(delta)}%.`;
+    document.getElementById('clingy-warning').style.display = 'block';
+  } else {
+    if (type === 'hangout') {
+      delta = 6 + Math.floor(Math.random() * 5);
+      msg = `Great hangout with ${currentManager.name}! Relationship +${delta}%.`;
+    } else if (type === 'call') {
+      delta = 2 + Math.floor(Math.random() * 2);
+      msg = `Quick catch-up call. Relationship +${delta}%.`;
+    } else if (type === 'gift') {
+      const money = parseFloat(localStorage.getItem('money') || '0');
+      if (money < 2000) {
+        showNotif('Not enough money for a gift! Need $2,000', 'error');
+        return;
+      }
+      localStorage.setItem('money', (money - 2000).toString());
+      delta = 12 + Math.floor(Math.random() * 4);
+      msg = `${currentManager.name} loved the gift! -$2,000 | Relationship +${delta}%.`;
+    }
+  }
+
+  rel = setRelationship(currentManager.id, rel + delta);
+
+  // Update modal
+  const level = getRelLevel(rel);
+  document.getElementById('rel-modal-pct').textContent = Math.round(rel) + '%';
+  document.getElementById('rel-modal-level').textContent = level.name;
+  document.getElementById('rel-modal-level').style.color = level.color;
+  document.getElementById('rel-modal-bar').style.width = rel + '%';
+
+  // Update main card
+  document.getElementById('stat-relationship').textContent = Math.round(rel) + '%';
+  document.getElementById('rel-bar').style.width = rel + '%';
+  document.getElementById('rel-level-text').textContent = level.name;
+  document.getElementById('rel-level-text').style.color = level.color;
+
+  showNotif(msg, delta >= 0 && !isClingy ? 'success' : 'warn');
+}
+
+// ============================================================
+// PAYOLA
+// ============================================================
+function openPayola() {
+  const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+  const list = document.getElementById('payola-song-list');
+  selectedPayolaSong = null;
+
+  // Risk based on manager level
+  const riskPcts = {1:40, 2:30, 3:20, 4:10, 5:5};
+  const riskPct = riskPcts[currentManager.rating] || 35;
+  document.getElementById('payola-risk-pct').textContent = riskPct + '%';
+  document.getElementById('payola-risk-bar').style.width = riskPct + '%';
+  document.getElementById('payola-risk-note').textContent =
+    `Level ${currentManager.rating} manager: ${riskPct < 20 ? 'strong' : riskPct < 30 ? 'moderate' : 'weak'} street protection`;
+
+  if (songs.length === 0) {
+    list.innerHTML = '<div style="color:var(--dim);font-size:13px;text-align:center;padding:20px">No released songs yet!</div>';
+  } else {
+    list.innerHTML = '';
+    songs.forEach((s, i) => {
+      const name = s.songName || s.name || 'Unknown';
+      const streams = (s.weeklyStreams || 0).toLocaleString();
+      const div = document.createElement('div');
+      div.className = 'song-select-item';
+      div.id = `payola-song-${i}`;
+      div.innerHTML = `
+        <div class="song-check" id="payola-check-${i}">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="white"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700">${name}</div>
+          <div style="font-size:11px;color:var(--dim)">${streams} weekly streams</div>
+        </div>
+      `;
+      div.onclick = () => selectPayolaSong(i, s);
+      list.appendChild(div);
+    });
+  }
+  openModal('modal-payola');
+}
+
+function selectPayolaSong(index, song) {
+  // Deselect all
+  document.querySelectorAll('.song-select-item').forEach(el => el.classList.remove('selected'));
+  // Select this one
+  const el = document.getElementById(`payola-song-${index}`);
+  if (el) el.classList.add('selected');
+  selectedPayolaSong = song;
+}
+
+function executePayola() {
+  if (!selectedPayolaSong) {
+    showNotif('Select a song first!', 'error');
+    return;
+  }
+  const cost = 75000;
+  const money = parseFloat(localStorage.getItem('money') || '0');
+  if (money < cost) {
+    showNotif(`Need $${cost.toLocaleString()} to run payola`, 'error');
+    return;
+  }
+
+  // Detection chance
+  const riskPcts = {1:40, 2:30, 3:20, 4:10, 5:5};
+  const detectChance = (riskPcts[currentManager.rating] || 35) / 100;
+  const caught = Math.random() < detectChance;
+
+  localStorage.setItem('money', (money - cost).toString());
+
+  if (caught) {
+    // Fine + reputation damage
+    const fine = Math.floor(money * 0.25);
+    const newMoney = Math.max(0, (money - cost) - fine);
+    localStorage.setItem('money', newMoney.toString());
+    const pop = parseFloat(localStorage.getItem('popularity') || '25');
+    localStorage.setItem('popularity', Math.max(1, pop - 15).toString());
+    closeModal('modal-payola');
+    showNotif(`CAUGHT! Fined $${fine.toLocaleString()}. -15 Popularity. Streams not added.`, 'error');
+  } else {
+    // Boost: 5M–12M illegal streams added
+    const boost = Math.floor(5000000 + Math.random() * 7000000);
+    let songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+    const songName = selectedPayolaSong.songName || selectedPayolaSong.name;
+    const idx = songs.findIndex(s => (s.songName || s.name) === songName);
+    if (idx >= 0) {
+      songs[idx].streams = (songs[idx].streams || 0) + boost;
+      songs[idx].weeklyStreams = (songs[idx].weeklyStreams || 0) + boost;
+    }
+    localStorage.setItem('releasedSongs', JSON.stringify(songs));
+    closeModal('modal-payola');
+    showNotif(`Success! Added ${(boost/1000000).toFixed(1)}M illegal streams to "${songName}"`, 'success');
+  }
+}
+
+// ============================================================
+// MANAGER ADVISOR
+// ============================================================
+function openAdvisorModal() {
+  const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+  const currentDate = new Date(localStorage.getItem('currentDate') || Date.now());
+  const currentYear = currentDate.getFullYear();
+
+  // Eligible awards songs — tap to select
+  const eligibleEl = document.getElementById('awards-eligible-list');
+  const eligible = songs.filter(s => {
+    if ((s.streams || 0) < 1000000) return false;
+    const releaseYear = new Date(s.releaseDate || '2025').getFullYear();
+    const weeksAgo = Math.floor((currentDate - new Date(s.releaseDate || '2025')) / (7*24*60*60*1000));
+    return releaseYear === currentYear && weeksAgo <= 52;
+  });
+
+  if (eligible.length === 0) {
+    eligibleEl.innerHTML = '<div style="color:var(--dim);font-size:12px;padding:10px">No eligible songs yet — needs s released this year.</div>';
+  } else {
+    eligibleEl.innerHTML = eligible.map(s => {
+      const name = (s.songName || s.name || 'Unknown').replace(/'/g,"\\'");
+      const streams = ((s.streams || 0) / 1000000).toFixed(1);
+      return `<div class="eligible-song" style="cursor:pointer;transition:background .2s" onclick="selectAwardSong('${name}','${streams}')">
+        <strong>${name}</strong><br><span>${streams}M streams · tap to select</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Pre-fill release tab from unreleasedSongs
+  const unreleased = JSON.parse(localStorage.getItem('unreleasedSongs') || '[]');
+  if (unreleased.length > 0) {
+    const names = unreleased.map(s => s.songName || s.name || 'Untitled').join(', ');
+    document.getElementById('release-input').value =
+      `I have ${unreleased.length} unreleased track(s): ${names}. Which should I prioritize releasing next?`;
+  }
+
+  document.getElementById('advisor-response').style.display = 'none';
+  document.getElementById('advisor-loading').style.display = 'none';
+  openModal('modal-advisor');
+}
+
+function selectAwardSong(name, streams) {
+  document.getElementById('awards-input').value =
+    `Which awards should I submit "${name}" (${streams}M streams) for? Is it strong enough to win?`;
+  document.querySelectorAll('.eligible-song').forEach(el => el.style.background = '');
+  event.currentTarget.style.background = 'rgba(59,130,246,.18)';
+}
+
+function switchAdvisorTab(tab) {
+  document.querySelectorAll('.advisor-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.advisor-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  event.target.classList.add('active');
+  document.getElementById('advisor-response').style.display = 'none';
+}
+
+async function askAdvisor(type) {
+  let userMsg = '';
+  if (type === 'release') {
+    userMsg = document.getElementById('release-input').value.trim();
+    if (!userMsg) { showNotif('Describe your unreleased tracks first', 'error'); return; }
+  } else {
+    userMsg = document.getElementById('awards-input').value.trim();
+    const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+    const currentDate = new Date(localStorage.getItem('currentDate') || Date.now());
+    const currentYear = currentDate.getFullYear();
+    const eligible = songs.filter(s => {
+      const releaseYear = new Date(s.releaseDate || '2025').getFullYear();
+      return releaseYear === currentYear && (s.streams || 0) >= 1000000;
+    });
+    const songList = eligible.map(s => `${s.songName || s.name} (${((s.streams||0)/1000000).toFixed(1)}M streams)`).join(', ');
+    userMsg = `My eligible songs this year are: ${songList || 'none yet'}. ${userMsg || 'Which should I submit for awards?'}`;
+  }
+
+  document.getElementById('advisor-loading').style.display = 'block';
+  document.getElementById('advisor-response').style.display = 'none';
+
+  const systemPrompt = `You are ${currentManager.name}, a music industry manager at ${currentManager.agency}. 
+You have a Level ${currentManager.rating}/5 industry rating and ${currentManager.promotionPower * 100}% promotion power.
+You advise artists — you never control them. Your advice is thoughtful, specific, and comes from experience.
+Keep your response under 130 words. Be direct and personal. You ADVISE only, never make decisions for them.
+${currentManager.rating >= 4 ? 'You have deep industry connections and speak with authority.' : 'You are up-and-coming with solid instincts.'}`;
+
+  try {
+    const resp = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyCitcEL515tEZ-QxMzGTSQO6kQtX8TnV5M`, {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: "user", parts: [{ text: userMsg }] }]
+      })
+    });
+    const data = await resp.json();
+    const text = data.candidates?.[0]?.content?.parts?.[0]?.text || 'Unable to get advice right now.';
+    document.getElementById('advisor-response').textContent = text;
+    document.getElementById('advisor-response').style.display = 'block';
+  } catch(e) {
+    document.getElementById('advisor-response').textContent = 'Manager is unavailable right now. Try again later.';
+    document.getElementById('advisor-response').style.display = 'block';
+  }
+  document.getElementById('advisor-loading').style.display = 'none';
+}
+  // ============================================================
+// TOUR DEALS
+// ============================================================
+const TOUR_COMPANY_ICONS = {
+  'td-coke':      `<svg viewBox="0 0 32 32" width="30" height="30" style="border-radius:6px;flex-shrink:0"><rect width="32" height="32" rx="7" fill="#C8102E"/><path d="M8 11 Q16 8 24 10 Q20 17 16 14 Q12 11 8 19 Q10 25 16 23 Q22 21 24 23" stroke="white" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>`,
+  'td-excellence':`<svg viewBox="0 0 32 32" width="30" height="30" style="border-radius:6px;flex-shrink:0"><rect width="32" height="32" rx="7" fill="#1a1a2e"/><polygon points="16,4 19,12 28,12 21,18 24,26 16,21 8,26 11,18 4,12 13,12" fill="#FFD700"/></svg>`,
+  'td-vegas':     `<svg viewBox="0 0 32 32" width="30" height="30" style="border-radius:6px;flex-shrink:0"><rect width="32" height="32" rx="7" fill="#0d0d1a"/><rect x="4" y="6" width="24" height="18" rx="3" fill="none" stroke="#A855F7" stroke-width="1.8"/><circle cx="16" cy="15" r="4" fill="#FFD700"/><rect x="7" y="25" width="18" height="2.5" rx="1.2" fill="#A855F7" opacity="0.5"/></svg>`,
+  'td-master':    `<svg viewBox="0 0 32 32" width="30" height="30" style="border-radius:6px;flex-shrink:0"><rect width="32" height="32" rx="7" fill="#0f1117"/><path d="M16 3L30 28H2Z" fill="none" stroke="#FFD700" stroke-width="2"/><circle cx="16" cy="18" r="4.5" fill="#FFD700"/></svg>`
+};
+
+const TOUR_COMPANIES = [
+  { id:'td-coke',       company:'Coca-Cola Experience', minPop:30, cityRange:[15,25], capRange:[6000,10000],  pr:{d:[50,80],  g:[100,140],v:[220,320]},   continents:['North America'] },
+  { id:'td-excellence', company:'Excellence Nation',    minPop:45, cityRange:[20,32], capRange:[10000,18000], pr:{d:[70,100], g:[130,180],v:[300,450]},  continents:['North America'] },
+  { id:'td-vegas',      company:'Las Vegas Residency',  minPop:55, cityRange:[6,12],  capRange:[4000,7000],   pr:{d:[120,180],g:[250,350],v:[700,1100]}, continents:['North America'] },
+  { id:'td-master',     company:'Master-Excellence',    minPop:65, cityRange:[25,38], capRange:[40000,60000], pr:{d:[100,150],g:[180,260],v:[500,800]},  continents:['North America','Europe'] }
+];
+
+function rndInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+
+function generateTourOffers() {
+  // 25% chance no deals this week
+  if (Math.random() < 0.25) return [];
+  const count = rndInt(1, 3);
+  return [...TOUR_COMPANIES]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, count)
+    .map(c => ({
+      id: c.id,
+      company: c.company,
+      emoji: c.emoji,
+      minPop: c.minPop,
+      cities: rndInt(...c.cityRange),
+      cap: rndInt(...c.capRange),
+      prices: { discount: rndInt(...c.pr.d), general: rndInt(...c.pr.g), vip: rndInt(...c.pr.v) },
+      continents: c.continents
+    }));
+}
+
+function openTourDeals() {
+  const popularity  = parseFloat(localStorage.getItem('popularity') || '25');
+  const existing    = JSON.parse(localStorage.getItem('tycoon_tours') || '[]');
+  const list        = document.getElementById('tour-deals-list');
+  const gameYear    = new Date(localStorage.getItem('currentDate') || Date.now()).getFullYear();
+  const dealSignedYear = parseInt(localStorage.getItem('lastTourDealYear') || '0');
+  const alreadySignedThisYear = dealSignedYear === gameYear;
+
+  // Offers are seeded per game-week so they stay consistent until week advances
+  const weekKey = localStorage.getItem('currentDate') || 'w0';
+  let offers;
+  try {
+    const cached = JSON.parse(localStorage.getItem('tourDealOffers') || 'null');
+    offers = (cached && cached.weekKey === weekKey) ? cached.offers : null;
+  } catch(e) { offers = null; }
+
+  if (!offers) {
+    offers = generateTourOffers();
+    localStorage.setItem('tourDealOffers', JSON.stringify({ weekKey, offers }));
+  }
+
+  if (offers.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--dim);font-size:13px;font-weight:400;line-height:1.6">
+      No tour deals available this week.<br>Advance a week and check back.
+    </div>`;
+    openModal('modal-tour-deals');
+    return;
+  }
+
+  list.innerHTML = offers.map(d => {
+    const icon        = TOUR_COMPANY_ICONS[d.id] || '';
+    const eligible    = popularity >= d.minPop && !alreadySignedThisYear;
+    const alreadyLive = existing.some(t => t.dealId === d.id && t.status !== 'completed');
+    const feePerShow  = { 'td-coke':80000,'td-excellence':150000,'td-vegas':200000,'td-master':300000 }[d.id] || 100000;
+    const estFee      = formatMoney(Math.floor(feePerShow * d.cities));
+
+    if (alreadyLive) return `<div class="promo-item" style="opacity:.5;pointer-events:none">
+      <div class="promo-row"><span class="promo-name" style="display:flex;align-items:center;gap:8px">${icon}<span>${d.company}</span></span><span style="color:var(--ok);font-size:12px">ACTIVE</span></div>
+      <div class="promo-desc">${d.cities}-show tour · Already running</div></div>`;
+
+    const blockReason = !eligible && alreadySignedThisYear ? '1 deal per year' : !eligible ? `${d.minPop}+ popularity needed` : '';
+    return `<div class="promo-item" onclick="${eligible ? `previewTourContract('${d.id}')` : ''}" style="${eligible ? 'cursor:pointer' : 'opacity:.4;pointer-events:none'}">
+      <div class="promo-row"><span class="promo-name" style="display:flex;align-items:center;gap:8px">${icon}<span>${d.company}</span></span><span class="promo-cost">${d.cities} shows</span></div>
+      <div class="promo-desc">${d.cities}-city tour · ~${(d.cap/1000).toFixed(0)}K cap venues</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:10px;color:var(--dim);text-transform:uppercase;margin-bottom:3px">Your Signing Fee</div>
+          <div style="font-size:14px;font-weight:800;color:var(--ok)">${estFee}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:8px;text-align:center">
+          <div style="font-size:10px;color:var(--dim);text-transform:uppercase;margin-bottom:3px">Avg Ticket</div>
+          <div style="font-size:14px;font-weight:800;color:var(--acc)">$${d.prices.general}</div>
+        </div>
+      </div>
+      <div class="promo-boost" style="margin-top:6px">${eligible ? '→ Tap to review contract' : `✗ ${blockReason}`}</div>
+    </div>`;
+  }).join('');
+
+  openModal('modal-tour-deals');
+}
+
+let _pendingTourDealId = null;
+
+function previewTourContract(dealId) {
+  let offers;
+  try { offers = JSON.parse(localStorage.getItem('tourDealOffers') || 'null')?.offers || []; }
+  catch(e) { offers = []; }
+  const d = offers.find(x => x.id === dealId);
+  if (!d) return;
+  _pendingTourDealId = dealId;
+
+  const feePerShow  = { 'td-coke':80000,'td-excellence':150000,'td-vegas':200000,'td-master':300000 }[d.id] || 100000;
+  const signingFee  = Math.floor(feePerShow * d.cities * (0.85 + Math.random() * 0.3));
+  const commPct     = currentContract ? currentContract.commission : 10;
+  const managerCut  = Math.floor(signingFee * commPct / 100);
+  const yourFee     = signingFee - managerCut;
+  const estRevenue  = formatMoney(Math.floor(d.cities * d.cap * d.prices.general * 0.65));
+  const icon        = TOUR_COMPANY_ICONS[d.id] || '';
+  const gameYear    = new Date(localStorage.getItem('currentDate') || Date.now()).getFullYear();
+  const endYear     = gameYear + Math.ceil(d.cities / 10);
+
+  document.getElementById('tc-icon').innerHTML = icon;
+  document.getElementById('tc-company-name').textContent = d.company;
+  document.getElementById('tc-company-name2').textContent = d.company;
+  document.getElementById('tc-artist-name').textContent = localStorage.getItem('artistName') || 'The Artist';
+  document.getElementById('tc-date').textContent = new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  document.getElementById('tc-territory').textContent = d.continents.join(', ');
+  document.getElementById('tc-territory2').textContent = d.continents.join(', ');
+  document.getElementById('tc-shows').textContent = d.cities + ' performances';
+  document.getElementById('tc-capacity').textContent = (d.cap/1000).toFixed(0) + 'K per venue';
+  document.getElementById('tc-ticket-discount').textContent = '$' + d.prices.discount;
+  document.getElementById('tc-ticket-general').textContent = '$' + d.prices.general;
+  document.getElementById('tc-ticket-vip').textContent = '$' + d.prices.vip;
+  document.getElementById('tc-gross-revenue').textContent = estRevenue + ' (company retains)';
+  document.getElementById('tc-signing-fee').textContent = formatMoney(signingFee);
+  document.getElementById('tc-manager-cut').textContent = `− ${formatMoney(managerCut)} (${commPct}% mgmt)`;
+  document.getElementById('tc-your-fee').textContent = formatMoney(yourFee);
+  document.getElementById('tc-duration').textContent = `${gameYear} – ${endYear}`;
+  document.getElementById('tc-yr-notice').textContent = gameYear;
+  document.getElementById('tc-sign-btn').dataset.fee = yourFee;
+  document.getElementById('tc-sign-btn').dataset.dealid = dealId;
+
+  closeModal('modal-tour-deals');
+  openModal('modal-tour-contract');
+}
+
+function signTourContract() {
+  const btn     = document.getElementById('tc-sign-btn');
+  const dealId  = btn.dataset.dealid;
+  const yourFee = parseFloat(btn.dataset.fee || '0');
+  let offers;
+  try { offers = JSON.parse(localStorage.getItem('tourDealOffers') || 'null')?.offers || []; }
+  catch(e) { offers = []; }
+  const d = offers.find(x => x.id === dealId);
+  if (!d) return;
+
+  const cityNames = ['New York','Los Angeles','Chicago','Houston','Miami','Atlanta','Dallas','Seattle','Toronto','London','Paris','Berlin','Tokyo','Sydney','São Paulo','Mexico City','Madrid','Amsterdam','Vancouver','Denver','Phoenix','Boston','Nashville','Las Vegas','Orlando','Montreal','Seoul','Barcelona','Rome','Dublin'];
+  const route = Array.from({length: d.cities}, (_, i) => ({
+    name: cityNames[i % cityNames.length],
+    capacity: d.cap,
+    continent: d.continents[i % d.continents.length],
+    cost: 0
+  }));
+  const setlist = JSON.parse(localStorage.getItem('releasedSongs') || '[]').slice(0,8).map(s => s.songName || s.name);
+  const tourObj = {
+    id: 'deal_' + Date.now(), dealId: d.id, isDealTour: true,
+    name: `${d.company} · ${d.cities}-City Tour`,
+    status: 'selling', weeksUntilStart: 4,
+    ticketsSold: 0, preSaleCount: 0, revenue: 0,
+    hypeMultiplier: 1.2, continents: d.continents,
+    weeklyBurn: 0, totalCapacity: d.cities * d.cap,
+    totalCost: 0, currentStop: 0,
+    route, setlist, prices: d.prices, bannerKey: null
+  };
+  const tours = JSON.parse(localStorage.getItem('tycoon_tours') || '[]');
+  tours.push(tourObj);
+  localStorage.setItem('tycoon_tours', JSON.stringify(tours));
+
+  const currentMoney = parseFloat(localStorage.getItem('money') || '0');
+  localStorage.setItem('money', (currentMoney + yourFee).toString());
+
+  const gameYear = new Date(localStorage.getItem('currentDate') || Date.now()).getFullYear();
+  localStorage.setItem('lastTourDealYear', gameYear.toString());
+
+  closeModal('modal-tour-contract');
+  showNotif(`Contract signed with ${d.company}! ${formatMoney(yourFee)} deposited. Tour starts in 4 weeks.`, 'success');
+}
+// ============================================================
+// BRAND DEALS
+// ============================================================
+const BRANDS = [
+  { id:'zenith', name:'Zenith Energy', category:'Energy Drink', maxPay:800000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#1a1a2e"/><polygon points="18,5 24,18 18,14 12,18" fill="#FFD700"/><polygon points="12,18 18,14 18,32 10,21" fill="#FFA500"/><polygon points="24,18 26,21 18,32 18,14" fill="#FF6B00"/></svg>` },
+  { id:'pulse', name:'Pulse Athletics', category:'Sportswear', maxPay:600000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#0f1117"/><polyline points="3,20 9,20 12,12 16,26 20,16 24,20 33,20" stroke="#00FF88" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>` },
+  { id:'nova', name:'Nova Tech', category:'Technology', maxPay:1000000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#0d0d1a"/><polygon points="18,4 32,12 32,24 18,32 4,24 4,12" fill="none" stroke="#4FC3F7" stroke-width="1.8"/><circle cx="18" cy="18" r="4.5" fill="#4FC3F7"/><line x1="18" y1="4" x2="18" y2="13.5" stroke="#4FC3F7" stroke-width="1.5"/><line x1="18" y1="22.5" x2="18" y2="32" stroke="#4FC3F7" stroke-width="1.5"/></svg>` },
+  { id:'drift', name:'Drift Shoes', category:'Footwear', maxPay:500000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#111"/><path d="M3,26 Q7,18 15,16 L27,14 Q33,13 33,18 L33,22 Q29,24 20,24 L8,26 Q5,27 3,26Z" fill="#E53935"/><rect x="6" y="24" width="22" height="3.5" rx="1.7" fill="#222"/></svg>` },
+  { id:'luxe', name:'Luxe Glow', category:'Cosmetics', maxPay:400000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#1a0a1a"/><polygon points="18,3 21,14 33,14 23,21 27,32 18,25 9,32 13,21 3,14 15,14" fill="none" stroke="#E879F9" stroke-width="1.5"/><polygon points="18,8 20,15 27,15 21,19 23,26 18,22 13,26 15,19 9,15 16,15" fill="#E879F9" opacity="0.55"/></svg>` },
+  { id:'apex', name:'Apex Drive', category:'Automotive', maxPay:750000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#0a0a0a"/><path d="M18,5 L33,28 L3,28 Z" fill="none" stroke="#F59E0B" stroke-width="2.2"/><path d="M18,5 L18,28" stroke="#F59E0B" stroke-width="1.5"/><path d="M18,9 L29,27 L7,27 Z" fill="#F59E0B" opacity="0.15"/></svg>` },
+  { id:'summit', name:'Summit Sip', category:'Beverages', maxPay:350000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#0d1f2d"/><path d="M3,28 L11,13 L18,20 L25,9 L33,28Z" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linejoin="round"/><path d="M3,28 L11,13 L18,20 L25,9 L33,28Z" fill="#38BDF8" opacity="0.12"/><rect x="3" y="28" width="30" height="2.5" rx="1.2" fill="#38BDF8" opacity="0.35"/></svg>` },
+  { id:'echo', name:'Echo Audio', category:'Audio Tech', maxPay:600000,
+    logo:`<svg viewBox="0 0 36 36" style="border-radius:6px"><rect width="36" height="36" fill="#0f0f18"/><circle cx="18" cy="21" r="5.5" fill="none" stroke="#A78BFA" stroke-width="2"/><circle cx="18" cy="21" r="2" fill="#A78BFA"/><path d="M9,21 Q9,10 18,10 Q27,10 27,21" fill="none" stroke="#A78BFA" stroke-width="1.5" opacity="0.55"/><rect x="15.5" y="26.5" width="5" height="3.5" rx="1" fill="#A78BFA" opacity="0.4"/><rect x="14.5" y="30" width="7" height="1.8" rx="0.9" fill="#A78BFA" opacity="0.3"/></svg>` }
+];
+
+function openBrandDeals() {
+  const activeBrands = JSON.parse(localStorage.getItem('activeBrandDeals') || '[]');
+  const weekSeed = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+  const rng = n => { let x = Math.sin(weekSeed + n) * 10000; return x - Math.floor(x); };
+
+  const available = BRANDS.filter((b, i) => {
+    return !activeBrands.some(a => a.id === b.id) && rng(i + 1) > 0.42;
+  });
+
+  const list = document.getElementById('brand-deals-list');
+  if (available.length === 0) {
+    list.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--dim);font-size:13px;font-weight:400;line-height:1.6">No brand offers this week.<br>Advance a week and check back.</div>`;
+  } else {
+    list.innerHTML = available.map(b => {
+      const pay = Math.min(1000000, Math.floor(b.maxPay * 0.3 + b.maxPay * 0.7 * rng(b.id.length + 5)));
+      const payStr = pay >= 1000000 ? '$1M' : pay >= 1000 ? `$${Math.floor(pay/1000)}K` : `$${pay}`;
+      return `<div class="promo-item" onclick="signBrandDeal('${b.id}')">
+        <div class="promo-row">
+          <span class="promo-name" style="display:flex;align-items:center;gap:8px">${b.logo}${b.name}</span>
+          <span class="promo-cost">${payStr}</span>
+        </div>
+        <div class="promo-desc">${b.category} · One-time signing fee</div>
+        <div class="promo-boost">Tag us in posts on your socials to activate the deal</div>
+      </div>`;
+    }).join('');
+  }
+
+  const activeSection = document.getElementById('brand-active-section');
+  const activeList = document.getElementById('brand-active-list');
+  if (activeBrands.length) {
+    activeSection.style.display = 'block';
+    activeList.innerHTML = activeBrands.map(b => `
+      <div class="promo-item" style="opacity:.6;pointer-events:none">
+        <div class="promo-row">
+          <span class="promo-name" style="display:flex;align-items:center;gap:8px">${b.logo}${b.name}</span>
+          <span style="color:var(--ok);font-size:12px;font-weight:700">ACTIVE</span>
+        </div>
+        <div class="promo-desc">${b.category}</div>
+      </div>`).join('');
+  } else { activeSection.style.display = 'none'; }
+
+  openModal('modal-brand-deals');
+}
+
+function signBrandDeal(brandId) {
+  const brand = BRANDS.find(b => b.id === brandId);
+  if (!brand) return;
+  const weekSeed = Math.floor(Date.now() / (1000 * 60 * 60 * 24 * 7));
+  const rng = n => { let x = Math.sin(weekSeed + n) * 10000; return x - Math.floor(x); };
+  const pay = Math.min(1000000, Math.floor(brand.maxPay * 0.3 + brand.maxPay * 0.7 * rng(brand.id.length + 5)));
+
+  const money = parseFloat(localStorage.getItem('money') || '0');
+  localStorage.setItem('money', (money + pay).toString());
+
+  const activeBrands = JSON.parse(localStorage.getItem('activeBrandDeals') || '[]');
+  activeBrands.push({ id: brand.id, name: brand.name, logo: brand.logo, category: brand.category });
+  localStorage.setItem('activeBrandDeals', JSON.stringify(activeBrands));
+
+  closeModal('modal-brand-deals');
+  showNotif(`${brand.name} deal signed! ${formatMoney(pay)} paid. Tag them in your posts!`, 'success');
+}
+
+// ============================================================
+// SOCIAL SCHEDULE
+// ============================================================
+let schedYear, schedMonth, schedSelectedDate = null, schedPlatform = null, schedImgData = null;
+
+function openSocialSchedule() {
+  const now = new Date(localStorage.getItem('currentDate') || new Date());
+  schedYear = now.getFullYear();
+  schedMonth = now.getMonth();
+  schedSelectedDate = null; schedPlatform = null; schedImgData = null;
+  document.getElementById('schedule-post-form').style.display = 'none';
+  document.getElementById('schedule-cal-section').style.display = 'block';
+  document.getElementById('sched-caption').value = '';
+  document.getElementById('sched-img-preview').style.display = 'none';
+  renderSchedCalendar();
+  renderUpcomingPosts();
+  openModal('modal-social-schedule');
+}
+
+function renderSchedCalendar() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('sched-month-label').textContent = `${months[schedMonth]} ${schedYear}`;
+
+  const now = new Date(localStorage.getItem('currentDate') || new Date());
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const firstDay = new Date(schedYear, schedMonth, 1).getDay();
+  const daysInMonth = new Date(schedYear, schedMonth + 1, 0).getDate();
+  const scheduled = JSON.parse(localStorage.getItem('scheduledPosts') || '[]');
+
+  const grid = document.getElementById('sched-cal-grid');
+  let html = ['S','M','T','W','T','F','S'].map(d =>
+    `<div style="text-align:center;font-size:10px;color:var(--dim);padding:3px 0;font-weight:700">${d}</div>`
+  ).join('');
+
+  for (let i = 0; i < firstDay; i++) html += '<div></div>';
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(schedYear, schedMonth, d);
+    const isPast = date < today;
+    const isToday = date.getTime() === today.getTime();
+    const ds = `${schedYear}-${String(schedMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isSel = schedSelectedDate === ds;
+    const hasDot = scheduled.some(p => p.scheduledDate === ds && !p.published);
+
+    html += `<div onclick="${isPast ? '' : `pickSchedDate('${ds}')`}" style="
+      text-align:center;padding:5px 2px;border-radius:8px;font-size:13px;font-weight:600;
+      cursor:${isPast ? 'default' : 'pointer'};
+      color:${isPast ? 'rgba(255,255,255,.18)' : '#fff'};
+      background:${isSel ? 'var(--p)' : isToday ? 'rgba(59,130,246,.2)' : 'transparent'};
+      position:relative
+    ">${d}${hasDot ? '<span style="position:absolute;top:1px;right:2px;width:5px;height:5px;border-radius:50%;background:var(--ok)"></span>' : ''}</div>`;
+  }
+  grid.innerHTML = html;
+}
+
+function schedPrevMonth() {
+  schedMonth--; if (schedMonth < 0) { schedMonth = 11; schedYear--; } renderSchedCalendar();
+}
+function schedNextMonth() {
+  schedMonth++; if (schedMonth > 11) { schedMonth = 0; schedYear++; } renderSchedCalendar();
+}
+
+function pickSchedDate(ds) {
+  schedSelectedDate = ds;
+  document.getElementById('sched-date-label').textContent = ds;
+  document.getElementById('schedule-cal-section').style.display = 'none';
+  document.getElementById('schedule-post-form').style.display = 'block';
+}
+
+function selectSchedPlatform(p) {
+  schedPlatform = p;
+  document.getElementById('sched-btn-vt').style.opacity = p === 'vibetok' ? '1' : '0.45';
+  document.getElementById('sched-btn-ig').style.opacity = p === 'instaify' ? '1' : '0.45';
+  document.getElementById('sched-btn-vt').style.borderWidth = p === 'vibetok' ? '2px' : '1px';
+  document.getElementById('sched-btn-ig').style.borderWidth = p === 'instaify' ? '2px' : '1px';
+}
+
+function handleSchedImg(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    schedImgData = ev.target.result;
+    document.getElementById('sched-img-el').src = schedImgData;
+    document.getElementById('sched-img-preview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function schedulePost() {
+  if (!schedPlatform) { showNotif('Choose a platform first', 'warn'); return; }
+  const caption = document.getElementById('sched-caption').value.trim();
+  if (!caption) { showNotif('Add a caption', 'warn'); return; }
+
+  const scheduled = JSON.parse(localStorage.getItem('scheduledPosts') || '[]');
+  scheduled.push({
+    id: Date.now(), platform: schedPlatform,
+    scheduledDate: schedSelectedDate, caption,
+    imageData: schedImgData || null,
+    published: false, createdAt: new Date().toISOString()
+  });
+  localStorage.setItem('scheduledPosts', JSON.stringify(scheduled));
+
+  document.getElementById('schedule-post-form').style.display = 'none';
+  document.getElementById('schedule-cal-section').style.display = 'block';
+  schedSelectedDate = null; schedImgData = null;
+  renderSchedCalendar();
+  renderUpcomingPosts();
+  showNotif(`Post scheduled for ${schedSelectedDate || 'selected date'} on ${schedPlatform === 'vibetok' ? 'Vibetok' : 'Instaify'}!`, 'success');
+}
+
+function renderUpcomingPosts() {
+  const upcoming = JSON.parse(localStorage.getItem('scheduledPosts') || '[]')
+    .filter(p => !p.published).sort((a,b) => a.scheduledDate.localeCompare(b.scheduledDate));
+  const el = document.getElementById('sched-upcoming-list');
+  if (!upcoming.length) {
+    el.innerHTML = `<div style="color:var(--dim);font-size:13px;font-weight:400;text-align:center;padding:10px">No posts scheduled yet.</div>`;
+    return;
+  }
+  el.innerHTML = upcoming.map(p => `
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px;margin-bottom:8px;display:flex;gap:10px;align-items:center">
+      ${p.imageData ? `<img src="${p.imageData}" style="width:38px;height:38px;object-fit:cover;border-radius:6px;flex-shrink:0">` : `<div style="width:38px;height:38px;border-radius:6px;background:rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;flex-shrink:0"><svg width="18" height="18" viewBox="0 0 24 24" fill="rgba(255,255,255,.3)"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3L14.5 12l4.5 6H5z"/></svg></div>`}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:10px;font-weight:800;color:${p.platform==='vibetok'?'#FE2C55':'#A78BFA'};margin-bottom:2px;text-transform:uppercase">${p.platform==='vibetok'?'Vibetok':'Instaify'}</div>
+        <div style="font-size:12px;color:#fff;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.caption}</div>
+        <div style="font-size:11px;color:var(--dim)">${p.scheduledDate}</div>
+      </div>
+      <button onclick="deleteSchedPost(${p.id})" style="background:rgba(239,68,68,.12);border:none;color:var(--err);width:28px;height:28px;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+      </button>
+    </div>`).join('');
+}
+
+function deleteSchedPost(id) {
+  const s = JSON.parse(localStorage.getItem('scheduledPosts') || '[]');
+  localStorage.setItem('scheduledPosts', JSON.stringify(s.filter(p => p.id !== id)));
+  renderUpcomingPosts(); renderSchedCalendar();
+}
+// ============================================================
+// TERMINATE
+// ============================================================
+function showTerminateModal() { openModal('modal-terminate'); }
+function terminateContract() {
+  localStorage.removeItem('managerContract');
+  showNotif('Contract terminated. You are now independent.', 'warn');
+  setTimeout(() => window.location.href = 'music.html', 1800);
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openModal(id) { document.getElementById(id).classList.add('active'); }
+function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) overlay.classList.remove('active');
+  });
+});
+
+// ============================================================
+// NOTIFICATION
+// ============================================================
+function showNotif(msg, type = 'success') {
+  const n = document.createElement('div');
+  n.className = `notif ${type}`;
+  n.textContent = msg;
+  document.body.appendChild(n);
+  setTimeout(() => n.remove(), 4500);
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+function formatMoney(n) {
+  if (!n) return '$0';
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + (n/1000).toFixed(0) + 'K';
+  return '$' + Math.floor(n).toLocaleString();
+}
+function goBack() { window.location.href = 'music.html'; }
+
+// ============================================================
+// BOOT
+// ============================================================
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

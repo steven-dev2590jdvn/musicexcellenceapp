@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>EX•CRITIC | Music Reviews</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #050505;
+            --bg-card: #121212;
+            --bg-hover: #1E1E1E;
+            --accent: #D4AF37; /* Gold for prestige */
+            --accent-glow: rgba(212, 175, 55, 0.3);
+            --text-main: #FFFFFF;
+            --text-muted: #888888;
+            --score-high: #10B981;
+            --score-mid: #F59E0B;
+            --score-low: #EF4444;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* --- HEADER --- */
+        header {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            z-index: 1000;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 24px;
+            letter-spacing: -1px;
+            color: var(--text-main);
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo span { color: var(--accent); }
+
+        .back-btn {
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .back-btn:hover { color: var(--accent); }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            margin-top: 80px;
+            padding: 20px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.1), transparent 40%);
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: 42px;
+            font-weight: 300;
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+        .hero-title b { font-weight: 700; color: var(--accent); }
+        .hero-subtitle { color: var(--text-muted); font-size: 14px; max-width: 400px; line-height: 1.5; }
+
+        /* --- CONTENT GRID --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-left: 3px solid var(--accent);
+            padding-left: 15px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-muted);
+            border: 1px dashed rgba(255,255,255,0.1);
+            border-radius: 12px;
+        }
+
+        /* --- REVIEW CARDS --- */
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .review-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 4px; /* Brutalist sharp corners */
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            border-color: rgba(255,255,255,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            padding: 15px;
+            gap: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .card-art {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            background: #222;
+        }
+
+        .card-meta {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .song-title {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 4px;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .artist-name {
+            font-size: 12px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .release-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .card-body {
+            padding: 15px;
+        }
+
+        .score-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .score-box {
+            font-family: var(--font-display);
+            font-size: 32px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .score-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+        }
+
+        .review-snippet {
+            font-family: 'Times New Roman', serif;
+            font-style: italic;
+            font-size: 15px;
+            line-height: 1.5;
+            color: #ccc;
+            margin-bottom: 15px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 4px 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .best-new-music {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: var(--accent);
+            color: #000;
+            font-weight: 800;
+            font-size: 10px;
+            padding: 4px 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 2px 10px rgba(212, 175, 55, 0.3);
+        }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.1);
+            max-width: 500px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-hero {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+            opacity: 0.6;
+            mask-image: linear-gradient(to bottom, black, transparent);
+        }
+
+        .modal-body {
+            padding: 30px;
+            margin-top: -100px;
+            position: relative;
+        }
+
+        .modal-score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #000;
+            border: 2px solid var(--accent);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .modal-h1 {
+            font-family: var(--font-display);
+            font-size: 32px;
+            line-height: 1.1;
+            margin-bottom: 10px;
+        }
+
+        .modal-meta {
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            font-size: 14px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .modal-text {
+            font-family: 'Times New Roman', serif;
+            font-size: 18px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 2001;
+        }
+
+        /* --- MOBILE NAV --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: #000;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            z-index: 999;
+        }
+        .nav-item {
+            color: var(--text-muted);
+            font-size: 20px;
+            transition: 0.2s;
+        }
+        .nav-item:hover, .nav-item.active { color: var(--text-main); }
+
+        @media(max-width: 600px) {
+            .hero-title { font-size: 32px; }
+            .modal-body { padding: 20px; }
+            .reviews-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo"><i class="fas fa-certificate"></i> EX<span>•</span>CRITIC</div>
+        <a href="music.html" class="back-btn"><i class="fas fa-times"></i></a>
+    </header>
+
+    <div class="hero">
+        <h1 class="hero-title">The World's Most<br><b>Honest Music Reviews</b></h1>
+        <p class="hero-subtitle">Independent criticism. No payola. Just the raw truth about your discography.</p>
+    </div>
+
+    <div class="container">
+        
+        <div class="section-header">
+            <h2 class="section-title">Your Discography</h2>
+        </div>
+
+        <div id="reviews-container" class="reviews-grid">
+            <!-- JS will populate this -->
+            <div class="empty-state">
+                <i class="fas fa-music" style="font-size: 40px; margin-bottom: 20px; opacity: 0.5;"></i>
+                <h3>No Music Found</h3>
+                <p>Release music in the studio to see critic reviews here.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- MODAL -->
+    <div id="review-modal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="close-modal" onclick="document.getElementById('review-modal').style.display='none'">&times;</button>
+            <img src="" id="modal-img" class="modal-hero">
+            <div class="modal-body">
+                <div class="modal-score-circle" id="modal-score">0.0</div>
+                <h1 class="modal-h1" id="modal-title">Song Title</h1>
+                <div class="modal-meta">
+                    <span id="modal-artist">ARTIST</span> • 
+                    <span id="modal-date">DATE</span>
+                </div>
+                <div class="modal-text" id="modal-text">
+                    Review text goes here...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIG & STATE ---
+        const REVIEWS_CONTAINER = document.getElementById('reviews-container');
+        let userSongs = [];
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            renderReviews();
+        });
+
+        // --- LOAD DATA ---
+        function loadData() {
+            try {
+                // Fetch only user data as requested
+                const rawSongs = localStorage.getItem('releasedSongs');
+                userSongs = rawSongs ? JSON.parse(rawSongs) : [];
+                
+                // Get Artist Name directly from storage
+                const artistDetails = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+                const defaultArtist = artistDetails.name || "Unknown Artist";
+
+                // Standardize Data
+                userSongs = userSongs.map(song => ({
+                    ...song,
+                    artist: song.artist || defaultArtist,
+                    rating: getDeterminsticRating(song.songName || song.name),
+                    review: getDeterministicReview(song.songName || song.name)
+                }));
+
+                // Sort by Release Date (Newest First)
+                userSongs.sort((a, b) => new Date(b.releaseDate) - new Date(a.releaseDate));
+
+            } catch (e) {
+                console.error("Error loading Ex-Critic data:", e);
+                userSongs = [];
+            }
+        }
+
+        // --- RENDER LOGIC ---
+        function renderReviews() {
+            REVIEWS_CONTAINER.innerHTML = '';
+
+            if (userSongs.length === 0) {
+                REVIEWS_CONTAINER.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-record-vinyl" style="font-size: 48px; margin-bottom: 15px; color:#333;"></i>
+                        <h3>The Silence is Loud</h3>
+                        <p>Critics are waiting. Release your first track to get judged.</p>
+                    </div>`;
+                return;
+            }
+
+            userSongs.forEach(song => {
+                const card = createReviewCard(song);
+                REVIEWS_CONTAINER.appendChild(card);
+            });
+        }
+
+        function createReviewCard(song) {
+            const dateStr = song.releaseDate ? new Date(song.releaseDate).toLocaleDateString() : 'Unknown Date';
+            const scoreColor = getScoreColor(song.rating);
+            const isBestNewMusic = song.rating >= 8.5;
+
+            const div = document.createElement('div');
+            div.className = 'review-card';
+            div.onclick = () => openModal(song);
+
+            div.innerHTML = `
+                ${isBestNewMusic ? '<div class="best-new-music">Best New Music</div>' : ''}
+                <div class="card-header">
+                    <img src="${song.coverArt || '/api/placeholder/80/80'}" class="card-art" onerror="this.src='/api/placeholder/80/80'">
+                    <div class="card-meta">
+                        <div class="song-title">${song.songName || song.name}</div>
+                        <div class="artist-name">${song.artist}</div>
+                        <div class="release-date">${dateStr}</div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="score-container">
+                        <div class="score-box" style="color: ${scoreColor}">${song.rating}</div>
+                        <div class="score-label">Ex-Score</div>
+                    </div>
+                    <div class="review-snippet">"${song.review.snippet}"</div>
+                    <div class="tags">
+                        <span class="tag">${song.genre || 'Music'}</span>
+                        <span class="tag">${song.type || 'Single'}</span>
+                        ${song.rating > 9.0 ? '<span class="tag" style="color:var(--accent); border-color:var(--accent)">Masterpiece</span>' : ''}
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        // --- MODAL LOGIC ---
+        function openModal(song) {
+            const modal = document.getElementById('review-modal');
+            const scoreColor = getScoreColor(song.rating);
+            
+            document.getElementById('modal-img').src = song.coverArt || '/api/placeholder/500/200';
+            document.getElementById('modal-score').innerText = song.rating;
+            document.getElementById('modal-score').style.color = scoreColor;
+            document.getElementById('modal-score').style.borderColor = scoreColor;
+            
+            document.getElementById('modal-title').innerText = song.songName || song.name;
+            document.getElementById('modal-artist').innerText = song.artist.toUpperCase();
+            document.getElementById('modal-date').innerText = song.releaseDate ? new Date(song.releaseDate).toDateString() : 'Released Recently';
+            
+            // Construct full review
+            document.getElementById('modal-text').innerHTML = `
+                <p><b>"${song.review.headline}"</b></p>
+                <p>${song.review.body}</p>
+                <p>In a landscape often crowded with derivative sounds, <b>${song.songName}</b> attempts to stake its claim. ${getGenericCritique(song.rating)}</p>
+            `;
+
+            modal.style.display = 'flex';
+        }
+
+        function closeModal(e) {
+            if (e.target.id === 'review-modal') {
+                document.getElementById('review-modal').style.display = 'none';
+            }
+        }
+
+        // --- UTILITIES & GENERATORS ---
+
+        function getScoreColor(rating) {
+            if (rating >= 8.0) return '#D4AF37'; // Gold/Best
+            if (rating >= 7.0) return '#10B981'; // Green/Good
+            if (rating >= 5.0) return '#F59E0B'; // Orange/Mid
+            return '#EF4444'; // Red/Bad
+        }
+
+        // Deterministic Rating: Same song name always gets same rating
+        function getDeterminsticRating(name) {
+            if (!name) return 5.0;
+            let hash = 0;
+            for (let i = 0; i < name.length; i++) {
+                hash = ((hash << 5) - hash) + name.charCodeAt(i);
+                hash |= 0;
+            }
+            // Map hash to 0-10, biased towards 6-8
+            const seed = Math.abs(hash) % 1000 / 1000;
+            let score;
+            if (seed > 0.95) score = 9.0 + (seed * 10 % 1); // Rare 9+
+            else if (seed < 0.1) score = 2.0 + (seed * 20); // Rare flop
+            else score = 5.0 + (seed * 4); // Most are 5-9
+
+            return Math.round(score * 10) / 10;
+        }
+
+        function getDeterministicReview(name) {
+            const rating = getDeterminsticRating(name);
+            const hash = name.length; // Simple seed
+            
+            const goodHeadlines = ["A triumph of sound.", "Bold, brash, and beautiful.", "Instant classic.", "Sonic perfection."];
+            const midHeadlines = ["Safe but effective.", "Shows promise.", "A mixed bag.", "Solid, if unspectacular."];
+            const badHeadlines = ["A swing and a miss.", "Disappointingly generic.", "Lost in translation.", "Needs more soul."];
+
+            const goodSnippets = [
+                "Layered textures meet undeniable hooks in a track that refuses to be ignored.",
+                "It feels like the artist has finally found their voice, screaming it from the rooftops.",
+                "Production quality is through the roof, matching the ambition of the songwriting."
+            ];
+            const midSnippets = [
+                "There are moments of brilliance here, buried under some questionable production choices.",
+                "It works as background noise, but fails to demand your full attention.",
+                "Competent execution, but it lacks the spark that makes a track truly memorable."
+            ];
+            const badSnippets = [
+                "It feels unfinished, as if the idea wasn't fully baked before hitting the studio.",
+                "Derivative and uninspired, it struggles to justify its own runtime.",
+                "A confusing mix of styles that never quite coalesces into a cohesive whole."
+            ];
+
+            let headline, snippet, body;
+
+            if (rating >= 7.5) {
+                headline = goodHeadlines[hash % goodHeadlines.length];
+                snippet = goodSnippets[hash % goodSnippets.length];
+                body = "The artistry on display here is commendable. Every layer seems meticulously placed, creating a soundscape that is both expansive and intimate.";
+            } else if (rating >= 5.0) {
+                headline = midHeadlines[hash % midHeadlines.length];
+                snippet = midSnippets[hash % midSnippets.length];
+                body = "While it hits the requisite marks of the genre, one can't help but wish for a bit more risk-taking. It's polished, certainly, but perhaps a bit too safe.";
+            } else {
+                headline = badHeadlines[hash % badHeadlines.length];
+                snippet = badSnippets[hash % badSnippets.length];
+                body = "There is a disconnect between ambition and execution here. The track wanders without a clear destination, leaving the listener feeling somewhat adrift.";
+            }
+
+            return { headline, snippet, body };
+        }
+
+        function getGenericCritique(rating) {
+            if (rating > 8) return "It stands as a testament to what is possible when vision meets talent.";
+            if (rating > 6) return "It's a worthy addition to their catalog, even if it doesn't reinvent the wheel.";
+            return "Hopefully, this serves as a learning experience for future projects.";
+        }
+
+    </script>
+</body>
+</html>
+

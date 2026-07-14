@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellence Universe</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Oswald:wght@400;500;700&family=Playfair+Display:ital,wght@0,700;0,900;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg-main: #060608;
+    --bg-card: #0f0f13;
+    --bg-elevated: #18181f;
+    --text-main: #ffffff;
+    --text-muted: #88888f;
+    --accent-red: #e8000d;
+    --accent-green: #00d26a;
+    --accent-gold: #ffcc00;
+    --accent-pink: #ff2a5f;
+    --accent-blue: #0a84ff;
+    --accent-purple: #9b59b6;
+    --border: rgba(255, 255, 255, 0.08);
+    --font-ui: 'Montserrat', sans-serif;
+    --font-display: 'Oswald', sans-serif;
+    --font-headline: 'Playfair Display', serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+    background: var(--bg-main); color: var(--text-main);
+    font-family: var(--font-ui); overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ── TOASTS ── */
+#toastContainer {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    z-index: 10000; display: flex; flex-direction: column; gap: 8px;
+    width: 92%; max-width: 400px; pointer-events: none;
+}
+.toast {
+    background: var(--bg-elevated); border-left: 4px solid var(--accent-green);
+    padding: 14px 16px; border-radius: 12px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.95);
+    animation: slideDown 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    pointer-events: all;
+}
+.toast.error { border-left-color: var(--accent-red); }
+.toast.info  { border-left-color: var(--accent-blue); }
+.toast-title { font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+.toast-msg   { font-size: 0.78rem; color: var(--text-muted); line-height: 1.45; }
+@keyframes slideDown { from { opacity:0; transform:translateY(-14px); } to { opacity:1; transform:translateY(0); } }
+@keyframes fadeOut   { to   { opacity:0; transform:translateY(-8px); } }
+
+/* ── HEADER ── */
+.header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 14px 18px; background: rgba(6, 6, 8, 0.96); backdrop-filter: blur(20px);
+    position: sticky; top: 0; z-index: 200; border-bottom: 1px solid var(--border);
+}
+.brand { font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
+.brand span { color: var(--accent-red); }
+.stats { display: flex; gap: 8px; }
+.stat-pill { background: var(--bg-elevated); padding: 6px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 800; border: 1px solid var(--border); }
+.stat-money { color: var(--accent-green); }
+.stat-pop   { color: var(--accent-pink); }
+
+/* ── MAIN CONTAINER ── */
+.container { max-width: 500px; margin: 0 auto; padding-bottom: 60px; }
+.section-title {
+    font-family: var(--font-display); font-size: 1.2rem; font-weight: 700;
+    padding: 0 18px; margin: 32px 0 16px; text-transform: uppercase;
+    letter-spacing: 1px; display: flex; align-items: center; gap: 10px;
+}
+.section-title::after { content:''; flex:1; height:1px; background:var(--border); }
+
+/* ── DYNAMIC NEWS SECTION ── */
+.news-masthead { background: #0b0b0e; border-bottom: 3px solid var(--accent-red); padding: 14px 18px 12px; }
+.news-outlet-name { font-family: var(--font-headline); font-size: 1.65rem; font-weight: 900; letter-spacing: -0.5px; }
+.news-outlet-name em { color: var(--accent-red); font-style: normal; }
+.news-outlet-tagline { font-size: 0.62rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 2.5px; margin-top: 2px; }
+.news-ticker { background: var(--accent-red); padding: 6px 14px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; display: flex; align-items: center; gap: 10px; overflow: hidden; }
+.ticker-label { background: white; color: var(--accent-red); padding: 2px 8px; border-radius: 4px; font-weight: 900; flex-shrink: 0; font-size: 0.62rem; }
+.ticker-track { overflow: hidden; flex: 1; }
+.ticker-inner { white-space: nowrap; display: inline-block; animation: ticker 25s linear infinite; }
+@keyframes ticker { from { transform: translateX(100%); } to { transform: translateX(-100%); } }
+
+.news-scroll { display: flex; gap: 16px; overflow-x: auto; padding: 16px 18px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.news-scroll::-webkit-scrollbar { display: none; }
+.news-card { min-width: 240px; max-width: 240px; background: var(--bg-card); border-radius: 16px; overflow: hidden; flex-shrink: 0; scroll-snap-align: start; border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+.news-card-img { width: 100%; height: 130px; object-fit: cover; display: block; border-bottom: 1px solid var(--border); }
+.news-card-body { padding: 14px; }
+.news-tag { display: inline-block; font-size: 0.58rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1.2px; padding: 3px 8px; border-radius: 4px; margin-bottom: 8px; }
+.tag-breaking  { background: var(--accent-red); color: #fff; }
+.tag-exclusive { background: var(--accent-purple); color: #fff; }
+.tag-scandal   { background: #8b0000; color: #ff9999; border: 1px solid #c00; }
+.tag-rumor     { background: rgba(255, 204, 0, 0.9); color: #000; }
+.tag-trending  { background: var(--accent-blue); color: #fff; }
+.news-card-title { font-size: 0.9rem; font-weight: 700; line-height: 1.4; margin-bottom: 8px; }
+.news-card-meta  { font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* ── LINEUP ANNOUNCEMENTS ── */
+.lineup-section { padding: 0 18px; }
+.lineup-card { background: linear-gradient(135deg, var(--bg-card), rgba(255, 204, 0, 0.05)); border: 1px solid rgba(255, 204, 0, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer; transition: all 0.2s; }
+.lineup-card:active { transform: scale(0.98); border-color: var(--accent-gold); }
+.lineup-thumb { width: 68px; height: 68px; border-radius: 12px; flex-shrink: 0; object-fit: cover; border: 1px solid rgba(255,255,255,0.1); }
+.lineup-body { flex: 1; min-width: 0; }
+.lineup-event-label { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--accent-gold); margin-bottom: 6px; }
+.lineup-headline { font-size: 0.9rem; font-weight: 700; line-height: 1.35; color: #fff; }
+.lineup-date { font-size: 0.7rem; color: var(--text-muted); margin-top: 6px; font-weight: 600; }
+
+/* ── FEATURED EVENTS SCROLL ── */
+.events-scroll { display: flex; gap: 16px; overflow-x: auto; padding: 0 18px 16px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.events-scroll::-webkit-scrollbar { display: none; }
+.event-card { min-width: 260px; background: var(--bg-card); border-radius: 20px; overflow: hidden; flex-shrink: 0; scroll-snap-align: start; border: 1px solid var(--border); cursor: pointer; position: relative; transition: opacity 0.2s; }
+.event-card:active { opacity: 0.85; }
+.event-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.event-badge { position: absolute; top: 12px; left: 12px; padding: 5px 12px; border-radius: 8px; font-weight: 800; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; backdrop-filter: blur(8px); }
+.badge-live   { background: rgba(232, 0, 13, 0.95); color: #fff; animation: pulse 2s infinite; }
+.badge-prep   { background: rgba(255, 204, 0, 0.95); color: #000; }
+.badge-open   { background: rgba(0, 210, 106, 0.95); color: #000; }
+.badge-locked { background: rgba(0, 0, 0, 0.8); color: var(--text-muted); border: 1px solid #333; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(232,0,13,0.5);} 70%{box-shadow:0 0 0 8px rgba(232,0,13,0);} }
+.event-gradient-footer { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0, 0, 0, 0.95)); padding: 30px 16px 12px; }
+.event-gradient-footer-text { font-size: 0.75rem; font-weight: 800; color: var(--accent-gold); letter-spacing: 0.5px; }
+.event-info { padding: 14px 16px 18px; }
+.event-name { font-family: var(--font-display); font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+.event-loc  { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+
+/* ── ALL FESTIVALS LISTING ── */
+.festivals-list { padding: 0 18px; }
+.festival-row { background: var(--bg-card); border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; padding: 14px 16px; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; }
+.festival-row:active { opacity: 0.8; transform: scale(0.98); }
+.festival-thumb { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; flex-shrink: 0; border: 1px solid rgba(255,255,255,0.1); }
+.festival-info  { flex: 1; min-width: 0; }
+.festival-name  { font-weight: 700; font-size: 0.95rem; margin-bottom: 6px; }
+.festival-sub   { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+.festival-badge { font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding: 5px 12px; border-radius: 8px; flex-shrink: 0; }
+.fbadge-live   { background: var(--accent-red); color: #fff; }
+.fbadge-open   { background: rgba(0, 210, 106, 0.15); color: var(--accent-green); border: 1px solid rgba(0, 210, 106, 0.4); }
+.fbadge-locked { background: var(--bg-elevated); color: var(--text-muted); border: 1px solid #2a2a30; }
+
+/* ── OVERLAYS & SHEETS ── */
+.overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(14px); z-index: 500; display: none; align-items: flex-end; justify-content: center; animation: fadeIn 0.22s ease; }
+.overlay.centered { align-items: center; padding: 18px; }
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+.modal-content { background: var(--bg-card); width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; overflow: hidden; border: 1px solid var(--border); border-bottom: none; max-height: 92vh; overflow-y: auto; scrollbar-width: none; animation: slideUp 0.3s cubic-bezier(0.32, 0.72, 0, 1); }
+.modal-content.sheet-center { border-radius: 22px; border-bottom: 1px solid var(--border); max-height: 88vh; animation: none; }
+.modal-content::-webkit-scrollbar { display: none; }
+@keyframes slideUp { from{transform:translateY(28px);opacity:0.5;} to{transform:translateY(0);opacity:1;} }
+
+.drag-handle { width: 40px; height: 5px; background: rgba(255, 255, 255, 0.2); border-radius: 3px; margin: 14px auto 0; }
+.modal-hero-img { width: 100%; height: 220px; object-fit: cover; display: block; border-bottom: 1px solid var(--border); }
+.close-btn { position: absolute; top: 14px; right: 14px; width: 34px; height: 34px; background: rgba(0, 0, 0, 0.75); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.1rem; cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2); z-index: 10; transition: transform 0.2s; }
+.close-btn:active { transform: scale(0.9); }
+.modal-body { padding: 24px 20px 34px; }
+.modal-title { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; line-height: 1.1; margin-bottom: 8px; }
+.modal-meta  { color: var(--accent-gold); font-weight: 800; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 18px; display: block; }
+.modal-desc  { color: var(--text-muted); font-size: 0.9rem; line-height: 1.65; margin-bottom: 16px; }
+
+.stage-banner { background: var(--accent-red); padding: 8px 16px; border-radius: 8px; font-weight: 800; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin: 24px 0 14px; display: inline-block; }
+.stage-banner.fashion { background: var(--accent-pink); }
+.celeb-row { background: var(--bg-elevated); padding: 14px 16px; border-radius: 14px; display: flex; align-items: center; gap: 16px; margin-bottom: 12px; border: 1px solid var(--border); }
+.celeb-avatar { width: 46px; height: 46px; border-radius: 12px; background: #222; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+.celeb-info h4 { font-weight: 800; font-size: 0.95rem; margin-bottom: 4px; }
+.celeb-info p  { font-size: 0.8rem; color: var(--accent-gold); font-weight: 600; }
+
+/* ── INTERACTIVE WORKFLOW ELEMENTS ── */
+.tier-box { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 14px; transition: border-color 0.2s, background 0.2s; cursor: pointer; }
+.tier-box:hover { border-color: rgba(255, 255, 255, 0.2); }
+.tier-box.selected { border-color: var(--accent-gold); background: rgba(255, 204, 0, 0.08); }
+.tier-box.locked { opacity: 0.5; cursor: not-allowed; }
+.tier-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.tier-title { font-weight: 800; font-size: 1rem; color: #fff; }
+.tier-req { font-size: 0.75rem; font-weight: 700; color: var(--accent-gold); }
+.tier-desc { font-size: 0.8rem; color: var(--text-muted); line-height: 1.45; }
+
+.brand-agency-card { background: var(--bg-elevated); border: 1px solid var(--border); border-radius: 14px; padding: 14px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: border-color 0.2s; }
+.brand-agency-card:hover { border-color: var(--accent-pink); }
+.brand-agency-card.selected { border-color: var(--accent-pink); background: rgba(255, 42, 95, 0.08); }
+.agency-info h4 { font-size: 0.95rem; font-weight: 800; color: #fff; }
+.agency-info p { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; }
+.agency-cost { font-size: 0.95rem; font-weight: 800; color: var(--accent-green); }
+
+/* Buttons */
+.btn-main { width: 100%; padding: 18px; border-radius: 16px; font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; border: none; transition: transform 0.18s; margin-top: 24px; font-family: var(--font-display); box-shadow: 0 4px 14px rgba(0,0,0,0.4); }
+.btn-primary { background: linear-gradient(90deg, var(--accent-green), #00b8d9); color: #000; }
+.btn-locked  { background: var(--bg-elevated); color: var(--text-muted); cursor: not-allowed; border: 1px solid var(--border); box-shadow: none; }
+.btn-prep    { background: linear-gradient(90deg, var(--accent-gold), #ff8c00); color: #000; }
+.btn-fashion { background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple)); color: #fff; }
+.btn-main:active:not(:disabled) { transform: scale(0.97); }
+.prep-section-title { font-family: var(--font-display); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--accent-gold); margin-bottom: 14px; }
+
+/* Minigame grid & Prep dynamics */
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.action-grid button { background: var(--bg-elevated); border: 1px solid var(--border); padding: 20px 14px; border-radius: 14px; color: white; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: all 0.2s; }
+.action-grid button:hover:not(:disabled) { background: rgba(0, 210, 106, 0.15); border-color: var(--accent-green); }
+.action-grid button:active:not(:disabled) { transform: scale(0.96); }
+.action-grid button:disabled { opacity: 0.4; cursor: not-allowed; }
+.action-grid button h4 { font-family: var(--font-display); font-size: 1.05rem; letter-spacing: 0.5px; }
+.action-grid button span { font-size: 0.75rem; color: var(--accent-red); font-weight: 700; }
+
+.game-stats-bar { display: flex; justify-content: space-between; background: #08080a; padding: 16px; border-radius: 14px; margin-bottom: 20px; border: 1px solid var(--border); }
+.game-stat h5 { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+.game-stat div { font-family: var(--font-display); font-size: 1.6rem; font-weight: 700; color: var(--accent-green); }
+.dj-deck { background: #080808; padding: 20px; border-radius: 16px; border: 2px solid #1a1a24; }
+.log-screen { background: #000; border: 1px solid #222; height: 110px; border-radius: 10px; padding: 12px; overflow-y: auto; font-family: monospace; font-size: 0.85rem; color: #888; margin-bottom: 20px; }
+
+/* Interview Interface */
+.qa-box { background: linear-gradient(180deg, rgba(255, 42, 95, 0.08), transparent); border-radius: 16px; padding: 20px; border: 1px solid rgba(255, 42, 95, 0.25); }
+.qa-reporter { font-style: italic; color: var(--accent-pink); margin-bottom: 10px; font-weight: 600; font-size: 0.9rem; }
+.qa-question { font-size: 1.15rem; font-weight: 800; line-height: 1.4; margin-bottom: 20px; }
+.qa-answers { display: flex; flex-direction: column; gap: 12px; }
+.ans-btn { background: var(--bg-elevated); color: white; padding: 16px; border-radius: 12px; border: 1px solid var(--border); text-align: left; font-weight: 600; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+.ans-btn:active:not(:disabled) { transform: scale(0.98); }
+.ans-btn.correct { background: rgba(0, 210, 106, 0.15); border-color: var(--accent-green); color: var(--accent-green); }
+.ans-btn.wrong { background: rgba(232, 0, 13, 0.15); border-color: var(--accent-red); color: var(--accent-red); }
+
+/* ── LEGAL CONTRACT MODAL ── */
+#contractOverlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(16px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 16px; animation: fadeIn 0.25s ease; }
+.contract-paper { background: #f2ede0; color: #1a1a1a; width: 100%; max-width: 480px; border-radius: 12px; max-height: 90vh; overflow-y: auto; scrollbar-width: thin; box-shadow: 0 24px 80px rgba(0, 0, 0, 0.95); }
+.contract-letterhead { background: #0c0c0e; color: #fff; padding: 28px 24px; text-align: center; border-radius: 12px 12px 0 0; }
+.contract-seal { width: 68px; height: 68px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-gold), #e07000); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 16px; box-shadow: 0 0 0 4px rgba(255, 204, 0, 0.3); }
+.contract-lh-org { font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px; }
+.contract-body { padding: 24px; }
+.contract-main-title { font-family: 'Georgia', serif; font-size: 1.1rem; font-weight: 700; text-align: center; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.contract-divider { border: none; border-top: 2px solid #c8bfad; margin: 16px 0; }
+.contract-parties { background: #e8e1cf; border-radius: 10px; padding: 16px; margin-bottom: 16px; font-size: 0.8rem; line-height: 1.8; }
+.party-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.2px; color: #777; font-weight: 700; margin-bottom: 4px; margin-top: 10px; }
+.party-label:first-child { margin-top: 0; }
+.party-value { font-weight: 700; }
+.contract-clause { margin-bottom: 16px; }
+.clause-number { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: #888; font-weight: 700; margin-bottom: 4px; }
+.clause-title { font-size: 0.9rem; font-weight: 800; color: #111; margin-bottom: 6px; }
+.clause-body { font-size: 0.8rem; color: #444; line-height: 1.75; }
+.contract-sig-section { border-top: 2px dashed #b8b09f; margin-top: 24px; padding-top: 20px; }
+.sig-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+.sig-line { border-bottom: 1px solid #444; height: 36px; width: 100%; display: flex; align-items: flex-end; font-size: 1.2rem; font-family: 'Brush Script MT', cursive; color: #444; }
+.contract-action-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: 20px 24px; background: #dfd7c2; border-radius: 0 0 12px 12px; border-top: 1px solid #cac1aa; }
+.contract-btn { padding: 18px; border-radius: 12px; font-weight: 800; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.5px; cursor: pointer; border: none; font-family: var(--font-display); transition: transform 0.15s; }
+.contract-btn:active { transform: scale(0.96); }
+.btn-decline { background: #cfc6b0; color: #777; }
+.btn-sign { background: #0c0c0e; color: #fff; }
+</style>
+</head>
+<body>
+
+<div id="toastContainer"></div>
+
+<header class="header">
+    <div class="brand" onclick="goHome()"><span>EXCELLENCE</span> UNIVERSE</div>
+    <div class="stats">
+        <div class="stat-pill"><span class="stat-money" id="displayBalance">$0</span></div>
+        <div class="stat-pill"><span class="stat-pop" id="displayPop">0%</span></div>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="news-masthead">
+        <div class="news-outlet-name">The <em>Excellence</em> Report</div>
+        <div class="news-outlet-tagline">Global Touring · Prestige Arenas · Runway · Industry Wire</div>
+    </div>
+    <div class="news-ticker">
+        <span class="ticker-label">LIVE FEED</span>
+        <div class="ticker-track"><span class="ticker-inner" id="tickerInner">Fetching industry updates...</span></div>
+    </div>
+
+    <div class="news-scroll" id="newsGrid"></div>
+
+    <h2 class="section-title">📣 Official Dispatches</h2>
+    <div class="lineup-section" id="lineupSection"></div>
+
+    <h2 class="section-title">🔥 Featured Circuits</h2>
+    <div class="events-scroll" id="featuredGrid"></div>
+
+    <h2 class="section-title">🎪 Worldwide Arenas</h2>
+    <div class="festivals-list" id="eventsGrid"></div>
+
+</div>
+
+<div class="overlay" id="eventDetailsOverlay">
+    <div class="modal-content">
+        <div class="drag-handle"></div>
+        <div style="position:relative;">
+            <div class="close-btn" onclick="closeModal('eventDetailsOverlay')">✕</div>
+            <img src="" class="modal-hero-img" id="detailImg" alt="">
+        </div>
+        <div class="modal-body">
+            <h2 class="modal-title" id="detailTitle"></h2>
+            <span class="modal-meta" id="detailMeta"></span>
+            <p class="modal-desc" id="detailDesc"></p>
+
+            <div id="detailLineupWrapper">
+                <div class="stage-banner" id="lineupBannerTag">Lineup Slate</div>
+                <div id="detailLineup"></div>
+            </div>
+
+            <div id="workflowContainer" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px;"></div>
+
+            <div id="detailPrepActions" style="display:none; margin-top:20px; border-top:1px solid var(--border); padding-top:20px;">
+                <div class="prep-section-title">⚡ Operational Readiness Tasks</div>
+                
+                <div id="readinessTracker" style="margin-bottom: 20px;">
+                    <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:var(--accent-gold); margin-bottom:8px; font-weight:800;">
+                        <span>Operational Capacity</span>
+                        <span id="readinessPct">0%</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05); height:10px; border-radius:5px; overflow:hidden; border: 1px solid var(--border);">
+                        <div id="readinessFill" style="background:var(--accent-green); width:0%; height:100%; transition:width 0.4s ease;"></div>
+                    </div>
+                </div>
+
+                <div class="action-grid" id="prepActionGrid"></div>
+            </div>
+
+            <button class="btn-main btn-locked" id="detailActionBtn">LOCKED</button>
+            <div id="detailLockMsg" style="text-align:center; color:var(--text-muted); font-size:0.8rem; margin-top:12px; font-weight:600;"></div>
+        </div>
+    </div>
+</div>
+
+<div class="overlay centered" id="performanceOverlay">
+    <div class="modal-content sheet-center">
+        <div class="modal-body">
+            <h2 class="modal-title" style="color:var(--accent-green);" id="perfTitle">ARENA HEADLINE</h2>
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.9rem;">The floor capacity is maxed out. Secure operational feedback.</p>
+            <div class="game-stats-bar">
+                <div class="game-stat"><h5>Time Left</h5><div id="perfTimer" style="color:#fff;">60s</div></div>
+                <div class="game-stat" style="text-align:right;"><h5>Hype Index</h5><div id="perfScore">0</div></div>
+            </div>
+            <div class="log-screen" id="perfLog"></div>
+            <div class="dj-deck">
+                <div class="action-grid">
+                    <button onclick="doPerfAction('Interact')"><h4>CROWD COMMAND</h4><span>BURNS: 5s</span></button>
+                    <button onclick="doPerfAction('Dance')"><h4>PRODUCTION DYNAMICS</h4><span>BURNS: 10s</span></button>
+                    <button onclick="doPerfAction('Song')" style="grid-column:span 2; background:rgba(0,210,106,0.08); border-color:var(--accent-green);">
+                        <h4>EXECUTE PRIMARY ANTHEM</h4><span>BURNS: 20s</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="overlay centered" id="metGalaOverlay">
+    <div class="modal-content sheet-center" style="border-color:var(--accent-pink);">
+        <div class="modal-body">
+            <h2 class="modal-title" style="color:var(--accent-pink);">EDITORIAL REVIEW</h2>
+            <p style="color:var(--text-muted); margin-bottom:20px; font-size:0.9rem;">The fashion press evaluates your structural alignment.</p>
+
+            <!-- Outfit photo upload step -->
+            <div id="outfitUploadStep">
+                <div class="prep-section-title">📸 Submit Your Red Carpet Look</div>
+                <div style="border:2px dashed rgba(255,42,95,0.4); border-radius:16px; padding:24px; text-align:center; margin-bottom:20px; cursor:pointer; position:relative;" onclick="document.getElementById('outfitFileInput').click()">
+                    <img id="outfitPreview" src="" style="display:none; width:100%; max-height:220px; object-fit:cover; border-radius:12px; margin-bottom:12px;">
+                    <div id="outfitPlaceholder">
+                        <div style="font-size:2.5rem; margin-bottom:8px;">👗</div>
+                        <div style="font-weight:800; font-size:0.9rem;">Tap to upload outfit photo</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Your red carpet moment</div>
+                    </div>
+                    <input type="file" id="outfitFileInput" accept="image/*" style="display:none;" onchange="handleOutfitUpload(event)">
+                </div>
+                <button class="btn-main btn-fashion" id="outfitSubmitBtn" onclick="submitOutfitAndStartQA()" disabled style="opacity:0.4; cursor:not-allowed;">CONFIRM LOOK & ENTER RED CARPET</button>
+            </div>
+
+            <!-- Q&A step (hidden until outfit submitted) -->
+            <div id="qaStep" style="display:none;">
+                <div class="game-stats-bar">
+                    <div class="game-stat"><h5>Style Metric</h5><div id="qaScore" style="color:var(--accent-pink);">0</div></div>
+                    <div class="game-stat" style="text-align:right;"><h5>Evaluation</h5><div id="qaProgress" style="color:#fff;">1/3</div></div>
+                </div>
+                <div class="qa-box">
+                    <div class="qa-reporter" id="qaReporter">E.U.N Bureau:</div>
+                    <div class="qa-question" id="qaQuestion"></div>
+                    <div class="qa-answers" id="qaAnswers"></div>
+                </div>
+                <button class="btn-main btn-fashion" id="qaFinishBtn" style="display:none;" onclick="finishMetGala()">FINALIZE PRESS CAPTURE</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="contractOverlay">
+    <div class="contract-paper" id="contractPaper"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// COMPLETE DATA REGISTRY
+// ═══════════════════════════════════════════════════════════
+
+function getYearlyHeadliners(eventId) {
+    const dateStr = localStorage.getItem('currentDate');
+    const gameYear = dateStr ? new Date(dateStr).getFullYear() : new Date().getFullYear();
+    const seed = gameYear % 4;
+    const rosters = {
+        exchella: [
+            [{ name: 'Travis Scott', role: 'Friday Headliner', icon: '🔥' }, { name: 'Charli XCX', role: 'Outdoor Headliner', icon: '🎧' }],
+            [{ name: 'Billie Eilish', role: 'Friday Headliner', icon: '🌙' }, { name: 'Tyler the Creator', role: 'Outdoor Headliner', icon: '🎨' }],
+            [{ name: 'Bad Bunny', role: 'Friday Headliner', icon: '🐰' }, { name: 'Doja Cat', role: 'Outdoor Headliner', icon: '🐱' }],
+            [{ name: 'The Weeknd', role: 'Friday Headliner', icon: '⚡' }, { name: 'Sabrina Carpenter', role: 'Outdoor Headliner', icon: '🌸' }]
+        ],
+        glastonbury: [
+            [{ name: 'Dua Lipa', role: 'Pyramid Stage Closer', icon: '🎤' }, { name: 'Coldplay', role: 'Legacy Headliner', icon: '🎸' }],
+            [{ name: 'Harry Styles', role: 'Pyramid Stage Closer', icon: '🌟' }, { name: 'Arctic Monkeys', role: 'Legacy Headliner', icon: '🎸' }],
+            [{ name: 'Beyoncé', role: 'Pyramid Stage Closer', icon: '👑' }, { name: 'Elton John', role: 'Farewell Headliner', icon: '🎹' }],
+            [{ name: 'SZA', role: 'Pyramid Stage Closer', icon: '🪐' }, { name: 'Radiohead', role: 'Legacy Headliner', icon: '🎸' }]
+        ],
+        lollapalooza: [
+            [{ name: 'SZA', role: 'Grant Park Stage Finale', icon: '🎧' }],
+            [{ name: 'Olivia Rodrigo', role: 'Grant Park Stage Finale', icon: '💜' }],
+            [{ name: 'Future', role: 'Grant Park Stage Finale', icon: '🌊' }],
+            [{ name: 'Kendrick Lamar', role: 'Grant Park Stage Finale', icon: '🎤' }]
+        ]
+    };
+    const roster = rosters[eventId];
+    if (!roster) return [];
+    return roster[seed % roster.length];
+}
+
+const eventsDB = [
+    {
+        id: 'exchella', name: 'Exchella Festival', type: 'music', loc: 'Indio, California',
+        desc: 'The ultimate apex of outdoor festivals. Features multi-tier artist validation. You receive an invitation each year once your fame meets the threshold.',
+        month: 4, prepStartMonth: 2, prepDuration: 8, isInviteOnly: true, minPop: 35,
+        img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=800&q=80',
+        tiers: [
+            // FIXED: Re-balanced requirements so players aren't soft-locked out of opening slots. 
+            { id: 'bottom', name: 'Desert Opener Tier', reqStreams: 0, desc: 'Early-day billing inside outdoor tents. Open entry for rising acts.' },
+            { id: 'middle', name: 'Direct Support Support', reqStreams: 1500000, desc: 'Twilight performance slots before major global acts.' },
+            { id: 'upper', name: 'Exchella Mainstage Headliner', reqStreams: 10000000, desc: 'Requires overwhelming streaming dominance. You cannot buy this placement.' }
+        ],
+        celebs: [
+            { name: 'Travis Scott', role: 'Friday Headliner', icon: '🔥' },
+            { name: 'Charli XCX', role: 'Outdoor Headliner', icon: '🎧' },
+            { name: 'You', role: 'Confirmed Billing Slot', icon: '★' }
+        ],
+        prepActions: [
+            { name: 'Soundstage Structural Alignment', cost: 3000, gain: 6 },
+            { name: 'Full Custom Automation Core', cost: 12000, gain: 14 }
+        ]
+    },
+    {
+        id: 'eungala', name: 'E.U.N Gala', type: 'fashion', loc: 'New York City, USA',
+        desc: 'The world\'s most rigorous style index. Secure invites, match the annual theme, and negotiate layout budgets directly with custom high-fashion syndicates.',
+        month: 5, prepStartMonth: 4, prepDuration: 4, isInviteOnly: true, minPop: 55,
+        img: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
+        agencies: [
+            { id: 'vanguard', name: 'Vanguard Independent', cost: 15000, multiplier: 1.2, desc: 'Clean, aggressive styling setup. Standard industry entry path.' },
+            { id: 'maison', name: 'Maison Luxe Syndicate', cost: 45000, multiplier: 1.6, desc: 'High custom couture pieces. Unlocks advanced algorithm scoring multipliers.' },
+            { id: 'apex', name: 'Archive Archangel Core', cost: 100000, multiplier: 2.2, desc: 'Restricted custom historical items. Absolute premium runway capture rating.' }
+        ],
+        celebs: [
+            { name: 'Anna Wintour', role: 'E.U.N Editorial Host', icon: '💎' },
+            { name: 'Zendaya', role: 'Runway Muse', icon: '📸' },
+            { name: 'You', role: 'Featured Style Entry', icon: '★' }
+        ]
+    },
+    {
+        id: 'glastonbury', name: 'Glastonbury Stage', type: 'music', loc: 'Pilton, UK',
+        desc: 'The defining British live mud festival. Highly traditional main-stage layout paths requiring massive respect metrics.',
+        month: 6, prepStartMonth: 4, prepDuration: 8, isInviteOnly: false, minPop: 65, entryFee: 10000,
+        img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80',
+        celebs: [
+            { name: 'Dua Lipa', role: 'Pyramid Stage Closer', icon: '🎤' },
+            { name: 'Coldplay', role: 'Legacy Headliner', icon: '🎸' },
+            { name: 'You', role: 'Main Support Core', icon: '★' }
+        ],
+        prepActions: [
+            { name: 'Live Rig Ground Testing', cost: 5000, gain: 5 },
+            { name: 'Stadium Audio Reinforcement', cost: 18000, gain: 15 }
+        ]
+    },
+    {
+        id: 'worldcup', name: 'World Cup Closing', type: 'sports', loc: 'Global Arena',
+        desc: 'The absolute absolute zenith of global sports entertainment broadcast live to a verified 1 billion screens. Restricted to elite one-time execution status.',
+        month: 7, prepStartMonth: 5, prepDuration: 8, isInviteOnly: true, minPop: 85, isApex: true,
+        img: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=800&q=80',
+        celebs: [
+            { name: 'Shakira', role: 'Prestige Legacy Ambassadress', icon: '⚽' },
+            { name: 'You', role: 'Apex Final Live Act', icon: '★' }
+        ],
+        prepActions: [
+            { name: 'Intercontinental Logistics Rig', cost: 25000, gain: 8 },
+            { name: 'Pitch-Level Pyrotechnics Array', cost: 75000, gain: 22 }
+        ]
+    },
+    {
+        id: 'lollapalooza', name: 'Lollapalooza Rig', type: 'music', loc: 'Chicago, USA',
+        desc: 'Premium urban central festival. Fast multi-stage scheduling requiring consistent streaming core delivery.',
+        month: 8, prepStartMonth: 6, prepDuration: 8, isInviteOnly: false, minPop: 50, entryFee: 8000,
+        img: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?auto=format&fit=crop&w=800&q=80',
+        celebs: [
+            { name: 'SZA', role: 'Grant Park Stage Finale', icon: '🎧' },
+            { name: 'You', role: 'Primary Stage Performer', icon: '★' }
+        ],
+        prepActions: [
+            { name: 'Midwest Audio Layout Prep', cost: 4000, gain: 5 },
+            { name: 'Custom Dynamic Lighting Walls', cost: 15000, gain: 12 }
+        ]
+    },
+    {
+        id: 'parisstyle', name: 'Paris Fashion Week', type: 'fashion', loc: 'Paris, France',
+        desc: 'The supreme structural index closing the autumn calendar. Directly interface custom collections directly into active algorithmic scoring loops.',
+        month: 9, prepStartMonth: 8, prepDuration: 4, isInviteOnly: true, minPop: 70,
+        img: 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=800&q=80',
+        agencies: [
+            { id: 'rive', name: 'Rive Gauche Boutique', cost: 20000, multiplier: 1.3, desc: 'Classic French minimalist staging array.' },
+            { id: 'haute', name: 'Le Marais Haute Suite', cost: 60000, multiplier: 1.8, desc: 'Uncompromised luxury piece alignments.' }
+        ],
+        celebs: [
+            { name: 'Bella Hadid', role: 'Front Row Prime Guest', icon: '📸' },
+            { name: 'You', role: 'Exclusive Runway Muse', icon: '★' }
+        ]
+    },
+    {
+        id: 'superbowl', name: 'Super Bowl Halftime', type: 'sports', loc: 'Apex Stadium, USA',
+        desc: 'The single most critical twelve minutes inside the North American industry. Absolute lifetime prestige status unsealing overwhelming dynamic metrics.',
+        month: 2, prepStartMonth: 11, prepDuration: 12, isInviteOnly: true, minPop: 90, isApex: true, // November prep trigger for February live event
+        img: 'https://images.unsplash.com/photo-1540747913346-19e32dc3e97e?auto=format&fit=crop&w=800&q=80',
+        celebs: [
+            { name: 'Jay-Z', role: 'Executive League Supervisor', icon: '🏈' },
+            { name: 'You', role: 'Apex Halftime Mastermind', icon: '★' }
+        ],
+        prepActions: [
+            { name: 'Full Field-Plate Rehearsal Run', cost: 50000, gain: 6 },
+            { name: 'Uncompromised Special FX Systems', cost: 150000, gain: 18 }
+        ]
+    }
+];
+
+// Dynamic Storyline & News Arrays
+const baseNewsPrompts = [
+    { tag: 'INDUSTRY', title: 'Major Multi-Tier Billing Slots Announced for Next Desert Festival Block', source: 'E.U.N Wire' },
+    { tag: 'EXCLUSIVE', title: 'Several Top Charting Albums Fail to Make Cut for Red Carpet Runway Theme Window', source: 'Excellence Insider' },
+    { tag: 'SCANDAL', title: 'Production Crews Walk Off Stage Following Conflicted Booking Schedules Outside UK Circuit', source: 'Touring Watch' },
+    { tag: 'RUMOR', title: 'Prestige Global Sports League Reportedly Vetting Only One Headliner Candidate For Final Show', source: 'Arena Central' },
+    { tag: 'TRENDING', title: 'Massive Social Media Surge Triggers Immediate Dynamic Scheduling Overhauls at Empire Polo Ground', source: 'Social Monitor' },
+    { tag: 'HYPE', title: 'High Fashion Syndicates Confirm Doubled Editorial Budgets Targeting Independent Runway Muses', source: 'Style Agency' }
+];
+
+const contractsData = {
+    standard: {
+        seal: '⚡', org: 'Excellence Live Promotions Syndicate',
+        title: 'Authorized Performance Enrollment Rider',
+        clauses: [
+            { num: 'Clause I', title: 'Execution Protocol', body: 'The signed entity accepts binding obligations to complete requested operational readiness run-throughs preceding active main-stage sets.' },
+            { num: 'Clause II', title: 'Algorithmic Distribution', body: 'Final payouts calculate post-set integrating actual execution metrics directly onto active discography streaming baselines.' },
+            { num: 'Clause III', title: 'Exclusivity Index', body: 'Unauthorized set cancellations trigger immediate financial penalty overrides directly onto linked banking platforms.' }
+        ]
+    }
+};
+
+// ═══════════════════════════════════════════════════════════
+// UNDERLYING LOCAL STORAGE ENGINE MAPPINGS
+// ═══════════════════════════════════════════════════════════
+let state = {
+    money: parseFloat(localStorage.getItem('money')) || 50000,
+    popularity: parseFloat(localStorage.getItem('popularity')) || 25,
+    date: new Date(localStorage.getItem('currentDate') || Date.now()),
+    activePrep: JSON.parse(localStorage.getItem('activeEventPrep') || 'null'),
+    selectedWorkflowTier: null
+};
+
+function getGameTime() {
+    return { month: state.date.getMonth() + 1, week: Math.ceil(state.date.getDate() / 7) };
+}
+
+function updateTopBar() {
+    document.getElementById('displayBalance').textContent = '$' + state.money.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    document.getElementById('displayPop').textContent = state.popularity.toFixed(1) + '%';
+    localStorage.setItem('money', state.money);
+}
+
+function showNotification(title, message, type = 'info') {
+    const container = document.getElementById('toastContainer');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.innerHTML = `<div class="toast-title">${title}</div><div class="toast-msg">${message}</div>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.animation = 'fadeOut 0.3s forwards'; setTimeout(() => toast.remove(), 300); }, 4500);
+}
+
+function goHome() {
+    // Basic navigation compliance to ensure header click returns to root state instead of login
+    window.location.href = window.location.pathname; 
+}
+
+// ═══════════════════════════════════════════════════════════
+// INITIALIZATION MODULES
+// ═══════════════════════════════════════════════════════════
+function init() {
+    updateTopBar();
+    renderDynamicNews();
+    renderOfficialDispatches();
+    renderMainGrid();
+
+    // Auto-focus logic check passed via redirect strings from main loops
+    const params = new URLSearchParams(window.location.search);
+    const focusId = params.get('focus');
+    if (focusId) {
+        setTimeout(() => openEventDetails(focusId), 200);
+    }
+}
+
+function renderDynamicNews() {
+    const grid = document.getElementById('newsGrid');
+    grid.innerHTML = '';
+    const artistData = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+    const myName = artistData.name || 'Rising Artist';
+
+    // Construct highly dynamic randomized news array injecting your active positioning
+    let dynamicNews = [...baseNewsPrompts];
+    if (state.activePrep) {
+        dynamicNews.unshift({
+            tag: 'LIVE WIRE', title: `${myName.toUpperCase()} Officially Enrolled Inside Operational Readiness Hub For Next Arena Phase`, source: 'E.U.N Bureau'
+        });
+    }
+
+    dynamicNews.forEach((n, idx) => {
+        const bgTypes = ['https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=400&q=80', 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=400&q=80', 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=400&q=80'];
+        const img = bgTypes[idx % bgTypes.length];
+        const tagType = n.tag === 'LIVE WIRE' ? 'breaking' : n.tag === 'EXCLUSIVE' ? 'exclusive' : 'trending';
+        
+        grid.innerHTML += `
+            <div class="news-card">
+                <img class="news-card-img" src="${img}" alt="Industry layout capture">
+                <div class="news-card-body">
+                    <span class="news-tag tag-${tagType}">${n.tag}</span>
+                    <div class="news-card-title">${n.title}</div>
+                    <div class="news-card-meta">${n.source} · Realtime System Sync</div>
+                </div>
+            </div>`;
+    });
+
+    const tickerStr = dynamicNews.map(n => `✦ ${n.tag}: ${n.title}`).join('   ');
+    document.getElementById('tickerInner').textContent = tickerStr;
+}
+
+function renderOfficialDispatches() {
+    const section = document.getElementById('lineupSection');
+    section.innerHTML = '';
+    const time = getGameTime();
+    let rendered = false;
+
+    eventsDB.forEach(ev => {
+        // Dispatch notifications post inside active prep negotiation boundaries
+        let startM = ev.prepStartMonth;
+        if (time.month >= startM && time.month <= ev.month) {
+            rendered = true;
+            section.innerHTML += `
+                <div class="lineup-card" onclick="openEventDetails('${ev.id}')">
+                    <img class="lineup-thumb" src="${ev.img}" alt="Arena Stage Core">
+                    <div class="lineup-body">
+                        <div class="lineup-event-label">OFFICIAL ANNOUNCEMENT · ${ev.type.toUpperCase()}</div>
+                        <div class="lineup-headline">${ev.name} Arena Logistics Slate Initialized</div>
+                        <div class="lineup-date">Target Scheduling execution window set for Month ${ev.month}</div>
+                    </div>
+                </div>`;
+        }
+    });
+
+    if (!rendered) {
+        section.innerHTML = `<p style="color:var(--text-muted); font-size:0.85rem; padding-bottom:12px;">The industry calendar shows no active dispatch warnings for the current frame.</p>`;
+    }
+}
+
+function renderMainGrid() {
+    const featGrid = document.getElementById('featuredGrid');
+    const listGrid = document.getElementById('eventsGrid');
+    featGrid.innerHTML = ''; listGrid.innerHTML = '';
+    const time = getGameTime();
+
+    eventsDB.forEach(ev => {
+        const { label, cls, fcls } = evaluateEventStateBadge(ev, time);
+
+        // Render Featured Showcase Stage Cards
+        const card = document.createElement('div');
+        card.className = 'event-card';
+        card.onclick = () => openEventDetails(ev.id);
+        card.innerHTML = `
+            <div style="position:relative;">
+                <img src="${ev.img}" class="event-img" alt="${ev.name}">
+                <div class="event-badge ${cls}">${label}</div>
+                <div class="event-gradient-footer">
+                    <div class="event-gradient-footer-text">${ev.isApex ? '★ ONCE IN A LIFETIME GIG ★' : `MONTH ${ev.month} ARENA`}</div>
+                </div>
+            </div>
+            <div class="event-info">
+                <div class="event-name">${ev.name}</div>
+                <div class="event-loc">${ev.type.toUpperCase()} · ${ev.loc}</div>
+            </div>`;
+        featGrid.appendChild(card);
+
+        // Render Clean List Layout
+        const row = document.createElement('div');
+        row.className = 'festival-row';
+        row.onclick = () => openEventDetails(ev.id);
+        row.innerHTML = `
+            <img class="festival-thumb" src="${ev.img}" alt="${ev.name}">
+            <div class="festival-info">
+                <div class="festival-name">${ev.name}</div>
+                <div class="festival-sub">${ev.type.toUpperCase()} · Target Execution Month ${ev.month}</div>
+            </div>
+            <div class="festival-badge ${fcls}">${label}</div>`;
+        listGrid.appendChild(row);
+    });
+}
+
+function evaluateEventStateBadge(ev, time) {
+    const isLive = time.month === ev.month;
+    if (state.activePrep && state.activePrep.id === ev.id) {
+        return isLive 
+            ? { label: '🔥 STAGE LIVE', cls: 'badge-live', fcls: 'fbadge-live' }
+            : { label: `PREP CYCLE [${state.activePrep.weekCompleted}]`, cls: 'badge-prep', fcls: 'fbadge-open' };
+    }
+
+    if (isLive) return { label: 'LIVE ARENA', cls: 'badge-live', fcls: 'fbadge-live' };
+    
+    // Support edge negotiation wrap boundary checks for early cycle event targeting
+    let startM = ev.prepStartMonth;
+    let endM = ev.month;
+    let isOpen = false;
+    
+    if (startM > endM) {
+        isOpen = time.month >= startM || time.month < endM;
+    } else {
+        isOpen = time.month >= startM && time.month < endM;
+    }
+
+    if (isOpen) return { label: 'ACCESS PORTAL', cls: 'badge-open', fcls: 'fbadge-open' };
+    return { label: 'SEALED', cls: 'badge-locked', fcls: 'fbadge-locked' };
+}
+
+// ═══════════════════════════════════════════════════════════
+// INTERACTIVE MULTI-STAGE SYSTEM INTERFACES
+// ═══════════════════════════════════════════════════════════
+let activeViewedEvent = null;
+
+function openEventDetails(id) {
+    const ev = eventsDB.find(e => e.id === id);
+    if (!ev) return;
+    activeViewedEvent = ev;
+    const time = getGameTime();
+    state.selectedWorkflowTier = null;
+
+    document.getElementById('eventDetailsOverlay').style.display = 'flex';
+    document.getElementById('detailImg').src = ev.img;
+    document.getElementById('detailTitle').innerText = ev.name;
+    document.getElementById('detailMeta').innerText = `${ev.type.toUpperCase()} ARENA · ${ev.loc} · SCHEDULED FRAME: ${ev.month}`;
+    document.getElementById('detailDesc').innerText = ev.desc;
+
+    // Strict Dynamic Lineup Implementation: Only show if booked or preparing
+    const isEnrolled = state.activePrep && state.activePrep.id === ev.id;
+    const lineupWrapper = document.getElementById('detailLineupWrapper');
+    
+    if (isEnrolled) {
+        lineupWrapper.style.display = 'block';
+        document.getElementById('lineupBannerTag').className = `stage-banner ${ev.type === 'fashion' ? 'fashion' : ''}`;
+        document.getElementById('lineupBannerTag').innerText = ev.type === 'fashion' ? '💎 VIP Press Slate' : '🎤 Mainstage Slate';
+        
+        const yearCelebs = getYearlyHeadliners(ev.id);
+        const celebList = yearCelebs.length > 0
+            ? [...yearCelebs, { name: 'You', role: 'Confirmed Billing Slot', icon: '★' }]
+            : ev.celebs;
+        let slateHTML = '';
+        celebList.forEach(c => {
+            slateHTML += `
+                <div class="celeb-row">
+                    <div class="celeb-avatar">${c.icon}</div>
+                    <div class="celeb-info"><h4>${c.name}</h4><p>${c.role}</p></div>
+                </div>`;
+        });
+        document.getElementById('detailLineup').innerHTML = slateHTML;
+    } else {
+        lineupWrapper.style.display = 'none';
+    }
+
+    // Process Active Interfaces / Action Triggers
+    const btn = document.getElementById('detailActionBtn');
+    const msg = document.getElementById('detailLockMsg');
+    const prepContainer = document.getElementById('detailPrepActions');
+    const workflowContainer = document.getElementById('workflowContainer');
+
+    btn.className = 'btn-main'; btn.style.display = 'block'; btn.disabled = false;
+    prepContainer.style.display = 'none'; workflowContainer.style.display = 'none';
+    msg.innerHTML = ''; btn.onclick = null;
+
+    const isLive = time.month === ev.month;
+
+    // Evaluate apex validation requirements
+    if (ev.isApex && localStorage.getItem(`completed_apex_${ev.id}`)) {
+        btn.innerText = 'PRESTIGE MILESTONE LOCKED';
+        btn.classList.add('btn-locked');
+        msg.innerText = 'This elite event accepts execution milestones only once per discography lifetime.';
+        return;
+    }
+
+    if (isEnrolled) {
+        if (isLive) {
+            btn.innerText = 'EXECUTE SHOWCASE SET 🔥';
+            btn.classList.add(ev.type === 'fashion' ? 'btn-fashion' : 'btn-primary');
+            btn.onclick = () => triggerMiniGameEngine(ev);
+        } else if (state.activePrep.lastActionDate === state.date.toDateString()) {
+            btn.innerText = 'READINESS SECURED — ADVANCE TIMELINE';
+            btn.classList.add('btn-locked');
+            msg.innerText = 'Operational task points validated for the current frame.';
+        } else {
+            btn.style.display = 'none';
+            prepContainer.style.display = 'block';
+            
+            // Dynamic readiness UI update
+            document.getElementById('readinessPct').innerText = `${state.activePrep.readiness}%`;
+            document.getElementById('readinessFill').style.width = `${state.activePrep.readiness}%`;
+            
+            const grid = document.getElementById('prepActionGrid');
+            grid.innerHTML = '';
+            ev.prepActions.forEach((act, idx) => {
+                grid.innerHTML += `
+                    <button class="btn-main btn-prep" style="margin-top:0; padding:18px 14px;"
+                            onclick="executeOperationalTask('${ev.id}', ${act.gain}, ${act.cost})">
+                        <div style="font-size:0.95rem; font-weight:800;">${act.name}</div>
+                        <div style="font-size:0.75rem; opacity:0.9;">BURNS $${act.cost.toLocaleString()} · +${act.gain}% Index</div>
+                    </button>`;
+            });
+            msg.innerHTML = `Prep Weeks Validated: ${state.activePrep.weekCompleted}/${ev.prepDuration}`;
+        }
+    } else if (state.activePrep) {
+        btn.innerText = 'CONCURRENT BOOKING PROTOCOL BLOCKED';
+        btn.classList.add('btn-locked');
+        msg.innerText = 'You cannot prepare staging loops for multiple arenas simultaneously.';
+    } else {
+        // Evaluate Negotiation Enrollment Access Window
+        let startM = ev.prepStartMonth;
+        let endM = ev.month;
+        let isOpen = false;
+        if (startM > endM) {
+            isOpen = time.month >= startM || time.month < endM;
+        } else {
+            isOpen = time.month >= startM && time.month < endM;
+        }
+
+        if (isOpen) {
+            // Assess standard popularity metrics before unsealing customized integration workflows
+            if (state.popularity < ev.minPop) {
+                btn.innerText = `REQUIRES ${ev.minPop}% MINIMUM FAME`;
+                btn.classList.add('btn-locked');
+                msg.innerText = `Your discography baseline lacks ${(ev.minPop - state.popularity).toFixed(1)}% metrics to qualify for access processing.`;
+            } else {
+                // Initialize highly specialized multi-stage workflow setups
+                if (ev.id === 'exchella') {
+                    workflowContainer.style.display = 'block';
+                    workflowContainer.innerHTML = `<div class="prep-section-title">🌵 Select Target Placement Tier</div>`;
+                    const allReleasedSongs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+                    const maxStreamSong = allReleasedSongs.reduce((max, s) => Math.max(max, s.streams || 0), 0);
+                    
+                    ev.tiers.forEach(t => {
+                        const tierOpen = maxStreamSong >= t.reqStreams;
+                        const formattedReq = t.reqStreams === 0 ? 'Open Entry' : `${(t.reqStreams / 1000000).toFixed(1)}M`;
+                        
+                        workflowContainer.innerHTML += `
+                            <div class="tier-box ${!tierOpen ? 'locked' : ''}" id="tbox_${t.id}" onclick="selectExchellaTier('${t.id}', ${tierOpen})">
+                                <div class="tier-header">
+                                    <span class="tier-title">${t.name}</span>
+                                    <span class="tier-req">Streams Floor: ${formattedReq} ${tierOpen ? '✓' : '✗'}</span>
+                                </div>
+                                <div class="tier-desc">${t.desc}</div>
+                            </div>`;
+                    });
+
+                    btn.innerText = 'INVITATION RECEIVED — SELECT YOUR TIER';
+                    btn.classList.add('btn-locked');
+                    btn.disabled = true;
+                    msg.innerText = `Peak Discography Release Streams: ${(maxStreamSong / 1000000).toFixed(1)}M`;
+                } else if (ev.type === 'fashion' && ev.agencies) {
+                    workflowContainer.style.display = 'block';
+                    workflowContainer.innerHTML = `<div class="prep-section-title">💎 Appoint Custom Style Syndicate</div>`;
+                    
+                    ev.agencies.forEach(ag => {
+                        workflowContainer.innerHTML += `
+                            <div class="brand-agency-card" id="agbox_${ag.id}" onclick="selectFashionAgency('${ag.id}')">
+                                <div class="agency-info">
+                                    <h4>${ag.name}</h4>
+                                    <p>${ag.desc}</p>
+                                </div>
+                                <div class="agency-cost">-$${ag.cost.toLocaleString()}</div>
+                            </div>`;
+                    });
+
+                    btn.innerText = 'AUTHORIZE AGENCY CONTRACT';
+                    btn.classList.add('btn-locked');
+                    btn.disabled = true;
+                    msg.innerText = 'Style partnerships scale red-carpet evaluation scoring outputs.';
+                } else {
+                    // Standard booking setup
+                    const feeStr = ev.entryFee ? ` — BURNS $${ev.entryFee.toLocaleString()}` : ' — INVITED';
+                    btn.innerText = `UNSEAL REGISTRATION RIDER${feeStr}`;
+                    btn.classList.add('btn-primary');
+                    btn.onclick = () => { closeModal('eventDetailsOverlay'); initializeContractRider(ev); };
+                }
+            }
+        } else if (time.month > ev.month) {
+            btn.innerText = 'ARENA SCHEDULE CYCLE CLOSED';
+            btn.classList.add('btn-locked');
+        } else {
+            btn.innerText = `ACCESS PIPELINE RE-OPENS MONTH ${ev.prepStartMonth}`;
+            btn.classList.add('btn-locked');
+        }
+    }
+}
+
+// Custom Workflow Actions
+function selectExchellaTier(tierId, isOpen) {
+    if (!isOpen) { showNotification('Access Restricted', 'Discography metrics fail to reach target streaming thresholds.', 'error'); return; }
+    state.selectedWorkflowTier = tierId;
+    document.querySelectorAll('.tier-box').forEach(b => b.classList.remove('selected'));
+    document.getElementById(`tbox_${tierId}`).classList.add('selected');
+
+    const btn = document.getElementById('detailActionBtn');
+    btn.innerText = 'ACCEPT EXCHELLA INVITATION';
+    btn.className = 'btn-main btn-primary';
+    btn.disabled = false;
+    btn.onclick = () => {
+    const evToBook = activeViewedEvent;
+    closeModal('eventDetailsOverlay');
+    if (tierId === 'upper') localStorage.setItem('exchella_lineup_dropped', '');
+    initializeContractRider(evToBook);
+};
+}
+
+function selectFashionAgency(agId) {
+    const ag = activeViewedEvent.agencies.find(a => a.id === agId);
+    if (!ag) return;
+    state.selectedWorkflowTier = ag;
+    document.querySelectorAll('.brand-agency-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById(`agbox_${agId}`).classList.add('selected');
+
+    const btn = document.getElementById('detailActionBtn');
+    btn.innerText = `AUTHORIZE AGENCY RIDER (-$${ag.cost.toLocaleString()})`;
+    btn.className = 'btn-main btn-fashion';
+    btn.disabled = false;
+    btn.onclick = () => {
+    if (state.money < ag.cost) { showNotification('Banking Failed', 'Insufficient funds to secure target fashion syndicate.', 'error'); return; }
+    const evToBook = activeViewedEvent;
+    state.money -= ag.cost; updateTopBar();
+    localStorage.setItem('eun_partner_brand', ag.name);
+    localStorage.setItem('eun_partner_multiplier', ag.multiplier);
+    localStorage.setItem('eun_gala_pending_shot', 'true');
+    closeModal('eventDetailsOverlay');
+    initializeContractRider(evToBook);
+};
+}
+
+// ═══════════════════════════════════════════════════════════
+// CONTRACT EXECUTION ENGINE
+// ═══════════════════════════════════════════════════════════
+function initializeContractRider(ev) {
+    const paper = document.getElementById('contractPaper');
+    const defaultData = contractsData.standard;
+    
+    let feeNotice = ev.entryFee 
+        ? `<div style="background:#fff3cd; border:1px solid #e6ac00; border-radius:8px; padding:14px; font-size:0.8rem; color:#5a4000; margin-bottom:18px;">⚠️ <strong>Operational Deductions:</strong> Confirming execution subtracts a non-refundable staging base of <strong>$${ev.entryFee.toLocaleString()} USD</strong> directly from active platforms.</div>`
+        : `<div style="background:#d4f0e0; border:1px solid #2a9e5c; border-radius:8px; padding:14px; font-size:0.8rem; color:#1a5c32; margin-bottom:18px;">✅ <strong>Prestige Logistics Certified:</strong> All foundational infrastructure layout costs are underwritten internally by the organizing board.</div>`;
+
+    let clausesHTML = defaultData.clauses.map(c => `
+        <div class="contract-clause">
+            <div class="clause-number">${c.num}</div>
+            <div class="clause-title">${c.title}</div>
+            <div class="clause-body">${c.body}</div>
+        </div>`).join('<hr class="contract-divider">');
+
+    paper.innerHTML = `
+        <div class="contract-letterhead">
+            <div class="contract-seal">${defaultData.seal}</div>
+            <div class="contract-lh-org">${defaultData.org}</div>
+        </div>
+        <div class="contract-body">
+            <div class="contract-main-title">${defaultData.title}</div>
+            <hr class="contract-divider">
+            <div class="contract-parties">
+                <div class="party-label">PRIMARY ARENA TARGET</div>
+                <div class="party-value">${ev.name.toUpperCase()} · [Frame: Month ${ev.month}]</div>
+                <div class="party-label">REGISTERED ENTITY</div>
+                <div class="party-value">${(JSON.parse(localStorage.getItem('artistDetails') || '{}').name || 'Independent Musician').toUpperCase()}</div>
+            </div>
+            ${feeNotice}
+            ${clausesHTML}
+            <div class="contract-sig-section">
+                <div class="sig-grid">
+                    <div>
+                        <span style="font-size:0.65rem; color:#777; display:block;">ARTIST SIGNATURE</span>
+                        <div class="sig-line">________________________</div>
+                    </div>
+                    <div>
+                        <span style="font-size:0.65rem; color:#777; display:block;">EXECUTION BOARD AUTHORIZATION</span>
+                        <div class="sig-line" style="font-family:sans-serif; font-size:0.95rem; font-weight:800;">✓ VALIDATED SYSTEM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="contract-action-bar">
+            <button class="contract-btn btn-decline" onclick="document.getElementById('contractOverlay').style.display='none'">Decline Rider</button>
+            <button class="contract-btn btn-sign" onclick="confirmEnrollmentExecution('${ev.id}')">Authorize Agreement</button>
+        </div>`;
+
+    document.getElementById('contractOverlay').style.display = 'flex';
+}
+
+function confirmEnrollmentExecution(id) {
+    document.getElementById('contractOverlay').style.display = 'none';
+    const ev = eventsDB.find(e => e.id === id);
+    if (!ev) return;
+
+    if (ev.entryFee && state.money < ev.entryFee) {
+        showNotification('Authorization Failed', 'Account balances failed to cover operational deposit deductions.', 'error');
+        return;
+    }
+
+    if (ev.entryFee) {
+        state.money -= ev.entryFee; updateTopBar();
+    }
+
+    // Set Active Prep States
+    state.activePrep = { id: ev.id, readiness: 15, weekCompleted: 0, lastActionDate: null };
+    localStorage.setItem('activeEventPrep', JSON.stringify(state.activePrep));
+    
+    showNotification('Arena Booked ✓', `Staging loop successfully opened for ${ev.name}.`, 'info');
+    openEventDetails(ev.id);
+    renderMainGrid();
+}
+
+// FIXED: Infused the Prep Loop with dynamic scenarios to combat repetitive grinding
+function executeOperationalTask(evId, gain, cost) {
+    if (state.money < cost) { showNotification('Task Unresolved', 'Insufficient capital to cover production burn setup.', 'error'); return; }
+    state.money -= cost; 
+
+    // Dynamic Scenario Generation to break the monotony 
+    let finalGain = gain;
+    const randomEventSeed = Math.random();
+    
+    if (randomEventSeed < 0.20) {
+        finalGain += 8; // Major Breakthrough
+        showNotification('Production Breakthrough! 🔥', `Crew optimization secured an unexpected +${finalGain}% Readiness spike.`, 'info');
+    } else if (randomEventSeed > 0.85) {
+        finalGain -= 4; // Logistics Friction
+        showNotification('Logistics Hitch ⚠️', `Supply chain delays disrupted staging. Only achieved +${finalGain}% index.`, 'error');
+    } else {
+        showNotification('Operations Advanced', `Validated +${finalGain}% staging capacity index.`, 'info');
+    }
+
+    state.activePrep.readiness = Math.min(100, state.activePrep.readiness + finalGain);
+    state.activePrep.weekCompleted++;
+    state.activePrep.lastActionDate = state.date.toDateString();
+    
+    localStorage.setItem('activeEventPrep', JSON.stringify(state.activePrep));
+    updateTopBar();
+    openEventDetails(evId);
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+    activeViewedEvent = null;
+    renderMainGrid();
+}
+
+// ═══════════════════════════════════════════════════════════
+// MINIGAME RENDER ENGINE
+// ═══════════════════════════════════════════════════════════
+function triggerMiniGameEngine(ev) {
+    if (ev.type === 'music' || ev.type === 'sports') {
+        startPerformanceEngine(ev.name, ev.isApex);
+    } else {
+        startEditorialQAEngine();
+    }
+}
+
+let perfState = { timer: 60, interval: null, score: 0, bonusMod: 1 };
+
+function appendLogOutput(msg, color = '#fff') {
+    const log = document.getElementById('perfLog');
+    const item = document.createElement('div');
+    item.innerHTML = `<span style="color:var(--accent-red);">[${perfState.timer}s]</span> <span style="color:${color}">${msg}</span>`;
+    item.style.marginBottom = '6px';
+    log.prepend(item);
+}
+
+function startPerformanceEngine(name, isApex) {
+    document.getElementById('performanceOverlay').style.display = 'flex';
+    document.getElementById('perfTitle').innerText = `${name.toUpperCase()} SET`;
+    
+    perfState.bonusMod = state.activePrep ? state.activePrep.readiness / 10 : 5;
+    perfState.timer = 60; perfState.score = 0;
+    
+    document.getElementById('perfLog').innerHTML = '';
+    document.getElementById('perfTimer').innerText = '60s';
+    document.getElementById('perfScore').innerText = '0';
+    document.querySelectorAll('#performanceOverlay button').forEach(b => b.disabled = false);
+
+    appendLogOutput('Primary stage automated rigging locked. Sound profiles green.', 'var(--accent-green)');
+    appendLogOutput('Execute track triggers to command audience indices.', 'var(--accent-gold)');
+
+    if (perfState.interval) clearInterval(perfState.interval);
+    perfState.interval = setInterval(() => {
+        perfState.timer--;
+        document.getElementById('perfTimer').innerText = `${perfState.timer}s`;
+        if (perfState.timer <= 0) { clearInterval(perfState.interval); resolvePerformancePayout(); }
+    }, 1000);
+}
+
+function doPerfAction(type) {
+    let burn = 0; let gain = 0;
+    if (type === 'Interact') { burn = 5; gain = Math.floor(8 + Math.random() * 6); appendLogOutput(`Command loop validated. Energy levels escalate! +${gain} Hype.`); }
+    if (type === 'Dance')    { burn = 10; gain = Math.floor(18 + Math.random() * 10); appendLogOutput(`Production automation drops. Floor goes crazy! +${gain} Hype.`); }
+    if (type === 'Song')     { burn = 20; gain = Math.floor(35 + perfState.bonusMod * 4); appendLogOutput(`Dropping Primary Anthem. Arena absolute explosion! +${gain} Hype.`, 'var(--accent-green)'); }
+    
+    if (perfState.timer - burn < 0) { showNotification('Burn Failed', 'Remaining timeframe limits output commands.', 'error'); return; }
+    
+    perfState.timer -= burn; perfState.score += gain;
+    document.getElementById('perfScore').innerText = perfState.score;
+    
+    const elements = document.querySelectorAll('#performanceOverlay button');
+    elements.forEach(b => b.disabled = true);
+    setTimeout(() => { if (perfState.timer > 0) elements.forEach(b => b.disabled = false); }, 600);
+}
+
+function resolvePerformancePayout() {
+    clearInterval(perfState.interval);
+    document.getElementById('performanceOverlay').style.display = 'none';
+
+    const maxBase = activeViewedEvent && activeViewedEvent.isApex ? 250 : 180;
+    const finalRating = Math.min(10, (perfState.score / maxBase) * 10).toFixed(1);
+    
+    const popBonus = Math.min(8, finalRating * 0.8);
+    const payoutScale = activeViewedEvent && activeViewedEvent.isApex ? 25000 : 8000;
+    const payoutMoney = Math.floor(finalRating * payoutScale);
+
+    // Apply Once-in-a-lifetime restriction flags back to localStorage directly
+    if (activeViewedEvent && activeViewedEvent.isApex) {
+        localStorage.setItem(`completed_apex_${activeViewedEvent.id}`, 'true');
+    }
+
+    state.popularity = Math.min(100, state.popularity + popBonus);
+    state.money += payoutMoney; updateTopBar();
+
+    showNotification('ARENA CONCLUDED', `Set evaluation metric: ${finalRating}/10. Secured +${popBonus.toFixed(1)}% discography fame alongside +$${payoutMoney.toLocaleString()} layout capital.`);
+    finalizeEventLifecycle();
+}
+
+let qaState = {
+    questions: [
+        { q: 'Evaluate the structural silhouettes chosen for your modern showcase today.', r: 'We integrated modern silhouettes directly onto structural baselines.', a: ['They passed me raw samples randomly.', 'We integrated modern silhouettes directly onto structural baselines.', 'I ignore layout references completely.'] },
+        { q: 'How does your visual alignment match the annual Metamorphosis context?', r: 'True evolution forces continuous aesthetic redesign.', a: ['True evolution forces continuous aesthetic redesign.', 'My management signed standard boilerplate riders.', 'I just copied historic runway templates.'] },
+        { q: 'Does this current configuration forecast future audio-visual directions?', r: 'Our creative output layers uniformly across all visual expressions.', a: ['Audio and style remain entirely separated contexts.', 'Our creative output layers uniformly across all visual expressions.', 'No, this look was simply an algorithmic selection.'] }
+    ],
+    curr: 0, score: 0, mult: 1
+};
+
+function startEditorialQAEngine() {
+    document.getElementById('metGalaOverlay').style.display = 'flex';
+    qaState.mult = parseFloat(localStorage.getItem('eun_partner_multiplier')) || 1.2;
+    qaState.curr = 0; qaState.score = 0;
+    // Reset to outfit upload step
+    document.getElementById('outfitUploadStep').style.display = 'block';
+    document.getElementById('qaStep').style.display = 'none';
+    document.getElementById('outfitPreview').style.display = 'none';
+    document.getElementById('outfitPlaceholder').style.display = 'block';
+    const submitBtn = document.getElementById('outfitSubmitBtn');
+    submitBtn.disabled = true; submitBtn.style.opacity = '0.4'; submitBtn.style.cursor = 'not-allowed';
+}
+
+function handleOutfitUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const preview = document.getElementById('outfitPreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
+        document.getElementById('outfitPlaceholder').style.display = 'none';
+        localStorage.setItem('metgala_outfit_photo', e.target.result);
+        const submitBtn = document.getElementById('outfitSubmitBtn');
+        submitBtn.disabled = false; submitBtn.style.opacity = '1'; submitBtn.style.cursor = 'pointer';
+    };
+    reader.readAsDataURL(file);
+}
+
+function submitOutfitAndStartQA() {
+    document.getElementById('outfitUploadStep').style.display = 'none';
+    document.getElementById('qaStep').style.display = 'block';
+    document.getElementById('qaFinishBtn').style.display = 'none';
+    populateQAInterface();
+}
+
+function populateQAInterface() {
+    if (qaState.curr >= qaState.questions.length) {
+        document.getElementById('qaFinishBtn').style.display = 'block';
+        document.getElementById('qaReporter').innerText = "Press Slate Evaluation complete.";
+        document.getElementById('qaQuestion').innerText = "Editorial captures safely processed to active databases.";
+        document.getElementById('qaAnswers').innerHTML = '';
+        return;
+    }
+    const qData = qaState.questions[qaState.curr];
+    document.getElementById('qaProgress').innerText = `${qaState.curr + 1}/${qaState.questions.length}`;
+    document.getElementById('qaScore').innerText = qaState.score;
+    document.getElementById('qaQuestion').innerText = qData.q;
+    
+    const wrapper = document.getElementById('qaAnswers');
+    wrapper.innerHTML = '';
+    
+    // Scramble answers safely
+    const answers = [...qData.a].sort(() => Math.random() - 0.5);
+    answers.forEach(text => {
+        const btn = document.createElement('button');
+        btn.className = 'ans-btn'; btn.innerText = text;
+        btn.onclick = () => validateQACapture(text, qData.r);
+        wrapper.appendChild(btn);
+    });
+}
+
+function validateQACapture(selected, truth) {
+    document.querySelectorAll('.ans-btn').forEach(b => {
+        b.disabled = true;
+        if (b.innerText === truth) b.classList.add('correct');
+        else if (b.innerText === selected) b.classList.add('wrong');
+    });
+
+    if (selected === truth) {
+        const baseGain = Math.floor(10 * qaState.mult);
+        qaState.score += baseGain;
+        document.getElementById('qaScore').innerText = qaState.score;
+    }
+
+    qaState.curr++;
+    setTimeout(populateQAInterface, 1100);
+}
+
+function finishMetGala() {
+    document.getElementById('metGalaOverlay').style.display = 'none';
+    const finalMetric = Math.min(10, (qaState.score / (30 * qaState.mult)) * 10).toFixed(1);
+    const popBonus = Math.min(10, finalMetric * 1.0);
+
+    state.popularity = Math.min(100, state.popularity + popBonus);
+    updateTopBar();
+
+    showNotification('EDITORIAL CONCLUDED', `Style configuration metric validated at ${finalMetric}/10. Secured +${popBonus.toFixed(1)}% absolute fame metrics.`);
+    finalizeEventLifecycle();
+}
+
+function finalizeEventLifecycle() {
+    localStorage.removeItem('activeEventPrep');
+    state.activePrep = null;
+    activeViewedEvent = null;
+    updateTopBar();
+    renderMainGrid();
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

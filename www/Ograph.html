@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Discography Graph – Musify</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"/>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;transition:.3s}
+body{height:100vh;background:linear-gradient(145deg,#0a0a0a,#1a1a1a);color:#e0e0e0;font-family:Inter,sans-serif;font-weight:800;overflow-y:auto}
+.back{position:fixed;top:20px;left:20px;width:44px;height:44px;background:rgba(0,0,0,.8);border-radius:50%;display:flex;align-items:center;justify-content:center;color:#e0e0e0;cursor:pointer;z-index:100;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1)}
+.back:hover{background:rgba(0,0,0,.9);color:#1db954;transform:scale(1.1)}
+.header{text-align:center;padding:80px 20px 20px}
+.header h1{font-size:32px;font-weight:900;background:linear-gradient(45deg,#1db954,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.tabs{display:flex;justify-content:center;gap:15px;margin-bottom:30px}
+.tab{padding:12px 30px;border:none;border-radius:25px;background:rgba(255,255,255,.05);color:#b3b3b3;font-weight:700;font-size:14px;cursor:pointer;backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.1)}
+.tab.active{background:linear-gradient(45deg,#1db954,#ff6b6b);color:#0a0a0a;transform:scale(1.05)}
+.selection-screen{position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(145deg,#0a0a0a,#1a1a1a);display:none;overflow-y:auto;z-index:99}
+.selection-content{max-width:900px;margin:80px auto;padding:0 20px 100px}
+.selection-header{text-align:center;margin-bottom:30px}
+.selection-header h2{font-size:28px;font-weight:900;background:linear-gradient(45deg,#1db954,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.selection-controls{display:flex;flex-wrap:wrap;justify-content:center;gap:15px;margin-bottom:30px}
+.btn{padding:12px 25px;border:none;border-radius:25px;background:linear-gradient(45deg,#1db954,#ff6b6b);color:#0a0a0a;font-weight:700;cursor:pointer;font-size:12px}
+.btn-secondary{background:rgba(255,255,255,.05);color:#e0e0e0;border:1px solid rgba(255,255,255,.1)}
+.btn:hover{transform:scale(1.05);box-shadow:0 10px 30px rgba(29,185,84,.3)}
+.btn-secondary:hover{background:rgba(255,255,255,.1);border-color:#1db954}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.items-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
+.item-card{background:rgba(255,255,255,.05);border-radius:15px;padding:20px;cursor:pointer;border:2px solid transparent;backdrop-filter:blur(20px)}
+.item-card:hover{border-color:#1db954;transform:scale(1.02);box-shadow:0 15px 40px rgba(29,185,84,.2)}
+.item-card.selected{border-color:#1db954;background:rgba(29,185,84,.1);transform:scale(1.02)}
+.item-info{display:flex;align-items:center;gap:15px}
+.item-img{width:60px;height:60px;object-fit:cover;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+.item-details h3{font-size:16px;font-weight:800;color:#e0e0e0;word-break:break-word}
+.item-details p{font-size:12px;color:#b3b3b3;margin-top:4px}
+.preview-container{position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.95);display:none;overflow-y:auto;z-index:98;padding:20px}
+.preview-content{max-width:1200px;margin:0 auto;position:relative}
+.preview-header{text-align:center;margin-bottom:20px;padding-top:20px}
+.preview-header h2{font-size:22px;font-weight:900;background:linear-gradient(45deg,#1db954,#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:14px;letter-spacing:.5px}
+.preview-actions{display:flex;justify-content:center;gap:15px;margin-bottom:16px}
+.filter-controls{display:flex;justify-content:center;gap:0;margin-bottom:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:30px;padding:4px;width:fit-content;margin-left:auto;margin-right:auto}
+.filter-btn{padding:8px 20px;border-radius:26px;background:transparent;border:none;color:#b3b3b3;font-size:12px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:.2s}
+.filter-btn.active{background:linear-gradient(45deg,#1db954,#1aa34a);color:#fff;box-shadow:0 4px 14px rgba(29,185,84,.35)}
+.filter-btn:hover:not(.active){color:#fff;background:rgba(255,255,255,.08)}
+.close-preview{position:absolute;top:20px;right:20px;width:44px;height:44px;border:none;border-radius:50%;background:rgba(0,0,0,.8);color:#e0e0e0;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:101}
+.close-preview:hover{background:rgba(0,0,0,.9);transform:scale(1.1)}
+.download-btn{padding:12px 25px;border:none;border-radius:25px;background:linear-gradient(45deg,#1db954,#ff6b6b);color:#0a0a0a;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.download-btn:hover{transform:scale(1.05);box-shadow:0 10px 30px rgba(29,185,84,.3)}
+.download-btn.loading{opacity:0.7;cursor:wait;}
+.chart-preview{background:rgba(0,0,0,.9);border-radius:15px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.4);min-height:700px;position:relative;overflow:hidden}
+.chart-bg{position:absolute;top:0;left:0;width:100%;height:100%;background-size:cover;background-position:center;filter:blur(25px);opacity:.3;z-index:1}
+.chart-content{position:relative;z-index:2}
+.chart-header{display:flex;align-items:flex-start;gap:20px;margin-bottom:30px;padding:16px;background:rgba(255,255,255,.04);border-radius:14px;border:1px solid rgba(255,255,255,.07)}
+.chart-profile{width:80px;height:80px;border-radius:12px;object-fit:cover;box-shadow:0 8px 25px rgba(0,0,0,.5);flex-shrink:0}
+.chart-artist-info{flex:1;min-width:0}
+.chart-title{font-size:20px;font-weight:900;color:#fff;margin-bottom:4px;text-shadow:2px 2px 4px rgba(0,0,0,.8)}
+.chart-artist{font-size:13px;color:#aaa;font-weight:600;margin-bottom:10px;text-shadow:1px 1px 2px rgba(0,0,0,.8)}
+.chart-stats{margin-top:8px}
+.active-stat{display:inline-flex;flex-direction:column;background:rgba(29,185,84,.1);border:1px solid rgba(29,185,84,.25);border-radius:12px;padding:8px 16px;transition:.3s}
+.active-stat-label{font-size:10px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.8px}
+.active-stat-value{font-size:14px;font-weight:900;color:#1db954;text-shadow:0 0 16px rgba(29,185,84,.45);line-height:1.2;margin-top:1px}
+.active-stat.pure{background:rgba(255,159,67,.1);border-color:rgba(255,159,67,.25)}
+.active-stat.pure .active-stat-value{color:#ff9f43;text-shadow:0 0 16px rgba(255,159,67,.45)}
+.active-stat.ses{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.25)}
+.active-stat.ses .active-stat-value{color:#ff6b6b;text-shadow:0 0 16px rgba(255,107,107,.45)}
+.chart-area{display:flex;align-items:flex-end;justify-content:flex-start;gap:6px;height:480px;margin-top:30px;overflow-x:auto;padding:0 10px;flex-wrap:nowrap}
+.bar{display:flex;flex-direction:column;align-items:center;min-width:50px;max-width:80px;flex:1}
+.bar-visual{width:100%;border-radius:8px 8px 0 0;position:relative;background-size:cover;background-position:center;box-shadow:0 6px 20px rgba(0,0,0,.3);overflow:hidden;min-height:60px;transition:height 0.4s ease}
+.bar-visual::before{content:'';position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(to bottom,rgba(0,0,0,.4),rgba(0,0,0,.7));border-radius:8px 8px 0 0}
+.bar-value{position:absolute;top:6px;left:50%;transform:translateX(-50%);color:#fff;font-weight:800;font-size:10px;text-shadow:2px 2px 4px rgba(0,0,0,.8);z-index:1;white-space:nowrap}
+.bar-label{margin-top:8px;font-size:9px;font-weight:700;text-align:center;color:#fff;text-shadow:1px 1px 2px rgba(0,0,0,.8);line-height:1.1;word-break:break-word;max-width:100%;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.made-by{position:absolute;bottom:12px;right:20px;font-size:10px;color:#ccc;font-weight:500;text-shadow:1px 1px 2px rgba(0,0,0,.8);z-index:2;text-align:right;}
+.error-msg{color:#ff6b6b;font-size:14px;text-align:center;margin-top:10px;padding:10px;background:rgba(255,107,107,.1);border-radius:8px;border:1px solid rgba(255,107,107,.3)}
+@media(max-width:768px){
+.chart-area{gap:4px;height:400px}
+.bar{min-width:45px;max-width:55px}
+.bar-value{font-size:9px}
+.bar-label{font-size:8px}
+}
+</style>
+</head>
+<body>
+<div class="back" onclick="goBack()"><i class="fas fa-arrow-left"></i></div>
+<div class="header"><h1>Discography Graph</h1></div>
+<div class="tabs"><button class="tab active" onclick="showBarChart()">See Bar Chart</button></div>
+
+<div id="selection-screen" class="selection-screen">
+<div class="selection-content">
+<div class="selection-header">
+<h2 id="selection-title">Select Items for Chart</h2>
+<div class="selection-controls">
+<button class="btn" onclick="selectType('songs')">Songs</button>
+<button class="btn" onclick="selectType('albums')">Albums</button>
+</div>
+</div>
+<div class="selection-controls">
+<button class="btn-secondary btn" onclick="selectAll()">Select All</button>
+<button class="btn-secondary btn" onclick="clearSelection()">Clear All</button>
+<button class="btn" id="generate-btn" disabled onclick="generateChart()">Generate Chart</button>
+</div>
+<div id="error-msg" class="error-msg" style="display:none"></div>
+<div id="items-grid" class="items-grid"></div>
+</div>
+</div>
+
+<div id="preview-container" class="preview-container">
+<div class="preview-content">
+<button class="close-preview" onclick="closePreview()"><i class="fas fa-times"></i></button>
+<div class="preview-header">
+<h2>Chart Preview</h2>
+<div class="preview-actions" id="preview-actions">
+<button class="download-btn" onclick="prepareDownload()"><i class="fas fa-download"></i> Download Chart</button>
+</div>
+<div class="filter-controls">
+<button class="filter-btn active" onclick="applyFilter('total', this)"><i class="fas fa-chart-bar" style="margin-right:5px;font-size:10px"></i>Total</button>
+<button class="filter-btn" onclick="applyFilter('pure', this)"><i class="fas fa-compact-disc" style="margin-right:5px;font-size:10px"></i>Pure</button>
+<button class="filter-btn" onclick="applyFilter('ses', this)"><i class="fas fa-headphones" style="margin-right:5px;font-size:10px"></i>SES</button>
+</div>
+</div>
+<div id="chart-preview" class="chart-preview">
+<div id="chart-bg" class="chart-bg"></div>
+<div class="chart-content">
+<div class="chart-header">
+<img id="chart-profile" class="chart-profile" alt="Artist">
+<div class="chart-artist-info">
+<div class="chart-title">Music Excellence</div>
+<div id="chart-artist" class="chart-artist">Artist Name</div>
+<div class="chart-stats">
+<div class="active-stat">
+  <span class="active-stat-label" id="stat-label">Total Sales</span>
+  <span class="active-stat-value" id="stat-value">0</span>
+</div>
+</div>
+</div>
+</div>
+<div id="chart-area" class="chart-area"></div>
+</div>
+<div class="made-by">Made By: Music Excellence & Steviee<br>Property of Music Excellence Ltd</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const $=id=>document.getElementById(id);
+const storage={
+get:k=>{try{const data=window.localStorage?localStorage.getItem(k):null;return data?JSON.parse(data):(k.includes('Details')?{}:[])}catch{return k.includes('Details')?{}:[]}},
+set:(k,v)=>{try{if(window.localStorage)localStorage.setItem(k,JSON.stringify(v))}catch{}}
+};
+    let _cachedArtistPhoto = null;
+const photoDB_Ograph = (function() {
+    const DB_NAME = 'MusicGameDB', STORE = 'photos', KEY = 'artistPhoto';
+    function open() {
+        return new Promise((res, rej) => {
+            const r = indexedDB.open(DB_NAME, 1);
+            r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            r.onsuccess = e => res(e.target.result);
+            r.onerror = e => rej(e.target.error);
+        });
+    }
+    return {
+        load() {
+            return open().then(db => new Promise((res, rej) => {
+                const tx = db.transaction(STORE, 'readonly');
+                const r = tx.objectStore(STORE).get(KEY);
+                r.onsuccess = e => res(e.target.result || null);
+                r.onerror = e => rej(e.target.error);
+            }));
+        }
+    };
+})();
+// Pre-load photo so synchronous loadArtistDetails() can use it
+photoDB_Ograph.load().then(p => { _cachedArtistPhoto = p; }).catch(() => {});
+let selectedItems=[],currentType='songs',sampleData={
+songs:[
+{songName:'Hit Song 1',streams:15000000,coverArt:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iIzFkYjk1NCIvPjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4xPC90ZXh0Pjwvc3ZnPg=='},
+{songName:'Popular Track 2',streams:12500000,coverArt:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iI2ZmNmI2YiIvPjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj4yPC90ZXh0Pjwvc3ZnPg=='},
+{songName:'Chart Breaker 3',streams:10000000},
+{songName:'Radio Hit 4',streams:8500000},
+{songName:'Viral Song 5',streams:7200000},
+{songName:'Dance Floor 6',streams:6800000},
+{songName:'Summer Anthem 7',streams:6200000},
+{songName:'Heartbreak Ballad 8',streams:5900000},
+{songName:'Club Banger 9',streams:5500000},
+{songName:'Feel Good 10',streams:5100000},
+{songName:'Late Night 11',streams:4800000},
+{songName:'Road Trip 12',streams:4500000},
+{songName:'Party Starter 13',streams:4200000},
+{songName:'Chill Vibes 14',streams:3900000},
+{songName:'Golden Hour 15',streams:3600000}
+],
+albums:[
+{name:'Debut Album',songs:[{songName:'Hit Song 1'},{songName:'Popular Track 2'},{songName:'Chart Breaker 3'}],coverArt:'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iIzMzMzMzMyIvPjx0ZXh0IHg9IjIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjEwIiBmaWxsPSIjZmZmIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5BTDwvdGV4dD48L3N2Zz4='},
+{name:'Second Release',songs:[{songName:'Radio Hit 4'},{songName:'Viral Song 5'},{songName:'Dance Floor 6'}]},
+{name:'Third Album',songs:[{songName:'Summer Anthem 7'},{songName:'Heartbreak Ballad 8'}]},
+{name:'Fourth Collection',songs:[{songName:'Club Banger 9'},{songName:'Feel Good 10'}]},
+{name:'Fifth EP',songs:[{songName:'Late Night 11'},{songName:'Road Trip 12'}]},
+{name:'Sixth Project',songs:[{songName:'Party Starter 13'},{songName:'Chill Vibes 14'}]},
+{name:'Latest Release',songs:[{songName:'Golden Hour 15'}]}
+],
+artistDetails:{name:'Sample Artist'}
+};
+
+let currentChartData = [];
+let currentFilterType = 'total';
+
+function loadArtistDetails(){
+let details=storage.get('artistDetails');
+let photo=_cachedArtistPhoto || (window.localStorage ? localStorage.getItem('artistPhoto') : null);
+if(!details.name&&!photo){
+details=sampleData.artistDetails;
+photo='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTAiIGZpbGw9IiMxZGI5NTQiLz48dGV4dCB4PSI1MCIgeT0iNjAiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIzNiIgZmlsbD0iI2ZmZiIgdGV4dC1hbmNob3I9Im1pZGRsZSI+QTwvdGV4dD48L3N2Zz4=';
+}
+return{name:details.name||'Artist Name',photo:photo||'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiByeD0iMTAiIGZpbGw9IiMzMzMzMzMiLz48L3N2Zz4='};
+}
+
+function goBack(){history.back()}
+
+function getSongName(s){return typeof s==='string'?s:s.songName||s.name||'Untitled'}
+function getAlbumName(a){return a.name||a.albumName||'Untitled Album'}
+function truncateText(text,maxLength=15){return text.length>maxLength?text.substring(0,maxLength)+'...':text}
+
+function calculateSales(originalStreams,type){
+const additionalStreams=Math.floor(originalStreams/2)+Math.floor(originalStreams/10);
+const totalStreams=originalStreams+additionalStreams;
+const ses=Math.floor(totalStreams/(type==='song'?150:1500));
+const pure=Math.floor(totalStreams/(type==='song'?1350:2700));
+return{totalSales:ses+pure,ses,pure,streams:totalStreams};
+}
+
+function formatNumber(num){
+if(num>=1000000)return(num/1000000).toFixed(1)+'M';
+if(num>=1000)return(num/1000).toFixed(0)+'K';
+return num.toString();
+}
+
+function showError(msg){
+const errorEl=$('error-msg');
+errorEl.textContent=msg;
+errorEl.style.display='block';
+setTimeout(()=>errorEl.style.display='none',5000);
+}
+
+function showBarChart(){$('selection-screen').style.display='block';selectType('songs')}
+
+function selectType(type){
+currentType=type;selectedItems=[];
+$('selection-title').textContent=`Select ${type[0].toUpperCase()+type.slice(1)} for Chart`;
+$('error-msg').style.display='none';
+loadItems();
+}
+
+function loadItems(){
+    const grid=$('items-grid');
+    let items=storage.get(currentType==='songs'?'releasedSongs':'releasedAlbums');
+    let songs=storage.get('releasedSongs');
+    if(!items.length){
+        items=sampleData[currentType];
+        songs=sampleData.songs;
+    }
+    if(!items.length){
+        grid.innerHTML=`<div style="text-align:center;padding:40px;color:#b3b3b3;grid-column:1/-1"><i class="fas fa-music" style="font-size:48px;margin-bottom:20px;opacity:.5"></i><h3>No ${currentType} found</h3></div>`;
+        return;
+    }
+    grid.innerHTML='';
+    items.forEach((item,i)=>{
+        const name=currentType==='songs'?getSongName(item):getAlbumName(item);
+        const displayName=truncateText(name,25);
+        let totalSales=0;
+        
+        if(currentType==='songs'){
+            const originalStreams=parseInt(item.streams)||parseInt(item.totalStreams)||parseInt(item.sales)||0;
+            const salesData=calculateSales(originalStreams,'song');
+            const physBonus=parseInt(item.physicalSales)||0;
+            totalSales=salesData.totalSales+physBonus;
+        }else{
+            let albumStreams=0;
+            if(item.songs&&item.songs.length){
+                item.songs.forEach(s=>{
+                    const songName=getSongName(s);
+                    const song=songs.find(rs=>getSongName(rs)===songName);
+                    if(song){
+                        albumStreams+=parseInt(song.streams)||parseInt(song.totalStreams)||0;
+                    }
+                });
+            }
+            const salesData=calculateSales(albumStreams,'album');
+            const physBonus=(parseInt(item.vinylSales)||0)+(parseInt(item.physicalSales)||0);
+            totalSales=salesData.totalSales+physBonus;
+        }
+
+        const img=item.coverArt||item.cover||'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHZpZXdCb3g9IjAgMCA0MCA0MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjQwIiBoZWlnaHQ9IjQwIiByeD0iNCIgZmlsbD0iIzMzMzMzMyIvPjwvc3ZnPgo=';
+        const div=document.createElement('div');
+        div.className='item-card';
+        div.onclick=()=>toggleSelection(i);
+        div.innerHTML=`<div class="item-info"><img src="${img}" class="item-img" alt="${displayName}" loading="lazy"><div class="item-details"><h3 title="${name}">${displayName}</h3><p>${formatNumber(totalSales)} sales</p></div></div>`;
+        grid.appendChild(div);
+    });
+}
+
+function toggleSelection(i){
+const cards=[...document.querySelectorAll('.item-card')];
+if(selectedItems.includes(i)){
+selectedItems=selectedItems.filter(x=>x!==i);
+cards[i].classList.remove('selected');
+}else{
+if(selectedItems.length>=15){
+showError('Maximum 15 items allowed for optimal chart display');
+return;
+}
+selectedItems.push(i);
+cards[i].classList.add('selected');
+}
+$('generate-btn').disabled=!selectedItems.length;
+}
+
+function selectAll(){
+const totalItems=document.querySelectorAll('.item-card').length;
+const maxItems=Math.min(15,totalItems);
+selectedItems=Array.from({length:maxItems},(_,i)=>i);
+document.querySelectorAll('.item-card').forEach((c,i)=>{
+if(i<maxItems)c.classList.add('selected');
+else c.classList.remove('selected');
+});
+$('generate-btn').disabled=false;
+if(totalItems>15)showError('Only first 15 items selected (maximum limit)');
+}
+
+function clearSelection(){
+selectedItems=[];
+document.querySelectorAll('.item-card').forEach(c=>c.classList.remove('selected'));
+$('generate-btn').disabled=true;
+}
+
+function generateChart(){
+    if(!selectedItems.length)return;
+    let source=storage.get(currentType==='songs'?'releasedSongs':'releasedAlbums');
+    let songs=storage.get('releasedSongs');
+    if(!source.length){
+        source=sampleData[currentType];
+        songs=sampleData.songs;
+    }
+    const artist=loadArtistDetails();
+    
+    let totalOverallSales=0;
+    let totalOverallPure=0;
+    let totalOverallSes=0;
+    
+    currentChartData=selectedItems.map(i=>source[i]).map(item=>{
+        const name=currentType==='songs'?getSongName(item):getAlbumName(item);
+        let itemTotal=0, itemPure=0, itemSes=0;
+        
+        if(currentType==='songs'){
+            const originalStreams=parseInt(item.streams)||parseInt(item.totalStreams)||parseInt(item.sales)||0;
+            const salesData=calculateSales(originalStreams,'song');
+            const physBonus=parseInt(item.physicalSales)||0;
+            itemTotal=salesData.totalSales+physBonus;
+            itemPure=salesData.pure+physBonus;
+            itemSes=salesData.ses;
+        }else{
+            let albumStreams=0;
+            if(item.songs&&item.songs.length){
+                item.songs.forEach(s=>{
+                    const songName=getSongName(s);
+                    const song=songs.find(rs=>getSongName(rs)===songName);
+                    if(song){
+                        albumStreams+=parseInt(song.streams)||parseInt(song.totalStreams)||0;
+                    }
+                });
+            }
+            const salesData=calculateSales(albumStreams,'album');
+            const physBonus=(parseInt(item.vinylSales)||0)+(parseInt(item.physicalSales)||0);
+            itemTotal=salesData.totalSales+physBonus;
+            itemPure=salesData.pure+physBonus;
+            itemSes=salesData.ses;
+        }
+        
+        totalOverallSales+=itemTotal;
+        totalOverallPure+=itemPure;
+        totalOverallSes+=itemSes;
+        
+        return{name, total:itemTotal, pure:itemPure, ses:itemSes, cover:item.coverArt||item.cover||''};
+    });
+    
+    currentChartData.sort((a,b)=>b.total-a.total);
+    
+    $('chart-bg').style.backgroundImage=`url('${artist.photo}')`;
+    $('chart-profile').src=artist.photo;
+    $('chart-artist').textContent=`Artist Name: ${artist.name}`;
+    
+    // Store totals globally for filter switching
+    window._chartTotals = {total: totalOverallSales, pure: totalOverallPure, ses: totalOverallSes};
+    
+    // Reset to total filter when opening
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.filter-btn').classList.add('active');
+    currentFilterType = 'total';
+    updateStatDisplay('total');
+    
+    renderBars();
+    
+    $('selection-screen').style.display='none';
+    $('preview-container').style.display='block';
+}
+
+function updateStatDisplay(type) {
+    const labels = {total:'Total Sales', pure:'Pure Sales', ses:'SES Sales'};
+    const t = window._chartTotals || {total:0,pure:0,ses:0};
+    const pill = document.querySelector('.active-stat');
+    if(pill) { pill.className = 'active-stat' + (type !== 'total' ? ' '+type : ''); }
+    $('stat-label').textContent = labels[type];
+    $('stat-value').textContent = formatNumber(t[type]);
+}
+
+function applyFilter(type, btnElement) {
+    currentFilterType = type;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btnElement.classList.add('active');
+    updateStatDisplay(type);
+    // Re-sort data based on selected filter
+    currentChartData.sort((a,b)=>b[type]-a[type]);
+    renderBars();
+}
+
+function renderBars() {
+    const container=$('chart-area');
+    container.innerHTML='';
+    
+    if(!currentChartData.length) return;
+    
+    const maxVal = Math.max(...currentChartData.map(d => d[currentFilterType])) || 1;
+    
+    currentChartData.forEach((d)=>{
+        const val = d[currentFilterType];
+        const barHeight=Math.max(80, (val/maxVal)*350);
+        const bar=document.createElement('div');
+        bar.className='bar';
+        const backgroundImage=d.cover?`background-image: url('${d.cover}');`:'background: linear-gradient(to bottom, #4a5568, #2d3748);';
+        bar.innerHTML=`<div class="bar-visual" style="height: ${barHeight}px;${backgroundImage}"><div class="bar-value">${formatNumber(val)}</div></div><div class="bar-label">${truncateText(d.name,10)}</div>`;
+        container.appendChild(bar);
+    });
+}
+
+function closePreview(){
+    $('preview-container').style.display='none';
+    const actionContainer = $('preview-actions');
+    actionContainer.innerHTML = `<button class="download-btn" onclick="prepareDownload()"><i class="fas fa-download"></i> Download Chart</button>`;
+}
+
+function prepareDownload(){
+    const btn = document.querySelector('.download-btn');
+    if(btn && btn.classList.contains('loading')) return;
+
+    if(btn){
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Generating...';
+        btn.classList.add('loading');
+    }
+
+    const element = document.getElementById('chart-preview');
+    const clone = element.cloneNode(true);
+
+    clone.style.cssText = 'position:fixed;left:-9999px;top:0;z-index:-9999;width:900px;height:auto;overflow:visible;max-height:none;max-width:none';
+
+    const scrollArea = clone.querySelector('.chart-area');
+    if(scrollArea){
+        scrollArea.style.overflow = 'visible';
+        scrollArea.style.width = '100%';
+        scrollArea.style.flexWrap = 'nowrap';
+        scrollArea.style.height = '480px';
+    }
+
+    // Force bars to fit within fixed width
+    clone.querySelectorAll('.bar').forEach(b => {
+        b.style.minWidth = '0';
+        b.style.flex = '1';
+    });
+
+    document.body.appendChild(clone);
+
+    if(typeof html2canvas === 'undefined'){
+        alert('Chart renderer not loaded yet. Try again.');
+        document.body.removeChild(clone);
+        if(btn){ btn.innerHTML = '<i class="fas fa-download"></i> Download Chart'; btn.classList.remove('loading'); }
+        return;
+    }
+
+    setTimeout(() => {
+        html2canvas(clone, {
+            useCORS: true,
+            scale: 2,
+            backgroundColor: '#0a0a0a',
+            logging: false,
+            width: 900,
+            height: clone.scrollHeight,
+            windowWidth: 900,
+            windowHeight: clone.scrollHeight,
+            scrollX: 0,
+            scrollY: 0
+        }).then(canvas => {
+            document.body.removeChild(clone);
+            if(btn){ btn.innerHTML = '<i class="fas fa-download"></i> Download Chart'; btn.classList.remove('loading'); }
+
+            canvas.toBlob(blob => {
+                const file = new File([blob], 'chart.png', {type:'image/png'});
+                // Try native share sheet (works on Android/iOS in WebView)
+                if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+                    navigator.share({files:[file], title:'Discography Chart'}).catch(()=>{});
+                } else {
+                    // Fallback: show image in overlay, user long-presses to save
+                    showImageOverlay(canvas.toDataURL('image/png'));
+                }
+            }, 'image/png');
+
+        }).catch(err => {
+            console.error('Render failed:', err);
+            if(document.body.contains(clone)) document.body.removeChild(clone);
+            if(btn){ btn.innerHTML = '<i class="fas fa-download"></i> Download Chart'; btn.classList.remove('loading'); }
+            alert('Failed to generate image. Try again.');
+        });
+    }, 500);
+}
+
+function showImageOverlay(dataUrl){
+    const existing = document.getElementById('img-save-overlay');
+    if(existing) existing.remove();
+    const overlay = document.createElement('div');
+    overlay.id = 'img-save-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#000;z-index:9999;display:flex;flex-direction:column;align-items:center;overflow-y:auto;padding:20px;gap:14px';
+    overlay.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%;max-width:600px">
+        <span style="font-size:13px;font-weight:800;color:#e0e0e0;font-family:Inter,sans-serif">Hold image → Save to Photos</span>
+        <button onclick="document.getElementById('img-save-overlay').remove()" style="width:36px;height:36px;border:none;border-radius:50%;background:rgba(255,255,255,.1);color:#fff;font-size:16px;cursor:pointer">✕</button>
+      </div>
+      <img src="${dataUrl}" style="width:100%;max-width:600px;border-radius:12px;display:block" />`;
+    document.body.appendChild(overlay);
+}
+</script>
+</body>
+</html>

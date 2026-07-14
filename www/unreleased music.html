@@ -1,0 +1,2566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Unreleased Music</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+:root{--bg:#050505;--bg2:#121212;--card:rgba(30,30,30,0.6);--text:#fff;--text2:#a0a0a0;--accent:#00AFFF;--accent-glow:rgba(0,175,255,0.3);--green:#00E676;--purple:#D500F9;--blue:#2979FF;--gold:#FFD700;--glass:rgba(255,255,255,0.03);--border:rgba(255,255,255,0.08)}*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter',sans-serif;font-weight:800;background:#000000;color:var(--text);line-height:1.6;min-height:100vh;padding-bottom:40px}
+....container{max-width:1100px;margin:0 auto;padding:20px}.header{display:flex;align-items:center;gap:15px;margin-bottom:25px;background:rgba(10,10,10,0.7);backdrop-filter:blur(20px);padding:20px 25px;border-radius:20px;border:1px solid var(--border);position:sticky;top:20px;z-index:100;box-shadow:0 10px 40px rgba(0,0,0,0.4)}.back-btn,.settings-btn{background:var(--glass);border:1px solid var(--border);color:var(--text2);font-size:18px;cursor:pointer;transition:.3s;border-radius:14px;width:48px;height:48px;display:flex;align-items:center;justify-content:center}.back-btn:hover,.settings-btn:hover{background:var(--accent);color:#fff;box-shadow:0 0 20px var(--accent-glow)}.page-title{font-size:28px;font-weight:800;flex:1;background:linear-gradient(135deg,#fff 30%,var(--text2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}.nav-tabs{display:flex;gap:15px;margin-bottom:30px;padding:5px;background:rgba(255,255,255,0.02);border-radius:16px;border:1px solid var(--border)}.tab-btn{flex:1;background:0 0;border:none;color:var(--text2);font-size:15px;font-weight:600;padding:14px;border-radius:12px;cursor:pointer;transition:.3s}.tab-btn:hover{color:var(--text);background:rgba(255,255,255,0.03)}.tab-btn.active{color:#fff;background:var(--accent);box-shadow:0 4px 20px var(--accent-glow)}.tab-content{display:none;animation:fadeIn .4s ease}.tab-content.active{display:block}@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}.list{display:grid;gap:20px}.card{background:linear-gradient(160deg,rgba(20,20,20,0.9),rgba(5,5,5,1));backdrop-filter:blur(10px);border-radius:16px;padding:16px;position:relative;transition:.3s;border:1px solid var(--border)}.card:hover{transform:translateY(-5px);box-shadow:0 15px 35px rgba(0,0,0,0.5);border-color:rgba(255,255,255,0.15)}.song-card{display:grid;grid-template-columns:64px 1fr;grid-template-areas:"toggle toggle" "cover details" "actions actions";gap:14px 16px;align-items:start}
+.song-card .type-btns{position:static;grid-area:toggle;margin-bottom:-4px}
+.song-card .cover{grid-area:cover;align-self:start}
+.song-card .details{grid-area:details}
+.song-card .song-actions{grid-area:actions}
+.song-actions{display:flex;flex-direction:column;gap:8px;align-items:stretch}
+.song-actions-main{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.song-actions-main .btn{width:100%;padding:12px 10px;font-size:13px}
+.song-actions .delete-btn{width:100%;height:40px}.album-card{grid-template-columns:1fr}.cover{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,#333,#111);background-size:cover;background-position:center;cursor:pointer;transition:.3s;position:relative;border:1px solid var(--border);flex-shrink:0;overflow:hidden;}.cover:hover{transform:scale(1.03);border-color:var(--accent)}.cover-status{position:absolute;bottom:-5px;right:-5px;background:var(--green);color:#000;border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:12px;border:2px solid #1a1a1a}.details{min-width:0;overflow:hidden;flex:1;display:flex;flex-direction:column;justify-content:center}.details-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap}.details-text{min-width:0;flex-shrink:0}.details-row .hype-wrap{padding:8px 10px}.details-row .hype-wrap-head{margin-bottom:4px;font-size:10.5px}.details-row .hype-track{height:10px}.details-row .name{font-size:16px}.name{font-size:19px;font-weight:700;margin-bottom:6px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px}.type{color:var(--text2);font-size:13px;font-weight:500;text-transform:uppercase;display:flex;align-items:center;gap:8px}.btn{border:none;padding:12px 24px;border-radius:12px;font-weight:600;cursor:pointer;transition:.3s;font-size:14px;display:inline-flex;align-items:center;justify-content:center;gap:8px}.delete-btn{background:rgba(255,68,68,0.1);color:#ff5252;width:44px;height:44px;padding:0}.delete-btn:hover{background:#ff5252;color:#fff}.publish-btn{background:linear-gradient(135deg,var(--accent),#0077B6);color:#fff}.publish-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px var(--accent-glow)}.promote-btn{background:linear-gradient(135deg,var(--gold),#FFA000);color:#000}.type-btns{position:absolute;top:16px;right:16px;display:flex;gap:6px;z-index:1}.type-btn{background:rgba(0,0,0,0.4);border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:8px;font-size:11px;cursor:pointer;font-weight:600;text-transform:uppercase}.type-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}.tracks{margin-top:20px;padding-top:20px;border-top:1px solid var(--border);color:var(--text2);font-size:14px;max-height:250px;overflow-y:auto}.track-item{margin-bottom:8px;padding:12px 16px;background:rgba(0,0,0,0.2);border-radius:10px;display:flex;align-items:center;gap:12px;cursor:grab;transition:.2s}.track-item:hover{background:rgba(255,255,255,0.05)}.empty{text-align:center;padding:80px 20px;color:var(--text2);background:rgba(255,255,255,0.02);border:2px dashed var(--border);border-radius:20px}.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:4000;backdrop-filter:blur(10px);align-items:center;justify-content:center}
+.modal-overlay.active{display:flex}.modal-box{background:#1a1a1a;width:90%;max-width:420px;border-radius:24px;padding:30px;border:1px solid var(--border);box-shadow:0 25px 60px rgba(0,0,0,0.6);position:relative}.date-picker{width:100%;padding:15px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:12px;color:#fff;margin-bottom:25px;font-size:16px}
+.upload-dropzone{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:28px 16px;border:2px dashed var(--border);border-radius:16px;background:rgba(255,255,255,0.02);cursor:pointer;transition:.25s;margin-bottom:15px}
+.upload-dropzone:hover{border-color:var(--accent);background:rgba(0,175,255,0.06)}
+.upload-dropzone i{font-size:26px;color:var(--accent);margin-bottom:4px}
+.upload-dropzone-title{font-weight:700;font-size:14px;color:#fff}
+.upload-dropzone-sub{font-size:12px;color:var(--text2)}
+.upload-dropzone input[type="file"]{position:absolute;inset:0;opacity:0;cursor:pointer}
+.upload-dropzone.has-files{border-style:solid;border-color:var(--green);background:rgba(0,230,118,0.05)}
+.photoshoot-preview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:20px}
+.photoshoot-preview-grid img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:10px;border:1px solid var(--border)}.edition-creator-page{display:none;position:fixed;inset:0;background:var(--bg);z-index:3000;overflow-y:auto;padding:20px}.edition-creator-page.active{display:block}.version-card{background:linear-gradient(145deg,var(--card),var(--bg2));border:2px solid var(--border);border-radius:20px;padding:30px;cursor:pointer;transition:.3s;text-align:center}.version-card:hover{border-color:var(--accent);transform:translateY(-5px)}@media(max-width:768px){.song-card{padding:16px}.song-card .delete-btn{width:100%}.album-header{grid-template-columns:1fr;text-align:center;justify-items:center}.album-actions{flex-direction:column}.album-actions .btn{width:100%}}
+.announce-btn{background:linear-gradient(135deg,var(--purple),#8800CC);color:#fff}
+.announce-btn:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(213,0,249,0.35)}
+.hype-wrap{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:10px 12px;flex:1;min-width:0}
+.hype-wrap-head{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;margin-bottom:8px;text-transform:uppercase;letter-spacing:.3px;color:var(--text2)}
+.hype-wrap-head .hype-val{color:var(--gold);font-size:13px}
+.hype-track{width:100%;height:14px;border-radius:99px;background:rgba(0,0,0,0.4);overflow:hidden;position:relative;border:1px solid var(--border)}
+.hype-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#ff2a5f,var(--purple),var(--accent));background-size:200% 100%;animation:hypeShift 3s linear infinite;transition:width .6s cubic-bezier(.22,1,.36,1);position:relative}
+@keyframes hypeShift{0%{background-position:0% 0}100%{background-position:200% 0}}
+.hype-fill::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.35),transparent);width:40%;animation:hypeShine 1.8s ease-in-out infinite}
+@keyframes hypeShine{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+.hype-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.hype-mini-btn{background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);font-size:11px;font-weight:700;padding:7px 12px;border-radius:99px;cursor:pointer;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.hype-mini-btn:hover{background:var(--accent);border-color:var(--accent)}
+.campaign-page{display:none;position:fixed;inset:0;background:linear-gradient(160deg,#050914 0%,#0a1120 35%,#000000 100%);z-index:3500;overflow-y:auto;padding:20px}
+.campaign-page.active{display:block}
+.campaign-hero{background:linear-gradient(135deg,rgba(0,175,255,0.15),rgba(213,0,249,0.08));border:1px solid var(--border);border-radius:22px;padding:22px;margin-bottom:20px;position:relative;overflow:hidden}
+.campaign-hero::before{content:'';position:absolute;top:-40%;right:-10%;width:220px;height:220px;background:radial-gradient(circle,var(--accent-glow),transparent 70%);pointer-events:none}
+.hype-meter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.hype-meter-row .hm-label{display:flex;align-items:center;gap:8px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2)}
+.hype-meter-row .hm-pct{font-weight:800;color:var(--gold);font-size:18px}
+.hype-track{position:relative;height:12px;border-radius:99px;background:rgba(255,255,255,0.06);overflow:hidden}
+.hype-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--accent),var(--purple));transition:width .5s cubic-bezier(.4,0,.2,1);box-shadow:0 0 16px var(--accent-glow)}
+.promo-card{background:linear-gradient(160deg,rgba(40,40,40,0.6),rgba(20,20,20,0.8));border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:.25s}
+.promo-card:hover{transform:translateY(-4px);border-color:rgba(255,215,0,0.4);box-shadow:0 12px 30px rgba(0,0,0,0.4)}
+.promo-card .pc-icon-wrap{width:42px;height:42px;border-radius:12px;background:rgba(255,215,0,0.1);display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--gold)}
+.reveal-chip{display:flex;align-items:center;justify-content:space-between;gap:10px;background:rgba(0,0,0,0.25);border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:10px}
+.reveal-chip.revealed{border-color:var(--green);background:rgba(0,230,118,0.06)}
+.reveal-chip .rc-label{font-weight:700;font-size:14px;display:flex;align-items:center;gap:10px}
+.reveal-chip .rc-status{font-size:11px;color:var(--text2);font-weight:600;text-transform:uppercase}
+.reveal-chip.revealed .rc-status{color:var(--green)}
+.promo-card{background:linear-gradient(160deg,rgba(40,40,40,0.6),rgba(20,20,20,0.8));border:1px solid var(--border);border-radius:18px;padding:20px;display:flex;flex-direction:column;gap:10px;transition:.25s}
+.promo-card:hover{transform:translateY(-4px);border-color:rgba(255,215,0,0.35);box-shadow:0 12px 30px rgba(0,0,0,0.4)}
+.promo-card .pc-title{font-weight:700;font-size:15px;display:flex;align-items:center;gap:10px}
+.promo-card .pc-desc{font-size:12.5px;color:var(--text2);line-height:1.5}
+.promo-card .pc-foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px}
+.promo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.campaign-log{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.campaign-log-item{display:flex;justify-content:space-between;font-size:12.5px;color:var(--text2);background:rgba(255,255,255,0.03);padding:10px 14px;border-radius:10px;border:1px solid var(--border)}
+.section-label{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);margin:26px 0 12px}
+/* Notifications */
+.notification-container{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:5000;display:flex;flex-direction:column;gap:10px;pointer-events:none}
+.toast{background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:50px;font-weight:600;box-shadow:0 10px 30px rgba(0,0,0,0.5);display:flex;align-items:center;gap:10px;animation:slideUp 0.3s cubic-bezier(0.175,0.885,0.32,1.275);border:1px solid var(--border);font-size:14px}
+.toast.success{border-color:var(--green);color:var(--green)}.toast.error{border-color:#ff5252;color:#ff5252}
+.toast.info{border-color:var(--blue);color:var(--blue);background:rgba(41, 121, 255, 0.1)}
+.toast i{font-size:16px}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* NEW STYLES FOR SEARCH */
+.cover-overlay {
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.7);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    opacity:0;
+    transition:0.2s;
+}
+.cover:hover .cover-overlay { opacity: 1; }
+.search-result-item {
+    position: relative;
+    aspect-ratio: 1/1;
+    border-radius: 10px;
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+}
+.search-result-item:hover {
+    transform: scale(1.05);
+    border-color: var(--accent);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+.loader {
+    border: 3px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    border-top: 3px solid var(--accent);
+    width: 24px; height: 24px;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* ===== UPLOAD LOADING OVERLAY ===== */
+#upload-loading-overlay {
+    position:fixed; inset:0; background:rgba(5,5,5,0.97);
+    z-index:9999; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:30px;
+}
+.upload-svg-ring {
+    position:relative; width:140px; height:140px;
+}
+.upload-svg-ring svg {
+    position:absolute; inset:0; width:100%; height:100%;
+}
+.ring-outer { animation: spin 3s linear infinite; }
+.ring-mid   { animation: spin 2s linear infinite reverse; }
+.ring-inner { animation: spin 1.4s linear infinite; }
+.ring-dot   { animation: ringPulse 1.5s ease-in-out infinite; }
+@keyframes ringPulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+.upload-stage-label {
+    font-size:13px; font-weight:700; letter-spacing:2px;
+    text-transform:uppercase; color:var(--accent); margin-bottom:8px;
+}
+.upload-bars-wrap {
+    display:flex; flex-direction:column; gap:14px;
+    width:280px;
+}
+.upload-bar-row { display:flex; flex-direction:column; gap:6px; }
+.upload-bar-title {
+    display:flex; justify-content:space-between;
+    font-size:12px; font-weight:600; color:var(--text2);
+}
+.upload-bar-title span:last-child { color:var(--accent); }
+.upload-bar-track {
+    height:6px; border-radius:99px;
+    background:rgba(255,255,255,0.07); overflow:hidden;
+}
+.upload-bar-fill {
+    height:100%; border-radius:99px; width:0%;
+    transition:width 0.4s ease;
+}
+.upload-bar-fill.bar1 { background:linear-gradient(90deg,#00AFFF,#0077B6); }
+.upload-bar-fill.bar2 { background:linear-gradient(90deg,#00E676,#00BFA5); }
+.upload-status-text {
+    font-size:13px; color:var(--text2); text-align:center;
+    min-height:20px; padding:0 20px;
+}
+
+/* ===== SETTINGS EXPANDED ===== */
+.server-bar-wrap { margin-top:10px; }
+.server-bar-row { display:flex; align-items:center; gap:10px; margin-bottom:8px; }
+.server-bar-label { font-size:12px; color:var(--text2); width:80px; flex-shrink:0; }
+.server-bar-track { flex:1; height:8px; border-radius:99px; background:rgba(255,255,255,0.07); overflow:hidden; }
+.server-bar-inner { height:100%; border-radius:99px; background:linear-gradient(90deg,var(--accent),var(--purple)); }
+.server-bar-val { font-size:11px; color:var(--text2); width:50px; text-align:right; flex-shrink:0; }
+.storage-total-text { font-size:12px; color:var(--text2); text-align:center; margin-top:6px; }
+
+  /* Ensure the overlay covers the whole image and buttons are centered */
+.cover-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    opacity: 0; /* Hidden by default */
+    transition: 0.2s ease;
+    border-radius: 16px;
+    z-index: 5;
+}
+
+/* Show buttons when you hover over the cover */
+.cover:hover .cover-overlay {
+    opacity: 1;
+}
+
+/* Prevent the overlay from blocking the click if it's not hovered */
+.cover-overlay button {
+    pointer-events: auto;
+}
+
+  
+  </style>
+</head>
+<body>
+    <div class="notification-container" id="notif-container"></div>
+
+    <!-- ===== UPLOAD LOADING OVERLAY ===== -->
+    <div id="upload-loading-overlay" style="display:none">
+        <div class="upload-svg-ring">
+            <!-- Outer ring -->
+            <svg class="ring-outer" viewBox="0 0 140 140" fill="none">
+                <circle cx="70" cy="70" r="60" stroke="rgba(0,175,255,0.15)" stroke-width="2"/>
+                <circle cx="70" cy="10" r="5" fill="var(--accent)" class="ring-dot"/>
+                <circle cx="130" cy="70" r="3" fill="var(--accent)" opacity="0.6"/>
+                <circle cx="70" cy="130" r="3" fill="var(--accent)" opacity="0.4"/>
+            </svg>
+            <!-- Mid ring -->
+            <svg class="ring-mid" viewBox="0 0 140 140" fill="none">
+                <circle cx="70" cy="70" r="44" stroke="rgba(213,0,249,0.15)" stroke-width="2"/>
+                <circle cx="70" cy="26" r="4" fill="var(--purple)" class="ring-dot"/>
+                <circle cx="114" cy="70" r="3" fill="var(--purple)" opacity="0.5"/>
+            </svg>
+            <!-- Inner ring -->
+            <svg class="ring-inner" viewBox="0 0 140 140" fill="none">
+                <circle cx="70" cy="70" r="28" stroke="rgba(0,230,118,0.2)" stroke-width="2"/>
+                <circle cx="70" cy="42" r="5" fill="var(--green)" class="ring-dot"/>
+            </svg>
+            <!-- Center dot -->
+            <svg style="position:absolute;inset:0;width:100%;height:100%" viewBox="0 0 140 140" fill="none">
+                <circle cx="70" cy="70" r="6" fill="var(--accent)"/>
+            </svg>
+        </div>
+        <div class="upload-stage-label" id="overlay-stage-label">Preparing...</div>
+        <div class="upload-bars-wrap">
+            <div class="upload-bar-row">
+                <div class="upload-bar-title">
+                    <span>Compressing Image</span>
+                    <span id="bar1-pct">0%</span>
+                </div>
+                <div class="upload-bar-track">
+                    <div class="upload-bar-fill bar1" id="bar1-fill"></div>
+                </div>
+            </div>
+            <div class="upload-bar-row">
+                <div class="upload-bar-title">
+                    <span>Uploading to Server</span>
+                    <span id="bar2-pct">—</span>
+                </div>
+                <div class="upload-bar-track">
+                    <div class="upload-bar-fill bar2" id="bar2-fill"></div>
+                </div>
+            </div>
+        </div>
+        <div class="upload-status-text" id="overlay-status-text">Starting...</div>
+    </div>
+    <div class="container" id="main-container">
+        <div class="header">
+            <button class="back-btn" onclick="goBack()"><i class="fas fa-chevron-left"></i></button>
+            <h1 class="page-title">Unreleased Music</h1>
+            <button class="settings-btn" onclick="toggleSettings()"><i class="fas fa-cog"></i></button>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="tab-btn active" onclick="showTab(event, 'songs')"><i class="fas fa-music"></i> Songs</button>
+            <button class="tab-btn" onclick="showTab(event, 'albums')"><i class="fas fa-compact-disc"></i> Albums</button>
+            <button class="tab-btn" onclick="showTab(event, 'scheduled')"><i class="fas fa-clock"></i> Scheduled</button>
+<button class="tab-btn" onclick="showTab(event, 'released-albums'); renderReleasedAlbums()"><i class="fas fa-star"></i> Released</button>
+        </div>
+
+        <div id="songs-tab" class="tab-content active">
+            <div id="songs-list" class="list"></div>
+        </div>
+
+        <div id="albums-tab" class="tab-content">
+            <div id="albums-list" class="list"></div>
+        </div>
+
+        <div id="released-albums-tab" class="tab-content">
+            <div id="released-albums-list" class="list"></div>
+        </div>
+
+        <div id="scheduled-tab" class="tab-content">
+            <div id="scheduled-list" class="list"></div>
+        </div>
+    </div>
+
+    <div class="settings-overlay" onclick="toggleSettings()" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:999;"></div>
+    <div class="settings-panel" id="settings" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1e1e;border-radius:16px;padding:24px;z-index:1000;min-width:340px;max-width:95%;max-height:90vh;overflow-y:auto;border:1px solid #333;">
+        <h3 style="margin-bottom:15px">⚙️ Settings</h3>
+        <div style="display:grid;gap:10px">
+            <button class="btn" style="background:var(--green);width:100%" onclick="clearCache()">Clear Cache</button>
+            <button class="btn" style="background:var(--blue);width:100%" onclick="showHistory()">Released History</button>
+
+            <!-- Server Guide -->
+            <div style="border:1px solid var(--border);border-radius:12px;padding:16px;background:rgba(0,0,0,0.3)">
+                <div style="font-size:13px;font-weight:700;margin-bottom:12px;color:var(--accent);display:flex;align-items:center;gap:8px">
+                    <i class="fas fa-server"></i> Server Guide &amp; Storage
+                </div>
+                <div style="font-size:11px;color:var(--text2);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Image Servers (Fallback Order)</div>
+                <div class="server-bar-wrap" id="server-status-bars">
+                    <div class="server-bar-row">
+                        <div class="server-bar-label">ImgBB</div>
+                        <div class="server-bar-track"><div class="server-bar-inner" style="width:100%;background:linear-gradient(90deg,var(--green),#00BFA5)"></div></div>
+                        <div class="server-bar-val" style="color:var(--green)">Primary</div>
+                    </div>
+                    <div class="server-bar-row">
+                        <div class="server-bar-label">Imglink</div>
+                        <div class="server-bar-track"><div class="server-bar-inner" style="width:75%;background:linear-gradient(90deg,var(--accent),#0077B6)"></div></div>
+                        <div class="server-bar-val" style="color:var(--accent)">Backup 1</div>
+                    </div>
+                    <div class="server-bar-row">
+                        <div class="server-bar-label">Cloudflare</div>
+                        <div class="server-bar-track"><div class="server-bar-inner" style="width:50%;background:linear-gradient(90deg,#F6821F,#F6821F)"></div></div>
+                        <div class="server-bar-val" style="color:#F6821F">Backup 2</div>
+                    </div>
+                    <div class="server-bar-row">
+                        <div class="server-bar-label">Cloudinary</div>
+                        <div class="server-bar-track"><div class="server-bar-inner" style="width:25%;background:linear-gradient(90deg,var(--purple),#AA00FF)"></div></div>
+                        <div class="server-bar-val" style="color:var(--purple)">Backup 3</div>
+                    </div>
+                </div>
+                <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+                    <div style="font-size:11px;color:var(--text2);margin-bottom:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px">📦 Local Storage Used</div>
+                    <div id="storage-bars-container"></div>
+                    <div class="storage-total-text" id="storage-total-text">Calculating...</div>
+                </div>
+            </div>
+
+            <!-- Re-send art covers button -->
+            <button class="btn" style="background:linear-gradient(135deg,var(--gold),#FFA000);color:#000;width:100%;font-weight:700" onclick="resendArtCoversToServers()">
+                <i class="fas fa-cloud-upload-alt"></i> Re-send Art Covers to Servers
+            </button>
+            <div style="font-size:11px;color:var(--text2);text-align:center;margin-top:-5px">Uploads any locally-stored art covers to image servers to free up space</div>
+
+            <button class="btn delete-btn" style="width:100%" onclick="toggleSettings()">Close</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="announce-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeAnnounceModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer"><i class="fas fa-times"></i></button>
+            <div class="modal-title" style="font-size:22px;font-weight:700;margin-bottom:10px"><i class="fas fa-bullhorn" style="color:var(--purple)"></i> Announce Release</div>
+            <p style="color:var(--text2); margin-bottom: 20px;">Kick off the rollout for <span id="announce-item-name" style="color:var(--accent);font-weight:700">Untitled</span></p>
+
+            <div id="announce-single-row" style="display:none">
+                <button class="btn announce-btn" style="width:100%" onclick="confirmAnnounce('single')"><i class="fas fa-music"></i> Announce Single</button>
+            </div>
+            <div id="announce-album-type-row" style="display:grid; grid-template-columns:1fr 1fr; gap:12px">
+                <button class="btn announce-btn" style="width:100%" onclick="confirmAnnounce('ep')"><i class="fas fa-compact-disc"></i> Announce EP</button>
+                <button class="btn announce-btn" style="width:100%" onclick="confirmAnnounce('album')"><i class="fas fa-record-vinyl"></i> Announce Album</button>
+            </div>
+            <p style="color:var(--text2); font-size:12px; margin-top:16px; line-height:1.5">This posts an announcement to XIFY, starts the Hype Meter, and unlocks promo actions. You can hide details like tracklist or features until you choose to reveal them.</p>
+        </div>
+    </div>
+<div class="modal-overlay" id="photoshoot-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closePhotoshootModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer"><i class="fas fa-times"></i></button>
+            <h2 style="margin-bottom:10px">Photoshoot</h2>
+            <p style="color:var(--text2);font-size:14px;margin-bottom:20px">Upload at least 2 photos to post to Xify.</p>
+            <label class="upload-dropzone" id="photoshoot-dropzone" for="photoshoot-file-input">
+                <input type="file" id="photoshoot-file-input" accept="image/*" multiple>
+                <i class="fas fa-camera-retro"></i>
+                <span class="upload-dropzone-title">Choose Photos</span>
+                <span class="upload-dropzone-sub">Click to browse · at least 2 images</span>
+            </label>
+            <div id="photoshoot-preview" class="photoshoot-preview-grid"></div>
+            <button class="btn promote-btn" style="width:100%" onclick="confirmPhotoshoot()">Post Photoshoot</button>
+        </div>
+    </div>
+    <div class="modal-overlay" id="publish-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closePublishModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer"><i class="fas fa-times"></i></button>
+            <div class="modal-title" style="font-size:22px;font-weight:700;margin-bottom:10px">Release Strategy</div>
+            <p style="color:var(--text2); margin-bottom: 20px;">Planning the drop for <span id="modal-item-name" style="color:var(--accent);font-weight:700">Untitled</span></p>
+            <label style="font-size: 13px; color: var(--text2); display: block; margin-bottom: 8px; font-weight:600">Target Release Date</label>
+            <input type="date" id="release-date-picker" class="date-picker">
+            <div class="modal-actions" style="display:grid; gap:12px">
+                <button class="btn" style="background:transparent; border:1px solid var(--accent); color:var(--accent); width:100%" onclick="confirmPublish(true)"><i class="fas fa-calendar-plus"></i> Schedule Drop</button>
+                <button class="btn publish-btn" style="width:100%" onclick="confirmPublish(false)"><i class="fas fa-bolt"></i> Drop Immediately</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="reschedule-modal">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeRescheduleModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer"><i class="fas fa-times"></i></button>
+            <div class="modal-title" style="font-size:22px;font-weight:700;margin-bottom:10px">Manage Release</div>
+            <p style="color:var(--text2); margin-bottom: 20px;">Editing the drop for <span id="reschedule-item-name" style="color:var(--accent);font-weight:700">Untitled</span></p>
+            <label style="font-size: 13px; color: var(--text2); display: block; margin-bottom: 8px; font-weight:600">New Release Date</label>
+            <input type="date" id="reschedule-date-picker" class="date-picker">
+            <div class="modal-actions" style="display:grid; gap:12px">
+                <button class="btn publish-btn" style="width:100%" onclick="confirmReschedule()"><i class="fas fa-calendar-check"></i> Confirm New Date</button>
+                <button class="btn" style="background:rgba(255,68,68,0.1);color:#ff5252;width:100%;border:1px solid rgba(255,68,68,0.3)" onclick="confirmCancelRelease()"><i class="fas fa-ban"></i> Cancel Release</button>
+            </div>
+            <div id="cancel-penalty-preview" style="margin-top:14px;font-size:12px;color:var(--text2);text-align:center"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="search-cover-modal">
+        <div class="modal-box" style="width:500px; max-width:95%">
+            <button class="modal-close" onclick="closeSearchModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer"><i class="fas fa-times"></i></button>
+            <h3 style="margin-bottom:15px">Search Album Art</h3>
+            
+            <div style="display:flex;gap:10px;margin-bottom:20px">
+                <input type="text" id="cover-search-input" placeholder="Artist or Album name..." style="flex:1;padding:12px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,0.3);color:white" onkeypress="if(event.key==='Enter') runCoverSearch()">
+                <button class="btn" onclick="runCoverSearch()" style="background:var(--accent);width:50px"><i class="fas fa-search"></i></button>
+            </div>
+    
+            <div id="search-results" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-height:300px;overflow-y:auto;min-height:100px">
+                <div style="grid-column:1/-1;text-align:center;color:var(--text2);padding:20px">Search for an artist above...</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="edition-creator-page" id="edition-creator">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="closeEditionCreator()"><i class="fas fa-times"></i></button>
+                <h1 class="page-title">Create New Version</h1>
+            </div>
+            <div id="edition-steps-container">
+                 <div class="step-indicator" style="display:flex;justify-content:center;gap:10px;margin-bottom:30px">
+                    <div class="step-dot active" data-step="1" style="width:12px;height:12px;border-radius:50%;background:var(--accent)"></div>
+                    <div class="step-dot" data-step="2" style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+                    <div class="step-dot" data-step="3" style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+                    <div class="step-dot" data-step="4" style="width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.2)"></div>
+                </div>
+                
+                <div class="creator-step active" id="step-1">
+                    <div class="card" style="max-width:800px;margin:0 auto;padding:40px">
+                        <h2 style="text-align:center;margin-bottom:30px">Choose Version Type</h2>
+                        <div class="version-choice" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px">
+                            <div class="version-card" onclick="selectVersionType('edition')">
+                                <i class="fas fa-layer-group" style="font-size:40px;margin-bottom:15px;color:var(--accent)"></i>
+                                <h3>Standard Edition</h3>
+                                <p style="color:var(--text2);font-size:13px">Add tracks with a suffix (e.g. "Tour Edition")</p>
+                            </div>
+                            <div class="version-card" onclick="selectVersionType('deluxe')">
+                                <i class="fas fa-star" style="font-size:40px;margin-bottom:15px;color:var(--gold)"></i>
+                                <h3>Deluxe</h3>
+                                <p style="color:var(--text2);font-size:13px">Bonus tracks + Custom Cover Art required.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="creator-step" id="step-2" style="display:none">
+                    <div class="card" style="max-width:600px;margin:0 auto;padding:40px">
+                        <h2 style="margin-bottom:20px">Name Your Edition</h2>
+                        <input type="text" id="edition-suffix" placeholder="e.g. Platinum Edition" style="width:100%;padding:12px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,0.3);color:white;margin-bottom:20px">
+                        <div class="action-buttons" style="display:flex;justify-content:space-between">
+                            <button class="btn delete-btn" onclick="prevStep()">Back</button>
+                            <button class="btn publish-btn" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="creator-step" id="step-3" style="display:none">
+                    <div class="card" style="max-width:700px;margin:0 auto;padding:40px">
+                        <h2 style="margin-bottom:20px">Select Bonus Tracks</h2>
+                        <div id="song-selection-container" style="display:grid;gap:10px;max-height:300px;overflow-y:auto;margin-bottom:20px"></div>
+                        <div class="action-buttons" style="display:flex;justify-content:space-between">
+                            <button class="btn delete-btn" onclick="prevStep()">Back</button>
+                            <button class="btn publish-btn" onclick="nextStep()">Next</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="creator-step" id="step-4" style="display:none">
+                    <div class="card" style="max-width:600px;margin:0 auto;padding:40px">
+                        <h2 style="margin-bottom:20px">Cover Art</h2>
+                        <p id="cover-instruction" style="color:var(--text2);margin-bottom:20px"></p>
+                        <div class="cover-upload-zone" id="cover-upload-zone" onclick="document.getElementById('edition-cover-input').click()" style="border:2px dashed var(--border);border-radius:15px;padding:40px;text-align:center;cursor:pointer;margin-bottom:20px;background:rgba(255,255,255,0.02)">
+                            <i class="fas fa-cloud-upload-alt" style="font-size:30px;color:var(--text2);margin-bottom:10px"></i>
+                            <p>Tap to Upload</p>
+                            <input type="file" id="edition-cover-input" style="display:none" accept="image/*" onchange="handleEditionCoverUpload(event)">
+                        </div>
+                        <div class="action-buttons" style="display:flex;justify-content:space-between">
+                            <button class="btn delete-btn" onclick="prevStep()">Back</button>
+                            <button class="btn publish-btn" onclick="createEditionVersion()">Finish</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== RELEASE AS SINGLE MODAL ===== -->
+    <div class="modal-overlay" id="single-release-modal">
+        <div class="modal-box">
+            <button onclick="closeSingleReleaseModal()" style="position:absolute;top:15px;right:15px;background:none;border:none;color:var(--text2);font-size:20px;cursor:pointer"><i class="fas fa-times"></i></button>
+            <h3 style="margin-bottom:5px">🎤 Release as Single</h3>
+            <p id="single-release-song-name" style="color:var(--accent);font-size:13px;margin-bottom:20px;font-weight:700"></p>
+
+            <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:10px">Cover Art</p>
+            <div style="display:flex;gap:10px;margin-bottom:20px">
+                <div id="single-keep-album-btn" onclick="selectSingleCover('album')" style="flex:1;border:2px solid var(--accent);border-radius:12px;padding:12px;text-align:center;cursor:pointer;background:rgba(0,175,255,0.1)">
+                    <div id="single-album-cover-preview" style="width:60px;height:60px;border-radius:8px;background:#333;margin:0 auto 8px;background-size:cover;background-position:center"></div>
+                    <div style="font-size:11px;font-weight:700;color:var(--text2)">Keep Album Cover</div>
+                </div>
+                <div id="single-upload-btn" onclick="selectSingleCover('upload')" style="flex:1;border:2px solid var(--border);border-radius:12px;padding:12px;text-align:center;cursor:pointer">
+                    <div style="width:60px;height:60px;border-radius:8px;background:rgba(255,255,255,0.05);margin:0 auto 8px;display:flex;align-items:center;justify-content:center;font-size:22px">📁</div>
+                    <div style="font-size:11px;font-weight:700;color:var(--text2)">Upload New Art</div>
+                    <input type="file" id="single-cover-file" accept="image/*" style="display:none" onchange="handleSingleCoverUpload(event)">
+                </div>
+            </div>
+
+            <p style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;margin-bottom:10px">Release Date</p>
+            <input type="date" id="single-release-date" class="date-picker" style="margin-bottom:20px">
+
+            <div style="display:grid;gap:10px">
+                <button class="btn" style="background:transparent;border:1px solid var(--accent);color:var(--accent);width:100%" onclick="confirmSingleRelease(true)"><i class="fas fa-calendar-plus"></i> Schedule</button>
+                <button class="btn publish-btn" style="width:100%" onclick="confirmSingleRelease(false)"><i class="fas fa-bolt"></i> Release Now</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="campaign-page" id="campaign-page">
+        <div class="container">
+            <div class="header">
+                <button class="back-btn" onclick="closeCampaignCenter()"><i class="fas fa-chevron-left"></i></button>
+                <h1 class="page-title" id="campaign-title">Hype Center</h1>
+            </div>
+
+            <div class="campaign-hero">
+                <div id="campaign-hype-meter"></div>
+            </div>
+
+            <div id="campaign-reveals" style="margin-top:10px"></div>
+
+            <div class="section-label"><i class="fas fa-bolt" style="color:var(--gold)"></i> Promo Actions</div>
+            <div class="promo-grid" id="campaign-promo-grid"></div>
+
+            <div class="section-label"><i class="fas fa-clock-rotate-left" style="color:var(--text2)"></i> Activity Log</div>
+            <div class="campaign-log" id="campaign-log"></div>
+        </div>
+    </div>
+
+    <script>
+    let loading=false;
+    let pendingPublish = null; 
+    let pendingCoverSearch = null; // NEW FOR SEARCH
+    let pendingSingleRelease = null;
+    let pendingReschedule = null; // { idx } of the scheduledReleases entry being reschedule/cancelled
+    let singleCoverMode = 'album';
+    let singleNewCoverUrl = null;
+    let editionCreatorState = { currentStep: 1, albumIndex: null, versionType: null, editionSuffix: '', selectedSongs: [], coverArt: null, originalAlbum: null };
+
+    // ===== IMAGE SERVER CONFIG =====
+    const IMGBB_KEY = '0a7ea6db2eff1e60912107ef39c65fd7';
+    const IMGLINK_KEY = 'gd-asMnvpIWw4HtYC4_D14hTm0temqCQBmu9WmOS';
+    const CLOUDFLARE_TOKEN = 'cfat_cwYbv1qr8jVexkGI6jheNRPrt14WSiFkJnVHqIZh51f10a0c';
+    const CLOUDINARY_CLOUD = 'dahr9ckzv';
+    const CLOUDINARY_PRESET = 'Excellence images';
+
+    // ===== OVERLAY HELPERS =====
+    function showUploadOverlay() {
+        setBar(1, 0); setBar(2, 0);
+        document.getElementById('bar2-pct').textContent = '—';
+        document.getElementById('overlay-stage-label').textContent = 'Preparing...';
+        document.getElementById('overlay-status-text').textContent = 'Getting ready...';
+        document.getElementById('upload-loading-overlay').style.display = 'flex';
+    }
+    function hideUploadOverlay() {
+        document.getElementById('upload-loading-overlay').style.display = 'none';
+    }
+    function setBar(n, pct, label) {
+        const fill = document.getElementById(`bar${n}-fill`);
+        const pctEl = document.getElementById(`bar${n}-pct`);
+        if(fill) fill.style.width = pct + '%';
+        if(pctEl) pctEl.textContent = label || Math.round(pct) + '%';
+    }
+    function setOverlayStage(stage, status) {
+        const stageEl = document.getElementById('overlay-stage-label');
+        const statusEl = document.getElementById('overlay-status-text');
+        if(stageEl) stageEl.textContent = stage;
+        if(statusEl) statusEl.textContent = status;
+    }
+
+    // ===== COMPRESSION =====
+    async function compressImage(file) {
+        // Skip compression if already under 100kb
+        if (file.size < 100 * 1024) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsDataURL(file);
+            });
+        }
+        return new Promise(resolve => {
+            const img = new Image();
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                let { width, height } = img;
+                const max = 800;
+                if (width > height && width > max) { height = Math.round(height * max / width); width = max; }
+                else if (height > max) { width = Math.round(width * max / height); height = max; }
+                canvas.width = width; canvas.height = height;
+                canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+                // Aim for ~200kb - start at 0.75 quality
+                const quality = file.size > 800 * 1024 ? 0.65 : 0.75;
+                resolve(canvas.toDataURL('image/jpeg', quality));
+            };
+            img.src = URL.createObjectURL(file);
+        });
+    }
+
+    // ===== UPLOAD TO SERVERS =====
+    async function uploadToImgBB(base64) {
+        const b64 = base64.includes(',') ? base64.split(',')[1] : base64;
+        const fd = new FormData();
+        fd.append('image', b64);
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_KEY}`, { method:'POST', body:fd });
+        const data = await res.json();
+        if (data.success && data.data?.url) return data.data.url;
+        throw new Error('ImgBB failed');
+    }
+    async function uploadToFreeimage(base64) {
+    const b64 = base64.includes(',') ? base64.split(',')[1] : base64;
+    const fd = new FormData();
+    fd.append('key', '6d207e02198a847aa98d0a2a901485a5');
+    fd.append('source', b64);
+    fd.append('action', 'upload');
+    fd.append('format', 'json');
+    const res = await fetch('https://freeimage.host/api/1/upload', {
+        method: 'POST',
+        body: fd
+    });
+    const data = await res.json();
+    if (data.status_code === 200 && data.image?.url) return data.image.url;
+    throw new Error('Freeimage failed');
+}
+    async function uploadToCatbox(base64) {
+    const b64 = base64.includes(',') ? base64.split(',')[1] : base64;
+    const blob = await (await fetch(`data:image/jpeg;base64,${b64}`)).blob();
+    const fd = new FormData();
+    fd.append('reqtype', 'fileupload');
+    fd.append('fileToUpload', blob, `cover_${Date.now()}.jpg`);
+    const res = await fetch('https://catbox.moe/user/api.php', {
+        method: 'POST',
+        body: fd
+    });
+    const url = await res.text();
+    if (url.startsWith('https://')) return url.trim();
+    throw new Error('Catbox failed');
+}
+
+async function uploadToImglink(base64) {
+    const b64 = base64.includes(',')
+        ? base64.split(',')[1]
+        : base64;
+
+    const blob = await (await fetch(`data:image/jpeg;base64,${b64}`)).blob();
+
+    const fd = new FormData();
+    fd.append('file', blob, `image_${Date.now()}.jpg`);
+
+    const res = await fetch('https://imglink.io/api/upload', {
+        method: 'POST',
+        headers: {
+            Authorization: `Bearer ${IMGLINK_KEY}`
+        },
+        body: fd
+    });
+
+    const text = await res.text();
+
+    console.log("IMGLINK RESPONSE:", text);
+
+    let data;
+
+    try {
+        data = JSON.parse(text);
+    } catch {
+        throw new Error(text);
+    }
+
+    if (data.url) return data.url;
+
+    throw new Error(JSON.stringify(data));
+}
+    async function uploadToCloudflare(base64) {
+    const ACCOUNT_ID = 'b502db081df9e584fc18b698d3c304be';
+
+    const b64 = base64.includes(',')
+        ? base64.split(',')[1]
+        : base64;
+
+    const blob = await (await fetch(`data:image/jpeg;base64,${b64}`)).blob();
+
+    const fd = new FormData();
+    fd.append('file', blob, `cover_${Date.now()}.jpg`);
+
+    const res = await fetch(
+        `https://api.cloudflare.com/client/v4/accounts/${ACCOUNT_ID}/images/v1`,
+        {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${CLOUDFLARE_TOKEN}`
+            },
+            body: fd
+        }
+    );
+
+    const text = await res.text();
+
+    console.log("CLOUDFLARE RESPONSE:", text);
+
+    let data;
+
+    try {
+        data = JSON.parse(text);
+    } catch {
+        throw new Error(text);
+    }
+
+    if (data.success && data.result?.variants?.[0]) {
+        return data.result.variants[0];
+    }
+
+    throw new Error(JSON.stringify(data));
+}
+    async function uploadToCloudinary(base64) {
+        const fd = new FormData();
+        fd.append('file', base64);
+        fd.append('upload_preset', CLOUDINARY_PRESET);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD}/image/upload`, { method:'POST', body:fd });
+        const data = await res.json();
+        if (data.secure_url) return data.secure_url;
+        throw new Error('Cloudinary failed');
+    }
+
+    async function uploadWithFallback(base64, onStatusUpdate) {
+        const servers = [
+            { name:'ImgBB', fn: () => uploadToImgBB(base64) },
+            { name:'Freeimage', fn: () => uploadToFreeimage(base64) },
+        { name:'Cloudinary', fn: () => uploadToCloudinary(base64) },
+        { name:'Catbox', fn: () => uploadToCatbox(base64) },
+        ];
+        for (let i = 0; i < servers.length; i++) {
+            const pct = ((i) / servers.length) * 100;
+            setBar(2, pct);
+            onStatusUpdate(`Trying ${servers[i].name}...`);
+            try {
+                const url = await servers[i].fn();
+                setBar(2, 100);
+                onStatusUpdate(`Uploaded via ${servers[i].name}`);
+                showToast(`Saved to ${servers[i].name}`, 'success');
+                return url;
+            } catch(e) {
+                console.warn(`${servers[i].name} failed:`, e);
+            }
+        }
+        return null; // All failed
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+    
+    function init(){
+        display();
+        initDragDrop();
+        setupEditionInputListeners();
+        const gameDateStr = localStorage.getItem('currentDate');
+        if(gameDateStr) {
+            const dateInput = document.getElementById('release-date-picker');
+            if(dateInput) {
+                dateInput.min = new Date(gameDateStr).toISOString().split('T')[0];
+                const defaultDate = new Date(gameDateStr);
+                defaultDate.setDate(defaultDate.getDate() + 14);
+                dateInput.value = defaultDate.toISOString().split('T')[0];
+            }
+        }
+    }
+    
+    function goBack(){try{window.history.length>1?window.history.back():window.location.href='music.html'}catch(e){window.location.href='music.html'}}
+
+    function showTab(e, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.getElementById(tabName + '-tab').classList.add('active');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        if(tabName === 'scheduled') renderScheduled();
+    }
+
+    function showToast(msg, type='info') {
+        const c = document.getElementById('notif-container');
+        const t = document.createElement('div');
+        t.className = `toast ${type}`;
+        let icon = type==='success'?'check-circle':type==='error'?'exclamation-circle':'cloud-upload-alt';
+        t.innerHTML = `<i class="fas fa-${icon}"></i> ${msg}`;
+        c.appendChild(t);
+        setTimeout(()=>t.remove(), 3500);
+    }
+
+    // REPLACE THE ENTIRE processImg FUNCTION (starts around line 387) WITH THIS:
+async function processImg(file, cb) {
+    if(!file || !file.type.startsWith('image/')) { showToast('Invalid file', 'error'); return; }
+    
+    showUploadOverlay();
+
+    try {
+        // === PHASE 1: COMPRESS ===
+        setOverlayStage('Compressing Image', file.size < 100*1024 ? 'Image is already small — skipping compression' : 'Compressing image...');
+        setBar(1, 10);
+
+        // Animate bar 1 while compressing
+        let bar1Interval = setInterval(() => {
+            const fill = document.getElementById('bar1-fill');
+            if(fill) {
+                const cur = parseFloat(fill.style.width || '10');
+                if(cur < 85) { fill.style.width = (cur + 5) + '%'; document.getElementById('bar1-pct').textContent = Math.round(cur+5)+'%'; }
+            }
+        }, 80);
+
+        const base64 = await compressImage(file);
+        clearInterval(bar1Interval);
+        setBar(1, 100);
+
+        // === PHASE 2: UPLOAD ===
+        setOverlayStage('Uploading to Server', 'Checking available servers...');
+
+        const url = await uploadWithFallback(base64, (status) => {
+            setOverlayStage('Uploading to Server', status);
+        });
+
+        if (url) {
+            cb(url);
+        } else {
+            showToast('⚠️ Image servers are down. Please try again later.', 'error');
+            setOverlayStage('Upload Failed', 'All image servers are currently down.');
+            await new Promise(r => setTimeout(r, 2000));
+            // Do NOT fall back to localStorage - just abort
+        }
+
+    } catch(e) {
+        console.error(e);
+        showToast('Upload error. Image servers may be down.', 'error');
+    } finally {
+        hideUploadOverlay();
+    }
+}
+
+    // ===== HYPE DECAY: buzz naturally rises/falls with each in-game week =====
+// Announced campaigns that aren't actively promoted lose some hype each week
+// (buzz fades if you don't keep feeding it), mirroring how real promo cycles work.
+const HYPE_CAP = 100;
+const HYPE_DECAY_PER_WEEK = 6;      // base hype lost per week of silence
+const HYPE_DRIFT_JITTER = 3;        // +/- random wobble so it doesn't feel mechanical
+
+function applyWeeklyHypeDecay(item) {
+    if (!item || !item.campaign || !item.campaign.announced) return item;
+    const c = item.campaign;
+    const gameDateStr = localStorage.getItem('currentDate');
+    if (!gameDateStr) return item;
+    const gameDate = new Date(gameDateStr);
+    if (isNaN(gameDate.getTime())) return item;
+
+    if (!c.lastDecayDate) {
+        // First time we see this campaign, just stamp it — no retroactive decay
+        c.lastDecayDate = gameDate.toISOString();
+        return item;
+    }
+
+    const lastDecay = new Date(c.lastDecayDate);
+    const weeksPassed = Math.floor((gameDate - lastDecay) / (7 * 24 * 60 * 60 * 1000));
+    if (weeksPassed < 1) return item;
+
+    for (let i = 0; i < weeksPassed; i++) {
+        const jitter = (Math.random() * HYPE_DRIFT_JITTER * 2) - HYPE_DRIFT_JITTER; // -3..+3
+        const change = -HYPE_DECAY_PER_WEEK + jitter; // mostly downward, occasionally flat/slight uptick
+        c.hype = Math.max(0, Math.min(HYPE_CAP, (c.hype || 0) + change));
+    }
+    c.lastDecayDate = gameDate.toISOString();
+    return item;
+}
+
+function getData(key){try{const item=localStorage?.getItem(key);const parsed=item?JSON.parse(item):[];const arr=Array.isArray(parsed)?parsed:[];if(key==='unreleasedSongs'||key==='unreleasedAlbums'||key==='scheduledReleases'){arr.forEach(entry=>{applyWeeklyHypeDecay(key==='scheduledReleases'?entry?.data:entry);});}return arr}catch(e){return[]}}
+function saveData(key,data){try{if(!localStorage||!key)return false;if(data===undefined)data=[];if(!Array.isArray(data))data=[];localStorage.setItem(key,JSON.stringify(data));return true}catch(e){showToast('Storage Full!', 'error');return false}}
+
+// ===== HYPE METER / CAMPAIGN SYSTEM =====
+    const PROMO_ACTIONS = {
+        single: [
+            { key:'artwork',    label:'Reveal Cover Artwork', icon:'fa-image',        cost:0,      hype:8,  repeatable:false, xify:'artwork' },
+            { key:'photoshoot', label:'Photoshoot',           icon:'fa-camera-retro', cost:2500,   hype:6,  repeatable:false, xify:'photoshoot' },
+            { key:'vibetok',    label:'VibeTok Campaign',     icon:'fa-music',        cost:8000,   hype:14, repeatable:false, xify:'vibetok' },
+            { key:'ads',        label:'Ad Campaign',          icon:'fa-bullhorn',     cost:5000,   hype:10, repeatable:false, xify:'ads' },
+            { key:'magazine',   label:'Magazine Cover',       icon:'fa-newspaper',    cost:100000, hype:30, repeatable:false, xify:'magazine', isMagazine:true }
+        ],
+        project: [
+            { key:'title',      label:'Reveal Title',         icon:'fa-heading',      cost:0,      hype:6,  repeatable:false, xify:'title' },
+            { key:'artwork',    label:'Reveal Cover Artwork', icon:'fa-image',        cost:0,      hype:8,  repeatable:false, xify:'artwork' },
+            { key:'date',       label:'Reveal Release Date',  icon:'fa-calendar',     cost:0,      hype:6,  repeatable:false, xify:'date' },
+            { key:'tracklist',  label:'Reveal Tracklist',     icon:'fa-list-ol',      cost:0,      hype:10, repeatable:false, xify:'tracklist' },
+            { key:'features',   label:'Reveal Features',      icon:'fa-users',        cost:0,      hype:10, repeatable:false, xify:'features' },
+            { key:'photoshoot', label:'Photoshoot',           icon:'fa-camera-retro', cost:2500,   hype:6,  repeatable:true,  xify:'photoshoot' },
+            { key:'vibetok',    label:'Send to Influencers',  icon:'fa-paper-plane',  cost:16000,  hype:14, repeatable:false, xify:'vibetok' },
+            { key:'ads_social', label:'Social Ads',           icon:'fa-hashtag',      cost:6000,   hype:8,  repeatable:false, xify:'ads_social' },
+            { key:'ads_tv',     label:'TV Spot',               icon:'fa-tv',           cost:20000,  hype:16, repeatable:false, xify:'ads_tv' },
+            { key:'ads_billboard', label:'Billboard',          icon:'fa-bullhorn',     cost:45000,  hype:26, repeatable:false, xify:'ads_billboard' },
+            { key:'magazine',   label:'Magazine Cover',       icon:'fa-newspaper',    cost:100000, hype:30, repeatable:true,  xify:'magazine', isMagazine:true }
+        ]
+    };
+
+    function blankCampaign(releaseType) {
+        return {
+            announced: false,
+            releaseType: releaseType,
+            hype: 0,
+            revealed: { title:false, artwork:false, date:false, tracklist:false, features:false },
+            promoLog: []
+        };
+    }
+
+    function getReleaseListKey(type) { return type === 'song' ? 'unreleasedSongs' : 'unreleasedAlbums'; }
+
+    function addHype(campaign, amount) {
+        campaign.hype = Math.max(0, Math.min(HYPE_CAP, (campaign.hype || 0) + amount));
+        return campaign;
+    }
+
+    function renderHypeMeter(campaign) {
+        if (!campaign || !campaign.announced) return '';
+        const hype = Math.round(campaign.hype || 0);
+        return `
+        <div class="hype-wrap">
+            <div class="hype-wrap-head"><span><i class="fas fa-fire"></i> Hype Meter</span><span class="hype-val">${hype}%</span></div>
+            <div class="hype-track"><div class="hype-fill" style="width:${hype}%"></div></div>
+        </div>`;
+    }
+
+    function setLoad(state){loading=state;const c=document.querySelector('.container');if(c)c.style.opacity = state ? '0.5' : '1';}
+    function esc(text){if(typeof text!=='string')return'';const d=document.createElement('div');d.textContent=text;return d.innerHTML}
+
+    function display(){
+        const songs=getData('unreleasedSongs');
+        const albums=getData('unreleasedAlbums');
+        const songsList=document.getElementById('songs-list');
+        const albumsList=document.getElementById('albums-list');
+        if(!songsList || !albumsList) return;
+        
+        songsList.innerHTML = songs.length ? '' : '<div class="empty"><i class="fas fa-music"></i><br>No unreleased songs</div>';
+        songs.forEach((s,i)=>{if(s)renderSong(s,i,songsList)});
+        
+        albumsList.innerHTML = albums.length ? '' : '<div class="empty"><i class="fas fa-compact-disc"></i><br>No unreleased albums</div>';
+        albums.forEach((a,i)=>{if(a)renderAlbum(a,i,albumsList)});
+        
+        renderScheduled();
+    }
+
+    // NEW SEARCH FUNCTIONS
+    function openSearchModal(type, idx) {
+        pendingCoverSearch = { type, index: idx };
+        document.getElementById('cover-search-input').value = '';
+        document.getElementById('search-results').innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text2);padding:20px">Type to search iTunes...</div>';
+        document.getElementById('search-cover-modal').classList.add('active');
+        setTimeout(() => document.getElementById('cover-search-input').focus(), 100);
+    }
+
+    function closeSearchModal() {
+        document.getElementById('search-cover-modal').classList.remove('active');
+        pendingCoverSearch = null;
+    }
+
+    async function runCoverSearch() {
+        const query = document.getElementById('cover-search-input').value.trim();
+        const container = document.getElementById('search-results');
+        if(!query) return;
+
+        container.innerHTML = '<div class="loader"></div>';
+
+        try {
+            const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=album&limit=15`);
+            const data = await res.json();
+            container.innerHTML = '';
+            if(data.resultCount === 0) {
+                container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text2)">No results found.</div>';
+                return;
+            }
+            data.results.forEach(item => {
+                const hdUrl = item.artworkUrl100.replace('100x100bb', '600x600bb');
+                const div = document.createElement('div');
+                div.className = 'search-result-item';
+                div.style.backgroundImage = `url(${hdUrl})`;
+                div.onclick = () => selectRemoteCover(hdUrl);
+                container.appendChild(div);
+            });
+
+            const manualBtn = document.createElement('div');
+            manualBtn.className = 'search-result-item';
+            manualBtn.style.display = 'flex';
+            manualBtn.style.flexDirection = 'column';
+            manualBtn.style.alignItems = 'center';
+            manualBtn.style.justifyContent = 'center';
+            manualBtn.style.border = '2px dashed var(--border)';
+            manualBtn.innerHTML = '<i class="fas fa-file-image" style="font-size:24px;margin-bottom:8px"></i><span style="font-size:10px">UPLOAD FILE</span>';
+            manualBtn.onclick = () => {
+                closeSearchModal();
+                const cards = document.querySelectorAll('.card');
+                const targetCard = cards[pendingCoverSearch.index];
+                targetCard.querySelector('.file-input').click();
+            };
+            container.appendChild(manualBtn);
+        } catch(e) {
+            container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#ff5252">Search failed.</div>';
+        }
+    }
+
+    async function selectRemoteCover(url) {
+        if(!pendingCoverSearch) return;
+        const container = document.getElementById('search-results');
+        container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--accent);font-weight:700"><div class="loader"></div>Saving to Cloud...</div>';
+
+        showUploadOverlay();
+        setOverlayStage('Uploading Cover Art', 'Fetching image...');
+        setBar(1, 100); // No compression step for remote URLs
+
+        try {
+            const cloudUrl = await uploadWithFallback(url, (status) => {
+                setOverlayStage('Uploading to Server', status);
+            });
+
+            if (cloudUrl) {
+                setCover(cloudUrl, pendingCoverSearch.type, pendingCoverSearch.index);
+                showToast('Cover updated!', 'success');
+                closeSearchModal();
+            } else {
+                showToast('⚠️ All image servers are down. Cover not saved.', 'error');
+                container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#ff5252">Image servers are down.</div>';
+            }
+        } catch(e) {
+            showToast('Failed to save image.', 'error');
+            container.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:#ff5252">Upload Failed.</div>';
+        } finally {
+            hideUploadOverlay();
+        }
+    }
+
+    // RENDER FUNCTIONS UPDATED WITH NEW BUTTONS
+    function renderSong(song, idx, container) {
+        const card = document.createElement('div');
+        card.className = 'card song-card';
+        const isRejected = song.rejectedByLabel === true;
+        if (isRejected) {
+            card.style.opacity = '0.5';
+            card.style.filter = 'grayscale(1)';
+            card.style.pointerEvents = 'none';
+        }
+        const cover = song.coverArt ? `background-image:url(${esc(song.coverArt)})` : '';
+        const status = song.coverArt ? '<div class="cover-status"><i class="fas fa-check"></i></div>' : '';
+        const name = esc(song.songName || song.name || 'Untitled');
+        const type = song.trackType || 'single';
+
+        const campaign = song.campaign;
+        const announceBtn = campaign && campaign.announced
+            ? `<button class="btn hype-mini-btn" style="pointer-events:auto;width:100%;justify-content:center;padding:12px" onclick="openCampaignCenter('song',${idx})"><i class="fas fa-fire"></i> Hype Center</button>`
+            : `<button class="btn announce-btn" style="pointer-events:auto" onclick="openAnnounceModal('song',${idx})"><i class="fas fa-bullhorn"></i> Announce</button>`;
+
+        card.innerHTML = `
+            <div class="type-btns"><button class="type-btn ${type === 'single' ? 'active' : ''}" onclick="changeType(event,'single',${idx})">Single</button><button class="type-btn ${type === 'album' ? 'active' : ''}" onclick="changeType(event,'album',${idx})">Album</button></div>
+            
+           <div class="cover" style="${cover}">
+    <input type="file" class="file-input" style="display:none" accept="image/*" onchange="uploadCover(event,'song',${idx})">
+    ${status}
+    <div class="cover-overlay">
+        <button title="Upload File" onclick="event.stopPropagation(); this.closest('.cover').querySelector('.file-input').click()" style="background:rgba(255,255,255,0.1); border:1px solid #fff; color:#fff; border-radius:50%; width:35px; height:35px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-file-upload"></i>
+        </button>
+        <button title="Search Web" onclick="event.stopPropagation(); openSearchModal('song', ${idx})" style="background:var(--accent); border:none; color:#fff; border-radius:50%; width:35px; height:35px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</div>
+
+            <div class="details">
+                <div class="details-row">
+                    <div class="details-text">
+                        <div class="name">${name}</div>
+                        <div class="type"><i class="fas fa-wave-square"></i> ${type === 'single' ? 'Single Track' : 'Album Track'}</div>
+                        ${isRejected ? '<div style="color:#ff5252; font-size:11px; font-weight:700; margin-top:5px;"><i class="fas fa-lock"></i> REJECTED BY LABEL</div>' : ''}
+                    </div>
+                    ${renderHypeMeter(campaign)}
+                </div>
+            </div>
+            <div class="song-actions">
+                <button class="btn delete-btn" style="pointer-events:auto" onclick="remove('song',${idx})"><i class="fas fa-trash"></i></button>
+                <div class="song-actions-main">
+                    ${announceBtn}
+                    <button class="btn publish-btn" style="pointer-events:auto; ${isRejected ? 'background:#333; cursor:not-allowed;' : ''}" onclick="${isRejected ? `checkLabelClearance({rejectedByLabel:true}, ()=>{})` : `openPublishModal('song',${idx})`}">
+                        ${isRejected ? '<i class="fas fa-ban"></i> Locked' : '<i class="fas fa-upload"></i> Release'}
+                    </button>
+                </div>
+            </div>`;
+        container.appendChild(card);
+    }
+
+    function renderAlbum(album, idx, container) {
+        const card = document.createElement('div');
+        card.className = 'card album-card';
+        const isRejected = album.rejectedByLabel === true;
+        if (isRejected) {
+            card.style.opacity = '0.5';
+            card.style.filter = 'grayscale(1)';
+        }
+        const cover = album.coverArt ? `background-image:url(${esc(album.coverArt)})` : '';
+        const status = album.coverArt ? '<div class="cover-status"><i class="fas fa-check"></i></div>' : '';
+        const name = esc(album.name || 'Untitled Album');
+        const type = esc(album.type || '');
+        const count = Array.isArray(album.songs) ? album.songs.length : 0;
+        const editionType = album.editionType || 'standard';
+        const editionButtons = `<div class="type-btns" style="position:static; justify-content: start; margin-top: 12px; padding-bottom: 5px;"><button class="type-btn ${editionType === 'standard' ? 'active' : ''}" onclick="changeAlbumEdition(event, 'standard', ${idx})">Standard</button><button class="type-btn ${editionType === 'deluxe' ? 'active' : ''}" onclick="changeAlbumEdition(event, 'deluxe', ${idx})">Deluxe</button><button class="type-btn ${editionType === 'edition' ? 'active' : ''}" onclick="changeAlbumEdition(event, 'edition', ${idx})">Edition</button></div>`;
+
+        let tracksHtml = '<div class="tracks" data-album-index="' + idx + '">';
+        if (Array.isArray(album.songs) && album.songs.length) {
+            tracksHtml += '<div style="margin-bottom:10px;font-weight:700;font-size:12px;opacity:0.7">TRACKLIST</div>';
+            album.songs.forEach((s, i) => { 
+    if (s) {
+        const trackName = typeof s === 'string' ? s : (s.songName || s.name || 'Untitled');
+        tracksHtml += `
+        <div class="track-item" draggable="true" data-track-index="${i}">
+            <div style="flex:1;"><span style="opacity:0.5;cursor:grab"><i class="fas fa-grip-vertical"></i></span> ${i + 1}. ${esc(trackName)}</div>
+        </div>`;
+    }
+});
+        } else { tracksHtml += '<div style="font-size:12px;opacity:0.7">No tracks added</div>'; }
+        tracksHtml += '</div>';
+
+        const campaign = album.campaign;
+        const announceBtn = campaign && campaign.announced
+            ? `<button class="btn hype-mini-btn" style="pointer-events:auto;padding:12px 20px" onclick="openCampaignCenter('album',${idx})"><i class="fas fa-fire"></i> Hype Center</button>`
+            : `<button class="btn announce-btn" style="pointer-events:auto" onclick="openAnnounceModal('album',${idx})"><i class="fas fa-bullhorn"></i> Announce</button>`;
+
+        card.innerHTML = `
+            <div class="album-header" style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center">
+               <div class="cover" style="${cover}">
+    <input type="file" class="file-input" style="display:none" accept="image/*" onchange="uploadCover(event,'album',${idx})">
+    ${status}
+    <div class="cover-overlay">
+        <button title="Upload File" onclick="event.stopPropagation(); this.closest('.cover').querySelector('.file-input').click()" style="background:rgba(255,255,255,0.1); border:1px solid #fff; color:#fff; border-radius:50%; width:35px; height:35px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-file-upload"></i>
+        </button>
+        <button title="Search Web" onclick="event.stopPropagation(); openSearchModal('album', ${idx})" style="background:var(--accent); border:none; color:#fff; border-radius:50%; width:35px; height:35px; cursor:pointer; display:flex; align-items:center; justify-content:center;">
+            <i class="fas fa-search"></i>
+        </button>
+    </div>
+</div>
+                <div class="details"><div class="name">${name}</div><div class="type">${type}${type ? ' • ' : ''}${count} tracks</div>
+                ${isRejected ? '<div style="color:#ff5252; font-size:11px; font-weight:700; margin-top:5px;"><i class="fas fa-lock"></i> REJECTED BY LABEL</div>' : editionButtons}
+                </div>
+            </div>
+            ${renderHypeMeter(campaign)}
+            ${tracksHtml}
+            <div class="album-actions" style="display:flex;gap:10px;justify-content:flex-end;margin-top:20px;border-top:1px solid var(--border);padding-top:15px">
+                <button class="btn delete-btn" style="pointer-events:auto" onclick="remove('album',${idx})"><i class="fas fa-trash"></i></button>
+                ${announceBtn}
+                <button class="btn publish-btn" style="pointer-events:auto; ${isRejected ? 'background:#333; cursor:not-allowed;' : ''}" onclick="${isRejected ? `checkLabelClearance({rejectedByLabel:true}, ()=>{})` : `openPublishModal('album',${idx})`}">
+                    ${isRejected ? '<i class="fas fa-ban"></i> Locked' : '<i class="fas fa-rocket"></i> Drop Album'}
+                </button>
+            </div>`;
+        container.appendChild(card);
+        // When releasing a compilation, skip songs already in releasedSongs
+const skipNames = new Set(album.alreadyReleasedSongNames || []);
+
+album.songs.forEach(songName => {
+    const name = typeof songName === 'string' ? songName : songName.songName;
+    if (skipNames.has(name)) return; // already released — don't duplicate
+    // ... rest of your release logic ...
+});
+    }
+
+    function renderScheduled() {
+        const list = document.getElementById('scheduled-list');
+        const scheduled = getData('scheduledReleases');
+        if(!scheduled.length) { list.innerHTML = '<div class="empty"><i class="fas fa-calendar-alt"></i><br>No scheduled releases</div>'; return; }
+        list.innerHTML = '';
+        const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+
+        scheduled.forEach((item, idx) => {
+            const card = document.createElement('div'); card.className = 'card song-card';
+            const releaseDate = new Date(item.releaseDate);
+            const diffDays = Math.ceil((releaseDate - gameDate) / (1000 * 60 * 60 * 24));
+            let timeText = diffDays <= 0 ? "<span style='color:var(--green)'>Releasing Today!</span>" : `${diffDays} Day${diffDays!==1?'s':''} left`;
+            if(diffDays >= 7) timeText = `${Math.floor(diffDays/7)} Week${Math.floor(diffDays/7)>1?'s':''} left`;
+
+            const data = item.data;
+            const cover = data.coverArt ? `background-image:url(${esc(data.coverArt)})` : '';
+            const campaign = data.campaign;
+            const hypeBtn = campaign && campaign.announced
+                ? `<button class="btn hype-mini-btn" style="width:100%;justify-content:center;padding:12px" onclick="openCampaignCenter('${item.type}',${idx},true)"><i class="fas fa-fire"></i> Hype Center</button>`
+                : `<button class="btn announce-btn" onclick="openAnnounceModal('${item.type}',${idx},true)"><i class="fas fa-bullhorn"></i> Announce</button>`;
+
+            card.innerHTML = `
+                <div class="type-btns" style="position:static;grid-area:toggle;margin-bottom:-4px;justify-content:flex-end;display:flex">
+                    <span class="type-btn active" style="background:var(--purple);border-color:var(--purple);cursor:default">${item.type==='album'?'Album':'Single'}</span>
+                </div>
+                <div class="cover" style="${cover}"></div>
+                <div class="details">
+                    <div class="details-row">
+                        <div class="details-text">
+                            <div class="name">${esc(data.name||data.songName||'Untitled')}</div>
+                            <div class="type" style="color:var(--accent);font-weight:700"><i class="fas fa-clock"></i> ${timeText}</div>
+                        </div>
+                        ${renderHypeMeter(campaign)}
+                    </div>
+                </div>
+                <div class="song-actions">
+                    ${hypeBtn}
+                    <button class="btn" style="width:100%;justify-content:center;padding:12px;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2)" onclick="openRescheduleModal(${idx})"><i class="fas fa-calendar-alt"></i> Reschedule / Cancel</button>
+                </div>`;
+            list.appendChild(card);
+        });
+    }
+    
+    function calcCancelRespectPenalty(item, gameDate) {
+        const releaseDate = new Date(item.releaseDate);
+        const daysLeft = Math.max(0, Math.ceil((releaseDate - gameDate) / (1000 * 60 * 60 * 24)));
+
+        let basePenalty;
+        if      (daysLeft <= 1)  basePenalty = 25;
+        else if (daysLeft <= 3)  basePenalty = 20;
+        else if (daysLeft <= 7)  basePenalty = 15;
+        else if (daysLeft <= 14) basePenalty = 10;
+        else if (daysLeft <= 30) basePenalty = 6;
+        else if (daysLeft <= 60) basePenalty = 3;
+        else                     basePenalty = 1.5;
+
+        const typeMult = item.type === 'album' ? 1.3 : 1.0;
+        const hypeAdd = Math.min(8, (item.hype || 0) * 0.08);
+
+        return Math.round((basePenalty * typeMult + hypeAdd) * 10) / 10;
+    }
+
+    function openRescheduleModal(idx) {
+        const scheduled = getData('scheduledReleases');
+        const item = scheduled[idx];
+        if(!item) return;
+        pendingReschedule = { idx };
+        const data = item.data;
+        document.getElementById('reschedule-item-name').textContent = data.name || data.songName || data.albumName || 'Untitled';
+
+        const picker = document.getElementById('reschedule-date-picker');
+        picker.value = item.releaseDate ? item.releaseDate.slice(0,10) : '';
+
+        const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+        const penalty = calcCancelRespectPenalty(item, gameDate);
+        document.getElementById('cancel-penalty-preview').innerHTML =
+            `<i class="fas fa-heart-broken"></i> Cancelling now costs <span style="color:#ff5252;font-weight:700">-${penalty} Respect</span> (the closer to the date, the worse it stings)`;
+
+        document.getElementById('reschedule-modal').classList.add('active');
+    }
+
+    function closeRescheduleModal() {
+        document.getElementById('reschedule-modal').classList.remove('active');
+        pendingReschedule = null;
+    }
+
+    function confirmReschedule() {
+        if(!pendingReschedule) return;
+        const dateVal = document.getElementById('reschedule-date-picker').value;
+        if(!dateVal) { showToast("Please select a date", 'error'); return; }
+
+        const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+        if(new Date(dateVal) <= gameDate) { showToast("New date must be in the future", 'error'); return; }
+
+        let scheduled = getData('scheduledReleases');
+        const item = scheduled[pendingReschedule.idx];
+        if(!item) { closeRescheduleModal(); return; }
+
+        item.releaseDate = dateVal;
+        saveData('scheduledReleases', scheduled);
+        showToast("Release date updated — no penalty for pushing it back", 'success');
+        closeRescheduleModal();
+        renderScheduled();
+    }
+
+    function confirmCancelRelease() {
+        if(!pendingReschedule) return;
+        let scheduled = getData('scheduledReleases');
+        const item = scheduled[pendingReschedule.idx];
+        if(!item) { closeRescheduleModal(); return; }
+
+        const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+        const penalty = calcCancelRespectPenalty(item, gameDate);
+        const data = item.data;
+        const displayName = data.name || data.songName || data.albumName || 'this release';
+
+        if(!confirm(`Cancel "${displayName}"? This costs -${penalty} Respect and cannot be undone. The song/album goes back to your unreleased list.`)) return;
+
+        const currentRespect = parseFloat(localStorage.getItem('respect')) || 0;
+        const newRespect = Math.max(0, currentRespect - penalty);
+        localStorage.setItem('respect', newRespect.toString());
+        const respectBar = document.getElementById('respect-bar');
+        if(respectBar) respectBar.style.width = newRespect + '%';
+
+        const listKey = item.type === 'song' ? 'unreleasedSongs' : 'unreleasedAlbums';
+        let list = getData(listKey);
+        const restored = { ...data };
+        delete restored.rejectedByLabel;
+        list.push(restored);
+        saveData(listKey, list);
+
+        scheduled.splice(pendingReschedule.idx, 1);
+        saveData('scheduledReleases', scheduled);
+
+        closeRescheduleModal();
+        display();
+        renderScheduled();
+        showToast(`Release cancelled. -${penalty} Respect. Moved back to your unreleased list.`, 'error');
+    }
+
+    // ===== ANNOUNCE FLOW =====
+    let pendingAnnounce = null; // { type:'song'|'album', idx, isScheduled }
+
+    // Helper: read/write the underlying song/album object whether it lives in
+    // unreleasedSongs/unreleasedAlbums OR wrapped inside scheduledReleases[idx].data
+    function readReleaseItem(type, idx, isScheduled) {
+        if (isScheduled) {
+            const scheduled = getData('scheduledReleases');
+            return scheduled[idx] ? scheduled[idx].data : null;
+        }
+        const list = getData(getReleaseListKey(type));
+        return list[idx] || null;
+    }
+
+    function writeReleaseItem(type, idx, isScheduled, item) {
+        if (isScheduled) {
+            const scheduled = getData('scheduledReleases');
+            if (!scheduled[idx]) return;
+            scheduled[idx].data = item;
+            saveData('scheduledReleases', scheduled);
+        } else {
+            const listKey = getReleaseListKey(type);
+            const list = getData(listKey);
+            list[idx] = item;
+            saveData(listKey, list);
+        }
+    }
+
+    function openAnnounceModal(type, idx, isScheduled) {
+        const item = readReleaseItem(type, idx, isScheduled);
+        if (!item) return;
+        pendingAnnounce = { type, idx, isScheduled: !!isScheduled };
+        const name = item.name || item.songName || item.albumName || 'Untitled';
+        document.getElementById('announce-item-name').textContent = name;
+
+        const isAlbum = type === 'album';
+        const albumTypeRow = document.getElementById('announce-album-type-row');
+        albumTypeRow.style.display = isAlbum ? 'grid' : 'none';
+        document.getElementById('announce-single-row').style.display = isAlbum ? 'none' : 'block';
+
+        document.getElementById('announce-modal').classList.add('active');
+    }
+
+    function closeAnnounceModal() { document.getElementById('announce-modal').classList.remove('active'); pendingAnnounce = null; }
+
+    function confirmAnnounce(releaseType) {
+        if (!pendingAnnounce) return;
+        const { type, idx, isScheduled } = pendingAnnounce;
+        const item = readReleaseItem(type, idx, isScheduled);
+        if (!item) { closeAnnounceModal(); return; }
+
+        item.campaign = blankCampaign(releaseType); // 'single' | 'ep' | 'album'
+        item.campaign.announced = true;
+        addHype(item.campaign, 10); // base hype just for announcing
+
+        writeReleaseItem(type, idx, isScheduled, item);
+        closeAnnounceModal();
+
+        const artistName = (JSON.parse(localStorage.getItem('artistDetails')||'{}').name) || 'The artist';
+        const name = item.name || item.songName || item.albumName || 'Untitled';
+        const dateStr = item.releaseDateGuess || 'soon';
+
+        let content;
+        if (releaseType === 'single') {
+            content = `${artistName}. Announces new single "${name}"\n\nAre you excited?`;
+        } else if (releaseType === 'ep') {
+            content = `${artistName}. Announces new EP "${name}"\n\nAre you excited?`;
+        } else {
+            content = `${artistName}. Announces new album "${name}"\n\nAre you excited?`;
+        }
+        postAnnouncementToXify(content, item.coverArt || null);
+        postFanReactionsToXify(artistName, name, item.campaign.hype);
+
+        display();
+        renderScheduled();
+        showToast(`Announced! Hype Meter is live.`, 'success');
+        openCampaignCenter(type, idx, isScheduled);
+    }
+
+    // ===== XIFY POSTING (shared localStorage bridge) =====
+    function xifyPayload(authorName, handle, avatar, content, mediaType, mediaData, extra) {
+        const likes = Math.floor(1000 + Math.random() * 50000);
+        const reposts = Math.floor(likes * (0.1 + Math.random() * 0.2));
+        const comments = Math.floor(likes * (0.05 + Math.random() * 0.1));
+        const views = likes * (10 + Math.floor(Math.random() * 20));
+        return Object.assign({
+            id: 'post_' + Date.now() + Math.random().toString(36).substr(2, 5),
+            authorName, authorHandle: handle, avatar,
+            isVerified: true, content,
+            mediaType: mediaType || 'none', mediaData: mediaData || null,
+            linkData: null, likes, reposts, comments, views,
+            isLiked: false, isReposted: false,
+            ts: parseInt(localStorage.getItem('currentWeek') || '1') * 10000 - Math.floor(Math.random() * 500),
+            npc: true
+        }, extra || {});
+    }
+
+    function pushXifyPosts(posts) {
+        const existing = getData('xifyPosts');
+        const merged = [...posts, ...existing];
+        saveData('xifyPosts', merged);
+
+        // Nudge any open Xify tab to refresh immediately instead of waiting
+        // for its next page load. The 'storage' event only fires in OTHER
+        // tabs by default, so this is what makes cross-tab updates instant.
+        try {
+            window.dispatchEvent(new StorageEvent('storage', { key: 'xifyPosts' }));
+        } catch (e) { /* StorageEvent constructor unsupported — safe to ignore */ }
+    }
+
+    function postAnnouncementToXify(content, coverArt) {
+        const post = xifyPayload('Pop Base', '@PopBase', 'pop.png', content, coverArt ? 'image' : 'none', coverArt);
+        pushXifyPosts([post]);
+    }
+
+    const FAN_POSITIVE_LINES = [
+        "I'M NOT READY 😭😭 THIS IS GOING TO BE EVERYTHING",
+        "the way I screamed when I saw this announcement",
+        "we are so back. this era is about to be insane",
+        "sir/ma'am you did NOT have to go this hard",
+        "crying shaking throwing up over this announcement",
+        "this is exactly what I needed today, thank you"
+    ];
+    const FAN_NEGATIVE_LINES = [
+        "I'm not gagging at this",
+        "should have kept this mess",
+        "the marketing team really said 'let's do the bare minimum'",
+        "waiting for the actual music before I get excited",
+        "we've seen this rollout before... and it flopped",
+        "hope the songs are better than this rollout so far"
+    ];
+    const FAN_HANDLES = ['@lunareclipsex','@popcritic99','@stanaccount22','@chartswatch','@midnightlistener','@velvetvinyl','@echoesfan','@nocapmusic','@replayqueen','@trackreview'];
+    const FAN_GRADIENTS = [['#ff6b6b','#feca57'],['#5f27cd','#00d2d3'],['#ff9ff3','#54a0ff'],['#1dd1a1','#01a3a4'],['#ff9f43','#ee5253']];
+
+    function fanAvatar(handle) {
+        const idx = Math.abs(handle.split('').reduce((a,c)=>a+c.charCodeAt(0),0)) % FAN_GRADIENTS.length;
+        const [c1, c2] = FAN_GRADIENTS[idx];
+        const initials = handle.replace('@','').slice(0,2).toUpperCase();
+        const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' stop-color='${c1}'/><stop offset='100%' stop-color='${c2}'/></linearGradient></defs><rect width='40' height='40' rx='20' fill='url(#g)'/><text x='20' y='26' text-anchor='middle' font-size='13' font-weight='bold' fill='white' font-family='Inter,sans-serif'>${initials}</text></svg>`;
+        return `data:image/svg+xml;base64,${btoa(svg)}`;
+    }
+// ===== INSTAIFY POSTING (shared IndexedDB bridge) =====
+function openInstaifyDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open('InstaifyDB', 1);
+        req.onupgradeneeded = e => e.target.result.createObjectStore('posts', { keyPath: 'id' });
+        req.onsuccess = e => resolve(e.target.result);
+        req.onerror = e => reject(e.target.error);
+    });
+}
+
+async function pushInstaifyPost(images, caption, song) {
+    try {
+        const a = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+        const handle = (a.name || 'artist').toLowerCase().replace(/\s+/g, '');
+        const popularity = parseFloat(localStorage.getItem('popularity')) || 25;
+        const popNorm = Math.min(1, Math.max(0, popularity / 100));
+        const initialBurst = Math.floor(500 + Math.pow(popNorm, 1.3) * 400000 + Math.random() * 2000);
+        const seed = Math.random();
+        const week = parseInt(localStorage.getItem('currentWeek') || '1');
+        const post = {
+            id: Date.now() + Math.floor(Math.random() * 1000),
+            name: a.name || 'Artist Name', handle, avatar: null, content: caption || '',
+            images: Array.isArray(images) ? images : [images], time: 'now', likes: initialBurst,
+            comments: Math.floor(initialBurst * (0.04 + Math.random() * 0.035)),
+            views: Math.floor(initialBurst * (5 + seed * 4)),
+            originalLikes: initialBurst, randomSeed: seed, weekCreated: week, lastWeekProcessed: week,
+            song: song || null, brandTag: null, lastEarnedViews: 0
+        };
+        const db = await openInstaifyDB();
+        await new Promise((res, rej) => {
+            const tx = db.transaction('posts', 'readwrite');
+            tx.objectStore('posts').put(post);
+            tx.oncomplete = res;
+            tx.onerror = e => rej(e.target.error);
+        });
+    } catch (e) {
+        console.error('Failed to push Instaify post', e);
+    }
+}
+    function postFanReactionsToXify(artistName, releaseName, hype) {
+        const posPct = Math.min(0.85, 0.55 + (hype || 0) / 250); // hype nudges sentiment positive, capped
+        const picks = [];
+        for (let i = 0; i < 4; i++) {
+            const isPos = Math.random() < posPct;
+            const pool = isPos ? FAN_POSITIVE_LINES : FAN_NEGATIVE_LINES;
+            const line = pool[Math.floor(Math.random() * pool.length)];
+            const handle = FAN_HANDLES[Math.floor(Math.random() * FAN_HANDLES.length)];
+            picks.push({ line, handle, isPos });
+        }
+
+        // 2 as standalone fan posts
+        const standalone = picks.slice(0, 2).map(p =>
+            xifyPayload(p.handle.slice(1), p.handle, fanAvatar(p.handle), p.line)
+        );
+
+        // 2 as quote-posts referencing the announcement
+        const quoteReplies = picks.slice(2).map(p => {
+            const post = xifyPayload(p.handle.slice(1), p.handle, fanAvatar(p.handle), p.line);
+            post.quotePost = {
+                id: 'ref_' + Date.now(),
+                authorName: 'Pop Base',
+                authorHandle: '@PopBase',
+                content: `${artistName} announced "${releaseName}"`.slice(0, 120)
+            };
+            return post;
+        });
+
+        pushXifyPosts([...standalone, ...quoteReplies]);
+    }
+
+    function formatReleaseDateLong(dateStr) {
+        if (!dateStr) return null;
+        const d = new Date(dateStr);
+        if (isNaN(d)) return null;
+        return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+
+    function getItemTracklist(item) {
+        if (!item.songs || !item.songs.length) return null;
+        return item.songs.map(sn => typeof sn === 'string' ? sn : (sn.songName || sn.name || '')).filter(Boolean);
+    }
+
+    function postRevealToXify(artistName, revealType, item) {
+        const name = item ? (item.name || item.songName || item.albumName || 'Untitled') : 'their upcoming project';
+        const isSingle = item && item.campaign && item.campaign.releaseType === 'single';
+        const projectWord = isSingle ? 'single' : 'album';
+        const dateLong = item ? formatReleaseDateLong(item.releaseDate) : null;
+
+        const lineSets = {
+            title: [
+                `🚨 IT'S OFFICIAL. ${artistName} just revealed the title for the new ${projectWord}: "${name}" 👀`,
+                `we have a title. ${artistName}'s new ${projectWord} is called "${name}" and the internet is already spiraling`,
+                `🚨 ${artistName} dropped the title with zero context: "${name}". everyone is losing it`
+            ],
+            artwork: [
+                `🚨 the cover art for "${name}" is HERE and ${artistName} did not miss`,
+                `${artistName} just unveiled the cover for "${name}" and the internet cannot stop talking about it`,
+                `🚨 cover art alert: ${artistName} really went all out on "${name}"`
+            ],
+            date: [
+                dateLong ? `🚨 IT'S OFFICIAL. ${artistName}'s "${name}" drops ${dateLong} 📅` : `🚨 ${artistName} just locked in the release date for "${name}"`,
+                dateLong ? `mark your calendars — ${artistName}'s "${name}" is out ${dateLong}` : `${artistName} just confirmed a release date for "${name}"`,
+                dateLong ? `🚨 the countdown starts now. "${name}" from ${artistName} lands ${dateLong}` : `🚨 ${artistName} just set the date for "${name}"`
+            ],
+            tracklist: (() => {
+                const tracks = item ? getItemTracklist(item) : null;
+                const trackBlock = tracks && tracks.length ? '\n\n' + tracks.map((t, i) => `${i + 1}. ${t}`).join('\n') : '';
+                return [
+                    `🚨 ${artistName} has revealed the full tracklist for "${name}"${trackBlock}`,
+                    `the checklist is out. ${artistName}'s "${name}" tracklist:${trackBlock}`,
+                    `🚨 no skips allegedly. ${artistName} dropped the "${name}" tracklist${trackBlock}`
+                ];
+            })(),
+            features: [
+                `🚨 the features on "${name}" are OUT and nobody saw this lineup coming`,
+                `${artistName} just revealed who's on "${name}" and the timeline is not okay`,
+                `🚨 feature list alert: ${artistName} really assembled a whole moment for "${name}"`
+            ],
+            ads_social: [
+                `🚨 ${artistName}'s ad campaign for "${name}" is EVERYWHERE right now, you cannot escape it`,
+                `every timeline, every feed — ${artistName} has taken over social media promoting "${name}"`,
+                `🚨 the social push for "${name}" is relentless right now and it's working`
+            ],
+            ads_tv: [
+                `🚨 ${artistName} just aired a TV spot for "${name}" and people are already clipping it`,
+                `${artistName} on TV promoting "${name}" — this era just got a lot bigger`,
+                `🚨 TV spot just dropped for "${name}" and the impact is immediate`
+            ],
+            ads_billboard: [
+                `🚨 ${artistName} just went up on a massive billboard for "${name}". this rollout is not playing around`,
+                `spotted: a giant "${name}" billboard, and yes people are already stopping to film it`,
+                `🚨 ${artistName} taking over billboards for "${name}". the scale of this rollout is insane`
+            ],
+            vibetok: [
+                `🚨 ${artistName}'s VibeTok campaign for "${name}" is going full viral ahead of the release`,
+                `everyone's duetting the "${name}" VibeTok sound right now, it's inescapable`,
+                `🚨 the VibeTok push for "${name}" just broke containment`
+            ]
+        };
+        const pool = lineSets[revealType] || [`🚨 ${artistName} just dropped a new promotional update on "${name}".`];
+        const content = pool[Math.floor(Math.random() * pool.length)];
+        const coverArt = (item && item.coverArt) ? item.coverArt : null;
+        postAnnouncementToXify(content, coverArt);
+    }
+
+    // ===== CAMPAIGN CENTER (Hype Meter + Promo Actions) =====
+    let currentCampaignCtx = null; // { type, idx, isScheduled }
+
+    function openCampaignCenter(type, idx, isScheduled) {
+        const item = readReleaseItem(type, idx, isScheduled);
+        if (!item || !item.campaign) return;
+        currentCampaignCtx = { type, idx, isScheduled: !!isScheduled };
+        renderCampaignCenter();
+        document.getElementById('campaign-page').classList.add('active');
+    }
+
+    function closeCampaignCenter() {
+        document.getElementById('campaign-page').classList.remove('active');
+        currentCampaignCtx = null;
+        display();
+        renderScheduled();
+    }
+
+    function getCurrentCampaignItem() {
+        if (!currentCampaignCtx) return null;
+        return readReleaseItem(currentCampaignCtx.type, currentCampaignCtx.idx, currentCampaignCtx.isScheduled);
+    }
+
+    function saveCurrentCampaignItem(item) {
+        writeReleaseItem(currentCampaignCtx.type, currentCampaignCtx.idx, currentCampaignCtx.isScheduled, item);
+    }
+
+    function renderCampaignCenter() {
+        const item = getCurrentCampaignItem();
+        if (!item) return;
+        const c = item.campaign;
+        const name = item.name || item.songName || item.albumName || 'Untitled';
+        const isSingle = c.releaseType === 'single';
+        document.getElementById('campaign-title').textContent = name;
+        document.getElementById('campaign-hype-meter').innerHTML = renderHypeMeter(c);
+
+        // Reveal chips (albums/EPs only)
+        const revealWrap = document.getElementById('campaign-reveals');
+        if (isSingle) {
+            revealWrap.innerHTML = '';
+            revealWrap.style.display = 'none';
+        } else {
+            revealWrap.style.display = 'block';
+            const revealDefs = [
+                { key:'title', label:'Title' }, { key:'artwork', label:'Cover Artwork' },
+                { key:'date', label:'Release Date' }, { key:'tracklist', label:'Tracklist' },
+                { key:'features', label:'Featured Artists' }
+            ];
+            revealWrap.innerHTML = '<div class="section-label">Reveals</div>' + revealDefs.map(r => {
+                const done = !!c.revealed[r.key];
+                return `<div class="reveal-chip ${done?'revealed':''}">
+                    <div class="rc-label"><i class="fas ${done?'fa-check-circle':'fa-lock'}" style="color:${done?'var(--green)':'var(--text2)'}"></i> ${r.label}</div>
+                    ${done ? `<span class="rc-status">Revealed</span>` : `<button class="hype-mini-btn" onclick="doPromoAction('${r.key}')">Reveal Now</button>`}
+                </div>`;
+            }).join('');
+        }
+
+        // Promo action cards
+        const actions = PROMO_ACTIONS[isSingle ? 'single' : 'project'];
+        const grid = document.getElementById('campaign-promo-grid');
+        grid.innerHTML = actions.filter(a => !(a.key in c.revealed)).map(a => {
+            const usedCount = c.promoLog.filter(l => l.type === a.key).length;
+            const disabled = !a.repeatable && usedCount > 0;
+            return `<div class="promo-card">
+                <div class="pc-title"><i class="fas ${a.icon}" style="color:var(--gold)"></i> ${a.label}</div>
+                <div class="pc-desc">${a.cost > 0 ? `$${a.cost.toLocaleString()} · ` : 'Free · '}+${a.hype} Hype${a.repeatable ? ' · Repeatable' : ''}</div>
+                <div class="pc-foot">
+                    <button class="btn ${disabled?'':'promote-btn'}" style="${disabled?'background:#333;cursor:not-allowed;width:100%':'width:100%'}" ${disabled?'disabled':''} onclick="doPromoAction('${a.key}')">
+                        ${disabled ? 'Done' : (a.isMagazine ? 'Open Editor' : 'Run')}
+                    </button>
+                </div>
+            </div>`;
+        }).join('');
+
+        // Log
+        const log = document.getElementById('campaign-log');
+        if (!c.promoLog.length) { log.innerHTML = '<div class="empty" style="padding:30px">No promo activity yet</div>'; }
+        else {
+            log.innerHTML = c.promoLog.slice().reverse().map(l =>
+                `<div class="campaign-log-item"><span>${esc(l.label)}</span></div>`
+            ).join('');
+        }
+    }
+let pendingPhotoshootFiles = [];
+
+    function openPhotoshootModal() {
+        pendingPhotoshootFiles = [];
+        document.getElementById('photoshoot-preview').innerHTML = '';
+        document.getElementById('photoshoot-file-input').value = '';
+        const dropzone = document.getElementById('photoshoot-dropzone');
+        dropzone.classList.remove('has-files');
+        dropzone.querySelector('.upload-dropzone-title').textContent = 'Choose Photos';
+        dropzone.querySelector('.upload-dropzone-sub').textContent = 'Click to browse · at least 2 images';
+        document.getElementById('photoshoot-modal').classList.add('active');
+    }
+
+    function closePhotoshootModal() {
+        document.getElementById('photoshoot-modal').classList.remove('active');
+        pendingPhotoshootFiles = [];
+    }
+
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.id === 'photoshoot-file-input') {
+            const files = Array.from(e.target.files || []);
+            const preview = document.getElementById('photoshoot-preview');
+            const dropzone = document.getElementById('photoshoot-dropzone');
+            preview.innerHTML = '';
+            pendingPhotoshootFiles = [];
+            if (files.length) {
+                dropzone.classList.add('has-files');
+                dropzone.querySelector('.upload-dropzone-title').textContent = `${files.length} photo${files.length > 1 ? 's' : ''} selected`;
+                dropzone.querySelector('.upload-dropzone-sub').textContent = 'Click to change selection';
+            } else {
+                dropzone.classList.remove('has-files');
+                dropzone.querySelector('.upload-dropzone-title').textContent = 'Choose Photos';
+                dropzone.querySelector('.upload-dropzone-sub').textContent = 'Click to browse · at least 2 images';
+            }
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    pendingPhotoshootFiles.push(ev.target.result);
+                    const img = document.createElement('img');
+                    img.src = ev.target.result;
+                    preview.appendChild(img);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    });
+
+    // IndexedDB writer for image-bearing Xify posts (shared MusicGameDB, same store magazine.html uses)
+const xifyImageDB = (function() {
+    const DB_NAME = 'MusicGameDB';
+    const DB_VERSION = 4;
+    const STORE = 'xifyPosts';
+    function open() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, DB_VERSION);
+            req.onupgradeneeded = e => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('photos')) db.createObjectStore('photos');
+                if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' });
+            };
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = e => reject(e.target.error);
+        });
+    }
+    return {
+        put(post) {
+            return open().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE, 'readwrite');
+                tx.objectStore(STORE).put(post);
+                tx.oncomplete = () => resolve(post);
+                tx.onerror = e => reject(e.target.error);
+            })).catch(() => null);
+        }
+    };
+})();
+    
+    function confirmPhotoshoot() {
+        if (pendingPhotoshootFiles.length < 2) {
+            showToast('Upload at least 2 photos', 'error');
+            return;
+        }
+        const item = getCurrentCampaignItem();
+        if (!item) return;
+        const c = item.campaign;
+        const isSingle = c.releaseType === 'single';
+        const actionDef = PROMO_ACTIONS[isSingle ? 'single' : 'project'].find(a => a.key === 'photoshoot');
+
+        const money = parseFloat(localStorage.getItem('money') || 0);
+        if (actionDef.cost > 0 && money < actionDef.cost) {
+            showToast(`Not enough money! Need $${actionDef.cost.toLocaleString()}`, 'error');
+            return;
+        }
+        localStorage.setItem('money', money - actionDef.cost);
+
+        const gain = actionDef.hype + Math.floor(Math.random() * 4);
+        addHype(c, gain);
+        c.promoLog.push({ type: 'photoshoot', label: actionDef.label, hypeGain: gain, cost: actionDef.cost, ts: Date.now() });
+        saveCurrentCampaignItem(item);
+
+        const artistName = (JSON.parse(localStorage.getItem('artistDetails')||'{}').name) || 'The artist';
+        const photoLines = [
+            `new era, new pictures. ${artistName} is NOT playing around 📸`,
+            `behind the scenes from the rollout... this is giving something 👀`,
+            `${artistName} really said "let me remind you who's running this" 📸`,
+            `the way these photos just dropped with zero warning`
+        ];
+        pendingPhotoshootFiles.forEach((photo, i) => {
+            const post = xifyPayload(artistName, '@' + artistName.replace(/[^a-zA-Z0-9]/g,'').toLowerCase(), '', photoLines[i % photoLines.length], 'image', photo);
+            xifyImageDB.put(post);
+        });
+        pushInstaifyPost(pendingPhotoshootFiles, `New promotional photos from the rollout 📸`);
+
+        closePhotoshootModal();
+        renderCampaignCenter();
+        showToast('Photoshoot posted to Xify and Instaify!', 'success');
+    }
+    
+    function doPromoAction(actionKey) {
+        const item = getCurrentCampaignItem();
+        if (!item) return;
+        const c = item.campaign;
+        const isSingle = c.releaseType === 'single';
+        const actionDef = PROMO_ACTIONS[isSingle ? 'single' : 'project'].find(a => a.key === actionKey);
+        if (!actionDef) return;
+
+        if (actionDef.key === 'photoshoot') {
+            openPhotoshootModal();
+            return;
+        }
+
+        if (actionDef.isMagazine) {
+            // Hand off to standalone Magazine Editor page
+            const artistName = (JSON.parse(localStorage.getItem('artistDetails')||'{}').name) || 'The Artist';
+            localStorage.setItem('magazineEditorContext', JSON.stringify({
+                releaseType: c.releaseType,
+                itemName: item.name || item.songName || item.albumName || 'Untitled',
+                artistName: artistName,
+                type: currentCampaignCtx.type,
+                idx: currentCampaignCtx.idx,
+                isScheduled: currentCampaignCtx.isScheduled,
+                coverArt: item.coverArt || null
+            }));
+            window.location.href = 'magazine.html';
+            return;
+        }
+
+        const money = parseFloat(localStorage.getItem('money') || 0);
+        if (actionDef.cost > 0 && money < actionDef.cost) {
+            showToast(`Not enough money! Need $${actionDef.cost.toLocaleString()}`, 'error');
+            return;
+        }
+        if (actionDef.cost > 0) {
+            localStorage.setItem('money', money - actionDef.cost);
+        }
+
+        // Reveal-type actions flip the revealed flag; promo-type actions just log + hype
+        if (actionKey in c.revealed) {
+            c.revealed[actionKey] = true;
+        }
+
+        const gain = actionDef.hype + Math.floor(Math.random() * 4);
+        addHype(c, gain);
+        c.promoLog.push({ type: actionKey, label: actionDef.label, hypeGain: gain, cost: actionDef.cost, ts: Date.now() });
+
+        saveCurrentCampaignItem(item);
+
+        const artistName = (JSON.parse(localStorage.getItem('artistDetails')||'{}').name) || 'The artist';
+        postRevealToXify(artistName, actionDef.xify, item);
+
+        renderCampaignCenter();
+        showToast(`${actionDef.label} live!`, 'success');
+    }
+
+    function openPublishModal(type, idx) {
+        const items = type === 'song' ? getData('unreleasedSongs') : getData('unreleasedAlbums');
+        const item = items[idx];
+        if(!item) return;
+        pendingPublish = { type, idx, item };
+        document.getElementById('modal-item-name').textContent = item.name || item.songName || item.albumName || 'Untitled';
+        document.getElementById('publish-modal').classList.add('active');
+    }
+    
+    function closePublishModal() { document.getElementById('publish-modal').classList.remove('active'); pendingPublish = null; }
+
+    function confirmPublish(isScheduled) {
+        if(!pendingPublish) return;
+        if(isScheduled) {
+            const dateVal = document.getElementById('release-date-picker').value;
+            if(!dateVal) { showToast("Please select a date", 'error'); return; }
+            const gameDate = new Date(localStorage.getItem('currentDate')||new Date());
+            if(new Date(dateVal) <= gameDate) { if(!confirm("Date is today or past. Release immediately?")) return; publishImmediately(pendingPublish.type, pendingPublish.idx); }
+            else { scheduleRelease(pendingPublish.type, pendingPublish.idx, dateVal); }
+        } else { publishImmediately(pendingPublish.type, pendingPublish.idx); }
+        closePublishModal();
+    }
+
+    function checkLabelClearance(item, callback) {
+        const deal = JSON.parse(localStorage.getItem('recordDeal'));
+        if (!deal) { callback(); return; }
+
+        if (item.rejectedByLabel) {
+            showToast("🚫 Label locked this release due to previous rejection.", "error");
+            deal.satisfaction = Math.max(0, (deal.satisfaction || 50) - 10);
+            localStorage.setItem('recordDeal', JSON.stringify(deal));
+            showToast("⚠️ Label Satisfaction dropped! (-10%)", "error");
+            return; 
+        }
+
+        const control = deal.terms.control || 'Low';
+        if (control === 'Low' && Math.random() < 0.30) {
+            showToast("Label Rejected: 'Quality not up to standard.'", "error");
+            deal.satisfaction = Math.max(0, (deal.satisfaction || 50) - 5);
+            localStorage.setItem('recordDeal', JSON.stringify(deal));
+
+            item.rejectedByLabel = true;
+            if (item.trackType === 'album' || item.type === 'Album') {
+                let albums = getData('unreleasedAlbums');
+                let foundIndex = albums.findIndex(a => (a.name || a.albumName) === (item.name || item.albumName));
+                if(foundIndex !== -1) { albums[foundIndex].rejectedByLabel = true; saveData('unreleasedAlbums', albums); }
+            } else {
+                let songs = getData('unreleasedSongs');
+                let foundIndex = songs.findIndex(s => (s.songName || s.name) === (item.songName || item.name));
+                if(foundIndex !== -1) { songs[foundIndex].rejectedByLabel = true; saveData('unreleasedSongs', songs); }
+            }
+            display();
+            return; 
+        }
+
+        if (Math.random() > 0.5) {
+            const budget = deal.tier === 'Worldwide' ? 50000 : 10000;
+            let money = parseFloat(localStorage.getItem('money')) || 0;
+            localStorage.setItem('money', money + budget);
+            showToast(`Label Approved + Budget ($${budget.toLocaleString()})`, "success");
+            deal.satisfaction = Math.min(100, (deal.satisfaction || 50) + 2);
+            localStorage.setItem('recordDeal', JSON.stringify(deal));
+        } else {
+            showToast("Label Approved.", "success");
+        }
+        callback();
+    }
+
+    function scheduleRelease(type, idx, dateStr) {
+        const listKey = type === 'song' ? 'unreleasedSongs' : 'unreleasedAlbums';
+        const list = getData(listKey);
+        const item = list[idx];
+
+        checkLabelClearance(item, () => {
+            const scheduled = getData('scheduledReleases');
+            let hypeBoost = 10; 
+            const deal = JSON.parse(localStorage.getItem('recordDeal'));
+            if(deal) {
+                if(deal.tier === 'Major') hypeBoost = 50;
+                else if(deal.tier === 'Indie') hypeBoost = 25;
+            }
+
+            scheduled.push({ 
+                type: type, 
+                data: item, 
+                releaseDate: dateStr, 
+                hype: hypeBoost, 
+                scheduledAt: new Date().toISOString() 
+            });
+            saveData('scheduledReleases', scheduled);
+            
+            if (type === 'album' && item.songs) {
+                let songs = getData('unreleasedSongs');
+                songs = songs.filter(s => !item.songs.includes(s.songName||s.name));
+                saveData('unreleasedSongs', songs);
+            }
+            
+            list.splice(idx, 1);
+            saveData(listKey, list);
+            display();
+            showTab({currentTarget:document.querySelector('.tab-btn[onclick*="scheduled"]')}, 'scheduled');
+        });
+    }
+
+    function publishImmediately(type, idx) {
+        const listKey = type === 'song' ? 'unreleasedSongs' : 'unreleasedAlbums';
+        const list = getData(listKey);
+        const item = list[idx];
+        checkLabelClearance(item, () => {
+            type === 'song' ? publishSong(idx) : publishAlbum(idx);
+        });
+    }
+
+    function clearCache(){ showToast('Cache cleared', 'success'); toggleSettings(); }
+
+    function showHistory(){
+        toggleSettings();
+        document.getElementById('main-container').innerHTML=`
+            <div class="header"><button class="back-btn" onclick="location.reload()"><i class="fas fa-chevron-left"></i></button><h1 class="page-title">Released History</h1></div>
+            <div class="nav-tabs"><button class="tab-btn active" onclick="showHistoryTab(event, 'albums')">Albums</button><button class="tab-btn" onclick="showHistoryTab(event, 'songs')">Songs</button></div>
+            <div id="history-albums-tab" class="tab-content active"><div id="history-albums-list" class="list"></div></div>
+            <div id="history-songs-tab" class="tab-content"><div id="history-songs-list" class="list"></div></div>`;
+        displayHistory();
+    }
+    
+    function showHistoryTab(e, tabName) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.getElementById('history-' + tabName + '-tab').classList.add('active');
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+    }
+
+    function displayHistory(){
+        const songs = getData('releasedSongs');
+        const albums = getData('releasedAlbums');
+        const songsList = document.getElementById('history-songs-list');
+        const albumsList = document.getElementById('history-albums-list');
+
+        songsList.innerHTML = songs.length ? '' : '<div class="empty">No released songs</div>';
+        songs.forEach((s,i) => {
+            const card=document.createElement('div'); card.className='card song-card';
+            const cover=s.coverArt?`background-image:url(${esc(s.coverArt)})`:'';
+            card.innerHTML=`<div class="cover" onclick="updateHistoryCover(event, 'song', ${i})" style="${cover}"><input type="file" class="file-input" style="display:none" accept="image/*" onchange="histCover(event, 'song', ${i})"></div><div class="details"><div class="name">${esc(s.songName||s.name||'Untitled')}</div><div class="type">Released • ${s.trackType||'single'}</div></div>`;
+            songsList.appendChild(card);
+        });
+        
+        albumsList.innerHTML = albums.length ? '' : '<div class="empty">No released albums</div>';
+        albums.forEach((a,i) => {
+            const card=document.createElement('div'); card.className='card album-card';
+            const cover=a.coverArt?`background-image:url(${esc(a.coverArt)})`:'';
+            const baseName = (a.name || a.albumName).replace(/\s*\(.*?\)\s*$/g, '').trim();
+            const canAddMore = albums.filter(al => (al.name||al.albumName).includes(baseName)).length < 4;
+            card.innerHTML=`<div class="album-header"><div class="cover" onclick="updateHistoryCover(event, 'album', ${i})" style="${cover}"><input type="file" class="file-input" style="display:none" accept="image/*" onchange="histCover(event, 'album', ${i})"></div><div class="details"><div class="name">${esc(a.name||a.albumName)}</div><div class="type">Album • ${a.songs?.length||0} tracks</div></div></div><div style="display:flex;justify-content:flex-end;margin-top:15px">${canAddMore?`<button class="btn" style="background:linear-gradient(135deg,var(--accent),var(--purple));font-size:12px" onclick="openEditionCreator(${i})"><i class="fas fa-plus"></i> Version</button>`:''}</div>`;
+            albumsList.appendChild(card);
+        });
+    }
+
+    function updateHistoryCover(e, t, i){ e.currentTarget.querySelector('.file-input')?.click(); }
+    function histCover(e, type, idx){
+        const file=e.target?.files?.[0]; if(!file)return;
+        const key = type === 'song' ? 'releasedSongs' : 'releasedAlbums';
+        processImg(file,(url)=>{ if(url){ const items=getData(key); items[idx].coverArt=url; saveData(key,items); displayHistory(); } });
+    }
+
+    function openEditionCreator(albumIndex) {
+        const albums = getData('releasedAlbums');
+        if (!albums[albumIndex]) return;
+        editionCreatorState = { currentStep: 1, albumIndex, versionType: null, editionSuffix: '', selectedSongs: [], coverArt: null, originalAlbum: albums[albumIndex] };
+        document.querySelectorAll('.creator-step').forEach(s => s.style.display = 'none');
+        document.getElementById('step-1').style.display = 'block';
+        document.getElementById('step-1').classList.add('active');
+        document.getElementById('edition-creator').classList.add('active');
+    }
+    
+    function closeEditionCreator() { document.getElementById('edition-creator').classList.remove('active'); }
+    function selectVersionType(type) {
+        editionCreatorState.versionType = type;
+        if (type === 'deluxe') {
+            editionCreatorState.editionSuffix = 'Deluxe';
+            editionCreatorState.currentStep = 3;
+            document.getElementById('cover-instruction').textContent = 'Upload custom cover art (Required for Deluxe)';
+        } else { editionCreatorState.currentStep = 2; }
+        updateStepUI();
+    }
+    
+    function setupEditionInputListeners() {
+        const suffixInput = document.getElementById('edition-suffix');
+        if (suffixInput) suffixInput.addEventListener('input', (e) => editionCreatorState.editionSuffix = e.target.value.trim());
+    }
+    
+    function nextStep() {
+        if (editionCreatorState.currentStep === 2 && !editionCreatorState.editionSuffix.trim()) { showToast('Enter edition name', 'error'); return; }
+        if (editionCreatorState.currentStep === 3 && editionCreatorState.selectedSongs.length === 0) { showToast('Select at least one song', 'error'); return; }
+        editionCreatorState.currentStep++;
+        if (editionCreatorState.currentStep === 3) loadAvailableSongs();
+        updateStepUI();
+    }
+    
+    function prevStep() {
+        if (editionCreatorState.versionType === 'deluxe' && editionCreatorState.currentStep === 3) editionCreatorState.currentStep = 1;
+        else editionCreatorState.currentStep--;
+        updateStepUI();
+    }
+    
+    function updateStepUI() {
+        document.querySelectorAll('.creator-step').forEach(step => step.style.display = 'none');
+        document.getElementById(`step-${editionCreatorState.currentStep}`).style.display = 'block';
+        document.querySelectorAll('.step-dot').forEach((dot, index) => dot.style.background = index + 1 <= editionCreatorState.currentStep ? 'var(--accent)' : 'rgba(255,255,255,.2)');
+    }
+    
+        function loadAvailableSongs() {
+        const c = document.getElementById('song-selection-container'); 
+        c.innerHTML = '';
+        
+        // 1. Get Unreleased Songs
+        const unreleased = getData('unreleasedSongs').map(s => ({
+            data: s,
+            source: 'unreleased',
+            name: s.songName || s.name
+        }));
+
+        // 2. Get Released Singles (Filter out songs already on albums)
+        const released = getData('releasedSongs')
+            .filter(s => !s.albumName && (s.trackType === 'single' || !s.trackType))
+            .map(s => ({
+                data: s,
+                source: 'released',
+                name: s.songName || s.name
+            }));
+
+        // 3. Combine List
+        editionCreatorState.availableList = [...unreleased, ...released];
+        
+        // Reset selection if list reloaded
+        editionCreatorState.selectedSongs = []; 
+
+        if (!editionCreatorState.availableList.length) { 
+            c.innerHTML = '<div style="color:var(--text2);text-align:center">No available songs found</div>'; 
+            return; 
+        }
+
+        // 4. Render Mixed List
+        editionCreatorState.availableList.forEach((item, idx) => {
+            const div = document.createElement('div');
+            div.style.cssText = 'background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:10px;padding:15px;cursor:pointer;display:flex;align-items:center;gap:12px';
+            
+            const isReleased = item.source === 'released';
+            const badge = isReleased 
+                ? `<span style="background:var(--blue);color:#fff;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:8px">RELEASED</span>`
+                : `<span style="background:var(--green);color:#000;padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;margin-left:8px">NEW</span>`;
+
+            div.innerHTML = `
+                <input type="checkbox" value="${idx}">
+                <label style="flex:1;color:white;cursor:pointer;display:flex;align-items:center">
+                    ${esc(item.name)} ${badge}
+                </label>`;
+            
+            // Handle click
+            div.onclick = (e) => {
+                if(e.target.tagName !== 'INPUT') { 
+                    const chk = div.querySelector('input'); 
+                    chk.checked = !chk.checked; 
+                    toggleSongSel(chk, div, idx); 
+                }
+            };
+            div.querySelector('input').onchange = (e) => toggleSongSel(e.target, div, idx);
+            c.appendChild(div);
+        });
+    }
+
+    function toggleSongSel(chk, div, idx) {
+        if (chk.checked) { div.style.borderColor = 'var(--accent)'; editionCreatorState.selectedSongs.push(idx); } 
+        else { div.style.borderColor = 'var(--border)'; editionCreatorState.selectedSongs = editionCreatorState.selectedSongs.filter(s => s !== idx); }
+    }
+    
+    function handleEditionCoverUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        processImg(file, (url) => {
+            if (url) {
+                editionCreatorState.coverArt = url;
+                const zone = document.getElementById('cover-upload-zone');
+                zone.style.backgroundImage = `url(${url})`;
+                zone.style.backgroundSize = 'cover';
+                zone.style.backgroundPosition = 'center';
+                zone.innerHTML = '<div style="background:rgba(0,0,0,0.7);padding:10px;border-radius:10px;color:var(--green);font-weight:700"><i class="fas fa-check-circle"></i> Uploaded</div>';
+            }
+        });
+    }
+    
+      function createEditionVersion() {
+        if (editionCreatorState.versionType === 'deluxe' && !editionCreatorState.coverArt) { showToast('Deluxe requires custom art!', 'error'); return; }
+        setLoad(true);
+        try {
+            // Load fresh data
+            let relAlbums = getData('releasedAlbums');
+            let relSongs = getData('releasedSongs');
+            let unreleasedSongs = getData('unreleasedSongs');
+            
+            const origIndex = editionCreatorState.albumIndex;
+            const orig = relAlbums[origIndex];
+            
+            // Get Game Date
+            const gameDate = localStorage.getItem('currentDate') || new Date().toISOString();
+            
+            // Initialize props if missing
+            if (!orig.originalTrackCount) { orig.originalTrackCount = orig.songs ? orig.songs.length : 0; }
+            if (!orig.id) { orig.id = `user_alb_${(orig.name || orig.albumName).replace(/[^a-z0-9]/gi, '')}`; }
+
+            // Create New Title
+            const baseName = (orig.name || orig.albumName).replace(/\s*\(.*?\)\s*$/g, '').trim();
+            const newName = editionCreatorState.versionType === 'deluxe' ? `${baseName} (Deluxe)` : `${baseName} (${editionCreatorState.editionSuffix} Edition)`;
+
+            orig.name = newName;
+            orig.albumName = newName;
+            
+            if (editionCreatorState.coverArt) { orig.coverArt = editionCreatorState.coverArt; }
+            
+            // Process Selected Songs
+            const namesToRemoveFromUnreleased = [];
+
+            editionCreatorState.selectedSongs.forEach(tempIdx => {
+                const item = editionCreatorState.availableList[tempIdx];
+                const songName = item.name;
+
+                if (item.source === 'unreleased') {
+                    // CASE A: It's a new song. Move from Unreleased -> Released
+                    const newS = { 
+                        songName: songName, 
+                        name: songName, 
+                        coverArt: orig.coverArt, 
+                        trackType: 'album', 
+                        streams: 0, 
+                        releaseDate: gameDate, 
+                        albumName: newName 
+                    };
+                    relSongs.push(newS);
+                    orig.songs.push({ songName: newS.songName, name: newS.name });
+                    namesToRemoveFromUnreleased.push(songName);
+
+              } else if (item.source === 'released') {
+    // CASE B: It's an existing single. Update it.
+    const existingIdx = relSongs.findIndex(r => (r.songName || r.name) === songName);
+    if (existingIdx !== -1) {
+        relSongs[existingIdx].albumName = newName;
+        relSongs[existingIdx].coverArt = orig.coverArt; // Update cover to match album
+        
+        // Add to album tracklist
+        orig.songs.push({ songName: songName, name: songName });
+    }
+}
+});
+            
+            
+            // Cleanup Unreleased list
+            unreleasedSongs = unreleasedSongs.filter(s => !namesToRemoveFromUnreleased.includes(s.songName || s.name));
+
+            // Save Everything
+            relAlbums[origIndex] = orig;
+            saveData('releasedAlbums', relAlbums); 
+            saveData('releasedSongs', relSongs); 
+            saveData('unreleasedSongs', unreleasedSongs);
+            
+            showToast(`"${newName}" updated!`, 'success');
+            closeEditionCreator(); 
+            displayHistory();
+        } catch(e) { console.error(e); showToast('Failed to create edition', 'error'); } 
+        finally { setLoad(false); }
+    }
+
+    function changeType(e,type,idx){ e.stopPropagation(); const s=getData('unreleasedSongs'); if(s[idx]){s[idx].trackType=type;saveData('unreleasedSongs',s);display()} }
+    function changeAlbumEdition(e, ed, idx) { e.stopPropagation(); const a=getData('unreleasedAlbums'); if(a[idx]){a[idx].editionType=ed;saveData('unreleasedAlbums',a);display()} }
+    function uploadCover(e,type,idx){ const f=e.target?.files?.[0]; if(f){e.stopPropagation(); processImg(f,(url)=>{if(url)setCover(url,type,idx)});} }
+    function setCover(url,type,idx){ const k=type==='song'?'unreleasedSongs':'unreleasedAlbums'; const i=getData(k); if(i[idx]){i[idx].coverArt=url;saveData(k,i);display();} }
+    function remove(type,idx){ if(confirm(`Delete this ${type}?`)){ const k=type==='song'?'unreleasedSongs':'unreleasedAlbums'; const i=getData(k); i.splice(idx,1); saveData(k,i); display(); showToast('Deleted', 'success'); } }
+
+    // ===== SETTINGS =====
+    function toggleSettings() {
+        const panel = document.getElementById('settings');
+        const overlay = document.querySelector('.settings-overlay');
+        const isOpen = panel.style.display !== 'none';
+        panel.style.display = isOpen ? 'none' : 'block';
+        overlay.style.display = isOpen ? 'none' : 'block';
+        if (!isOpen) renderStorageStats();
+    }
+
+    function renderStorageStats() {
+        const container = document.getElementById('storage-bars-container');
+        const totalEl = document.getElementById('storage-total-text');
+        if (!container) return;
+
+        // Estimate localStorage usage
+        const QUOTA_BYTES = 5 * 1024 * 1024; // 5MB typical
+        let totalUsed = 0;
+        const categories = {};
+
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            const val = localStorage.getItem(key) || '';
+            const bytes = (key.length + val.length) * 2; // UTF-16
+            totalUsed += bytes;
+            // Group by category
+            const cat = key.includes('Song') || key.includes('song') ? 'Songs' :
+                        key.includes('Album') || key.includes('album') ? 'Albums' :
+                        key.includes('Release') || key.includes('release') || key.includes('scheduled') ? 'Releases' :
+                        'Other';
+            categories[cat] = (categories[cat] || 0) + bytes;
+        }
+
+        const pct = Math.min((totalUsed / QUOTA_BYTES) * 100, 100);
+        const colors = { Songs: 'var(--accent)', Albums: 'var(--purple)', Releases: 'var(--green)', Other: 'var(--gold)' };
+
+        container.innerHTML = '';
+        Object.entries(categories).forEach(([cat, bytes]) => {
+            const catPct = Math.min((bytes / QUOTA_BYTES) * 100, 100);
+            const kb = (bytes / 1024).toFixed(1);
+            container.innerHTML += `
+                <div class="server-bar-row">
+                    <div class="server-bar-label">${cat}</div>
+                    <div class="server-bar-track"><div class="server-bar-inner" style="width:${catPct}%;background:${colors[cat]||'var(--accent)'}"></div></div>
+                    <div class="server-bar-val">${kb}kb</div>
+                </div>`;
+        });
+
+        const usedKb = (totalUsed / 1024).toFixed(1);
+        const quotaKb = (QUOTA_BYTES / 1024).toFixed(0);
+        const barColor = pct > 80 ? '#ff5252' : pct > 60 ? 'var(--gold)' : 'var(--green)';
+        totalEl.innerHTML = `<span style="color:${barColor};font-weight:700">${usedKb}kb</span> / ${quotaKb}kb used (${Math.round(pct)}%)`;
+    }
+
+    async function resendArtCoversToServers() {
+        const keysToCheck = [];
+        for (let i = 0; i < localStorage.length; i++) {
+            keysToCheck.push(localStorage.key(i));
+        }
+
+        let found = 0, reuploaded = 0, failed = 0;
+        toggleSettings(); // close panel
+        showUploadOverlay();
+
+        // Find all art cover base64 data URIs across all localStorage keys
+        for (const key of keysToCheck) {
+            try {
+                const raw = localStorage.getItem(key);
+                if (!raw) continue;
+                let arr;
+                try { arr = JSON.parse(raw); } catch(e) { continue; }
+                if (!Array.isArray(arr)) continue;
+
+                let changed = false;
+                for (let i = 0; i < arr.length; i++) {
+                    const item = arr[i];
+                    if (!item || typeof item !== 'object') continue;
+                    // Only process items that have a coverArt key with base64 data URI
+                    if (item.coverArt && typeof item.coverArt === 'string' && item.coverArt.startsWith('data:image')) {
+                        found++;
+                        setOverlayStage('Re-sending Art Covers', `Found ${found} local covers... uploading #${found}`);
+                        setBar(1, 100);
+                        setBar(2, 10);
+                        const url = await uploadWithFallback(item.coverArt, (status) => {
+                            setOverlayStage('Re-sending Art Covers', status);
+                        });
+                        if (url) {
+                            arr[i].coverArt = url;
+                            changed = true;
+                            reuploaded++;
+                        } else {
+                            failed++;
+                        }
+                    }
+                }
+                if (changed) localStorage.setItem(key, JSON.stringify(arr));
+            } catch(e) { console.warn('resend error:', e); }
+        }
+
+        hideUploadOverlay();
+        display();
+        if (found === 0) {
+            showToast('No local art covers found — all good!', 'success');
+        } else {
+            showToast(`Re-uploaded ${reuploaded}/${found} covers. ${failed > 0 ? `${failed} failed.` : ''}`, reuploaded === found ? 'success' : 'error');
+        }
+    }
+
+  function publishSong(idx){
+    let s=getData('unreleasedSongs'), r=getData('releasedSongs'), item=s[idx];
+    const timestamp = Date.now();
+    const cleanTitle = (item.songName||item.name).replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+    
+    const pub={ 
+        id: `user_song_${cleanTitle}_${timestamp}`,
+        songName: item.songName||item.name, 
+        name: item.songName||item.name, 
+        title: item.songName||item.name,
+        coverArt: item.coverArt||'', 
+        trackType: item.trackType||'single', 
+        streams: 0,
+        weeklyStreams: 0,
+        releaseDate: localStorage.getItem('currentDate')||new Date().toISOString(),
+        hype: 0,
+        stats: { weeksCharting: 0, peakStreams: 0 },
+        theme: item.theme || null,
+        songType: item.songType || 'normal',
+        ...(item.isRemix && { isRemix: true, remixType: item.remixType||'Exclusive', originalParent: item.originalParent||'' })
+    };
+    
+    r.push(pub); 
+    s.splice(idx,1); 
+    saveData('releasedSongs',r); 
+    saveData('unreleasedSongs',s); 
+    showToast('Song Released!', 'success'); 
+    display();
+}
+
+    function publishAlbum(idx){
+        let a=getData('unreleasedAlbums'), ra=getData('releasedAlbums'), s=getData('unreleasedSongs'), rs=getData('releasedSongs'), item=a[idx];
+        const gd = localStorage.getItem('currentDate')||new Date().toISOString();
+        const pub={ name:item.name||item.albumName, albumName:item.name||item.albumName, coverArt:item.coverArt||'', releaseDate:gd, type:item.type||'Album', songs:[] };
+        
+        if(item.songs) item.songs.forEach(sn=>{
+            const songName = typeof sn === 'string' ? sn : (sn.songName || sn.name || '');
+            if (!songName) return;
+            const cleanTitle = songName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            const trackId = `user_song_${cleanTitle}_${Date.now()}_${Math.floor(Math.random()*100000)}`;
+            if (typeof sn === 'object' && sn.isLiveTrack) {
+                const rel={ id:trackId, songName, name:songName, coverArt:pub.coverArt, trackType:'album', streams:0, releaseDate:gd, albumName:pub.name, isLiveTrack:true, originalSongName:sn.originalSongName||'' };
+                rs.push(rel); pub.songs.push({songName,name:songName}); return;
+            }
+            const ex=rs.find(x=>(x.songName||x.name)===songName);
+            if(ex) { if(!ex.id) ex.id=trackId; ex.albumName=pub.name; ex.coverArt=pub.coverArt; pub.songs.push({songName:ex.songName,name:ex.songName}); }
+
+                        else {
+                const uIdx=s.findIndex(x=>(x.songName||x.name)===songName);
+                if(uIdx>=0){
+                    const raw=s[uIdx];
+                    const rel={ id:trackId, songName:raw.songName||raw.name, name:raw.songName||raw.name, coverArt:pub.coverArt, trackType:'album', streams:0, releaseDate:gd, albumName:pub.name, theme:raw.theme||null, songType:raw.songType||'normal' };
+                    rs.push(rel); pub.songs.push({songName:rel.songName,name:rel.name}); s.splice(uIdx,1);
+                }
+            }
+        });
+        ra.push(pub); saveData('releasedSongs',rs); saveData('releasedAlbums',ra); saveData('unreleasedSongs',s); a.splice(idx,1); saveData('unreleasedAlbums',a);
+        showToast('Album Dropped!', 'success'); display();
+    }
+    
+    let draggedItem=null, currentAlbumIndex=null;
+    function initDragDrop() {
+        document.addEventListener('dragstart', (e) => { if (e.target.classList.contains('track-item')) { draggedItem = e.target; currentAlbumIndex = e.target.closest('.tracks').dataset.albumIndex; setTimeout(() => e.target.classList.add('dragging'), 0); } });
+        document.addEventListener('dragend', (e) => { if (draggedItem) { draggedItem.classList.remove('dragging'); draggedItem = null; } });
+        document.addEventListener('dragover', (e) => { if (e.target.closest('.tracks')?.dataset.albumIndex === currentAlbumIndex) e.preventDefault(); });
+        document.addEventListener('drop', (e) => {
+            if (draggedItem && e.target.closest('.tracks')?.dataset.albumIndex === currentAlbumIndex) {
+                e.preventDefault(); const target = e.target.closest('.track-item');
+                if (target && target !== draggedItem) {
+                     const from = parseInt(draggedItem.dataset.trackIndex), to = parseInt(target.dataset.trackIndex);
+                     const albums = getData('unreleasedAlbums'); const album = albums[currentAlbumIndex];
+                     const [moved] = album.songs.splice(from, 1); album.songs.splice(to, 0, moved);
+                     saveData('unreleasedAlbums', albums); display();
+                }
+            }
+        });
+    }
+    // ===== RELEASED ALBUMS → RELEASE AS SINGLE =====
+    function renderReleasedAlbums() {
+        const list = document.getElementById('released-albums-list');
+        if (!list) return;
+        const releasedAlbums = getData('releasedAlbums');
+        const releasedSongs = getData('releasedSongs');
+
+        if (!releasedAlbums.length) {
+            list.innerHTML = '<div class="empty"><i class="fas fa-compact-disc"></i><br>No released albums yet</div>';
+            return;
+        }
+        list.innerHTML = '';
+
+        releasedAlbums.forEach((album) => {
+            const card = document.createElement('div');
+            card.className = 'card album-card';
+            const coverStyle = album.coverArt ? `background-image:url(${esc(album.coverArt)})` : '';
+            let tracksHtml = '<div class="tracks"><div style="margin-bottom:10px;font-weight:700;font-size:12px;opacity:0.7">TRACKLIST</div>';
+
+            if (Array.isArray(album.songs) && album.songs.length) {
+                album.songs.forEach((s, i) => {
+                    const sName = typeof s === 'string' ? s : (s.songName || s.name || '');
+                    const songObj = releasedSongs.find(rs => (rs.songName || rs.name) === sName);
+                    const isSingle = songObj && songObj.trackType === 'single';
+                    const safeName = sName.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                    const safeCover = (album.coverArt || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                    tracksHtml += `
+                    <div class="track-item" style="cursor:default">
+                        <div style="flex:1">${i + 1}. ${esc(sName)}
+                            ${isSingle ? '<span style="color:var(--accent);font-size:10px;font-weight:800;margin-left:6px">● SINGLE</span>' : ''}
+                        </div>
+                        ${!isSingle ? `<button onclick="openSingleReleaseModal('${safeName}','${safeCover}')"
+                            style="background:rgba(0,230,118,0.15);border:1px solid var(--green);color:var(--green);border-radius:6px;padding:6px 10px;font-size:10px;font-weight:800;cursor:pointer;text-transform:uppercase;transition:0.2s"
+                            onmouseover="this.style.background='var(--green)';this.style.color='#000'"
+                            onmouseout="this.style.background='rgba(0,230,118,0.15)';this.style.color='var(--green)'">
+                            <i class="fas fa-star"></i> Make Single
+                        </button>` : ''}
+                    </div>`;
+                });
+            } else {
+                tracksHtml += '<div style="font-size:12px;opacity:0.7">No tracks</div>';
+            }
+            tracksHtml += '</div>';
+
+            card.innerHTML = `
+                <div class="album-header" style="display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;margin-bottom:16px">
+                    <div class="cover" style="${coverStyle}"></div>
+                    <div class="details">
+                        <div class="name">${esc(album.name || album.albumName || 'Untitled')}</div>
+                        <div class="type" style="color:var(--text2)">Released • ${Array.isArray(album.songs) ? album.songs.length : 0} tracks</div>
+                    </div>
+                </div>
+                ${tracksHtml}`;
+            list.appendChild(card);
+        });
+    }
+
+    function openSingleReleaseModal(songName, albumCoverArt) {
+        pendingSingleRelease = { songName, albumCoverArt };
+        singleCoverMode = 'album';
+        singleNewCoverUrl = null;
+        document.getElementById('single-release-song-name').textContent = `"${songName}"`;
+        const preview = document.getElementById('single-album-cover-preview');
+        preview.style.backgroundImage = albumCoverArt ? `url(${albumCoverArt})` : '';
+        // Reset selection highlight
+        document.getElementById('single-keep-album-btn').style.borderColor = 'var(--accent)';
+        document.getElementById('single-keep-album-btn').style.background = 'rgba(0,175,255,0.1)';
+        document.getElementById('single-upload-btn').style.borderColor = 'var(--border)';
+        document.getElementById('single-upload-btn').style.background = '';
+        // Default date to current game date
+        const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+        document.getElementById('single-release-date').value = gameDate.toISOString().split('T')[0];
+        document.getElementById('single-release-modal').classList.add('active');
+    }
+
+    function closeSingleReleaseModal() {
+        document.getElementById('single-release-modal').classList.remove('active');
+        pendingSingleRelease = null;
+    }
+
+    function selectSingleCover(mode) {
+        singleCoverMode = mode;
+        const keepBtn = document.getElementById('single-keep-album-btn');
+        const uploadBtn = document.getElementById('single-upload-btn');
+        if (mode === 'album') {
+            keepBtn.style.borderColor = 'var(--accent)'; keepBtn.style.background = 'rgba(0,175,255,0.1)';
+            uploadBtn.style.borderColor = 'var(--border)'; uploadBtn.style.background = '';
+        } else {
+            uploadBtn.style.borderColor = 'var(--accent)'; uploadBtn.style.background = 'rgba(0,175,255,0.1)';
+            keepBtn.style.borderColor = 'var(--border)'; keepBtn.style.background = '';
+            document.getElementById('single-cover-file').click();
+        }
+    }
+
+    function handleSingleCoverUpload(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => { singleNewCoverUrl = e.target.result; showToast('New cover ready!', 'success'); };
+        reader.readAsDataURL(file);
+    }
+
+    function confirmSingleRelease(isScheduled) {
+        if (!pendingSingleRelease) return;
+        const { songName, albumCoverArt } = pendingSingleRelease;
+        const newCoverArt = (singleCoverMode === 'upload' && singleNewCoverUrl) ? singleNewCoverUrl : albumCoverArt;
+        const dateVal = document.getElementById('single-release-date').value;
+        const releaseDate = dateVal ? new Date(dateVal).toISOString() : new Date(localStorage.getItem('currentDate') || new Date()).toISOString();
+
+        let songs = getData('releasedSongs');
+        const idx = songs.findIndex(s => (s.songName || s.name) === songName);
+        if (idx === -1) { showToast('Song not found!', 'error'); return; }
+
+        if (!songs[idx].id) {
+            const cleanTitle = songName.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+            songs[idx].id = `user_song_${cleanTitle}_${Date.now()}`;
+        }
+        songs[idx].trackType = 'single';
+        songs[idx].coverArt = newCoverArt;
+        songs[idx].singleReleasedDate = releaseDate;
+        songs[idx].singleBoostWeeksLeft = 1;   // triggers first-week boost in music.html
+        songs[idx].songsReleasedSameWeek = 1;  // treated as standalone for decay curve
+
+        saveData('releasedSongs', songs);
+
+        closeSingleReleaseModal();
+        renderReleasedAlbums();
+        showToast(`"${songName}" is now a Single! 🎤 Expect a boost next week.`, 'success');
+    }
+
+    function extractToSingle(e, albumIdx, trackIdx) {
+    e.stopPropagation();
+    let albums = getData('unreleasedAlbums');
+    let songs = getData('unreleasedSongs');
+    
+    let album = albums[albumIdx];
+    if(!album || !album.songs || !album.songs[trackIdx]) return;
+    
+    let trackName = typeof album.songs[trackIdx] === 'string' ? album.songs[trackIdx] : album.songs[trackIdx].songName;
+    
+    // Remove from album
+    album.songs.splice(trackIdx, 1);
+    saveData('unreleasedAlbums', albums);
+    
+    // Add to unreleased songs
+    songs.push({
+        songName: trackName,
+        name: trackName,
+        coverArt: album.coverArt || '', // Carries over the album cover!
+        trackType: 'single'
+    });
+    saveData('unreleasedSongs', songs);
+    
+    showToast(`"${trackName}" moved to Singles!`, 'success');
+    display();
+}
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,744 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Discography - Musify</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    :root {
+        --bg: #000000;
+        --card: #1c1c1e;
+        --text: #ffffff;
+        --subtext: #8e8e93;
+        --accent: #0a84ff;
+        --gold: #FFD60A;
+        --platinum: #64D2FF;
+        --diamond: #BF5AF2;
+        --green: #30d158;
+        --red: #ff453a;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; -webkit-font-smoothing: antialiased; }
+
+    body { background: var(--bg); color: var(--text); padding-bottom: 60px; overflow-x: hidden; }
+
+    /* Header */
+    .header { padding: 30px 20px 16px; position: relative; }
+    .back-btn { color: var(--accent); font-size: 18px; cursor: pointer; padding: 4px 0; display: inline-block; margin-bottom: 14px; }
+    .header-row { display: flex; align-items: center; justify-content: space-between; }
+    h1 { font-weight: 700; font-size: 28px; letter-spacing: -0.6px; }
+    .balance-pill { background: rgba(48,209,88,0.12); border: 1px solid rgba(48,209,88,0.2); color: var(--green); font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 20px; display: flex; align-items: center; gap: 5px; }
+
+    /* Summary - Adjusted to fit 4 columns on mobile without scrolling */
+    .summary-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; padding: 16px; }
+    .summary-box { background: var(--card); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 10px 4px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+    .sum-val { font-size: 14px; font-weight: 700; color: white; letter-spacing: -0.5px; }
+    .sum-lbl { font-size: 9px; font-weight: 600; color: var(--subtext); text-transform: uppercase; margin-top: 2px; }
+    .sum-gold .sum-val { color: var(--gold); }
+    .sum-plat .sum-val { color: var(--platinum); }
+    .sum-diam .sum-val { color: var(--diamond); }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 8px; padding: 0 16px; margin-bottom: 20px; }
+    .tab { background: rgba(255,255,255,0.06); border: none; color: var(--subtext); padding: 7px 16px; border-radius: 20px; cursor: pointer; font-weight: 500; font-size: 13px; transition: 0.2s; }
+    .tab.active { background: var(--text); color: var(--bg); font-weight: 600; }
+    .tab.eligible-tab { background: rgba(10,132,255,0.12); color: var(--accent); border: 1px solid rgba(10,132,255,0.2); }
+    .tab.eligible-tab.active { background: var(--accent); color: #fff; border-color: transparent; }
+
+    /* Grid */
+    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; padding: 0 16px; }
+
+    /* Card */
+    .card { background: var(--card); border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); overflow: hidden; transition: transform 0.2s; }
+    .card-main { display: flex; gap: 16px; padding: 16px; align-items: flex-start; }
+    
+    /* Plaque Container */
+    .card-plaque { width: 85px; height: 85px; flex-shrink: 0; filter: drop-shadow(0 6px 12px rgba(0,0,0,0.6)); }
+    
+    .card-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+    .card-title-main { font-weight: 800; font-size: 18px; letter-spacing: -0.3px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+    
+    .card-meta-line { font-size: 13px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-meta-line strong { font-weight: 700; color: var(--text); margin-right: 4px; }
+    .card-meta-line span { color: var(--subtext); font-weight: 500; }
+
+    /* Card Bottom Actions */
+    .card-actions { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+    .action-btn { font-size: 11px; font-weight: 700; color: var(--subtext); cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
+    .action-btn:hover { color: var(--text); }
+    .action-btn i { font-size: 12px; }
+
+    /* Certify button */
+    .certify-row { padding: 12px 16px; border-top: 1px solid rgba(255,255,255,0.04); background: rgba(0,0,0,0.2); }
+    .certify-btn { width: 100%; border-radius: 6px; padding: 10px; font-size: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+    .certify-btn.gold-btn { background: rgba(255,214,10,0.1); border: 1px solid rgba(255,214,10,0.3); color: var(--gold); }
+    .certify-btn.gold-btn:hover { background: rgba(255,214,10,0.2); }
+    .certify-btn.plat-btn { background: rgba(100,210,255,0.1); border: 1px solid rgba(100,210,255,0.3); color: var(--platinum); }
+    .certify-btn.plat-btn:hover { background: rgba(100,210,255,0.2); }
+    .certify-btn.diam-btn { background: rgba(191,90,242,0.1); border: 1px solid rgba(191,90,242,0.3); color: var(--diamond); }
+    .certify-btn.diam-btn:hover { background: rgba(191,90,242,0.2); }
+    .certify-btn.broke-btn { background: rgba(255,69,58,0.05); border: 1px solid rgba(255,69,58,0.15); color: var(--red); cursor: not-allowed; }
+
+    /* Eligible tab cards */
+    .elig-card { background: var(--card); border-radius: 8px; border: 1px solid rgba(255,255,255,0.15); padding: 14px 16px; display: flex; align-items: center; gap: 14px; }
+    .elig-info { flex: 1; min-width: 0; }
+    .elig-title { font-weight: 700; font-size: 15px; letter-spacing: -0.2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+    .elig-sub { font-size: 12px; color: var(--subtext); font-weight: 500; margin-top: 4px; }
+    .elig-right { text-align: right; flex-shrink: 0; }
+    .elig-cost { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+    .elig-certify-btn { border: none; border-radius: 6px; padding: 8px 14px; font-size: 11px; font-weight: 700; cursor: pointer; text-transform: uppercase; }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(20px); background: #2c2c2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 10px 18px; font-size: 13px; font-weight: 500; color: var(--text); z-index: 999; opacity: 0; transition: all 0.3s; white-space: nowrap; pointer-events: none; }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Modals */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); backdrop-filter: blur(12px); display: none; justify-content: center; align-items: flex-end; z-index: 100; }
+    .modal.active { display: flex; }
+    .modal-content { background: #1c1c1e; width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; border: 1px solid rgba(255,255,255,0.08); max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .modal-handle { width: 36px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 0 auto 18px; }
+    .modal-title { font-weight: 800; font-size: 18px; letter-spacing: -0.4px; margin-bottom: 4px; text-transform: uppercase; }
+    .modal-sub { font-size: 12px; color: var(--subtext); font-weight: 500; margin-bottom: 18px; }
+
+    /* Graph */
+    .graph-box { background: rgba(0,0,0,0.2); border-radius: 12px; padding: 12px; height: 160px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.04); }
+    canvas { width: 100%; height: 100%; }
+
+    /* Credits */
+    .credit-row { display: flex; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 13px; }
+    .credit-key { color: var(--subtext); font-weight: 500; }
+    .credit-val { font-weight: 500; text-align: right; max-width: 65%; }
+
+    /* Cert timeline */
+    .timeline { padding-left: 18px; border-left: 2px solid rgba(255,255,255,0.08); margin-top: 14px; }
+    .t-item { margin-bottom: 18px; position: relative; }
+    .t-item::before { content: ''; width: 10px; height: 10px; background: var(--card); border: 2px solid currentColor; border-radius: 50%; position: absolute; left: -24px; top: 2px; }
+    .t-date { font-size: 11px; color: var(--subtext); font-weight: 500; margin-bottom: 2px; }
+    .t-name { font-weight: 700; font-size: 13px; text-transform: uppercase; }
+
+    .empty-state { grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--subtext); }
+    .empty-icon { font-size: 36px; opacity: 0.25; margin-bottom: 12px; }
+    .empty-text { font-size: 13px; font-weight: 500; }
+
+    /* Pricing table in eligible header */
+    .price-table { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; scrollbar-width: none; }
+    .price-chip { background: rgba(255,255,255,0.04); border-radius: 8px; padding: 8px 12px; flex-shrink: 0; text-align: center; border: 1px solid rgba(255,255,255,0.08); }
+    .price-chip-val { font-size: 13px; font-weight: 800; }
+    .price-chip-lbl { font-size: 9px; color: var(--subtext); text-transform: uppercase; margin-top: 2px; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="back-btn" onclick="window.location.href='music.html'"><i class="fas fa-chevron-left"></i> Music</div>
+    <div class="header-row">
+        <h1>Discography</h1>
+        <div class="balance-pill" id="balancePill"><i class="fas fa-dollar-sign" style="font-size:10px;"></i> <span id="balanceAmt">0</span></div>
+    </div>
+</div>
+
+<div class="summary-container" id="discographySummary"></div>
+
+<div class="tabs">
+    <div class="tab active" onclick="switchTab('songs', this)">Singles</div>
+    <div class="tab" onclick="switchTab('albums', this)">Albums</div>
+    <div class="tab eligible-tab" onclick="switchTab('eligible', this)"><i class="fas fa-star" style="font-size:10px;"></i> Eligible</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="modal" id="salesModal">
+    <div class="modal-content">
+        <div class="modal-handle"></div>
+        <div class="modal-title" id="salesTitle">Title</div>
+        <div class="modal-sub">Lifetime Sales Trajectory</div>
+        <div class="graph-box"><canvas id="salesChart"></canvas></div>
+        <div style="display:flex; gap:10px;">
+            <div class="summary-box" style="flex:1; text-align:center;">
+                <div class="sum-val" id="modalTotalSales">0</div>
+                <div class="sum-lbl">Total Sales</div>
+            </div>
+            <div class="summary-box" style="flex:1; text-align:center;">
+                <div class="sum-val" id="modalCertSales" style="color:var(--subtext);">—</div>
+                <div class="sum-lbl">Certified Sales</div>
+            </div>
+            <div class="summary-box" style="flex:1; text-align:center;">
+                <div class="sum-val" id="modalPeak">—</div>
+                <div class="sum-lbl">Peak Chart</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="creditsModal">
+    <div class="modal-content">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Credits & History</div>
+        <div id="creditsList" style="margin-bottom:24px;"></div>
+        <div style="font-size:11px; font-weight:600; color:var(--subtext); text-transform:uppercase; margin-bottom:10px;">Certification History</div>
+        <div class="timeline" id="timelineList"></div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+    let songs = [], albums = [], currentTab = 'songs';
+
+    // ── Costs & Thresholds ──────────────────────────────────────────────
+    const COSTS = {
+        song:  { gold: 50000,  platinum: 100000,  diamond: 1000000 },
+        album: { gold: 250000, platinum: 500000,  diamond: 5000000 }
+    };
+    const THRESH = { gold: 500000, platinum: 1000000, diamond: 10000000 };
+
+    // ── Money helpers ────────────────────────────────────────────────────
+    function getMoney() { return parseFloat(localStorage.getItem('money') || '0'); }
+    function setMoney(v) {
+        localStorage.setItem('money', v.toString());
+        updateBalancePill();
+    }
+    function fmtMoney(n) {
+        if (n >= 1000000) return '$' + (n/1000000).toFixed(2) + 'M';
+        if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+        return '$' + Math.floor(n).toLocaleString();
+    }
+    function updateBalancePill() {
+        document.getElementById('balanceAmt').innerText = fmtMoney(getMoney());
+    }
+
+    // ── Certifications storage ───────────────────────────────────────────
+    function loadCerts() { return JSON.parse(localStorage.getItem('songCertifications') || '{}'); }
+    function saveCerts(c) { localStorage.setItem('songCertifications', JSON.stringify(c)); }
+    function getCertObj(name) {
+        const c = loadCerts();
+        return c[name] || { gold: false, goldDate: null, platinum: 0, platDates: [], diamond: 0, diamDates: [] };
+    }
+
+    // ── Cert helpers ─────────────────────────────────────────────────────
+    function getHighestCert(certObj) {
+        if (certObj.diamond > 0) return { name: certObj.diamond + 'x Diamond', color: '#BF5AF2', level: 'diamond', count: certObj.diamond };
+        if (certObj.platinum > 0) return { name: certObj.platinum + 'x Platinum', color: '#64D2FF', level: 'platinum', count: certObj.platinum };
+        if (certObj.gold)         return { name: 'Gold', color: '#FFD60A', level: 'gold', count: 1 };
+        return null;
+    }
+
+    function getCertifiedSales(certObj) {
+        if (certObj.diamond > 0) return certObj.diamond * THRESH.diamond;
+        if (certObj.platinum > 0) return certObj.platinum * THRESH.platinum;
+        if (certObj.gold)         return THRESH.gold;
+        return 0;
+    }
+
+    function getNextEligible(sales, certObj, type) {
+        // Diamond
+        const maxDiam = Math.floor(sales / THRESH.diamond);
+        if (maxDiam > certObj.diamond)
+            return { level: 'diamond', mult: certObj.diamond + 1, name: (certObj.diamond+1)+'x Diamond', cost: COSTS[type].diamond, color: '#BF5AF2', cls: 'diam-btn' };
+        // Platinum
+        const maxPlat = Math.floor(sales / THRESH.platinum);
+        if (maxPlat > certObj.platinum)
+            return { level: 'platinum', mult: certObj.platinum + 1, name: (certObj.platinum+1)+'x Platinum', cost: COSTS[type].platinum, color: '#64D2FF', cls: 'plat-btn' };
+        // Gold
+        if (sales >= THRESH.gold && !certObj.gold)
+            return { level: 'gold', mult: 1, name: 'Gold', cost: COSTS[type].gold, color: '#FFD60A', cls: 'gold-btn' };
+        return null;
+    }
+
+    // ── Certify action ───────────────────────────────────────────────────
+    function certify(name, type, next) {
+        const money = getMoney();
+        if (money < next.cost) {
+            showToast('❌ Not enough money — need ' + fmtMoney(next.cost));
+            return;
+        }
+        setMoney(money - next.cost);
+
+        const certs = loadCerts();
+        if (!certs[name]) certs[name] = { gold: false, goldDate: null, platinum: 0, platDates: [], diamond: 0, diamDates: [] };
+        const now = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+        if (next.level === 'gold')     { certs[name].gold = true; certs[name].goldDate = now; }
+        if (next.level === 'platinum') { certs[name].platinum++; certs[name].platDates.push(now); }
+        if (next.level === 'diamond')  { certs[name].diamond++;  certs[name].diamDates.push(now); }
+
+        saveCerts(certs);
+        showToast('🎉 ' + name + ' — ' + next.name + ' Certified! −' + fmtMoney(next.cost));
+        render(currentTab);
+        calculateSummary();
+    }
+
+    // ── Sales calculation ────────────────────────────────────────────────
+    function calculateSales(streams, type) {
+        const additionalStreams = Math.floor(streams/2) + Math.floor(streams/10);
+        const total = streams + additionalStreams;
+        const ses  = Math.floor(total / (type === 'song' ? 150 : 1500));
+        const pure = Math.floor(total / (type === 'song' ? 1350 : 2700));
+        return { totalSales: ses + pure, streams: total };
+    }
+
+    function getSongName(s) { return typeof s === 'string' ? s : s.songName || s.name || 'Untitled'; }
+
+    // ── Format helpers ───────────────────────────────────────────────────
+    function fmt(n) {
+        if (n >= 1000000) return (n/1000000).toFixed(2) + 'M';
+        if (n >= 1000)    return (n/1000).toFixed(1) + 'K';
+        return n.toLocaleString();
+    }
+
+    // ── Realistic SVG Plaque - RIAA Image Style ──────────────────────────
+    function getPlaqueSVG(levelStr) {
+        let type = 'uncert';
+        if (levelStr) {
+            const lower = levelStr.toLowerCase();
+            if (lower.includes('gold')) type = 'gold';
+            else if (lower.includes('platinum')) type = 'platinum';
+            else if (lower.includes('diamond')) type = 'diamond';
+        }
+
+        const colors = {
+            gold: { light: '#FCE68D', mid: '#D4AF37', dark: '#9C7A1A', label: '#7D6112' },
+            platinum: { light: '#FFFFFF', mid: '#D0D0D0', dark: '#888888', label: '#555555' },
+            diamond: { light: '#EACDFF', mid: '#A653DE', dark: '#5E1B8C', label: '#350B54' },
+            uncert: { light: '#5A5A5C', mid: '#2C2C2E', dark: '#151517', label: '#0A0A0C' }
+        };
+
+        const c = colors[type];
+        let bottomText = levelStr ? levelStr.toUpperCase() : 'UNCERT';
+        
+        // Generate a random ID suffix so gradients don't conflict when multiple SVGs render on screen
+        const uid = Math.random().toString(36).substring(2, 9);
+        const gradId = `mGrad-${uid}`;
+        const labelGradId = `lGrad-${uid}`;
+
+        return `<svg viewBox="0 0 100 100" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Metallic sweeping gradient -->
+                <linearGradient id="${gradId}" x1="15%" y1="0%" x2="85%" y2="100%">
+                    <stop offset="0%" stop-color="${c.mid}" />
+                    <stop offset="25%" stop-color="${c.light}" />
+                    <stop offset="50%" stop-color="${c.mid}" />
+                    <stop offset="75%" stop-color="${c.dark}" />
+                    <stop offset="100%" stop-color="${c.light}" />
+                </linearGradient>
+                <!-- Label gradient -->
+                <radialGradient id="${labelGradId}" cx="50%" cy="50%" r="50%">
+                    <stop offset="0%" stop-color="${c.mid}" />
+                    <stop offset="100%" stop-color="${c.label}" />
+                </radialGradient>
+            </defs>
+
+            <!-- Outer Metallic Disc -->
+            <circle cx="50" cy="50" r="48" fill="url(#${gradId})" />
+
+            <!-- Grooves overlay -->
+            <circle cx="50" cy="50" r="45" fill="none" stroke="#000" stroke-width="0.3" stroke-opacity="0.3"/>
+            <circle cx="50" cy="50" r="42" fill="none" stroke="#000" stroke-width="0.3" stroke-opacity="0.15"/>
+            <circle cx="50" cy="50" r="39" fill="none" stroke="#000" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="50" cy="50" r="36" fill="none" stroke="#000" stroke-width="0.2" stroke-opacity="0.1"/>
+            <circle cx="50" cy="50" r="33" fill="none" stroke="#000" stroke-width="0.4" stroke-opacity="0.3"/>
+            <circle cx="50" cy="50" r="30" fill="none" stroke="#000" stroke-width="0.3" stroke-opacity="0.15"/>
+            <circle cx="50" cy="50" r="27" fill="none" stroke="#000" stroke-width="0.5" stroke-opacity="0.3"/>
+
+            <!-- Center Label Area -->
+            <circle cx="50" cy="50" r="23" fill="url(#${labelGradId})" stroke="url(#${gradId})" stroke-width="1.5" />
+            <circle cx="50" cy="50" r="20" fill="none" stroke="url(#${gradId})" stroke-width="0.75" />
+
+            <!-- RIAA Logo & Level Text -->
+            ${levelStr ? `
+            <g transform="translate(50, 43.5) scale(1, 1.4)">
+                <text x="0" y="0" text-anchor="middle" fill="url(#${gradId})" font-size="9" font-weight="900" font-family="Arial, Helvetica, sans-serif" letter-spacing="0.5">RIAA</text>
+            </g>
+            <line x1="31" y1="48" x2="69" y2="48" stroke="url(#${gradId})" stroke-width="1.2" />
+            <g transform="translate(50, 59) scale(1, 1.3)">
+                <text x="0" y="0" text-anchor="middle" fill="url(#${gradId})" font-size="${bottomText.length > 8 ? 6.5 : 8}" font-weight="900" font-family="Arial, Helvetica, sans-serif" letter-spacing="0.2">${bottomText}</text>
+            </g>
+            ` : `
+            <g transform="translate(50, 52)">
+                <text x="0" y="0" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="7" font-weight="800" font-family="Arial, Helvetica, sans-serif" letter-spacing="0.5">UNCERT</text>
+            </g>
+            `}
+            
+            <!-- Spindle Hole -->
+            <circle cx="50" cy="50" r="2" fill="#151517"/>
+        </svg>`;
+    }
+
+    // ── Summary bar ──────────────────────────────────────────────────────
+    function calculateSummary() {
+        let totalSales = 0, gold = 0, plat = 0, diam = 0;
+        const certs = loadCerts();
+
+        [...songs, ...albums].forEach(item => {
+            const name = item.songName || item.name;
+            const c = certs[name] || {};
+            if (c.diamond > 0) { diam++; totalSales += c.diamond * THRESH.diamond; }
+            else if (c.platinum > 0) { plat++; totalSales += c.platinum * THRESH.platinum; }
+            else if (c.gold) { gold++; totalSales += THRESH.gold; }
+        });
+
+        document.getElementById('discographySummary').innerHTML = `
+            <div class="summary-box"><div class="sum-val">${fmt(totalSales)}</div><div class="sum-lbl">Cert Units</div></div>
+            <div class="summary-box sum-gold"><div class="sum-val">${gold}</div><div class="sum-lbl">Gold</div></div>
+            <div class="summary-box sum-plat"><div class="sum-val">${plat}</div><div class="sum-lbl">Platinum</div></div>
+            <div class="summary-box sum-diam"><div class="sum-val">${diam}</div><div class="sum-lbl">Diamond</div></div>
+        `;
+    }
+
+    // ── Load data ─────────────────────────────────────────────────────────
+    function loadData() {
+        songs  = JSON.parse(localStorage.getItem('releasedSongs')  || '[]').filter(s => s.songName || s.name);
+        albums = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+        updateBalancePill();
+        calculateSummary();
+    }
+
+    // ── Tab switch ────────────────────────────────────────────────────────
+    function switchTab(type, el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        currentTab = type;
+        render(type);
+    }
+
+    // ── Main render ───────────────────────────────────────────────────────
+    function render(type) {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+
+        if (type === 'eligible') { renderEligible(); return; }
+
+        const items = type === 'songs' ? songs : albums;
+        const processed = items.map(item => {
+            const name = item.songName || item.name;
+            let salesData;
+            if (type === 'songs') {
+                const raw = parseInt(item.streams) || parseInt(item.totalStreams) || 0;
+                salesData = calculateSales(raw, 'song');
+                const phys = parseInt(item.physicalSales) || 0;
+                if (phys) salesData.totalSales += phys;
+            } else {
+                let albStreams = 0;
+                if (item.songs) item.songs.forEach(s => {
+                    const sd = songs.find(r => getSongName(r) === getSongName(s));
+                    if (sd) albStreams += parseInt(sd.streams) || parseInt(sd.totalStreams) || 0;
+                });
+                salesData = calculateSales(albStreams, 'album');
+                const phys = (parseInt(item.vinylSales) || 0) + (parseInt(item.physicalSales) || 0);
+                if (phys) salesData.totalSales += phys;
+            }
+            return { ...item, salesData, _type: type === 'songs' ? 'song' : 'album' };
+        });
+
+        processed.sort((a, b) => b.salesData.totalSales - a.salesData.totalSales);
+
+        if (!processed.length) {
+            grid.innerHTML = emptyState('No releases yet.');
+            return;
+        }
+
+        processed.forEach(item => {
+            const name = item.songName || item.name;
+            const certObj = getCertObj(name);
+            const highest = getHighestCert(certObj);
+            const certifiedSales = getCertifiedSales(certObj);
+            const next = getNextEligible(item.salesData.totalSales, certObj, item._type);
+            
+            const date = item.releaseDate ? new Date(item.releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Unknown';
+            const typeLabel = item._type === 'album' ? 'ALBUM' : 'SINGLE';
+            
+            let certDateStr = '—';
+            if (highest) {
+                if (highest.level === 'gold') certDateStr = certObj.goldDate;
+                else if (highest.level === 'platinum') certDateStr = certObj.platDates[certObj.platDates.length - 1];
+                else if (highest.level === 'diamond') certDateStr = certObj.diamDates[certObj.diamDates.length - 1];
+            }
+
+            const div = document.createElement('div');
+            div.className = 'card';
+            
+            div.innerHTML = `
+                <div class="card-main">
+                    <div class="card-plaque">${getPlaqueSVG(highest ? highest.name : null)}</div>
+                    <div class="card-info">
+                        <div class="card-title-main">${name}</div>
+                        <div class="card-meta-line"><strong>Format:</strong> <span>${typeLabel}</span></div>
+                        <div class="card-meta-line"><strong>Total Sales:</strong> <span>${fmt(item.salesData.totalSales)}</span></div>
+                        <div class="card-meta-line"><strong>Streams:</strong> <span>${fmt(item.salesData.streams)}</span></div>
+                        ${highest 
+                            ? `<div class="card-meta-line"><strong>Cert Date:</strong> <span>${certDateStr}</span></div>
+                               <div class="card-meta-line"><strong>Highest:</strong> <span style="color:${highest.color}; font-weight:700;">${highest.name}</span></div>` 
+                            : `<div class="card-meta-line"><strong>Released:</strong> <span>${date}</span></div>`
+                        }
+                    </div>
+                </div>
+                <div class="card-actions">
+                    <div class="action-btn sales-btn"><i class="fas fa-chart-line"></i> Sales Chart</div>
+                    <div class="action-btn details-btn">More Details ▼</div>
+                </div>
+                ${next ? `
+                <div class="certify-row">
+                    <button class="certify-btn ${next.cls} ${getMoney() < next.cost ? 'broke-btn' : ''}"
+                        data-name="${name.replace(/"/g, '&quot;')}" data-type="${item._type}">
+                        ${getMoney() < next.cost
+                            ? `<i class="fas fa-lock"></i> Need ${fmtMoney(next.cost - getMoney())}`
+                            : `<i class="fas fa-certificate"></i> Certify ${next.name} — ${fmtMoney(next.cost)}`
+                        }
+                    </button>
+                </div>` : ''}
+            `;
+
+            // Attach event listeners explicitly to avoid quote issues in HTML
+            div.querySelector('.details-btn').addEventListener('click', () => openDetails(item, certObj));
+            div.querySelector('.sales-btn').addEventListener('click', () => openSales(item, item._type));
+            
+            if (next) {
+                div.querySelector('.certify-btn').addEventListener('click', () => {
+                    doCertify(name, item._type, next);
+                });
+            }
+
+            grid.appendChild(div);
+        });
+    }
+
+    // ── Eligible tab ──────────────────────────────────────────────────────
+    function renderEligible() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+
+        // Price guide
+        const guide = document.createElement('div');
+        guide.style.cssText = 'grid-column:1/-1; margin-bottom:4px;';
+        guide.innerHTML = `
+            <div style="font-size:11px; font-weight:700; color:var(--subtext); text-transform:uppercase; margin-bottom:8px; letter-spacing:0.5px;">Certification Costs</div>
+            <div class="price-table">
+                <div class="price-chip"><div class="price-chip-val" style="color:var(--gold);">$50K</div><div class="price-chip-lbl">Single Gold</div></div>
+                <div class="price-chip"><div class="price-chip-val" style="color:var(--platinum);">$100K</div><div class="price-chip-lbl">Single Plat</div></div>
+                <div class="price-chip"><div class="price-chip-val" style="color:var(--diamond);">$1M</div><div class="price-chip-lbl">Single Diam</div></div>
+                <div class="price-chip"><div class="price-chip-val" style="color:var(--gold);">$250K</div><div class="price-chip-lbl">Album Gold</div></div>
+                <div class="price-chip"><div class="price-chip-val" style="color:var(--platinum);">$500K</div><div class="price-chip-lbl">Album Plat</div></div>
+                <div class="price-chip"><div class="price-chip-val" style="color:var(--diamond);">$5M</div><div class="price-chip-lbl">Album Diam</div></div>
+            </div>
+        `;
+        grid.appendChild(guide);
+
+        const eligible = [];
+
+        songs.forEach(item => {
+            const name = item.songName || item.name;
+            const raw = parseInt(item.streams) || parseInt(item.totalStreams) || 0;
+            const sd = calculateSales(raw, 'song');
+            const phys = parseInt(item.physicalSales) || 0;
+            if (phys) sd.totalSales += phys;
+            const certObj = getCertObj(name);
+            const next = getNextEligible(sd.totalSales, certObj, 'song');
+            if (next) eligible.push({ name, type: 'song', typeLabel: 'Single', sales: sd.totalSales, certObj, next });
+        });
+
+        albums.forEach(item => {
+            const name = item.songName || item.name;
+            let albStreams = 0;
+            if (item.songs) item.songs.forEach(s => {
+                const sd = songs.find(r => getSongName(r) === getSongName(s));
+                if (sd) albStreams += parseInt(sd.streams) || parseInt(sd.totalStreams) || 0;
+            });
+            const salesData = calculateSales(albStreams, 'album');
+            const phys = (parseInt(item.vinylSales) || 0) + (parseInt(item.physicalSales) || 0);
+            if (phys) salesData.totalSales += phys;
+            const certObj = getCertObj(name);
+            const next = getNextEligible(salesData.totalSales, certObj, 'album');
+            if (next) eligible.push({ name, type: 'album', typeLabel: 'Album', sales: salesData.totalSales, certObj, next });
+        });
+
+        eligible.sort((a, b) => b.sales - a.sales);
+
+        if (!eligible.length) {
+            const e = document.createElement('div');
+            e.style.cssText = 'grid-column:1/-1;';
+            e.innerHTML = `<div class="empty-state"><div class="empty-icon"><i class="fas fa-star"></i></div><div class="empty-text">No eligible releases — keep building those streams!</div></div>`;
+            grid.appendChild(e);
+            return;
+        }
+
+        eligible.forEach(e => {
+            const canAfford = getMoney() >= e.next.cost;
+            const div = document.createElement('div');
+            div.className = 'elig-card';
+            div.innerHTML = `
+                <div class="card-plaque" style="width:48px; height:48px;">${getPlaqueSVG(e.next.name)}</div>
+                <div class="elig-info">
+                    <div class="elig-title">${e.name}</div>
+                    <div class="elig-sub">${e.typeLabel} · ${fmt(e.sales)} sales · Next: <span style="color:${e.next.color}; font-weight:700;">${e.next.name}</span></div>
+                </div>
+                <div class="elig-right">
+                    <div class="elig-cost" style="color:${e.next.color};">${fmtMoney(e.next.cost)}</div>
+                    <button class="elig-certify-btn" style="background:${canAfford ? e.next.color+'22' : 'rgba(255,69,58,0.1)'}; color:${canAfford ? e.next.color : 'var(--red)'}; border:1px solid ${canAfford ? e.next.color+'44' : 'rgba(255,69,58,0.2)'};"
+                        onclick='doCertify(${JSON.stringify(e.name)}, "${e.type}", ${JSON.stringify(e.next)})'>
+                        ${canAfford ? 'Certify' : 'Can\'t Afford'}
+                    </button>
+                </div>
+            `;
+            grid.appendChild(div);
+        });
+    }
+
+    // ── Certify wrapper (re-renders) ──────────────────────────────────────
+    function doCertify(name, type, next) {
+        certify(name, type, next);
+    }
+
+    // ── Open details modal ────────────────────────────────────────────────
+    function openDetails(item, certObj) {
+        document.getElementById('creditsModal').classList.add('active');
+        const creds = item.credits || {};
+        const det   = item.splits && item.splits.details ? item.splits.details : {};
+
+        let writers = creds.writers || creds.writer;
+        if (!writers && det.writer) writers = det.writer.map(p => p.name).join(', ');
+        let producers = creds.producers || creds.producer;
+        if (!producers && det.producer) producers = det.producer.map(p => p.name).join(', ');
+        let features = creds.features;
+        if (!features && det.feature) features = det.feature.map(p => p.name).join(', ');
+        let samples = creds.samples;
+        if (!samples && det.sample) samples = det.sample.map(p => `${p.name} (by ${p.artist})`).join(', ');
+        const userSplit = item.splits ? item.splits.user : 100;
+
+        document.getElementById('creditsList').innerHTML = `
+            <div class="credit-row"><span class="credit-key">Writers</span><span class="credit-val">${writers || 'Me'}</span></div>
+            <div class="credit-row"><span class="credit-key">Producers</span><span class="credit-val">${producers || 'Me'}</span></div>
+            <div class="credit-row"><span class="credit-key">Features</span><span class="credit-val">${features || 'None'}</span></div>
+            <div class="credit-row"><span class="credit-key">Samples</span><span class="credit-val" style="color:var(--gold)">${samples || 'None'}</span></div>
+            <div class="credit-row" style="border-top:1px solid rgba(255,255,255,0.08); margin-top:8px; padding-top:10px;">
+                <span class="credit-key">Your Royalty Split</span>
+                <span class="credit-val" style="color:var(--green); font-size:14px; font-weight:700;">${userSplit}%</span>
+            </div>
+        `;
+
+        // Timeline
+        const tl = document.getElementById('timelineList');
+        let html = '';
+        if (certObj.gold)
+            html += timelineItem('#FFD60A', 'Gold Certified', certObj.goldDate, fmt(THRESH.gold) + ' units');
+        certObj.platDates.forEach((d, i) =>
+            html += timelineItem('#64D2FF', `${i+1}x Platinum Certified`, d, fmt((i+1) * THRESH.platinum) + ' units'));
+        certObj.diamDates.forEach((d, i) =>
+            html += timelineItem('#BF5AF2', `${i+1}x Diamond Certified`, d, fmt((i+1) * THRESH.diamond) + ' units'));
+        tl.innerHTML = html || '<div style="color:var(--subtext); font-size:12px; font-weight:500;">No certifications yet.</div>';
+    }
+
+    function timelineItem(color, name, date, sub) {
+        return `<div class="t-item" style="color:${color}">
+            <div class="t-date" style="color:var(--subtext);">${date || '—'}</div>
+            <div class="t-name" style="color:${color};">${name}</div>
+            <div style="font-size:11px; color:var(--subtext); margin-top:2px;">${sub}</div>
+        </div>`;
+    }
+
+    // ── Open sales modal ──────────────────────────────────────────────────
+    function openSales(item, type) {
+        document.getElementById('salesModal').classList.add('active');
+        document.getElementById('salesTitle').innerText = item.songName || item.name;
+        const certObj = getCertObj(item.songName || item.name);
+        const certSales = getCertifiedSales(certObj);
+        const highest = getHighestCert(certObj);
+
+        let totalSales;
+        if (item.salesData) { totalSales = item.salesData.totalSales; }
+        else {
+            const raw = parseInt(item.streams) || 0;
+            totalSales = calculateSales(raw, type || 'song').totalSales;
+        }
+
+        document.getElementById('modalTotalSales').innerText = fmt(totalSales);
+        document.getElementById('modalCertSales').innerText = certSales > 0 ? fmt(certSales) : '—';
+        if (highest) document.getElementById('modalCertSales').style.color = highest.color;
+        document.getElementById('modalPeak').innerText = item.peakPosition ? '#' + item.peakPosition : '—';
+        drawGraph(totalSales, certSales, highest ? highest.color : null);
+    }
+
+    function drawGraph(total, certified, certColor) {
+        const cvs = document.getElementById('salesChart');
+        const ctx = cvs.getContext('2d');
+        cvs.width  = cvs.parentElement.offsetWidth;
+        cvs.height = cvs.parentElement.offsetHeight;
+
+        const steps = 20;
+        const points = [];
+        for (let i = 0; i <= steps; i++) {
+            const x = i / steps;
+            points.push(Math.log10(x * 9 + 1) * total);
+        }
+
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+        const w = cvs.width, h = cvs.height;
+
+        const grad = ctx.createLinearGradient(0, 0, 0, h);
+        grad.addColorStop(0, 'rgba(10,132,255,0.25)');
+        grad.addColorStop(1, 'rgba(10,132,255,0)');
+
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+        points.forEach((v, i) => ctx.lineTo((i/steps)*w, h - (v/total)*(h*0.8) - 8));
+        ctx.lineTo(w, h);
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.beginPath();
+        points.forEach((v, i) => {
+            const x = (i/steps)*w, y = h - (v/total)*(h*0.8) - 8;
+            i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.strokeStyle = '#0a84ff';
+        ctx.lineWidth = 2.5;
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+
+        // Certified line
+        if (certified > 0 && certColor) {
+            const cy = h - (certified/total)*(h*0.8) - 8;
+            ctx.setLineDash([4, 4]);
+            ctx.beginPath();
+            ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+            ctx.strokeStyle = certColor;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            ctx.fillStyle = certColor;
+            ctx.font = '700 9px Inter,sans-serif';
+            ctx.fillText('CERTIFIED', 4, cy - 4);
+        }
+    }
+
+    // ── Toast ─────────────────────────────────────────────────────────────
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.innerText = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    function emptyState(msg) {
+        return `<div class="empty-state"><div class="empty-icon"><i class="fas fa-music"></i></div><div class="empty-text">${msg}</div></div>`;
+    }
+
+    // ── Close modals ──────────────────────────────────────────────────────
+    document.querySelectorAll('.modal').forEach(m => {
+        m.addEventListener('click', e => { if (e.target === m) m.classList.remove('active'); });
+    });
+
+    // ── Init ──────────────────────────────────────────────────────────────
+    document.addEventListener('DOMContentLoaded', () => {
+        loadData();
+        render('songs');
+    });
+</script>
+</body>
+</html>
+

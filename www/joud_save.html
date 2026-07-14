@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloud Saves</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #07070F;
+            --glass: rgba(255,255,255,0.04);
+            --glass-border: rgba(255,255,255,0.09);
+            --glass-hover: rgba(255,255,255,0.07);
+            --blue: #3B82F6;
+            --purple: #8B5CF6;
+            --green: #10B981;
+            --gold: #F59E0B;
+            --red: #EF4444;
+            --text: #FFFFFF;
+            --muted: #64748B;
+            --sub: #94A3B8;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 40px 16px 60px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 60% 40% at 15% 10%, rgba(59,130,246,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 50% 35% at 85% 85%, rgba(139,92,246,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 40% 30% at 50% 50%, rgba(6,182,212,0.05) 0%, transparent 60%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 48px 48px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .wrap {
+            max-width: 480px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* HEADER */
+        .header { margin-bottom: 28px; }
+
+        .header-eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--blue);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-eyebrow::before {
+            content: '';
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: var(--blue);
+            border-radius: 2px;
+        }
+
+        .header h1 {
+            font-size: 34px;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, #fff 0%, rgba(255,255,255,0.6) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.1;
+            margin-bottom: 6px;
+        }
+
+        .header-sub {
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 500;
+        }
+
+        /* NAV BAR */
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 14px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--sub);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            text-decoration: none;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover { background: var(--glass-hover); color: var(--text); }
+        .nav-btn svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
+
+        /* NOT LOGGED IN */
+        #not-logged-in {
+            display: none;
+            text-align: center;
+            padding: 60px 24px;
+        }
+
+        .login-icon {
+            width: 64px;
+            height: 64px;
+            fill: var(--muted);
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .login-msg {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--sub);
+            margin-bottom: 8px;
+        }
+
+        .login-sub {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        /* STORAGE BAR */
+        .storage-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px 22px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+
+        .storage-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .storage-label {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--sub);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .storage-label svg { width: 14px; height: 14px; fill: var(--blue); }
+
+        .storage-pct {
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -0.02em;
+        }
+
+        .storage-bar-bg {
+            height: 6px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .storage-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+            transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 12px rgba(59,130,246,0.5);
+        }
+
+        .storage-bar-fill.warning { background: linear-gradient(90deg, var(--gold), #E07B00); }
+        .storage-bar-fill.danger  { background: linear-gradient(90deg, var(--red), #B91C1C); }
+
+        .storage-meta { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+        .premium-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--gold);
+            background: rgba(245,158,11,0.12);
+            border: 1px solid rgba(245,158,11,0.3);
+            border-radius: 6px;
+            padding: 3px 8px;
+        }
+
+        .premium-badge svg { width: 10px; height: 10px; fill: var(--gold); }
+
+        /* SLOTS */
+        .slots-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .slots-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--sub);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .slot-count { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+        /* SLOT CARD */
+        .slot-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            box-shadow: 0 4px 24px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slot-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--blue), var(--purple));
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .slot-card.active-slot {
+            border-color: rgba(59,130,246,0.4);
+            background: rgba(59,130,246,0.06);
+            box-shadow: 0 4px 24px rgba(59,130,246,0.15), inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .slot-card.active-slot::before { opacity: 1; }
+
+        .slot-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .slot-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.02em;
+            margin-bottom: 3px;
+        }
+
+        .slot-artist { font-size: 13px; color: var(--sub); font-weight: 500; }
+
+        .active-pip {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--blue);
+            background: rgba(59,130,246,0.12);
+            border: 1px solid rgba(59,130,246,0.3);
+            border-radius: 6px;
+            padding: 4px 9px;
+            white-space: nowrap;
+        }
+
+        .active-pip::before {
+            content: '';
+            display: block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--blue);
+            box-shadow: 0 0 6px var(--blue);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .slot-meta { display: flex; gap: 16px; margin-bottom: 16px; }
+
+        .slot-stat { display: flex; flex-direction: column; gap: 2px; }
+
+        .slot-stat-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+        .slot-stat-value { font-size: 13px; font-weight: 700; color: var(--sub); }
+
+        .slot-actions { display: flex; gap: 8px; }
+
+        .slot-btn {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            background: var(--glass);
+            color: var(--sub);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .slot-btn:hover { background: var(--glass-hover); color: var(--text); }
+
+        .slot-btn.restore {
+            background: rgba(59,130,246,0.1);
+            border-color: rgba(59,130,246,0.3);
+            color: var(--blue);
+        }
+
+        .slot-btn.restore:hover {
+            background: rgba(59,130,246,0.2);
+            box-shadow: 0 0 16px rgba(59,130,246,0.3);
+        }
+
+        .slot-btn.set-active {
+            background: rgba(16,185,129,0.1);
+            border-color: rgba(16,185,129,0.3);
+            color: var(--green);
+        }
+
+        .slot-btn.set-active:hover {
+            background: rgba(16,185,129,0.2);
+            box-shadow: 0 0 16px rgba(16,185,129,0.3);
+        }
+
+        .slot-btn.delete {
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.2);
+            color: var(--red);
+            flex: 0;
+            padding: 10px 14px;
+        }
+
+        .slot-btn.delete:hover { background: rgba(239,68,68,0.18); }
+        .slot-btn.delete svg { width: 14px; height: 14px; fill: currentColor; display: block; }
+
+        /* ADD SLOT */
+        .add-slot-btn {
+            width: 100%;
+            padding: 18px;
+            border: 2px dashed rgba(255,255,255,0.12);
+            border-radius: 20px;
+            background: transparent;
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 12px;
+        }
+
+        .add-slot-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+        .add-slot-btn:hover:not(:disabled) {
+            border-color: rgba(59,130,246,0.4);
+            color: var(--blue);
+            background: rgba(59,130,246,0.05);
+        }
+
+        .add-slot-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+        .slots-max-note {
+            text-align: center;
+            font-size: 12px;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(7,7,15,0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            z-index: 9000;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0 16px 32px;
+        }
+
+        .modal-overlay.active { display: flex; }
+
+        .modal {
+            background: rgba(18,18,30,0.95);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 28px 28px 24px 24px;
+            padding: 32px 24px 24px;
+            width: 100%;
+            max-width: 480px;
+            box-shadow: 0 -8px 64px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+            animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(80px); opacity: 0; }
+            to   { transform: translateY(0);    opacity: 1; }
+        }
+
+        .modal-handle {
+            width: 36px;
+            height: 4px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 4px;
+            margin: 0 auto 28px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            margin-bottom: 6px;
+        }
+
+        .modal-sub {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 14px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .modal-input:focus {
+            border-color: rgba(59,130,246,0.5);
+            background: rgba(59,130,246,0.04);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+
+        .modal-input::placeholder { color: var(--muted); }
+
+        .modal-actions { display: flex; gap: 10px; }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 14px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn.confirm {
+            background: linear-gradient(135deg, var(--blue), var(--purple));
+            color: white;
+            box-shadow: 0 4px 20px rgba(59,130,246,0.35);
+        }
+
+        .modal-btn.confirm:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(59,130,246,0.5); }
+        .modal-btn.confirm:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+        .modal-btn.cancel {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--sub);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .modal-btn.cancel:hover { background: var(--glass-hover); color: var(--text); }
+
+        /* SPINNER */
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* EMPTY */
+        .empty { text-align: center; padding: 48px 24px; }
+
+        .empty-icon {
+            width: 52px;
+            height: 52px;
+            fill: var(--muted);
+            margin: 0 auto 16px;
+            display: block;
+            opacity: 0.5;
+        }
+
+        .empty-title { font-size: 16px; font-weight: 800; color: var(--sub); margin-bottom: 6px; }
+        .empty-sub   { font-size: 13px; color: var(--muted); }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+            transition: opacity 0.4s ease;
+        }
+
+        .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+        .loading-ring {
+            width: 44px;
+            height: 44px;
+            border: 3px solid rgba(255,255,255,0.08);
+            border-top-color: var(--blue);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap">
+
+    <!-- NAV BAR -->
+    <div class="nav-bar">
+        <a class="nav-btn" href="music.html">
+            <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back
+        </a>
+        <a class="nav-btn" href="settings.html">
+            <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+            Settings
+        </a>
+    </div>
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-eyebrow">Music Excellence</div>
+        <h1>Cloud Saves</h1>
+        <div class="header-sub">Your game, stored safely in the cloud.</div>
+    </div>
+
+    <!-- NOT LOGGED IN -->
+    <div id="not-logged-in">
+        <svg class="login-icon" viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+        </svg>
+        <div class="login-msg">Sign in to use Cloud Saves</div>
+        <div class="login-sub">Go to Settings and log into your cloud account first.</div>
+        <a href="settings.html" style="display:inline-block;text-decoration:none;padding:14px 28px;background:linear-gradient(135deg,#3B82F6,#8B5CF6);color:white;border-radius:14px;font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;">Go to Settings</a>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main-content" style="display:none;">
+
+        <!-- STORAGE -->
+        <div class="storage-card">
+            <div class="storage-header">
+                <div class="storage-label">
+                    <svg viewBox="0 0 24 24"><path d="M2 20h20v-4H2v4zm2-3h2v2H4v-2zM2 4v4h20V4H2zm4 3H4V5h2v2zm-4 7h20v-4H2v4zm2-3h2v2H4v-2z"/></svg>
+                    Storage
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <span id="premium-badge-storage" class="premium-badge" style="display:none;">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                        Premium
+                    </span>
+                    <div class="storage-pct" id="storage-pct">0%</div>
+                </div>
+            </div>
+            <div class="storage-bar-bg">
+                <div class="storage-bar-fill" id="storage-bar" style="width:0%"></div>
+            </div>
+            <div class="storage-meta" id="storage-meta">Calculating...</div>
+        </div>
+
+        <!-- SLOTS -->
+        <div class="slots-header">
+            <div class="slots-title">Save Slots</div>
+            <div class="slot-count" id="slot-count"></div>
+        </div>
+
+        <div id="slots-container"></div>
+
+        <button class="add-slot-btn" id="add-slot-btn" onclick="openAddModal()">
+            <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Add Save Slot
+        </button>
+
+        <div class="slots-max-note" id="slots-max-note" style="display:none;"></div>
+
+    </div>
+</div>
+
+<!-- ADD SLOT MODAL -->
+<div class="modal-overlay" id="add-modal">
+    <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title">New Save Slot</div>
+        <div class="modal-sub">Name this save so you can find it later.</div>
+        <input type="text" class="modal-input" id="slot-name-input" placeholder="e.g. Week 50 — Signed to label" maxlength="40">
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeAddModal()">Cancel</button>
+            <button class="modal-btn confirm" id="confirm-add-btn" onclick="createSlot()">
+                <span id="confirm-add-label">Save Now</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- RESTORE MODAL -->
+<div class="modal-overlay" id="restore-modal">
+    <div class="modal">
+        <div class="modal-handle"></div>
+        <div class="modal-title">Restore Save?</div>
+        <div class="modal-sub" id="restore-modal-sub">This will overwrite your current local game. This cannot be undone.</div>
+        <div class="modal-actions">
+            <button class="modal-btn cancel" onclick="closeRestoreModal()">Cancel</button>
+            <button class="modal-btn confirm" id="confirm-restore-btn" onclick="confirmRestore()">
+                <span id="confirm-restore-label">Restore</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyAAkmh5MvkQ6X86u2qxAUFawRe3B1WhB20",
+        authDomain: "editorschoice-ace3c.firebaseapp.com",
+        databaseURL: "https://editorschoice-ace3c-default-rtdb.firebaseio.com",
+        projectId: "editorschoice-ace3c",
+        storageBucket: "editorschoice-ace3c.firebasestorage.app",
+        messagingSenderId: "902609269552",
+        appId: "1:902609269552:web:27c5238802cbf62a8fcef5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    let currentUser = null;
+    let safeEmail = null;
+    let isPremium = false;
+    let slots = {};
+    let pendingRestoreSlot = null;
+
+    const MAX_BYTES_FREE    = 10 * 1024 * 1024;
+    const MAX_BYTES_PREMIUM = 30 * 1024 * 1024;
+    const MAX_SLOTS_FREE    = 1;
+    const MAX_SLOTS_PREMIUM = 3;
+
+    // ── KEY SANITIZATION ──────────────────────────────────────────────────────
+    // Firebase RTDB forbids . # $ / [ ] in keys.
+    // We encode them as %XX using encodeURIComponent and then swap % → '~'
+    // (% is also forbidden, so we use ~ which is safe).
+    function encodeKey(k) {
+        return encodeURIComponent(k).replace(/%/g, '~');
+    }
+
+    function decodeKey(k) {
+        return decodeURIComponent(k.replace(/~/g, '%'));
+    }
+
+    // Encode all keys in a localStorage snapshot before writing to Firebase
+    function encodeSnapshot(raw) {
+        const encoded = {};
+        for (const [k, v] of Object.entries(raw)) {
+            encoded[encodeKey(k)] = v;
+        }
+        return encoded;
+    }
+
+    // Decode all keys when reading back from Firebase to restore localStorage
+    function decodeSnapshot(encoded) {
+        const raw = {};
+        for (const [k, v] of Object.entries(encoded)) {
+            raw[decodeKey(k)] = v;
+        }
+        return raw;
+    }
+
+    // ── INDEXEDDB BACKUP/RESTORE ────────────────────────────────────────────
+    // All 7 IndexedDB databases used across the game, and their stores.
+    // { db: [ { store, keyPath } ] } — keyPath: true means the store keys
+    // its own records (e.g. 'id'), so we only need to dump values.
+    // keyPath: false means the key is set manually on put(), so we must
+    // capture key+value pairs to restore correctly.
+    const IDB_SCHEMA = {
+        'MusicGameDB':       [{ store: 'photos',    keyPath: false }],
+        'MusicExcellenceDB': [{ store: 'images',    keyPath: false }],
+        'VibetokDB':         [{ store: 'posts',     keyPath: true  }],
+        'MusicVideoDB':      [{ store: 'coverArts', keyPath: false }],
+        'XifyArchiveDB':     [{ store: 'posts',     keyPath: true  }],
+        'InstaifyDB':        [{ store: 'posts',     keyPath: true  }],
+        'InstaifyGifDB':     [{ store: 'gifs',      keyPath: false }]
+    };
+
+    function openIdb(name) {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(name);
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = () => resolve(null); // DB doesn't exist yet — skip, don't fail the whole save
+        });
+    }
+
+    // Dumps every DB/store in IDB_SCHEMA into a plain JS object.
+    // Shape: { [dbName]: { [storeName]: [...entries] } }
+    // For keyPath:false stores, entries are [key, value] pairs.
+    // For keyPath:true stores, entries are just the values.
+    async function dumpAllIndexedDB() {
+        const dump = {};
+        for (const [dbName, stores] of Object.entries(IDB_SCHEMA)) {
+            const idb = await openIdb(dbName);
+            if (!idb) continue;
+            dump[dbName] = {};
+            for (const { store, keyPath } of stores) {
+                if (!idb.objectStoreNames.contains(store)) continue;
+                dump[dbName][store] = await new Promise((resolve, reject) => {
+                    const tx = idb.transaction(store, 'readonly');
+                    const os = tx.objectStore(store);
+                    const entries = [];
+                    if (keyPath) {
+                        const req = os.getAll();
+                        req.onsuccess = () => resolve(req.result || []);
+                        req.onerror = () => reject(req.error);
+                    } else {
+                        const req = os.openCursor();
+                        req.onsuccess = e => {
+                            const cursor = e.target.result;
+                            if (cursor) {
+                                entries.push([cursor.key, cursor.value]);
+                                cursor.continue();
+                            } else {
+                                resolve(entries);
+                            }
+                        };
+                        req.onerror = () => reject(req.error);
+                    }
+                });
+            }
+            idb.close();
+        }
+        return dump;
+    }
+
+    // Restores a dump produced by dumpAllIndexedDB(). Wipes each target
+    // store before writing, so restoring an old slot fully replaces
+    // current IndexedDB content rather than merging with it.
+    async function restoreAllIndexedDB(dump) {
+        // Walk EVERY known DB/store, not just the ones present in this
+        // slot's dump. IndexedDB is one shared pool across all save slots,
+        // so a slot that never touched (say) InstaifyGifDB must still wipe
+        // that store on restore — otherwise leftover data from a
+        // different slot silently stays behind and "leaks" into this one.
+        for (const [dbName, schemaEntry] of Object.entries(IDB_SCHEMA)) {
+            const idb = await new Promise((resolve, reject) => {
+                const req = indexedDB.open(dbName);
+                req.onupgradeneeded = e => {
+                    const database = e.target.result;
+                    schemaEntry.forEach(({ store, keyPath }) => {
+                        if (!database.objectStoreNames.contains(store)) {
+                            database.createObjectStore(store, keyPath ? { keyPath: 'id' } : undefined);
+                        }
+                    });
+                };
+                req.onsuccess = e => resolve(e.target.result);
+                req.onerror = () => reject(req.error);
+            });
+
+            const dumpForThisDb = dump[dbName] || {}; // this slot may have nothing for this DB — that's fine, we still clear it
+
+            for (const { store: storeName } of schemaEntry) {
+                if (!idb.objectStoreNames.contains(storeName)) continue;
+                const meta = schemaEntry.find(s => s.store === storeName);
+                const entries = dumpForThisDb[storeName] || []; // clear-only if this slot had no data here
+
+                await new Promise((resolve, reject) => {
+                    const tx = idb.transaction(storeName, 'readwrite');
+                    const os = tx.objectStore(storeName);
+                    os.clear();
+                    entries.forEach(entry => {
+                        if (meta.keyPath) {
+                            os.put(entry);
+                        } else {
+                            const [key, value] = entry;
+                            os.put(value, key);
+                        }
+                    });
+                    tx.oncomplete = () => resolve();
+                    tx.onerror = () => reject(tx.error);
+                });
+            }
+            idb.close();
+        }
+    }
+
+    // ── AUTH ──────────────────────────────────────────────────────────────────
+    onAuthStateChanged(auth, async (user) => {
+        if (!user) {
+            document.getElementById('not-logged-in').style.display = 'block';
+            document.getElementById('main-content').style.display = 'none';
+            const overlay = document.getElementById('loading-overlay');
+            overlay.classList.add('hidden');
+            setTimeout(() => overlay.remove(), 400);
+            return;
+        }
+
+        currentUser = user;
+        safeEmail = user.email.replace(/\./g, ',');
+
+        localStorage.setItem('joudUID', user.uid);
+        localStorage.setItem('joudSafeEmail', safeEmail);
+
+        const premSnap = await get(ref(db, `users/${safeEmail}/premium`));
+        isPremium = premSnap.val() === 'yes';
+
+        if (isPremium) {
+            document.getElementById('premium-badge-storage').style.display = 'inline-flex';
+        }
+
+        document.getElementById('not-logged-in').style.display = 'none';
+        document.getElementById('main-content').style.display = 'block';
+
+        await loadSlots();
+
+        const overlay = document.getElementById('loading-overlay');
+        overlay.classList.add('hidden');
+        setTimeout(() => overlay.remove(), 400);
+    });
+
+    // ── LOAD ──────────────────────────────────────────────────────────────────
+    async function loadSlots() {
+        const snap = await get(ref(db, `joud/${safeEmail}`));
+        slots = snap.exists() ? snap.val() : {};
+        renderSlots();
+        updateStorageBar();
+    }
+
+    // ── RENDER ────────────────────────────────────────────────────────────────
+    function renderSlots() {
+        const container = document.getElementById('slots-container');
+        const maxSlots  = isPremium ? MAX_SLOTS_PREMIUM : MAX_SLOTS_FREE;
+        const slotKeys  = Object.keys(slots);
+        const activeSlot = localStorage.getItem('activeJoudSlot');
+
+        document.getElementById('slot-count').textContent = `${slotKeys.length} / ${maxSlots}`;
+
+        if (slotKeys.length === 0) {
+            container.innerHTML = `
+                <div class="empty">
+                    <svg class="empty-icon" viewBox="0 0 24 24"><path d="M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z"/></svg>
+                    <div class="empty-title">No saves yet</div>
+                    <div class="empty-sub">Add a slot to start backing up your game.</div>
+                </div>`;
+        } else {
+            container.innerHTML = slotKeys.map(key => {
+                const slot = slots[key];
+                const isActive = key === activeSlot;
+                const date = slot.lastSaved
+                    ? new Date(slot.lastSaved).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+                    : '—';
+                const time = slot.lastSaved
+                    ? new Date(slot.lastSaved).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })
+                    : '';
+
+                return `
+                    <div class="slot-card ${isActive ? 'active-slot' : ''}">
+                        <div class="slot-top">
+                            <div>
+                                <div class="slot-name">${escHtml(key)}</div>
+                                <div class="slot-artist">${escHtml(slot.artistName || 'Unknown Artist')}</div>
+                            </div>
+                            ${isActive ? '<div class="active-pip">Autosave</div>' : ''}
+                        </div>
+                        <div class="slot-meta">
+                            <div class="slot-stat">
+                                <div class="slot-stat-label">Week</div>
+                                <div class="slot-stat-value">${slot.week || '—'}</div>
+                            </div>
+                            <div class="slot-stat">
+                                <div class="slot-stat-label">Saved</div>
+                                <div class="slot-stat-value">${date}</div>
+                            </div>
+                            <div class="slot-stat">
+                                <div class="slot-stat-label">Time</div>
+                                <div class="slot-stat-value">${time}</div>
+                            </div>
+                        </div>
+                        <div class="slot-actions">
+                            <button class="slot-btn restore" onclick="window._joud.openRestore('${escAttr(key)}')">Restore</button>
+                            ${!isActive
+                                ? `<button class="slot-btn set-active" onclick="window._joud.setActive('${escAttr(key)}')">Set Active</button>`
+                                : `<button class="slot-btn" style="opacity:0.35;cursor:default;" disabled>Active</button>`}
+                            <button class="slot-btn delete" onclick="window._joud.deleteSlot('${escAttr(key)}')">
+                                <svg viewBox="0 0 24 24"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
+                            </button>
+                        </div>
+                    </div>`;
+            }).join('');
+        }
+
+        const addBtn = document.getElementById('add-slot-btn');
+        const maxNote = document.getElementById('slots-max-note');
+        if (slotKeys.length >= maxSlots) {
+            addBtn.disabled = true;
+            maxNote.style.display = 'block';
+            maxNote.textContent = isPremium
+                ? 'Maximum of 3 save slots reached.'
+                : 'Upgrade to Excellence Premium for up to 3 save slots.';
+        } else {
+            addBtn.disabled = false;
+            maxNote.style.display = 'none';
+        }
+    }
+
+    // ── STORAGE BAR ───────────────────────────────────────────────────────────
+    function updateStorageBar() {
+        const maxBytes   = isPremium ? MAX_BYTES_PREMIUM : MAX_BYTES_FREE;
+        const totalLabel = isPremium ? '30MB' : '10MB';
+        const bytes      = new Blob([JSON.stringify(slots)]).size; // slots now include idbData, so this already reflects the true total
+        const pct        = Math.min(100, Math.round((bytes / maxBytes) * 100));
+
+        document.getElementById('storage-pct').textContent = `${pct}%`;
+        const bar = document.getElementById('storage-bar');
+        bar.style.width = `${pct}%`;
+        bar.className = 'storage-bar-fill' + (pct >= 90 ? ' danger' : pct >= 70 ? ' warning' : '');
+
+        const kb = (bytes / 1024).toFixed(1);
+        document.getElementById('storage-meta').textContent = `~${kb} KB used of ${totalLabel}`;
+    }
+
+    // ── CREATE SLOT ───────────────────────────────────────────────────────────
+    window.openAddModal = () => {
+        document.getElementById('slot-name-input').value = '';
+        document.getElementById('add-modal').classList.add('active');
+        setTimeout(() => document.getElementById('slot-name-input').focus(), 350);
+    };
+
+    window.closeAddModal = () => {
+        document.getElementById('add-modal').classList.remove('active');
+    };
+
+    window.createSlot = async () => {
+        const name = document.getElementById('slot-name-input').value.trim();
+        if (!name) { document.getElementById('slot-name-input').focus(); return; }
+
+        const maxSlots = isPremium ? MAX_SLOTS_PREMIUM : MAX_SLOTS_FREE;
+        if (Object.keys(slots).length >= maxSlots) { closeAddModal(); return; }
+
+        // Build snapshot with ENCODED keys
+        const rawSnapshot = {};
+        for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (k.startsWith('firebase:')) continue;
+            rawSnapshot[k] = localStorage.getItem(k);
+        }
+        const encodedSnapshot = encodeSnapshot(rawSnapshot);
+
+        const idbSnapshot = await dumpAllIndexedDB();
+
+        const artistDetails = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+        const gameWeek = localStorage.getItem('gameWeek') || '0';
+
+        const payload = {
+            data: encodedSnapshot,
+            idbData: idbSnapshot,
+            lastSaved: new Date().toISOString(),
+            week: gameWeek,
+            artistName: artistDetails.name || 'Unknown'
+        };
+
+        const maxBytes    = isPremium ? MAX_BYTES_PREMIUM : MAX_BYTES_FREE;
+        const currentSize = new Blob([JSON.stringify(slots)]).size;
+        const newSize     = new Blob([JSON.stringify(payload)]).size;
+
+        if (currentSize + newSize > maxBytes) {
+            alert('Not enough cloud storage. Delete an old slot first (this save includes your images/posts data, which can be large).');
+            return;
+        }
+
+        const label = document.getElementById('confirm-add-label');
+        const btn   = document.getElementById('confirm-add-btn');
+        label.innerHTML = '<span class="spinner"></span>Saving...';
+        btn.disabled = true;
+
+        try {
+            // Encode the slot name itself for use as a Firebase key
+            const fbKey = encodeKey(name);
+            await set(ref(db, `joud/${safeEmail}/${fbKey}`), payload);
+
+            if (Object.keys(slots).length === 0) {
+                localStorage.setItem('activeJoudSlot', name);
+            }
+
+            slots[name] = payload; // keep unencoded in local state for display
+            closeAddModal();
+            renderSlots();
+            updateStorageBar();
+        } catch (e) {
+            alert('Save failed: ' + e.message);
+        } finally {
+            label.textContent = 'Save Now';
+            btn.disabled = false;
+        }
+    };
+
+    // ── ACTIONS ───────────────────────────────────────────────────────────────
+    window._joud = {
+        setActive(slotName) {
+            localStorage.setItem('activeJoudSlot', slotName);
+            renderSlots();
+        },
+
+        openRestore(slotName) {
+            pendingRestoreSlot = slotName;
+            document.getElementById('restore-modal-sub').textContent =
+                `"${slotName}" will overwrite your current local game. This cannot be undone.`;
+            document.getElementById('restore-modal').classList.add('active');
+        },
+
+        async deleteSlot(slotName) {
+            if (!confirm(`Delete "${slotName}"? This cannot be undone.`)) return;
+            const fbKey = encodeKey(slotName);
+            await remove(ref(db, `joud/${safeEmail}/${fbKey}`));
+            delete slots[slotName];
+            if (localStorage.getItem('activeJoudSlot') === slotName) {
+                localStorage.removeItem('activeJoudSlot');
+            }
+            renderSlots();
+            updateStorageBar();
+        }
+    };
+
+    window.closeRestoreModal = () => {
+        document.getElementById('restore-modal').classList.remove('active');
+        pendingRestoreSlot = null;
+    };
+
+    window.confirmRestore = async () => {
+        if (!pendingRestoreSlot) return;
+
+        const label = document.getElementById('confirm-restore-label');
+        const btn   = document.getElementById('confirm-restore-btn');
+        label.innerHTML = '<span class="spinner"></span>Restoring...';
+        btn.disabled = true;
+
+        try {
+            const fbKey = encodeKey(pendingRestoreSlot);
+            const snap  = await get(ref(db, `joud/${safeEmail}/${fbKey}`));
+            if (!snap.exists()) { alert('Save not found.'); return; }
+
+            // DECODE keys before restoring to localStorage
+            const encodedData = snap.val().data;
+            const rawData     = decodeSnapshot(encodedData);
+
+            localStorage.clear();
+            for (const [k, v] of Object.entries(rawData)) {
+                localStorage.setItem(k, v);
+            }
+
+            // Restore all 7 IndexedDB databases (photos, posts, cover arts, gifs, etc.)
+            const idbData = snap.val().idbData;
+            if (idbData) {
+                await restoreAllIndexedDB(idbData);
+            }
+
+            // Re-stamp joud keys
+            localStorage.setItem('joudUID', currentUser.uid);
+            localStorage.setItem('joudSafeEmail', safeEmail);
+            localStorage.setItem('activeJoudSlot', pendingRestoreSlot);
+
+            closeRestoreModal();
+            alert(`✅ "${pendingRestoreSlot}" restored! Redirecting to game...`);
+            window.location.href = 'music.html';
+
+        } catch (e) {
+            alert('Restore failed: ' + e.message);
+            label.textContent = 'Restore';
+            btn.disabled = false;
+        }
+    };
+
+    document.getElementById('slot-name-input').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') window.createSlot();
+    });
+
+    // ── HELPERS ───────────────────────────────────────────────────────────────
+    function escHtml(str) {
+        return String(str)
+            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function escAttr(str) {
+        return String(str).replace(/'/g, "\\'");
+    }
+</script>
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-ring"></div>
+    <div class="loading-label">Loading saves…</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellence Radio – Apply</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{
+  --primary:#3B82F6;--secondary:#8B5CF6;--accent:#06B6D4;
+  --success:#10B981;--warning:#F59E0B;--error:#EF4444;
+  --bg:#0D0D1F;--bg2:#141428;--bg3:#1A1A35;
+  --card:rgba(20,20,45,0.85);--border:rgba(59,130,246,0.18);
+  --text:#FFFFFF;--muted:#7B8DB0;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px;
+  background-image:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(59,130,246,0.12),transparent),
+  radial-gradient(ellipse 40% 30% at 85% 80%,rgba(139,92,246,0.08),transparent);}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:center;gap:16px;padding:20px 20px 0;margin-bottom:24px}
+.back-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:var(--card);
+  display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;color:var(--muted);
+  transition:all .2s;flex-shrink:0}
+.back-btn:hover{border-color:var(--primary);color:var(--primary)}
+.header-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;
+  background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.radio-signal{display:flex;align-items:center;gap:4px;margin-left:auto}
+.signal-bar{width:3px;background:var(--accent);border-radius:2px;animation:signal 1.2s ease-in-out infinite}
+.signal-bar:nth-child(1){height:8px;animation-delay:.0s}
+.signal-bar:nth-child(2){height:14px;animation-delay:.15s}
+.signal-bar:nth-child(3){height:20px;animation-delay:.3s}
+.signal-bar:nth-child(4){height:14px;animation-delay:.45s}
+.signal-bar:nth-child(5){height:8px;animation-delay:.6s}
+@keyframes signal{0%,100%{opacity:.3}50%{opacity:1}}
+
+.container{max-width:480px;margin:0 auto;padding:0 16px}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;margin-bottom:16px;backdrop-filter:blur(20px)}
+.card-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.card-title svg{width:15px;height:15px;fill:var(--accent);flex-shrink:0}
+
+/* ── LABEL STATUS ── */
+.label-badge{display:flex;align-items:center;gap:14px;background:rgba(255,255,255,0.04);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.label-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.label-icon.indie{background:rgba(107,114,128,0.2)}
+.label-icon.small{background:rgba(16,185,129,0.15)}
+.label-icon.medium{background:rgba(245,158,11,0.15)}
+.label-icon.big{background:rgba(59,130,246,0.15)}
+.label-info h4{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;margin-bottom:3px}
+.label-info p{font-size:12px;color:var(--muted)}
+.push-pill{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:6px}
+.push-pill.light{background:rgba(107,114,128,0.2);color:#9CA3AF}
+.push-pill.medium{background:rgba(245,158,11,0.2);color:var(--warning)}
+.push-pill.heavy{background:rgba(59,130,246,0.2);color:var(--primary)}
+.push-pill.indie{background:rgba(239,68,68,0.15);color:var(--error)}
+.push-pill svg{width:10px;height:10px;fill:currentColor}
+
+/* ── SLOT METER ── */
+.slot-meter{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+.slot{height:44px;border-radius:10px;border:1.5px dashed rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;font-weight:600;color:var(--muted);transition:all .3s}
+.slot.occupied{border-style:solid;border-color:var(--primary);background:rgba(59,130,246,0.1);color:var(--primary)}
+.slot.occupied::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:50%;animation:pulse-dot 1.5s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+
+/* ── FORM ── */
+.form-label{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px}
+.form-select{width:100%;padding:13px 16px;border:1px solid var(--border);border-radius:12px;background:rgba(255,255,255,0.04);color:var(--text);font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;appearance:none;-webkit-appearance:none;cursor:pointer;transition:all .2s;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='%237B8DB0'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.form-select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,.12)}
+.form-select option{background:#1A1A35;color:#fff}
+
+/* ── STATIONS ── */
+.stations-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.station-item{position:relative;cursor:pointer}
+.station-item input{position:absolute;opacity:0;width:0;height:0}
+.station-card{border:1.5px solid var(--border);border-radius:14px;padding:14px;text-align:center;transition:all .25s;background:rgba(255,255,255,0.02)}
+.station-item input:checked ~ .station-card{border-color:var(--primary);background:rgba(59,130,246,0.1);box-shadow:0 0 20px rgba(59,130,246,.15)}
+.station-name{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;margin-bottom:3px;color:var(--text)}
+.station-freq{font-size:11px;color:var(--muted);margin-bottom:8px}
+.station-accept{font-size:11px;font-weight:700;padding:3px 8px;border-radius:20px;display:inline-block}
+.station-accept.high{background:rgba(16,185,129,.15);color:var(--success)}
+.station-accept.medium{background:rgba(245,158,11,.15);color:var(--warning)}
+.station-accept.low{background:rgba(239,68,68,.15);color:var(--error)}
+.station-check{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:50%;background:var(--primary);display:none;align-items:center;justify-content:center}
+.station-item input:checked ~ .station-card .station-check{display:flex}
+.station-check svg{width:10px;height:10px;fill:white}
+
+/* ── FEE NOTICE ── */
+.fee-notice{display:flex;align-items:center;gap:10px;background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:12px 14px;font-size:13px;color:var(--warning);font-weight:500;margin-top:12px}
+.fee-notice svg{width:16px;height:16px;fill:var(--warning);flex-shrink:0}
+
+/* ── SUBMIT BTN ── */
+.submit-btn{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Syne',sans-serif;font-size:16px;font-weight:800;cursor:pointer;transition:all .25s;letter-spacing:.3px;margin-top:4px;display:flex;align-items:center;justify-content:center;gap:10px}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(59,130,246,.35)}
+.submit-btn:active{transform:translateY(0)}
+.submit-btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:none}
+.submit-btn svg{width:18px;height:18px;fill:white}
+
+/* ── ACTIVE SUBMISSIONS ── */
+.active-list{display:grid;gap:10px}
+.active-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:14px;padding:12px 14px;position:relative;overflow:hidden}
+.active-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:linear-gradient(var(--accent),var(--primary))}
+.active-art{width:42px;height:42px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg3)}
+.active-info{flex:1;min-width:0}
+.active-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.active-meta{font-size:11px;color:var(--muted);margin-top:2px}
+.active-plays{text-align:right;flex-shrink:0}
+.active-plays-num{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--accent)}
+.active-plays-label{font-size:10px;color:var(--muted)}
+.pull-btn{width:28px;height:28px;border-radius:8px;border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.08);color:var(--error);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s;margin-left:8px}
+.pull-btn:hover{background:rgba(239,68,68,.18);border-color:var(--error)}
+.pull-btn svg{fill:currentColor}
+.peak-badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:rgba(239,68,68,.15);color:var(--error);margin-left:6px}
+.wave-badge{display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:rgba(6,182,212,.12);color:var(--accent)}
+
+/* ── RESULT MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.active{display:flex}
+.modal{background:linear-gradient(135deg,var(--bg2),var(--bg3));border:1px solid var(--border);border-radius:24px;padding:28px;width:100%;max-width:380px;animation:modalIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes modalIn{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal h3{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;text-align:center;margin-bottom:6px;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.modal-sub{text-align:center;color:var(--muted);font-size:13px;margin-bottom:20px}
+.result-list{display:grid;gap:8px;margin-bottom:20px}
+.result-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;font-size:13px;font-weight:600}
+.result-item.accepted{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.25);color:var(--success)}
+.result-item.rejected{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.15);color:var(--error)}
+.result-item svg{width:16px;height:16px;fill:currentColor;flex-shrink:0}
+.result-item span{flex:1}
+.close-modal{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;font-family:'Syne',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .2s}
+.close-modal:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(59,130,246,.3)}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:30px 20px;color:var(--muted);font-size:14px}
+.empty-state svg{width:40px;height:40px;fill:var(--muted);margin-bottom:12px;opacity:.5}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 20px;font-size:13px;font-weight:600;z-index:9999;transition:transform .35s cubic-bezier(.34,1.56,.64,1);white-space:nowrap;backdrop-filter:blur(20px)}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:rgba(16,185,129,.4);color:var(--success)}
+.toast.error{border-color:rgba(239,68,68,.4);color:var(--error)}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <a href="music.html" class="back-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+      <path d="M19 12H5M12 5l-7 7 7 7"/>
+    </svg>
+  </a>
+  <div class="header-title">Radio Apply</div>
+  <div class="radio-signal">
+    <div class="signal-bar"></div><div class="signal-bar"></div><div class="signal-bar"></div><div class="signal-bar"></div><div class="signal-bar"></div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- LABEL STATUS -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Your Status
+    </div>
+    <div class="label-badge" id="label-badge">
+      <div class="label-icon indie" id="label-icon">🎤</div>
+      <div class="label-info">
+        <h4 id="label-name">Independent Artist</h4>
+        <p id="label-desc">No label deal active</p>
+        <div id="push-pill" class="push-pill indie">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg>
+          &lt;10% acceptance
+        </div>
+      </div>
+    </div>
+    <p class="form-label" style="margin-bottom:8px" id="slot-label">Radio Slots</p>
+    <div class="slot-meter" style="grid-template-columns:1fr 1fr">
+      <div class="slot" id="slot-1"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Slot 1</div>
+      <div class="slot" id="slot-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Slot 2</div>
+      <div class="slot" id="slot-3"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Slot 3</div>
+      <div class="slot" id="slot-4"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Slot 4</div>
+    </div>
+  </div>
+
+  <!-- SONG SELECT -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+      Select Song
+    </div>
+    <label class="form-label">Choose a released track</label>
+    <select class="form-select" id="song-select">
+      <option value="">— Pick a song —</option>
+    </select>
+  </div>
+
+  <!-- STATION SELECT -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      Submit to Stations
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-bottom:14px">Not all stations may accept you. Select up to 4.</p>
+    <div class="stations-grid">
+
+      <label class="station-item">
+        <input type="checkbox" name="station" value="1" checked>
+        <div class="station-card">
+          <div class="station-name">Excellence FM</div>
+          <div class="station-freq">100.1 FM</div>
+          <div class="station-accept high" id="accept-1">High Accept</div>
+          <div class="station-check"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div>
+        </div>
+      </label>
+
+      <label class="station-item">
+        <input type="checkbox" name="station" value="2" checked>
+        <div class="station-card">
+          <div class="station-name">Excellence Urban</div>
+          <div class="station-freq">102.3 FM</div>
+          <div class="station-accept medium" id="accept-2">Medium Accept</div>
+          <div class="station-check"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div>
+        </div>
+      </label>
+
+      <label class="station-item">
+        <input type="checkbox" name="station" value="3">
+        <div class="station-card">
+          <div class="station-name">Excellence Pop</div>
+          <div class="station-freq">104.5 FM</div>
+          <div class="station-accept medium" id="accept-3">Medium Accept</div>
+          <div class="station-check"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div>
+        </div>
+      </label>
+
+      <label class="station-item">
+        <input type="checkbox" name="station" value="4">
+        <div class="station-card">
+          <div class="station-name">Excellence Hot</div>
+          <div class="station-freq">98.7 FM</div>
+          <div class="station-accept low" id="accept-4">Selective</div>
+          <div class="station-check"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg></div>
+        </div>
+      </label>
+
+    </div>
+    <div class="fee-notice" id="fee-notice" style="display:none">
+      <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+      <span id="fee-text">Submission fee: <strong>$50,000</strong> per application (indie artist)</span>
+    </div>
+    <button class="submit-btn" id="submit-btn" onclick="submitToRadio()" style="margin-top:16px">
+      <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      Submit Application
+    </button>
+  </div>
+
+  <!-- ACTIVE ON RADIO -->
+  <div class="card">
+    <div class="card-title">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm0-4h2v2h-2zm-6 0h4v2h-4z"/></svg>
+      Active on Radio
+    </div>
+    <div id="active-list">
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm0-4h2v2h-2zm-6 0h4v2h-4z"/></svg>
+        <p>No songs currently on radio.<br>Submit one to get started!</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- RESULT MODAL -->
+<div class="modal-overlay" id="result-modal">
+  <div class="modal">
+    <h3 id="modal-title">Application Sent!</h3>
+    <p class="modal-sub" id="modal-sub">Results from all 4 stations</p>
+    <div class="result-list" id="result-list"></div>
+    <button class="close-modal" onclick="closeModal()">Got It!</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── LABEL TIERS ──────────────────────────────────────────────────────────
+const LABEL_TIERS = {
+  indie:  { name:'Independent',  emoji:'🎤', class:'indie',  pushLevel:'indie',  accept:{1:.08,2:.07,3:.06,4:.05}, feePerStation:50000, weeklyIncrement:400 },
+  small:  { name:'Small Label',  emoji:'🏷️', class:'small',  pushLevel:'light',  accept:{1:.35,2:.28,3:.25,4:.20}, feePerStation:0, weeklyIncrement:900 },
+  medium: { name:'Mid Label',    emoji:'🏢', class:'medium', pushLevel:'medium', accept:{1:.58,2:.52,3:.48,4:.40}, feePerStation:0, weeklyIncrement:2500 },
+  big:    { name:'Major Label',  emoji:'⭐', class:'big',    pushLevel:'heavy',  accept:{1:.82,2:.78,3:.72,4:.65}, feePerStation:0, weeklyIncrement:8000 },
+};
+
+const STATION_NAMES = { 1:'Excellence FM', 2:'Excellence Urban', 3:'Excellence Pop', 4:'Excellence Hot' };
+const PUSH_PEAKS = { indie:3000, light:8000, medium:30000, heavy:120000 };
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+let tier = null;
+
+function isPremiumUser() {
+  return localStorage.getItem('isPremium') === 'true';
+}
+
+function getMaxRadioSlots() {
+  return isPremiumUser() ? 4 : 2;
+}
+
+function getLabelTier() {
+  const deal = JSON.parse(localStorage.getItem('recordDeal') || 'null');
+  if (!deal) return LABEL_TIERS.indie;
+  const royalty = deal.terms?.royalty || 30;
+  if (royalty <= 20) return LABEL_TIERS.small;
+  if (royalty <= 35) return LABEL_TIERS.medium;
+  return LABEL_TIERS.big;
+}
+
+function getRadioSongs() {
+  return JSON.parse(localStorage.getItem('radioSongs') || '[]').filter(s => !s.depleted);
+}
+
+function renderLabelStatus() {
+  tier = getLabelTier();
+  const icon = document.getElementById('label-icon');
+  const name = document.getElementById('label-name');
+  const desc = document.getElementById('label-desc');
+  const pill = document.getElementById('push-pill');
+
+  icon.className = `label-icon ${tier.class}`;
+  icon.textContent = tier.emoji;
+  name.textContent = tier.name;
+
+  const deal = JSON.parse(localStorage.getItem('recordDeal') || 'null');
+  desc.textContent = deal ? `${deal.label?.name || 'Label'} • ${deal.terms?.royalty}% royalty` : 'No label deal active';
+
+  const pushLabels = { indie:'<10% acceptance', light:'Light Push', medium:'Medium Push', heavy:'Heavy Push' };
+  pill.className = `push-pill ${tier.pushLevel === 'indie' ? 'indie' : tier.pushLevel}`;
+  pill.innerHTML = `<svg viewBox="0 0 24 24" style="width:10px;height:10px;fill:currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15v-4H7l5-8v4h4l-5 8z"/></svg> ${pushLabels[tier.pushLevel]}`;
+
+  // Update station accept rates based on tier
+  const acceptLabels = {
+    1: { indie:'~8%', small:'~35%', light:'~35%', medium:'~58%', heavy:'~82%' },
+    2: { indie:'~7%', small:'~28%', light:'~28%', medium:'~52%', heavy:'~78%' },
+    3: { indie:'~6%', small:'~25%', light:'~25%', medium:'~48%', heavy:'~72%' },
+    4: { indie:'~5%', small:'~20%', light:'~20%', medium:'~40%', heavy:'~65%' },
+  };
+  const levelKey = tier.pushLevel;
+  [1,2,3,4].forEach(n => {
+    const el = document.getElementById(`accept-${n}`);
+    if (el) el.textContent = (acceptLabels[n][levelKey] || '—') + ' accept';
+  });
+
+  // Fee notice
+  const fee = document.getElementById('fee-notice');
+  const feeText = document.getElementById('fee-text');
+  if (tier.pushLevel === 'indie') {
+    fee.style.display = 'flex';
+    feeText.innerHTML = `Submission fee: <strong>$${(50000).toLocaleString()}</strong> per application (indie artist)`;
+  } else {
+    fee.style.display = 'none';
+  }
+
+  document.getElementById('slot-label').textContent = `Radio Slots (max ${getMaxRadioSlots()} songs at once${isPremiumUser() ? ' • Premium' : ''})`;
+}
+
+function renderSlots() {
+  const active = getRadioSongs().filter(s => s.isUser);
+  const maxSlots = getMaxRadioSlots();
+  const allSlotEls = [
+    document.getElementById('slot-1'),
+    document.getElementById('slot-2'),
+    document.getElementById('slot-3'),
+    document.getElementById('slot-4')
+  ];
+  allSlotEls.forEach((sl, i) => {
+    if (i >= maxSlots) { sl.style.display = 'none'; return; }
+    sl.style.display = 'flex';
+    sl.className = 'slot' + (active[i] ? ' occupied' : '');
+    sl.innerHTML = active[i]
+      ? `<span style="font-size:12px;font-weight:700;color:var(--primary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px">${active[i].title}</span>`
+      : `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg> Slot ${i+1}`;
+  });
+}
+
+function renderSongSelect() {
+  const sel = document.getElementById('song-select');
+  const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+  const activeSongs = getRadioSongs().filter(s => s.isUser).map(s => s.id);
+  sel.innerHTML = '<option value="">— Pick a song —</option>';
+  if (!songs.length) {
+    sel.innerHTML = '<option value="">No released songs yet</option>';
+    return;
+  }
+  songs.forEach(song => {
+    const id = song.id;
+    const title = song.songName || song.name || 'Untitled';
+    const onAir = activeSongs.includes(id);
+    const opt = document.createElement('option');
+    opt.value = id;
+    opt.textContent = onAir ? `${title} (On Air)` : title;
+    if (onAir) opt.disabled = true;
+    sel.appendChild(opt);
+  });
+}
+
+function renderActiveList() {
+  const container = document.getElementById('active-list');
+  const active = getRadioSongs().filter(s => s.isUser);
+  if (!active.length) {
+    container.innerHTML = `<div class="empty-state"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/></svg><p>No songs currently on radio.<br>Submit one to get started!</p></div>`;
+    return;
+  }
+  container.innerHTML = active.map(song => {
+    const peakHtml = song.hasReachedPeak ? `<span class="peak-badge">📉 Declining</span>` : `<span class="wave-badge">📡 On Air</span>`;
+    const stations = (song.stationIds || []).map(id => STATION_NAMES[id] || `Station ${id}`).join(', ');
+    return `<div class="active-item">
+      <img class="active-art" src="${song.art || ''}" onerror="this.style.background='var(--bg3)'">
+      <div class="active-info">
+        <div class="active-title">${song.title} ${peakHtml}</div>
+        <div class="active-meta">Week ${song.weeksOnAir || 1} on air • ${stations}</div>
+      </div>
+      <div class="active-plays">
+        <div class="active-plays-num">${fmtNum(song.currentWeeklyPlays || 0)}</div>
+        <div class="active-plays-label">plays/wk</div>
+      </div>
+      <button class="pull-btn" onclick="pullFromRadio('${song.id}')" title="Pull from radio">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+    </div>`;
+  }).join('');
+}
+
+function pullFromRadio(songId) {
+  let radioSongs = JSON.parse(localStorage.getItem('radioSongs') || '[]');
+  const idx = radioSongs.findIndex(s => s.id === songId && s.isUser);
+  if (idx === -1) { showToast('Could not find that song on radio', 'error'); return; }
+
+  radioSongs[idx].depleted = true;
+  radioSongs[idx].pulledByUser = true;
+  localStorage.setItem('radioSongs', JSON.stringify(radioSongs));
+
+  showToast(`"${radioSongs[idx].title}" pulled from radio`, 'success');
+  init();
+}
+
+// ── SUBMIT ──────────────────────────────────────────────────────────────
+function submitToRadio() {
+  let songId = document.getElementById('song-select').value;
+  if (!songId) { showToast('Select a song first', 'error'); return; }
+
+  const checked = [...document.querySelectorAll('input[name="station"]:checked')];
+  if (!checked.length) { showToast('Select at least one station', 'error'); return; }
+
+  const maxSlots = getMaxRadioSlots();
+  const userSongs = getRadioSongs().filter(s => s.isUser);
+  if (userSongs.length >= maxSlots) {
+    const msg = maxSlots < 4
+      ? `You already have ${maxSlots} songs on radio! Get Excellence Premium for 4 slots.`
+      : `You already have ${maxSlots} songs on radio!`;
+    showToast(msg, 'error');
+    return;
+  }
+
+  // Check if same song already on radio
+  if (userSongs.some(s => s.id === songId)) { showToast('That song is already on radio', 'error'); return; }
+
+  // Cost check for indie
+  if (tier.pushLevel === 'indie') {
+    const cost = 50000;
+    const money = parseFloat(localStorage.getItem('money') || '0');
+    if (money < cost) { showToast(`Need $${cost.toLocaleString()} to apply`, 'error'); return; }
+    localStorage.setItem('money', (money - cost).toFixed(0));
+  }
+
+  // Find song data
+  const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+  let song = songs.find(s => s.id === songId);
+  if (!song) {
+    // Fallback: id can go stale if releasedSongs was rewritten between page load
+    // and submit (e.g. a track just got converted to a single). Match on the
+    // dropdown's own selected text as a backup instead of failing outright.
+    const selectedText = document.getElementById('song-select').selectedOptions[0]?.textContent || '';
+    const cleanSelected = selectedText.replace(/\s*\(On Air\)\s*$/, '').trim();
+    song = songs.find(s => (s.songName || s.name || '').trim() === cleanSelected);
+    // Re-sync songId to the resolved song's real, current id — otherwise the
+    // radio entry gets pushed with the stale dropdown id.
+    if (song) songId = song.id;
+  }
+  if (!song) { showToast('Song not found — try refreshing the page', 'error'); return; }
+
+  // RNG acceptance for each station
+  const stationVals = checked.map(c => parseInt(c.value));
+  const results = [];
+  const accepted = [];
+
+  stationVals.forEach(stId => {
+    const chance = tier.accept[stId] || .05;
+    const won = Math.random() < chance;
+    results.push({ stId, won, name: STATION_NAMES[stId] });
+    if (won) accepted.push(stId);
+  });
+
+  // If any accepted, add to radio
+  if (accepted.length > 0) {
+    const radioSongs = JSON.parse(localStorage.getItem('radioSongs') || '[]');
+    const peakPlays = PUSH_PEAKS[tier.pushLevel] || 3000;
+    radioSongs.push({
+      id: songId,
+      title: song.songName || song.name,
+      artist: JSON.parse(localStorage.getItem('artistDetails') || '{}').name || 'Artist',
+      art: song.coverArt || '',
+      isUser: true,
+      stationIds: accepted,
+      pushLevel: tier.pushLevel,
+      labelType: tier.pushLevel === 'indie' ? 'independent' : 'signed',
+      weeklyPlaysIncrement: tier.weeklyIncrement,
+      radioPlays: 0,
+      currentWeeklyPlays: Math.floor(tier.weeklyIncrement * 0.5),
+      peakPlays: peakPlays,
+      hasReachedPeak: false,
+      weeksOnAir: 0,
+      addedDate: localStorage.getItem('currentDate') || new Date().toISOString(),
+      depleted: false
+    });
+    localStorage.setItem('radioSongs', JSON.stringify(radioSongs));
+  }
+
+  showResultModal(song.songName || song.name, results);
+  setTimeout(init, 200);
+}
+
+function showResultModal(songTitle, results) {
+  document.getElementById('modal-title').textContent = `Results for "${songTitle}"`;
+  const accepted = results.filter(r => r.won);
+  document.getElementById('modal-sub').textContent = accepted.length
+    ? `Accepted by ${accepted.length} of ${results.length} stations!`
+    : `Rejected by all stations this time.`;
+
+  document.getElementById('result-list').innerHTML = results.map(r => `
+    <div class="result-item ${r.won ? 'accepted' : 'rejected'}">
+      <svg viewBox="0 0 24 24">${r.won
+        ? '<path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/>'
+        : '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>'}
+      </svg>
+      <span>${r.name}</span>
+      <strong>${r.won ? '✅ Accepted' : '❌ Rejected'}</strong>
+    </div>`).join('');
+
+  document.getElementById('result-modal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('result-modal').classList.remove('active');
+}
+
+// ── HELPERS ──────────────────────────────────────────────────────────────
+function fmtNum(n) {
+  if (n >= 1000000) return (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return (n/1000).toFixed(1) + 'K';
+  return n.toString();
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function init() {
+  renderLabelStatus();
+  renderSlots();
+  renderSongSelect();
+  renderActiveList();
+}
+
+init();
+</script>
+</body>
+</html>

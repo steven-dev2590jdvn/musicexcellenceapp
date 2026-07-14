@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tuneify Charts - Music Excellence</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --primary: #fa2d48; /* Tuneify Red */
+            --bg: #ffffff;
+            --bg-secondary: #f2f2f7;
+            --bg-tertiary: #f9f9f9;
+            --text-main: #000000;
+            --text-secondary: #8e8e93;
+            --border: #e5e5ea;
+            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body, html {
+            height: 100%;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            overflow-x: hidden;
+            overflow-y: auto; /* Fix for scrolling */
+            -webkit-overflow-scrolling: touch; /* Smooth scroll on mobile */
+            padding-top: 60px; /* For navbar */
+        }
+
+        /* --- Navigation --- */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-left, .nav-right {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+        
+        .nav-right {
+            justify-content: flex-end;
+        }
+
+        .nav-center {
+            flex: 2;
+            text-align: center;
+            font-weight: 700;
+            font-size: 17px;
+            color: var(--text-main);
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-btn:active {
+            opacity: 0.7;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* --- Views --- */
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            min-height: calc(100vh - 60px);
+            padding-bottom: var(--safe-area-bottom);
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* --- Header Section --- */
+        .page-header {
+            padding: 24px 20px 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* --- Chart List --- */
+        .chart-list {
+            display: flex;
+            flex-direction: column;
+            padding-left: 20px;
+        }
+
+        .chart-row {
+            display: flex;
+            flex-direction: column;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.2s;
+        }
+
+        .chart-row:last-child {
+            border-bottom: none;
+        }
+
+        .chart-row-main {
+            display: flex;
+            align-items: center;
+            padding: 9px 20px 9px 0;
+            cursor: pointer;
+        }
+
+        .chart-row.expandable:active .chart-row-main {
+            background-color: var(--bg-tertiary);
+        }
+
+        .chart-rank {
+            width: 24px;
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            flex-shrink: 0;
+            text-align: center;
+            margin-right: 10px;
+        }
+
+        .chart-art {
+            width: 44px;
+            height: 44px;
+            border-radius: 5px;
+            object-fit: cover;
+            margin-right: 11px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .chart-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .chart-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 1px;
+        }
+
+        .explicit-tag {
+            display: inline-block;
+            font-size: 9px;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 1px 3px;
+            border-radius: 3px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+
+        .chart-artist {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chart-sales-badge {
+            background: transparent;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 800;
+            flex-shrink: 0;
+            margin-left: 10px;
+            text-transform: uppercase;
+            min-width: 64px;
+            text-align: center;
+        }
+
+        /* --- Expandable Details --- */
+        .chart-details {
+            display: none;
+            padding: 12px 20px 16px 40px;
+            background-color: var(--bg-tertiary);
+            border-top: 1px dashed var(--border);
+            animation: slideDown 0.2s ease-out;
+        }
+
+        .chart-row.expanded .chart-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        .detail-label {
+            color: var(--text-secondary);
+            font-weight: 600;
+            min-width: 80px;
+        }
+
+        /* --- History View Layout Matches Image --- */
+        .history-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px 24px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            z-index: 2;
+        }
+
+        .history-profile-img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 12px;
+            background: var(--bg-secondary);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+        }
+
+        .history-profile-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .history-profile-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .history-stats-row {
+            display: flex;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .history-stat-box {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 8px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+        }
+
+        .history-stat-value {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .history-stat-label {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            text-align: center;
+        }
+
+        .history-list {
+            padding: 20px;
+            background: var(--bg-tertiary);
+            min-height: calc(100vh - 320px);
+        }
+
+        /* --- New Beautiful History Cards --- */
+        .history-card {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            transition: transform 0.1s ease;
+        }
+
+        .history-card:active {
+            transform: scale(0.98);
+        }
+
+        .history-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .history-card-art {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+            flex-shrink: 0;
+            margin-right: 14px;
+        }
+
+        .history-card-info {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .history-song-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 2px;
+            letter-spacing: -0.01em;
+        }
+
+        .history-song-artist {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .history-song-stats {
+            display: flex;
+            gap: 8px;
+            margin-left: 12px;
+        }
+
+        .history-song-stat {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            padding: 8px 12px;
+            border-radius: 10px;
+            min-width: 50px;
+        }
+
+        .history-stat-num {
+            font-size: 15px;
+            font-weight: 900;
+            color: var(--text-main);
+            line-height: 1;
+            margin-bottom: 3px;
+        }
+
+        .history-stat-num.is-one {
+            color: var(--primary);
+        }
+
+        .history-stat-sub {
+            font-size: 9px;
+            font-weight: 800;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideDown { 
+            from { opacity: 0; transform: translateY(-10px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        .chart-row.user-song {
+            background: linear-gradient(90deg, rgba(250, 45, 72, 0.06) 0%, transparent 100%);
+            border-left: 3px solid var(--primary);
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav-bar">
+        <div class="nav-left">
+            <button class="nav-btn" onclick="window.location.href='tuneify.html'">
+                <svg class="nav-icon" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+                Back
+            </button>
+        </div>
+        <div class="nav-center" id="nav-title">Top Sales</div>
+        <div class="nav-right">
+            <button class="nav-btn" id="history-toggle-btn" onclick="toggleView()">History</button>
+        </div>
+    </nav>
+
+    <div id="view-charts" class="view active">
+        <div class="page-header">
+            <h1 class="page-title">Tuneify Charts</h1>
+            <p class="page-subtitle" id="date-subtitle">Updating Real-Time</p>
+        </div>
+        <div class="chart-list" id="chart-container">
+            </div>
+    </div>
+
+    <div id="view-history" class="view">
+        <div class="history-profile" id="history-profile-header">
+            </div>
+        <div class="history-list" id="history-container">
+            </div>
+    </div>
+
+    <script>
+        // Formatting Helper
+        function formatSales(num) {
+            if (!num || num === 0) return '0';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+            return num.toString();
+        }
+
+        function getReadableDate() {
+            const raw = localStorage.getItem('currentDate');
+            return raw ? new Date(raw).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : 'Today';
+        }
+
+        // --- Data Loading & Processing ---
+        function loadTuneifyCharts() {
+            const tuneifySongs = JSON.parse(localStorage.getItem('tuneify_chart_final') || '[]');
+            const historyData = JSON.parse(localStorage.getItem('tuneify_song_history') || '{}');
+
+            const container = document.getElementById('chart-container');
+            
+            if (tuneifySongs.length === 0) {
+                container.innerHTML = `<div class="empty-state">No songs currently charting. Check back later!</div>`;
+                return;
+            }
+
+            let html = '';
+            
+            tuneifySongs.forEach((song, index) => {
+                const rank = index + 1;
+                const sales = song.tuneifySales;
+                const isExpandable = sales > 0;
+                
+                const hist = historyData[song.id] || { peak: rank, weeks: 1, lastPos: 0 };
+                const globalPeak = hist.peak;
+                const totalWeeks = hist.weeks;
+                const lastPos = hist.lastPos;
+                
+                html += `
+                    <div class="chart-row ${isExpandable ? 'expandable' : ''} ${song.isUser ? 'user-song' : ''}" onclick="toggleDetails(this, ${isExpandable})">
+                        <div class="chart-row-main">
+                            <div class="chart-rank">${rank}</div>
+                            <img src="${song.art || 'https://placehold.co/100'}" class="chart-art" alt="Cover Art">
+                            <div class="chart-info">
+                                <div class="chart-title">
+                                    ${song.title} ${song.isUser ? '' : '<span class="explicit-tag">E</span>'}
+                                </div>
+                                <div class="chart-artist">${song.artist}</div>
+                            </div>
+                            <div class="chart-sales-badge">${formatSales(sales)}</div>
+                        </div>
+                        
+                        <div class="chart-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Tuneify Peak:</span>
+                                <span>#${globalPeak}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Weeks Charting:</span>
+                                <span>${totalWeeks}</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Trend:</span>
+                                <span style="color: ${lastPos > rank ? '#34c759' : lastPos < rank && lastPos !== 0 ? '#ff3b30' : '#8e8e93'}">
+                                    ${lastPos === 0 ? 'New Entry' : (lastPos > rank ? '▲ Rising' : lastPos < rank ? '▼ Falling' : '➖ Stable')}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // --- IndexedDB photo loader (mirrors tuneify.html) ---
+        const photoDB = (function() {
+            const DB_NAME = 'MusicGameDB'; const STORE = 'photos'; const KEY = 'artistPhoto';
+            function open() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(DB_NAME, 1);
+                    req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+                    req.onsuccess = e => resolve(e.target.result);
+                    req.onerror = e => reject(e.target.error);
+                });
+            }
+            return {
+                load() {
+                    return open().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(STORE, 'readonly');
+                        const req = tx.objectStore(STORE).get(KEY);
+                        req.onsuccess = e => resolve(e.target.result || null);
+                        req.onerror = e => reject(e.target.error);
+                    }));
+                }
+            };
+        })();
+
+        async function loadHistory() {
+            const historyData = JSON.parse(localStorage.getItem('tuneify_song_history') || '{}');
+            const releasedSongs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+            
+            const container = document.getElementById('history-container');
+            const profileHeader = document.getElementById('history-profile-header');
+
+            // --- Artist profile (IndexedDB first, localStorage fallback — same as tuneify.html) ---
+            const artistDetails = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+            let artistPhoto = await photoDB.load().catch(() => null);
+            if (!artistPhoto) artistPhoto = localStorage.getItem('artistPhoto') || '';
+            const artistName = artistDetails.name || 'Your Artist';
+
+            // --- Song list ---
+            let histArray = Object.keys(historyData).map(id => ({ id: id, ...historyData[id] }));
+            histArray = histArray.filter(h => h.isUser);
+            histArray.sort((a, b) => {
+                if (a.peak !== b.peak) return a.peak - b.peak;
+                return (b.weeks || 0) - (a.weeks || 0);
+            });
+
+            // --- Compute stats ---
+            const no1Hits    = histArray.filter(s => s.peak === 1).length;
+            const top10Hits  = histArray.filter(s => s.peak <= 10).length;
+            const totalSongs = histArray.length;
+
+            // --- Render profile header ---
+            profileHeader.innerHTML = `
+                <img class="history-profile-img"
+                     src="${artistPhoto || 'https://placehold.co/80'}"
+                     alt="${artistName}">
+                <div class="history-profile-name">${artistName}</div>
+                <div class="history-profile-label">Tuneify Charts</div>
+                <div class="history-stats-row">
+                    <div class="history-stat-box">
+                        <div class="history-stat-value">${no1Hits}</div>
+                        <div class="history-stat-label">No. 1 Hits</div>
+                    </div>
+                    <div class="history-stat-box">
+                        <div class="history-stat-value">${top10Hits}</div>
+                        <div class="history-stat-label">Top 10 Hits</div>
+                    </div>
+                    <div class="history-stat-box">
+                        <div class="history-stat-value">${totalSongs}</div>
+                        <div class="history-stat-label">Total Entries</div>
+                    </div>
+                </div>
+            `;
+
+            // --- Render song list ---
+            if (histArray.length === 0) {
+                container.innerHTML = `<div class="empty-state">No historical data yet. Keep releasing music!</div>`;
+                return;
+            }
+
+            let html = '';
+            histArray.forEach(song => {
+                const peak = song.peak || 1;
+                const weeks = song.weeks || 1;
+                const isNo1 = peak === 1;
+                
+                // CRUCIAL FIX: Cross-reference live releasedSongs to get the correct current cover art!
+                const liveSongData = releasedSongs.find(s => (s.songName || s.name) === song.title);
+                const artUrl = liveSongData?.coverArt || liveSongData?.art || song.art || 'https://placehold.co/100';
+
+                html += `
+                    <div class="history-card">
+                        <img src="${artUrl}" class="history-card-art" alt="Cover Art">
+                        <div class="history-card-info">
+                            <div class="history-song-title">${song.title || 'Unknown Song'}</div>
+                            <div class="history-song-artist">YOU</div>
+                        </div>
+                        <div class="history-song-stats">
+                            <div class="history-song-stat">
+                                <div class="history-stat-num ${isNo1 ? 'is-one' : ''}">#${peak}</div>
+                                <div class="history-stat-sub">PEAK</div>
+                            </div>
+                            <div class="history-song-stat">
+                                <div class="history-stat-num">${weeks}</div>
+                                <div class="history-stat-sub">WKS</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // --- Interactions ---
+        function toggleDetails(rowElement, isExpandable) {
+            if (!isExpandable) return; 
+            rowElement.classList.toggle('expanded');
+        }
+
+        let currentView = 'charts';
+        function toggleView() {
+            const chartsView = document.getElementById('view-charts');
+            const historyView = document.getElementById('view-history');
+            const toggleBtn = document.getElementById('history-toggle-btn');
+            const navTitle = document.getElementById('nav-title');
+
+            if (currentView === 'charts') {
+                chartsView.classList.remove('active');
+                historyView.classList.add('active');
+                toggleBtn.textContent = 'Top Sales';
+                navTitle.textContent = 'History';
+                currentView = 'history';
+                loadHistory();
+            } else {
+                historyView.classList.remove('active');
+                chartsView.classList.add('active');
+                toggleBtn.textContent = 'History';
+                navTitle.textContent = 'Top Sales';
+                currentView = 'charts';
+            }
+            window.scrollTo(0, 0);
+        }
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('date-subtitle').textContent = `Updated: ${getReadableDate()}`;
+            loadTuneifyCharts();
+        });
+    
+    //Code by Steven +  Jayson (Also resposible for ui)
+
+    </script>
+</body>
+</html>

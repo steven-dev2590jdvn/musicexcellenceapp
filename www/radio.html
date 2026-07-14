@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excellence Radio – Platform</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800;900&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
+:root{
+  --primary:#3B82F6;--secondary:#8B5CF6;--accent:#06B6D4;--gold:#F59E0B;
+  --success:#10B981;--error:#EF4444;
+  --bg:#090916;--bg2:#10101E;--bg3:#161628;
+  --card:rgba(16,16,30,0.9);--border:rgba(59,130,246,0.15);
+  --text:#FFFFFF;--muted:#6B7A9F;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{overflow-x:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%,rgba(59,130,246,.1),transparent),
+    radial-gradient(ellipse 50% 50% at 0% 60%,rgba(139,92,246,.07),transparent),
+    radial-gradient(ellipse 40% 40% at 100% 40%,rgba(6,182,212,.05),transparent);}
+
+/* ── HEADER ── */
+.header{padding:20px 20px 16px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;background:rgba(9,9,22,.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.back-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;color:var(--muted);transition:all .2s;flex-shrink:0}
+.back-btn:hover{border-color:var(--primary);color:var(--primary)}
+.header-brand{flex:1;min-width:0}
+.brand-name{font-family:'Syne',sans-serif;font-size:20px;font-weight:900;letter-spacing:-.5px;background:linear-gradient(135deg,var(--primary) 0%,var(--secondary) 60%,var(--accent) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.brand-tag{font-size:11px;color:var(--muted);font-weight:500;letter-spacing:.5px}
+.live-badge{display:flex;align-items:center;gap:5px;padding:5px 10px;background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);border-radius:20px;flex-shrink:0}
+.live-dot{width:6px;height:6px;background:var(--error);border-radius:50%;animation:livepulse 1.2s infinite}
+@keyframes livepulse{0%,100%{opacity:1}50%{opacity:.3}}
+.live-text{font-size:11px;font-weight:700;color:var(--error);letter-spacing:1px}
+
+/* ─ BANNER / CAROUSEL ─────────────────────────────────────────────────── */
+.banner-section{width:100%;overflow:hidden;padding:0;position:relative;border-bottom:1px solid var(--border)}
+.banner-track{display:flex;gap:0;transition:transform .5s cubic-bezier(.25,.46,.45,.94);will-change:transform}
+.banner-slide{flex:0 0 100vw;width:100vw;height:200px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.banner-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(0px);transform:scale(1.05)}
+.banner-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(9,9,22,.95) 0%,rgba(9,9,22,.6) 50%,rgba(9,9,22,.2) 100%)}
+.banner-content{position:relative;z-index:2;padding:16px 20px;width:100%;display:flex;align-items:flex-end;gap:14px}
+.banner-art{width:64px;height:64px;border-radius:10px;object-fit:cover;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.5);border:1.5px solid rgba(255,255,255,.12)}
+.banner-info{flex:1;min-width:0}
+.banner-rank{font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:3px}
+.banner-title{font-family:'Syne',sans-serif;font-size:18px;font-weight:900;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.banner-artist{font-size:12px;color:rgba(255,255,255,.6);margin-top:3px}
+.banner-plays{font-family:'Syne',sans-serif;font-size:22px;font-weight:900;color:var(--accent);text-align:right;flex-shrink:0}
+.banner-plays-label{font-size:10px;color:var(--muted);text-align:right}
+.banner-push-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:8px;color:white;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;text-decoration:none;letter-spacing:.3px}
+.banner-push-btn:hover{transform:translateY(-2px);box-shadow:0 4px 14px rgba(59,130,246,.4)}
+.banner-push-btn svg{width:12px;height:12px;fill:white;flex-shrink:0}
+
+/* Dots */
+.banner-dots{display:flex;gap:6px;justify-content:center;padding:10px 0 6px}
+.banner-dot{width:6px;height:6px;border-radius:3px;background:rgba(255,255,255,.2);transition:all .3s;cursor:pointer}
+.banner-dot.active{width:20px;background:var(--primary)}
+
+/* ─ SECTION HEADER ─────────────────────────────────────────────────────── */
+.section-header{display:flex;align-items:center;justify-content:space-between;padding:18px 18px 10px}
+.section-title{font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;display:flex;align-items:center;gap:8px}
+.section-title svg{width:14px;height:14px;fill:var(--accent)}
+.section-count{font-size:12px;color:var(--muted);font-weight:500;background:rgba(255,255,255,.05);padding:3px 8px;border-radius:10px}
+
+/* ─ HERO #1 CARD ──────────────────────────────────────────────────────── */
+.hero-card{margin:6px 16px 16px;background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(139,92,246,.1));border:1px solid rgba(59,130,246,.3);border-radius:20px;overflow:hidden;position:relative;cursor:pointer}
+.hero-card::before{content:'#1';position:absolute;top:14px;left:16px;font-family:'Syne',sans-serif;font-size:48px;font-weight:900;opacity:.06;line-height:1;color:white}
+.hero-inner{display:flex;align-items:center;gap:16px;padding:18px}
+.hero-art{width:80px;height:80px;border-radius:14px;object-fit:cover;flex-shrink:0;box-shadow:0 6px 24px rgba(0,0,0,.5);border:2px solid rgba(59,130,246,.3)}
+.hero-info{flex:1;min-width:0}
+.hero-label{font-size:10px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:5px}
+.hero-title{font-family:'Syne',sans-serif;font-size:19px;font-weight:900;line-height:1.15;margin-bottom:4px}
+.hero-artist{font-size:13px;color:rgba(255,255,255,.55);margin-bottom:10px}
+.hero-stats{display:flex;gap:16px}
+.hero-stat{display:flex;flex-direction:column}
+.hero-stat-val{font-family:'Syne',sans-serif;font-size:15px;font-weight:800;color:var(--accent)}
+.hero-stat-lbl{font-size:10px;color:var(--muted)}
+.hero-wave{flex-shrink:0;display:flex;align-items:center;gap:2px;height:36px}
+.hero-wave span{display:block;width:3px;background:linear-gradient(to top,var(--primary),var(--accent));border-radius:2px;animation:herowave 1.2s ease-in-out infinite}
+.hero-wave span:nth-child(1){height:60%;animation-delay:.0s}
+.hero-wave span:nth-child(2){height:100%;animation-delay:.1s}
+.hero-wave span:nth-child(3){height:40%;animation-delay:.2s}
+.hero-wave span:nth-child(4){height:80%;animation-delay:.3s}
+.hero-wave span:nth-child(5){height:55%;animation-delay:.4s}
+@keyframes herowave{0%,100%{transform:scaleY(.4)}50%{transform:scaleY(1)}}
+
+/* ─ CHART LIST ──────────────────────────────────────────────────────────── */
+.chart-list{padding:0 16px;display:grid;gap:8px}
+.chart-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:10px 12px;transition:all .2s;cursor:pointer;position:relative;overflow:hidden}
+.chart-item:hover{background:rgba(59,130,246,.06);border-color:var(--border)}
+.chart-item.user-song{border-color:rgba(59,130,246,.25);background:rgba(59,130,246,.05)}
+.chart-item.user-song::before{content:'';position:absolute;left:0;top:0;bottom:0;width:2.5px;background:linear-gradient(to bottom,var(--primary),var(--accent))}
+.chart-rank{width:28px;text-align:center;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;color:var(--muted);flex-shrink:0}
+.chart-rank.top3{color:var(--gold)}
+.chart-art{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:var(--bg3)}
+.chart-info{flex:1;min-width:0}
+.chart-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px}
+.chart-artist{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chart-right{text-align:right;flex-shrink:0}
+.chart-plays{font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--accent)}
+.chart-weeks{font-size:10px;color:var(--muted);margin-top:1px}
+.chart-tag{display:inline-block;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:700;margin-top:2px}
+.tag-user{background:rgba(59,130,246,.15);color:var(--primary)}
+.tag-peak{background:rgba(245,158,11,.12);color:var(--gold)}
+.tag-hot{background:rgba(239,68,68,.12);color:var(--error)}
+.mini-wave{display:inline-flex;align-items:center;gap:1.5px;height:12px;vertical-align:middle;margin-left:4px}
+.mini-wave span{display:block;width:2px;background:var(--accent);border-radius:1px;animation:herowave 1.2s ease-in-out infinite}
+.mini-wave span:nth-child(1){height:6px}
+.mini-wave span:nth-child(2){height:12px;animation-delay:.15s}
+.mini-wave span:nth-child(3){height:8px;animation-delay:.3s}
+
+/* ─ PUSH BTN FLOATING ──────────────────────────────────────────────────── */
+.push-fab{position:fixed;bottom:24px;right:20px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:16px;padding:14px 20px;color:white;font-family:'Syne',sans-serif;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 6px 28px rgba(59,130,246,.45);display:flex;align-items:center;gap:8px;z-index:50;transition:all .25s;text-decoration:none;letter-spacing:.3px}
+.push-fab:hover{transform:translateY(-3px);box-shadow:0 10px 36px rgba(59,130,246,.55)}
+.push-fab svg{width:16px;height:16px;fill:white}
+
+/* ─ EMPTY / LOADING ─────────────────────────────────────────────────────── */
+.empty-radio{text-align:center;padding:60px 30px;color:var(--muted)}
+.empty-radio svg{width:56px;height:56px;fill:var(--muted);opacity:.35;margin-bottom:16px}
+.empty-radio h3{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;margin-bottom:8px;color:var(--muted)}
+.empty-radio p{font-size:13px;line-height:1.6}
+
+.loader{display:flex;justify-content:center;padding:30px;gap:8px}
+.loader span{width:8px;height:8px;border-radius:50%;background:var(--primary);animation:loader 1s ease-in-out infinite}
+.loader span:nth-child(2){animation-delay:.15s}
+.loader span:nth-child(3){animation-delay:.3s}
+@keyframes loader{0%,80%,100%{opacity:.3;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+
+.page-bottom{height:100px}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <a href="music.html" class="back-btn">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  </a>
+  <div class="header-brand">
+    <div class="brand-name">Excellence Radio</div>
+    <div class="brand-tag">🎵 Now Spinning</div>
+  </div>
+  <div class="live-badge">
+    <div class="live-dot"></div>
+    <div class="live-text">LIVE</div>
+  </div>
+</div>
+
+<!-- BANNER CAROUSEL -->
+<div class="banner-section">
+  <div class="banner-track" id="banner-track"></div>
+  <div class="banner-dots" id="banner-dots"></div>
+</div>
+
+<!-- #1 HERO -->
+<div class="section-header">
+  <div class="section-title"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg># 1 THIS WEEK</div>
+</div>
+<div id="hero-section"></div>
+
+<!-- CHART -->
+<div class="section-header">
+  <div class="section-title"><svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>ON AIR NOW</div>
+  <div class="section-count" id="song-count">—</div>
+</div>
+<div class="chart-list" id="chart-list">
+  <div class="loader"><span></span><span></span><span></span></div>
+</div>
+
+<div class="page-bottom"></div>
+
+<!-- FAB -->
+<a href="radify.html" class="push-fab">
+  <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12zM6 10h2v2H6zm0 4h8v2H6zm10 0h2v2h-2zm0-4h2v2h-2zm-6 0h4v2h-4z"/></svg>
+  Push For Radio
+</a>
+  <script>
+// ── IndexedDB for banners ──────────────────────────────────────────────
+const DB_NAME = 'RadioBannersDB';
+const DB_VER  = 1;
+const STORE   = 'banners';
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(DB_NAME, DB_VER);
+    req.onupgradeneeded = e => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(STORE)) {
+        db.createObjectStore(STORE, { keyPath:'id', autoIncrement:true });
+      }
+    };
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror = e => reject(e.target.error);
+  });
+}
+
+async function saveBanners(banners) {
+  const db = await openDB();
+  const tx = db.transaction(STORE, 'readwrite');
+  const store = tx.objectStore(STORE);
+  store.clear();
+  banners.forEach(b => store.add(b));
+}
+
+async function loadBanners() {
+  try {
+    const db = await openDB();
+    return new Promise(resolve => {
+      const tx = db.transaction(STORE, 'readonly');
+      const req = tx.objectStore(STORE).getAll();
+      req.onsuccess = e => resolve(e.target.result || []);
+      req.onerror = () => resolve([]);
+    });
+  } catch(e) { return []; }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────
+function fmtNum(n) {
+  if (!n) return '0';
+  if (n >= 1000000) return (n/1000000).toFixed(1)+'M';
+  if (n >= 1000) return (n/1000).toFixed(1)+'K';
+  return n.toLocaleString();
+}
+
+function buildSVGBanner(song, rank) {
+  const colors = [
+    ['#3B82F6','#8B5CF6'], ['#06B6D4','#3B82F6'], ['#8B5CF6','#EC4899'],
+    ['#F59E0B','#EF4444'], ['#10B981','#06B6D4']
+  ];
+  const [c1, c2] = colors[rank % colors.length];
+  const title = (song.title || '').substring(0, 22);
+  const artist = (song.artist || '').substring(0, 20);
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="360" height="200" viewBox="0 0 360 200">
+    <defs>
+      <linearGradient id="g${rank}" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="${c1}" stop-opacity=".9"/>
+        <stop offset="100%" stop-color="${c2}" stop-opacity=".9"/>
+      </linearGradient>
+      <filter id="blur${rank}"><feGaussianBlur stdDeviation="12"/></filter>
+    </defs>
+    <rect width="360" height="200" fill="#090916"/>
+    <circle cx="300" cy="40" r="120" fill="url(#g${rank})" filter="url(#blur${rank})" opacity=".6"/>
+    <circle cx="60" cy="160" r="80" fill="${c1}" filter="url(#blur${rank})" opacity=".3"/>
+    <text x="24" y="70" font-family="sans-serif" font-size="64" font-weight="900" fill="white" opacity=".07">#${rank+1}</text>
+    ${[0,1,2,3,4,5,6,7].map((b,i)=>`<rect x="${290+i*8}" y="${100 + Math.sin(i*1.2)*30}" width="5" height="${20+Math.sin(i)*25}" rx="2.5" fill="${c1}" opacity=".6"/>`).join('')}
+    <text x="24" y="145" font-family="sans-serif" font-size="20" font-weight="900" fill="white">${title}</text>
+    <text x="24" y="168" font-family="sans-serif" font-size="13" fill="rgba(255,255,255,.55)">${artist}</text>
+    <rect x="24" y="114" width="${fmtNum(song.currentWeeklyPlays||0).length*9+16}" height="22" rx="11" fill="${c1}" opacity=".25"/>
+    <text x="32" y="129" font-family="sans-serif" font-size="11" font-weight="700" fill="${c1}">${fmtNum(song.currentWeeklyPlays||0)} plays/wk</text>
+  </svg>`;
+}
+
+// ── BANNER CAROUSEL ──────────────────────────────────────────────────
+let currentBannerIdx = 0;
+let bannerCount = 0;
+let bannerTimer = null;
+
+function renderBanners(songs) {
+  const track = document.getElementById('banner-track');
+  const dots = document.getElementById('banner-dots');
+  bannerCount = songs.length;
+  if (!bannerCount) { track.innerHTML = ''; dots.innerHTML = ''; return; }
+
+  track.innerHTML = songs.map((song, i) => `
+    <div class="banner-slide">
+      ${song.art ? `<div class="banner-bg" style="background-image:url('${song.art}')"></div>` : `<div class="banner-bg" style="background:linear-gradient(135deg,#1a1a35,#0d0d1f)"></div>`}
+      <div class="banner-overlay"></div>
+      <div class="banner-content">
+        <img class="banner-art" src="${song.art || ''}" onerror="this.style.display='none'">
+        <div class="banner-info">
+          <div class="banner-rank"># ${i+1} ON EXCELLENCE RADIO</div>
+          <div class="banner-title">${song.title || 'Unknown'}</div>
+          <div class="banner-artist">${song.artist || ''}</div>
+        </div>
+        <div style="text-align:right;flex-shrink:0">
+          <div class="banner-plays">${fmtNum(song.currentWeeklyPlays||0)}</div>
+          <div class="banner-plays-label">plays/wk</div>
+          ${song.isUser ? `<a href="radio-apply.html" class="banner-push-btn" style="margin-top:8px;display:inline-flex"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>Push More</a>` : ''}
+        </div>
+      </div>
+    </div>`).join('');
+
+  dots.innerHTML = songs.map((_, i) => `<div class="banner-dot ${i===0?'active':''}" onclick="goToBanner(${i})"></div>`).join('');
+
+  startBannerAuto();
+}
+
+function goToBanner(idx) {
+  currentBannerIdx = Math.max(0, Math.min(idx, bannerCount - 1));
+  document.getElementById('banner-track').style.transform = `translateX(-${currentBannerIdx * 100}vw)`;
+  document.querySelectorAll('.banner-dot').forEach((d, i) => d.classList.toggle('active', i === currentBannerIdx));
+}
+
+function startBannerAuto() {
+  if (bannerTimer) clearInterval(bannerTimer);
+  bannerTimer = setInterval(() => {
+    currentBannerIdx = (currentBannerIdx + 1) % bannerCount;
+    goToBanner(currentBannerIdx);
+  }, 4000);
+}
+
+// ── HERO ─────────────────────────────────────────────────────────────
+function renderHero(song) {
+  const el = document.getElementById('hero-section');
+  if (!song) { el.innerHTML = ''; return; }
+  el.innerHTML = `
+    <div class="hero-card">
+      <div class="hero-inner">
+        <img class="hero-art" src="${song.art || ''}" onerror="this.style.background='var(--bg3)'">
+        <div class="hero-info">
+          <div class="hero-label">🏆 #1 Excellence Radio</div>
+          <div class="hero-title">${song.title || 'Unknown'}</div>
+          <div class="hero-artist">${song.artist || ''}</div>
+          <div class="hero-stats">
+            <div class="hero-stat">
+              <div class="hero-stat-val">${fmtNum(song.currentWeeklyPlays||0)}</div>
+              <div class="hero-stat-lbl">plays/wk</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-val">Wk ${song.weeksOnAir||1}</div>
+              <div class="hero-stat-lbl">on air</div>
+            </div>
+            <div class="hero-stat">
+              <div class="hero-stat-val">${fmtNum(song.radioPlays||song.currentWeeklyPlays||0)}</div>
+              <div class="hero-stat-lbl">total plays</div>
+            </div>
+          </div>
+        </div>
+        <div class="hero-wave"><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
+    </div>`;
+}
+
+// ── CHART LIST ────────────────────────────────────────────────────────
+function renderChart(allSongs) {
+  const list = document.getElementById('chart-list');
+  document.getElementById('song-count').textContent = `${allSongs.length} songs`;
+
+  if (!allSongs.length) {
+    list.innerHTML = `<div class="empty-radio">
+      <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V6h16v12z"/></svg>
+      <h3>Nothing on air</h3>
+      <p>Advance the week in the game<br>to populate Excellence Radio!</p>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = allSongs.map((song, i) => {
+    const isTop3 = i < 3;
+    const rankStr = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}`;
+    const tagHtml = song.isUser
+      ? `<span class="chart-tag tag-user">Your Song</span>`
+      : song.hasReachedPeak
+        ? `<span class="chart-tag tag-peak">📉 Peaking</span>`
+        : i < 10 ? `<span class="chart-tag tag-hot">🔥 Hot</span>` : '';
+    const waveHtml = !song.hasReachedPeak && i < 5 ? `<span class="mini-wave"><span></span><span></span><span></span></span>` : '';
+    
+    return `<div class="chart-item ${song.isUser ? 'user-song' : ''}">
+      <div class="chart-rank ${isTop3 ? 'top3' : ''}">${rankStr}</div>
+      <img class="chart-art" src="${song.art || ''}" onerror="this.style.background='var(--bg3)'">
+      <div class="chart-info">
+        <div class="chart-title">${song.title || 'Unknown'}${waveHtml}</div>
+        <div class="chart-artist">${song.artist || '—'}</div>
+        ${tagHtml}
+      </div>
+      <div class="chart-right">
+        <div class="chart-plays">${fmtNum(song.currentWeeklyPlays||0)}</div>
+        <div class="chart-weeks">Wk ${song.weeksOnAir||1}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── MAIN LOAD ─────────────────────────────────────────────────────────
+async function init() {
+  // Read the master, persistent radio chart calculated by music.html
+  const allSongs = JSON.parse(localStorage.getItem('radioSongs') || '[]');
+
+  // Sort by weekly plays just to be safe
+  allSongs.sort((a, b) => (b.currentWeeklyPlays || 0) - (a.currentWeeklyPlays || 0));
+
+  const bannerSongs = allSongs.slice(0, 5);
+
+  let savedBanners = await loadBanners();
+
+  // Always force-refresh banners to ensure data isn't stale
+  const newBanners = bannerSongs.map((song, i) => ({
+    songId: song.id,
+    title: song.title,
+    artist: song.artist,
+    art: song.art,
+    svgData: buildSVGBanner(song, i),
+    currentWeeklyPlays: song.currentWeeklyPlays,
+    isPushForRadio: song.isUser,
+  }));
+  await saveBanners(newBanners);
+  savedBanners = newBanners;
+
+  renderBanners(bannerSongs);
+  renderHero(allSongs[0] || null);
+  renderChart(allSongs);
+}
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Excellence★News</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@700;800;900&family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --purple-main:#8B5CF6;--purple-dark:#6D28D9;--purple-bg:#EDE9FE;
+      --black:#0A0A0A;--gray:#5A5A5A;--light:#F4F4F4;
+      --border:#E4E4E4;--white:#FFFFFF;
+      --red:#E8322A;--purple:#6D28D9;--gold:#B45309;
+    }
+    body{font-family:'Barlow',sans-serif;background:var(--white);color:var(--black);max-width:480px;margin:0 auto;min-height:100vh;overflow-x:hidden}
+
+    /* ===== HEADER ===== */
+    .hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--white);border-bottom:2px solid var(--black);position:sticky;top:0;z-index:200}
+    .hdr-back{background:none;border:none;cursor:pointer;padding:6px;display:flex;align-items:center;justify-content:center;border-radius:6px;transition:background .15s}
+    .hdr-back:hover{background:var(--light)}
+    .hdr-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;letter-spacing:-0.5px;color:var(--black);text-transform:uppercase}
+    .hdr-right{width:34px;height:34px}
+
+    /* ===== TICKER ===== */
+    .ticker{background:var(--black);padding:8px 0;overflow:hidden;white-space:nowrap}
+    .ticker-track{display:inline-block;animation:tick 40s linear infinite}
+    @keyframes tick{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    .ticker-item{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:white;letter-spacing:.5px;text-transform:uppercase;padding:0 24px}
+    .ticker-item::after{content:" /";color:var(--purple-main);margin-left:20px}
+    .ticker-sep{display:inline-block;color:var(--purple-main);font-weight:900;padding:0 8px}
+
+    /* ===== TAG / BADGE ===== */
+    .tag{display:inline-block;font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:10px;padding:4px 10px;border-radius:3px;letter-spacing:1px;text-transform:uppercase;line-height:1}
+    .tag-main{background:var(--purple-main);color:var(--white)}
+    .tag-red{background:var(--red);color:var(--white)}
+    .tag-purple{background:var(--purple);color:var(--white)}
+    .tag-gold{background:var(--gold);color:var(--white)}
+    .tag-black{background:var(--black);color:var(--white)}
+    .tag-outline{background:transparent;border:1.5px solid var(--black);color:var(--black)}
+
+    /* ===== HERO CARD ===== */
+    .hero{position:relative;cursor:pointer;overflow:hidden;display:block}
+    .hero-media{width:100%;aspect-ratio:4/3;object-fit:cover;display:block;transition:transform .4s ease}
+    .hero-media-fb{width:100%;aspect-ratio:4/3;background:#111;display:flex;align-items:center;justify-content:center}
+    .hero:hover .hero-media{transform:scale(1.04)}
+    .hero-grad{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 25%,rgba(0,0,0,.88) 100%)}
+    .hero-body{position:absolute;bottom:0;left:0;right:0;padding:20px 16px 18px}
+    .hero-tag-row{margin-bottom:8px}
+    .hero-hl{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;line-height:1.1;color:var(--white);text-transform:uppercase;letter-spacing:-.3px;margin-bottom:6px}
+    .hero-by{font-size:10px;color:rgba(255,255,255,.55);font-weight:700;letter-spacing:1px;text-transform:uppercase}
+
+    /* ===== WEEK LABEL ===== */
+    .week-lbl{background:var(--black);padding:7px 16px;display:flex;align-items:center;gap:8px}
+    .week-lbl span{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--purple-main)}
+    .week-lbl-line{flex:1;height:1px;background:rgba(255,255,255,.12)}
+
+    /* ===== ARTICLE CARD ===== */
+    .card{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .12s;text-decoration:none;color:inherit;align-items:flex-start}
+    .card:hover{background:var(--light)}
+    .card:active{background:var(--border)}
+    .card-thumb{width:84px;height:68px;object-fit:cover;border-radius:6px;flex-shrink:0;background:var(--light);display:block}
+    .card-thumb-fb{width:84px;height:68px;border-radius:6px;flex-shrink:0;background:var(--light);display:flex;align-items:center;justify-content:center}
+    .card-body{flex:1;min-width:0}
+    .card-tag-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:5px}
+    .card-hl{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:17px;line-height:1.15;color:var(--black);text-transform:uppercase;letter-spacing:-.2px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+    .card-sub{font-size:12px;color:var(--gray);margin-top:4px;line-height:1.4;font-weight:500;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .card-meta{font-size:10px;color:#bbb;margin-top:5px;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+
+    /* ===== EMPTY ===== */
+    .empty{text-align:center;padding:70px 28px}
+    .empty-icon{margin-bottom:18px;opacity:.2}
+    .empty h2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:32px;text-transform:uppercase;color:var(--black);margin-bottom:8px}
+    .empty p{font-size:14px;line-height:1.6;color:var(--gray);font-weight:500}
+
+    /* ===== TOAST ===== */
+    .toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-8px);background:var(--black);color:white;padding:9px 18px;border-radius:3px;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;z-index:500;opacity:0;transition:all .22s;pointer-events:none;white-space:nowrap;font-family:'Barlow Condensed',sans-serif}
+    .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    /* ===== MODAL OVERLAY ===== */
+    .mo{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(3px)}
+    .mo.open{display:flex}
+    .modal{background:var(--white);border-radius:18px 18px 0 0;width:100%;max-width:480px;margin:0 auto;max-height:93vh;overflow-y:auto;animation:mup .3s cubic-bezier(.32,.72,0,1)}
+    @keyframes mup{from{transform:translateY(100%);opacity:0}to{transform:translateY(0);opacity:1}}
+    .modal-bar{position:sticky;top:0;background:var(--white);padding:13px 16px;border-bottom:2px solid var(--black);display:flex;align-items:center;justify-content:space-between;z-index:10}
+    .modal-close{background:var(--light);border:none;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}
+    .modal-close:hover{background:var(--border)}
+    .modal-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;letter-spacing:-.3px;text-transform:uppercase}
+
+    /* ===== MODAL CONTENT ===== */
+    .m-img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}
+    .m-img-fb{width:100%;aspect-ratio:4/3;background:#111;display:flex;align-items:center;justify-content:center}
+    .m-body{padding:20px}
+    .m-tag-row{margin-bottom:10px}
+    .m-hl{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;line-height:1.1;text-transform:uppercase;letter-spacing:-.4px;margin-bottom:10px}
+    .m-byline{font-size:10px;color:#aaa;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:18px}
+    .m-prose p{font-size:15px;line-height:1.8;color:#2a2a2a;margin-bottom:14px;font-weight:500}
+    .m-prose h3{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:21px;text-transform:uppercase;letter-spacing:-.2px;margin:22px 0 10px;color:var(--black);border-left:3px solid var(--purple-main);padding-left:10px}
+
+    /* ===== REVIEW CARD ===== */
+    .rev-top{display:flex;gap:14px;align-items:center;background:var(--light);border-radius:10px;padding:14px;margin-bottom:18px}
+    .rev-cover{width:80px;height:80px;object-fit:cover;border-radius:8px;flex-shrink:0}
+    .rev-cover-fb{width:80px;height:80px;border-radius:8px;background:#ddd;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+    .rev-info-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:20px;text-transform:uppercase;line-height:1.1}
+    .rev-info-sub{font-size:12px;color:var(--gray);font-weight:600;margin-top:3px}
+
+    .score-box{background:var(--black);border-radius:12px;padding:18px 16px;display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .score-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:64px;line-height:1;min-width:72px;text-align:center}
+    .score-great{color:#34D399}.score-good{color:#FCD34D}.score-ok{color:#F87171}
+    .score-verdict{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:18px;text-transform:uppercase;letter-spacing:.5px;color:white}
+    .score-desc{font-size:13px;color:rgba(255,255,255,.5);margin-top:3px;font-weight:500;line-height:1.4}
+
+    .tracks-hdr{display:flex;justify-content:space-between;margin:18px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--black)}
+    .tracks-hdr span{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:12px;letter-spacing:1px;text-transform:uppercase}
+    .t-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
+    .t-row:last-child{border-bottom:none}
+    .t-n{font-size:11px;color:#ccc;width:16px;text-align:right;flex-shrink:0;font-weight:700}
+    .t-name{flex:1;font-size:14px;font-weight:700}
+    .t-grade{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:13px;padding:3px 9px;border-radius:3px;letter-spacing:.3px}
+    .gs{background:#D1FAE5;color:#065F46}.ga{background:#DBEAFE;color:#1E40AF}.gb{background:#EDE9FE;color:#5B21B6}.gc{background:#FEF3C7;color:#92400E}.gd{background:#FEE2E2;color:#991B1B}
+    .t-sc{font-size:12px;font-weight:800;color:#999;min-width:28px;text-align:right}
+
+    /* ===== TOUR MODAL ===== */
+    .tour-hdr-box{background:var(--black);border-radius:12px;padding:18px;margin:16px 0}
+    .tour-hdr-name{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:26px;text-transform:uppercase;letter-spacing:-.3px;color:white;line-height:1.1}
+    .tour-hdr-sub{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px;font-weight:600}
+    .tour-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+    .tour-stat{background:var(--light);border-radius:8px;padding:12px 8px;text-align:center}
+    .tour-stat-v{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px}
+    .tour-stat-l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-top:2px;font-weight:700}
+    .v-hdr{display:flex;justify-content:space-between;padding-bottom:6px;border-bottom:2px solid var(--black);margin-bottom:8px}
+    .v-hdr span{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:11px;letter-spacing:1px;text-transform:uppercase}
+    .v-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+    .v-row:last-child{border-bottom:none}
+    .v-badge{width:26px;height:26px;background:var(--purple-main);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:900;flex-shrink:0}
+    .v-info{flex:1}.v-name{font-size:14px;font-weight:800}.v-loc{font-size:12px;color:var(--gray);font-weight:500}
+    .v-cap{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:13px;color:var(--purple-dark);background:var(--purple-bg);padding:3px 10px;border-radius:3px}
+
+    .feed{padding-bottom:90px}
+  </style>
+</head>
+<body>
+
+<header class="hdr">
+  <button class="hdr-back" onclick="history.back()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+  </button>
+  <span class="hdr-logo">Excellence★News</span>
+  <div class="hdr-right"></div>
+</header>
+
+<div class="ticker"><div class="ticker-track" id="ticker-track"></div></div>
+
+<div class="feed" id="feed"></div>
+
+<div class="toast" id="toast"></div>
+
+<div class="mo" id="mo">
+  <div class="modal" id="modal">
+    <div class="modal-bar">
+      <button class="modal-close" onclick="closeMo()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+      <span class="modal-logo">Excellence★News</span>
+      <span style="width:30px"></span>
+    </div>
+    <div id="mo-content"></div>
+  </div>
+</div>
+
+<script>
+// ── UTILS ────────────────────────────────────────────────────
+const LS  = k => { try { return JSON.parse(localStorage.getItem(k)||'null'); } catch { return null; } };
+const arr = k => LS(k) || [];
+const obj = k => LS(k) || {};
+const save= (k,v)=> localStorage.setItem(k, JSON.stringify(v));
+
+function toast(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('on'); setTimeout(()=>t.classList.remove('on'),2200); }
+
+// ── IN-MEMORY ARTICLE STORE (never written to localStorage) ──
+let _ARTS = [];
+
+// ── SEEDED RNG ───────────────────────────────────────────────
+function rng(seed){ let s=(Math.abs(Math.round(seed))||99)>>>0; return ()=>{ s=(s*1664525+1013904223)>>>0; return s/4294967296; }; }
+function strHash(str){ return (str||'').split('').reduce((a,c)=>(a*31+c.charCodeAt(0))|0,7)>>>0; }
+
+// ── RATING ENGINE ─────────────────────────────────────────────
+function makeRating(album, relSongs){
+  const r = rng(strHash(album.id||album.name||'x'));
+  const refs   = album.songs||[];
+  let tracks   = refs.map(t=>(typeof t==='string'?t:t.name)).filter(Boolean)
+                     .map(name=>({name, score:Math.round((5.5+r()*4.3)*10)/10}));
+  if(!tracks.length){ const n=Math.floor(r()*6)+8; for(let i=0;i<n;i++) tracks.push({name:`Track ${i+1}`,score:Math.round((5.5+r()*4)*10)/10}); }
+  const avg    = tracks.reduce((s,t)=>s+t.score,0)/tracks.length;
+  const overall= Math.min(10,Math.max(3.5,Math.round((avg+(r()-.5)*.8)*10)/10));
+  return { tracks, overall };
+}
+function grade(s){ return s>=9?'S':s>=8?'A':s>=7?'B':s>=6?'C':'D'; }
+function gradeClass(g){ return {S:'gs',A:'ga',B:'gb',C:'gc',D:'gd'}[g]||'gd'; }
+function verdict(s){
+  if(s>=9.5) return {w:'INSTANT CLASSIC',d:'A generation-defining project. Flawless from start to finish.'};
+  if(s>=9.0) return {w:'MASTERPIECE',    d:'Exceptional artistry. An immediate must-listen.'};
+  if(s>=8.5) return {w:'EXCELLENT',      d:'A standout body of work with very few weaknesses.'};
+  if(s>=8.0) return {w:'GREAT',          d:'Consistently strong with real highlights throughout.'};
+  if(s>=7.0) return {w:'GOOD',           d:'A solid effort. The highs outweigh the lows.'};
+  if(s>=6.0) return {w:'DECENT',         d:'Has moments, but inconsistency holds it back.'};
+  if(s>=5.0) return {w:'MIXED',          d:'Some sparks of brilliance buried under filler.'};
+  return {w:'DISAPPOINTING',d:'Falls short of expectations on most fronts.'};
+}
+function scClass(s){ return s>=9?'score-great':s>=6?'score-good':'score-ok'; }
+
+// ── STORY TEXT ────────────────────────────────────────────────
+const DRAMA=[
+  (a,s)=>`${a}'s Chattr Post on "${s}" Ignites Firestorm Online`,
+  (a,s)=>`${a} Calls Out Rivals Over Chart Position`,
+  (a,s)=>`Fans Rally Behind ${a} Amid Streaming Controversy`,
+  (a,s)=>`${a} Responds to Critics in Viral Chattr Post`,
+  (a,s)=>`${a} Says "${s}" Is Bigger Than the Numbers Show`,
+  (a,s)=>`Inside the Drama Around ${a}'s Chart Run`,
+];
+const CHART=[
+  (a,s)=>`${a} Eyes Record-Breaking Run at Number One with "${s}"`,
+  (a,s)=>`How "${s}" Became the Song of the Moment`,
+  (a,s)=>`${a} Dominates Every Playlist — "${s}" Unstoppable`,
+  (a,s)=>`"${s}" by ${a}: The Story Behind the Hit`,
+  (a,s)=>`${a}'s "${s}" Shatters Weekly Streaming Records`,
+];
+function pick(arr,seed){ const r=rng(seed); return arr[Math.floor(r()*arr.length)]; }
+
+const SONG_LONG = (art,isPlayer,pname) => isPlayer ? [
+  `${pname}'s latest track has done exactly what the streaming data predicted — shot straight to the top of the Hot 100 and refused to leave. The song has accumulated an extraordinary number of streams in a short window, and playlist curators across every major platform have taken notice.`,
+  `What makes the run particularly impressive is the consistency. Daily stream counts haven't just peaked — they've held. Listeners are coming back, the skip rate is low, and the socials are lit. Every metric that matters is pointing in the same direction: this record is a hit.`,
+  `Behind the scenes, the rollout strategy has been tight. The release landed at the right moment in the cultural cycle, and the production choices — every sonic decision — feel deliberate and fully realised. Nothing about this sounds accidental.`,
+  `Critics who doubted the staying power of the lead single have gone quiet. The numbers are doing the talking now. With a chart position this dominant, the question is no longer whether the song will hold — it's how long it can keep other artists out of the top spot.`
+] : [
+  `${art.artist}'s latest entry on the Hot 100 has made a statement that the rest of the industry can't ignore. "${art.title}" arrived with real momentum — co-signs, editorial playlists, and a fanbase that mobilised the moment the record dropped.`,
+  `The track's climb has been methodical. It didn't explode overnight; it built. Week over week, the stream counts grew, the saves compounded, and the algorithm took over. That kind of organic growth is increasingly rare and the charts are reflecting it.`,
+  `Sonically, the record hits a lane that feels fresh but not alienating. The production bridges familiar territory with something that still sounds new — a combination that mainstream radio has been starved of. DSPs have rewarded it accordingly.`,
+  `With no signs of a slowdown, the conversation around "${art.title}" has shifted from whether it's a hit to whether it has the legs to become a classic. The next few weeks will tell the story, but right now, ${art.artist} sits exactly where every artist wants to be: at number one.`
+];
+
+const ALBUM_LONG_INTRO = (name,artist,isPlayer,pname) => isPlayer ?
+  `${pname}'s "${name}" is the project that the game has been asking for. From the opening track to the final outro, this is a body of work built with intention — every feature, every production choice, every sequencing decision feels considered. This is not filler. This is a statement.` :
+  `${artist}'s "${name}" landed at the top of the album chart this week and the numbers are telling a clear story. The project has dominated the conversation since release day, racking up chart-eligible streams at a pace that few albums manage in their first weeks out.`;
+
+const DRAMA_LONG = (art) => [
+  `The post started as a reaction to a single chart update. ${art.artist} took to Chattr early on Monday morning and delivered a message that nobody in the comments section was ready for. Screenshots were being shared within minutes, and by the time the morning playlist drops hit, it had already gone viral.`,
+  `The context, for those catching up: "${art.title}" has been climbing steadily, but the rate of movement has sparked debate about whether the numbers are organic. ${art.artist} appeared to address those whispers directly — and with considerably more confidence than diplomacy.`,
+  `The Chattr post — which at time of writing has accumulated thousands of responses — contained language that the artist's team has neither walked back nor clarified. Whether this is strategy or genuine frustration depends on who you ask, and the industry is split.`,
+  `Streaming numbers for "${art.title}" have spiked noticeably since the post went live. Whether that is coincidence or cause, the song is now charting higher than it was forty-eight hours ago. The conversation, whatever its nature, has not hurt the record.`
+];
+
+const TOUR_LONG = (t, pname, venues, totalCap) => [
+  `${pname} has officially confirmed what fans had been speculating about for weeks. The "${t.name}" tour is happening — ${venues.length} stops, across multiple markets, with a total capacity of ${totalCap.toLocaleString()} seats. This is the largest live commitment of the year.`,
+  `The routing reflects an artist operating with full confidence. The venue choices are aggressive — not conservative. The scale of the production, based on pre-tour documentation, matches the ambition of the booking. This is not a small room tour.`,
+  `Pre-sale tickets open in advance of the general on-sale window. Given the fanbase momentum coming off recent releases, industry analysts are projecting sell-through rates well above the tour average. Multiple stops are expected to move fast.`,
+  `The setlist, drawn from across the catalogue, signals that this is a full career moment rather than a single-cycle promotional run. The show is being designed to hit. Every stop on this routing has been chosen with intention.`
+];
+
+// ── ARTICLE BUILDERS ──────────────────────────────────────────
+function weeklyArts(week, chartSongs, chartAlbums, pname){
+  const arts=[];
+  const weekLabel = `THIS WEEK`; // Removed historic "Week X" binding to prevent stuck views
+
+  // 1 — Top Song
+  const s0=chartSongs[0];
+  if(s0){
+    const isP=(s0.id||'').startsWith('user_');
+    arts.push({
+      id:`w${week}_song`, week, wLabel:weekLabel,
+      sort: week * 1000 + 80, // Fixed sort priority based on the current week
+      type:'top_song',
+      tag:'HOT 100', tagCls:'tag-main',
+      hl: isP ? `${pname} Rules the Hot 100 — Your Track Sits at Number One`
+               : `${s0.artist} Holds Number One on the Hot 100 with "${s0.title}"`,
+      sub:'The streaming numbers are undeniable this week.',
+      img:s0.art||'', isP, data:s0, hero:true,
+      longBody: SONG_LONG(s0, isP, pname)
+    });
+  }
+
+  // 2 — Top Album
+  const a0=chartAlbums[0];
+  if(a0){
+    const isP=(a0.id||'').startsWith('user_');
+    arts.push({
+      id:`w${week}_album`, week, wLabel:weekLabel,
+      sort: week * 1000 + 70, // Fixed sort priority based on the current week
+      type:'top_album',
+      tag:'ALBUMS', tagCls:'tag-main',
+      hl: isP ? `${pname}'s Album Towers at Number One on the Album Chart`
+               : `${a0.artist}'s "${a0.title}" Leads the Album Chart`,
+      sub:'The project continues to attract new listeners week over week.',
+      img:a0.art||'', isP, data:a0,
+      longBody:[
+        ALBUM_LONG_INTRO(a0.title||'this project', a0.artist, isP, pname),
+        `Listener retention metrics show that people aren't just streaming the singles — they are going deep into the tracklist. Album-equivalent units are up, and the engagement numbers suggest this is the kind of project that builds a fanbase rather than just chasing a moment.`,
+        `The production landscape of the album rewards repeat listens. Subtle details in the mix that don't reveal themselves on first play become the hooks on the third or fourth pass. That kind of craftsmanship is increasingly rare in the streaming era.`,
+        `With the album chart position confirmed, the tour rumour cycle has officially started. Industry insiders are pointing to a live run later in the year to support the project. Whether that materialises remains to be seen — but the demand is certainly there.`
+      ]
+    });
+  }
+
+  // 3 — Artist drama/story
+  const npcs=chartSongs.filter(s=>!(s.id||'').startsWith('user_'));
+  if(npcs.length){
+    const r=rng(week*137+41);
+    const picked=npcs[Math.floor(r()*Math.min(npcs.length,15))];
+    const isDrama=r()>.45;
+    const tplArr=isDrama?DRAMA:CHART;
+    const tpl=pick(tplArr, week*53+7);
+    arts.push({
+      id:`w${week}_story`, week, wLabel:weekLabel,
+      sort: week * 1000 + 60, // Fixed sort priority based on the current week
+      type:isDrama?'drama':'chart_story',
+      tag:isDrama?'CHATTR DRAMA':'TRENDING', tagCls:isDrama?'tag-red':'tag-outline',
+      hl: tpl(picked.artist, picked.title),
+      sub: isDrama ? 'The post has the internet divided and stream counts spiking.'
+                   : 'The crossover is reshaping the conversation this week.',
+      img:picked.art||'', isP:false, data:picked,
+      longBody: isDrama ? DRAMA_LONG(picked) : [
+        `"${picked.title}" by ${picked.artist} has continued its ascent up the chart this week, and the story behind the record is now getting the attention it deserves. What started as a quiet release has become one of the more compelling chart narratives of the current cycle.`,
+        `The song's reach has extended well beyond the artist's existing fanbase. Algorithmic playlisting has played a role, but the clip activity and sync placements this week have amplified the reach further. This is not a passive algorithm story — there are real push points behind the numbers.`,
+        `${picked.artist}'s team has been running a controlled but effective campaign. Feature rollouts, strategic timing around editorial refresh windows, and a consistent social presence have all contributed to the chart trajectory.`,
+        `The record now sits in a position where a genuine run at the top of the chart is possible. The gap between where "${picked.title}" currently sits and the number one position has been closing. The next refresh will tell us a great deal about whether that momentum can be sustained.`
+      ]
+    });
+  }
+
+  return arts;
+}
+
+function albumDropArt(album, relSongs, pname, isPlayer = true, currentWeek = 0){
+  const rating = makeRating(album, relSongs);
+  const v      = verdict(rating.overall);
+  return {
+    id:`drop_${album.id||strHash(album.name||'')}`,
+    week:currentWeek, wLabel:'NEW RELEASE',
+    sort: currentWeek * 1000 + 90, // Fixed sort priority based on the current week
+    type:'album_drop', tag:'ALBUM REVIEW', tagCls:'tag-gold',
+    hl:`${pname}'s "${album.name||album.albumName}" — Official Excellence★News Review`,
+    sub:`We put the project under the microscope. Here is our full verdict.`,
+    img:album.coverArt||'', isP:isPlayer,
+    specialType:'album_review', ratingData:rating, verdictData:v, data:album
+  };
+}
+
+function tourArt(tour, pname, currentWeek = 0){
+  const venues=tour.route||[];
+  const totalCap=venues.reduce((s,v)=>s+(v.capacity||0),0);
+  return {
+    id:`tour_${strHash(tour.name+(tour.id||''))}`,
+    week:currentWeek, wLabel:'TOUR ANNOUNCEMENT',
+    sort: currentWeek * 1000 + 95, // Fixed sort priority based on the current week
+    type:'tour', tag:'WORLD TOUR', tagCls:'tag-purple',
+    hl:`${pname} Announces "${tour.name}" — Full Dates and Venues`,
+    sub:`${venues.length} venues, ${totalCap.toLocaleString()} total capacity.`,
+    img:tour.banner||'', isP:true,
+    specialType:'tour',
+    longBody: TOUR_LONG(tour, pname, venues, totalCap),
+    tourData:tour, data:tour
+  };
+}
+
+// ── GENERATE ─────────────────────────────────────────────────
+function generate(){
+  const chartSongs  = arr('chart_songs_final');
+  const chartAlbums = arr('chart_albums_final');
+  const relSongs    = arr('releasedSongs');
+  const relAlbums   = arr('releasedAlbums');
+  const tours       = arr('tycoon_tours');
+  const ad          = obj('artistDetails');
+  const pname       = ad.name || localStorage.getItem('artistName') || 'You';
+  const currentWeek = parseInt(localStorage.getItem('currentWeek')||'1');
+
+  let arts = _ARTS.length ? [..._ARTS] : [];
+
+  // ── PRUNE ────────────────────────────────────────────────────
+  // Reviews: only live during their release week → expire after that
+  // Weekly chart stories: keep current + 1 previous week
+  // Tours: keep indefinitely (they're announcements)
+  arts = arts.filter(a => {
+    if (a.type === 'album_drop') return a.week === currentWeek;          // reviews: this week only
+    if (['top_song','top_album','drama','chart_story'].includes(a.type)) return a.week >= currentWeek - 1; // chart: keep 1 week back
+    return true; // tours and anything else: keep
+  });
+
+  // ── REFRESH CURRENT WEEK CHART ARTICLES ──────────────────────
+  // Always re-build this week's chart stories so they reflect the LIVE chart
+  arts = arts.filter(a => !(a.week === currentWeek &&
+    ['top_song','top_album','drama','chart_story'].includes(a.type)));
+
+  if(chartSongs.length || chartAlbums.length){
+    const fresh = weeklyArts(currentWeek, chartSongs, chartAlbums, pname);
+    arts = [...fresh, ...arts.filter(a => !fresh.some(f => f.id === a.id))];
+  }
+
+  // ── ALBUM REVIEWS ────────────────────────────────────────────
+  // Only generate a review if we haven't reviewed it yet THIS week
+  const ratedAlbs = new Set(arts.filter(a=>a.type==='album_drop').map(a=>a.data?.id||strHash(a.data?.name||'')));
+
+  // Player's latest album
+  if(relAlbums.length > 0){
+    const latestUserAlb = relAlbums[relAlbums.length - 1];
+    const key = latestUserAlb.id || strHash(latestUserAlb.name||'');
+    if(!ratedAlbs.has(key)){
+      const art = albumDropArt(latestUserAlb, relSongs, pname, true, currentWeek);
+      arts = [art, ...arts.filter(a=>a.id!==art.id)];
+      ratedAlbs.add(key);
+    }
+  }
+
+  // Top 2 new NPC albums (debut week only)
+  const newNPCAlbums = chartAlbums.filter(a => a.weeks === 1 && !a.isUser).slice(0, 2);
+  newNPCAlbums.forEach(alb => {
+    const key = alb.id || strHash(alb.title||alb.name||'');
+    if(!ratedAlbs.has(key)){
+      const mappedAlb = { ...alb, name: alb.title || alb.name, coverArt: alb.art };
+      const art = albumDropArt(mappedAlb, [], alb.artist, false, currentWeek);
+      arts = [art, ...arts.filter(a=>a.id!==art.id)];
+      ratedAlbs.add(key);
+    }
+  });
+
+  // ── TOURS ─────────────────────────────────────────────────────
+  const doneTours = new Set(arts.filter(a=>a.type==='tour').map(a=>a.data?.name||''));
+  tours.forEach(t=>{
+    if(t.name && !doneTours.has(t.name)){
+      const art = tourArt(t, pname, currentWeek);
+      arts = [art, ...arts.filter(a=>a.id!==art.id)];
+    }
+  });
+
+  // ── SAVE — only track lastWeek, never write articles to localStorage ──
+  arts = arts.slice(0, 30);
+  _ARTS = arts;
+  try { save('excellencenews_lastWeek', currentWeek); } catch(e) {}
+
+  return arts;
+}
+
+// ── TICKER ────────────────────────────────────────────────────
+function buildTicker(arts){
+  const track=document.getElementById('ticker-track');
+  if(!arts.length){ track.textContent='No stories yet'; return; }
+  const items=arts.slice(0,10).map(a=>`<span class="ticker-item">${a.hl}</span>`).join('');
+  track.innerHTML=items+items; // duplicate for seamless loop
+}
+
+// ── RENDER FEED ───────────────────────────────────────────────
+function renderFeed(arts){
+  const feed=document.getElementById('feed');
+  if(!arts.length){
+    feed.innerHTML=`<div class="empty">
+      <div class="empty-icon">
+        <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      </div>
+      <h2>No Stories Yet</h2>
+      <p>Advance through a week in-game to generate your first news cycle.</p>
+    </div>`;
+    return;
+  }
+
+  // Sort: special events first, then weeks descending
+  const sorted=[...arts].sort((a,b)=>(b.sort||0)-(a.sort||0));
+
+  let html='';
+  let hero=true;
+  let lastLabel=null;
+
+  for(let i=0;i<sorted.length;i++){
+    const a=sorted[i];
+    if(hero){
+      hero=false;
+      html+=heroHTML(a);
+      continue;
+    }
+    if(a.wLabel!==lastLabel){
+      lastLabel=a.wLabel;
+      html+=`<div class="week-lbl"><span>${a.wLabel}</span><div class="week-lbl-line"></div></div>`;
+    }
+    html+=cardHTML(a);
+  }
+  feed.innerHTML=html;
+}
+
+function heroHTML(a){
+  const imgTag=a.img
+    ?`<img class="hero-media" src="${a.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:'';
+  const fbTag=`<div class="hero-media-fb" ${a.img?'style="display:none"':''}><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+  const starBadge=a.isP?'★ ':'';
+  return `<div class="hero" onclick="openArt('${a.id}')">
+    ${imgTag}${fbTag}
+    <div class="hero-grad"></div>
+    <div class="hero-body">
+      <div class="hero-tag-row"><span class="tag ${a.tagCls}">${starBadge}${a.tag}</span></div>
+      <div class="hero-hl">${a.hl}</div>
+      <div class="hero-by">BY EXCELLENCE★NEWS STAFF</div>
+    </div>
+  </div>`;
+}
+
+function cardHTML(a){
+  const starBadge=a.isP?'★ ':'';
+  const thumbHtml=a.img
+    ?`<img class="card-thumb" src="${a.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="card-thumb-fb" style="display:none"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`
+    :`<div class="card-thumb-fb"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#bbb" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+  return `<div class="card" onclick="openArt('${a.id}')">
+    ${thumbHtml}
+    <div class="card-body">
+      <div class="card-tag-row">
+        <span class="tag ${a.tagCls}" style="font-size:9px;padding:3px 7px">${starBadge}${a.tag}</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <div class="card-hl">${a.hl}</div>
+      <div class="card-sub">${a.sub}</div>
+      <div class="card-meta">Excellence★News Staff</div>
+    </div>
+  </div>`;
+}
+
+// ── MODAL ─────────────────────────────────────────────────────
+document.getElementById('mo').addEventListener('click',e=>{ if(e.target===document.getElementById('mo')) closeMo(); });
+
+function openArt(id){
+  const a=_ARTS.find(x=>x.id===id);
+  if(!a) return;
+
+  // Regenerate stripped fields on-demand (not stored to save localStorage space)
+  if(!a.longBody){
+    const relSongs = arr('releasedSongs');
+    const ad = obj('artistDetails');
+    const pname = ad.name || localStorage.getItem('artistName') || 'You';
+    if(a.type==='top_song')    a.longBody = SONG_LONG(a.data, a.isP, pname);
+    else if(a.type==='top_album') a.longBody = [
+      ALBUM_LONG_INTRO(a.data?.title||a.data?.name||'this project', a.data?.artist, a.isP, pname),
+      `Listener retention metrics show that people aren't just streaming the singles — they are going deep into the tracklist. Album-equivalent units are up, and the engagement numbers suggest this is the kind of project that builds a fanbase rather than just chasing a moment.`,
+      `The production landscape of the album rewards repeat listens. Subtle details in the mix that don't reveal themselves on first play become the hooks on the third or fourth pass. That kind of craftsmanship is increasingly rare in the streaming era.`,
+      `With the album chart position confirmed, the tour rumour cycle has officially started. Industry insiders are pointing to a live run later in the year to support the project. Whether that materialises remains to be seen — but the demand is certainly there.`
+    ];
+    else if(a.type==='drama')  a.longBody = DRAMA_LONG(a.data);
+    else if(a.type==='chart_story') a.longBody = [
+      `"${a.data?.title}" by ${a.data?.artist} has continued its ascent up the chart this week, and the story behind the record is now getting the attention it deserves.`,
+      `The track's reach has extended well beyond the artist's existing fanbase. Algorithmic playlisting has played a role, but the clip activity and sync placements this week have amplified the reach further.`,
+      `${a.data?.artist}'s team has been running a controlled but effective campaign. Feature rollouts, strategic timing around editorial refresh windows, and a consistent social presence have all contributed.`,
+      `The record now sits in a position where a genuine run at the top of the chart is possible. The next refresh will tell us a great deal about whether that momentum can be sustained.`
+    ];
+    else if(a.specialType==='tour'){
+      const t=a.tourData||a.data||{};
+      const venues=t.route||[];
+      const totalCap=venues.reduce((s,v)=>s+(v.capacity||0),0);
+      a.longBody = TOUR_LONG(t, pname, venues, totalCap);
+    }
+  }
+  if(a.specialType==='album_review' && !a.ratingData){
+    const relSongs = arr('releasedSongs');
+    a.ratingData = makeRating(a.data, relSongs);
+    a.verdictData = verdict(a.ratingData.overall);
+  }
+
+  const c=document.getElementById('mo-content');
+  if(a.specialType==='album_review') c.innerHTML=albumModal(a);
+  else if(a.specialType==='tour')    c.innerHTML=tourModal(a);
+  else                               c.innerHTML=stdModal(a);
+  document.getElementById('mo').classList.add('open');
+  document.body.style.overflow='hidden';
+  document.getElementById('modal').scrollTop=0;
+}
+
+function closeMo(){
+  document.getElementById('mo').classList.remove('open');
+  document.body.style.overflow='';
+}
+
+function imgOrFb(src, cls='m-img', fbCls='m-img-fb'){
+  if(src) return `<img class="${cls}" src="${src}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="${fbCls}" style="display:none"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+  return `<div class="${fbCls}"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></div>`;
+}
+
+function stdModal(a){
+  const paras=(a.longBody||[a.sub]).map(p=>`<p>${p}</p>`).join('');
+  return `
+    ${imgOrFb(a.img)}
+    <div class="m-body">
+      <div class="m-tag-row"><span class="tag ${a.tagCls}">${a.isP?'★ ':''}${a.tag}</span></div>
+      <div class="m-hl">${a.hl}</div>
+      <div class="m-byline">BY EXCELLENCE★NEWS STAFF &nbsp;·&nbsp; ${a.wLabel}</div>
+      <div class="m-prose">${paras}</div>
+    </div>`;
+}
+
+function albumModal(a){
+  const {ratingData:rd, verdictData:vd, data:alb} = a;
+  const {tracks, overall} = rd;
+  const {w:vw, d:vd2} = vd;
+
+  const coverHTML = alb.coverArt
+    ?`<img class="rev-cover" src="${alb.coverArt}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="rev-cover-fb" style="display:none"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>`
+    :`<div class="rev-cover-fb"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>`;
+
+  const albumImgHTML = alb.coverArt
+    ?`<img class="m-img" src="${alb.coverArt}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="m-img-fb" style="display:none"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>`
+    :`<div class="m-img-fb"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>`;
+
+  const prose = overall>=9
+    ?`A breathtaking release operating at a completely different level. The cohesion, the production choices, the sequencing — everything clicks. The tracklist moves like a single unbroken statement from an artist who knows exactly what they are doing. This is one for the year-end lists and beyond.`
+    :overall>=8
+    ?`A confident, cohesive body of work that shows real artistic growth. The production is inspired throughout, and there are standout moments that will live long in the memory. Even the looser moments reveal a creative instinct that holds the whole thing together.`
+    :overall>=7
+    ?`A solid showing with real highlights throughout. The project demonstrates exactly why this artist is commanding attention right now, even if a few moments don't quite land as intended. The best tracks here are genuinely among the strongest of the year.`
+    :overall>=6
+    ?`A mixed bag that contains flashes of genuine brilliance alongside moments that feel underbaked. The core fanbase will find plenty to love. The project never fully realises its potential, but the foundation for something great is clearly present.`
+    :`A disappointing release that falls short on most fronts. The ideas are present but the execution needs work. There are individual moments that suggest what this artist is capable of — the question is whether the next project can channel that capability from start to finish.`;
+
+  const tRows=tracks.map((t,i)=>{
+    const g=grade(t.score);
+    return `<div class="t-row"><span class="t-n">${i+1}</span><span class="t-name">${t.name}</span><span class="t-grade ${gradeClass(g)}">${g}</span><span class="t-sc">${t.score}</span></div>`;
+  }).join('');
+
+  return `
+    ${albumImgHTML}
+    <div class="m-body">
+      <div class="m-tag-row"><span class="tag tag-gold">★ ${a.tag}</span></div>
+      <div class="m-hl">${a.hl}</div>
+      <div class="m-byline">BY EXCELLENCE★NEWS STAFF &nbsp;·&nbsp; ${a.wLabel}</div>
+
+      <div class="rev-top">
+        ${coverHTML}
+        <div>
+          <div class="rev-info-name">${alb.name||alb.albumName}</div>
+          <div class="rev-info-sub">${alb.type||'Album'} &nbsp;·&nbsp; ${tracks.length} Tracks</div>
+        </div>
+      </div>
+
+      <div class="score-box">
+        <div class="score-num ${scClass(overall)}">${overall}</div>
+        <div>
+          <div class="score-verdict">${vw}</div>
+          <div class="score-desc">${vd2}</div>
+        </div>
+      </div>
+
+      <div class="m-prose"><p>${prose}</p></div>
+
+      <div class="tracks-hdr"><span>Track Ratings</span><span>Grade &nbsp;/&nbsp; Score</span></div>
+      ${tRows}
+
+      <div class="m-prose" style="margin-top:18px"><p><strong>Overall: ${overall}/10 — ${vw}</strong></p></div>
+    </div>`;
+}
+
+function tourModal(a){
+  const t  = a.tourData;
+  const vs = t.route||[];
+  const totalCap = vs.reduce((s,v)=>s+(v.capacity||0),0);
+  const conts= t.continents?t.continents.length:(new Set(vs.map(v=>v.continent).filter(Boolean)).size||1);
+
+  const bannerHTML = t.banner
+    ?`<img class="m-img" src="${t.banner}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div class="m-img-fb" style="display:none"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></div>`
+    :`<div class="m-img-fb"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></div>`;
+
+  const paras=(a.longBody||[]).map(p=>`<p>${p}</p>`).join('');
+
+  const vRows=vs.map((v,i)=>`
+    <div class="v-row">
+      <div class="v-badge">${i+1}</div>
+      <div class="v-info">
+        <div class="v-name">${v.name}</div>
+        <div class="v-loc">${[v.location,v.continent].filter(Boolean).join(' · ')||v.type||''}</div>
+      </div>
+      <div class="v-cap">${(v.capacity||0).toLocaleString()}</div>
+    </div>`).join('');
+
+  const setHTML=(t.setlist&&t.setlist.length)?`
+    <div class="m-prose"><h3>Setlist</h3></div>
+    <div style="background:var(--light);border-radius:10px;padding:14px">
+      ${t.setlist.map((s,i)=>`<div class="t-row"><span class="t-n">${i+1}</span><span class="t-name">${s}</span></div>`).join('')}
+    </div>`:'';
+
+  return `
+    ${bannerHTML}
+    <div class="m-body">
+      <div class="m-tag-row"><span class="tag tag-purple">★ ${a.tag}</span></div>
+      <div class="m-hl">${a.hl}</div>
+      <div class="m-byline">BY EXCELLENCE★NEWS STAFF &nbsp;·&nbsp; ${a.wLabel}</div>
+
+      <div class="tour-hdr-box">
+        <div class="tour-hdr-name">"${t.name}"</div>
+        <div class="tour-hdr-sub">${vs.length} Stops &nbsp;·&nbsp; ${conts} Continent${conts!==1?'s':''}</div>
+      </div>
+
+      <div class="tour-stats">
+        <div class="tour-stat"><div class="tour-stat-v">${vs.length}</div><div class="tour-stat-l">Venues</div></div>
+        <div class="tour-stat"><div class="tour-stat-v">${totalCap.toLocaleString()}</div><div class="tour-stat-l">Total Cap</div></div>
+        <div class="tour-stat"><div class="tour-stat-v">${conts}</div><div class="tour-stat-l">Continents</div></div>
+      </div>
+
+      <div class="m-prose">${paras}</div>
+
+      <div class="v-hdr"><span>Venue</span><span>Capacity</span></div>
+      ${vRows||'<p style="color:#aaa;font-size:13px;padding:10px 0">No venues listed.</p>'}
+
+      ${setHTML}
+      <div class="m-prose" style="margin-top:18px"><p>Total capacity: <strong>${totalCap.toLocaleString()} fans</strong> across <strong>${vs.length} shows</strong>.</p></div>
+    </div>`;
+}
+
+// ── AUTO-ADVANCE DETECTION ────────────────────────────────────
+// Regenerate whenever the week or chart data changes
+function checkWeekAdvance(){
+  const storedWeek  = parseInt(localStorage.getItem('excellencenews_lastWeek')||'0');
+  const currentWeek = parseInt(localStorage.getItem('currentWeek')||'1');
+  if(currentWeek !== storedWeek){
+    const arts = generate();
+    buildTicker(arts);
+    renderFeed(arts);
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',()=>{
+  // Clear any old bloated article data that may have filled the quota
+  try { localStorage.removeItem('excellencenews_articles'); } catch(e){}
+  const arts = generate();
+  buildTicker(arts);
+  renderFeed(arts);
+});
+
+// Listen for localStorage changes (in-game week advance from another page)
+window.addEventListener('storage', e=>{
+  if(e.key==='currentWeek' || e.key==='chart_songs_final' || e.key==='chart_albums_final'
+     || e.key==='releasedAlbums' || e.key==='tycoon_tours'){
+    const arts = generate();
+    buildTicker(arts);
+    renderFeed(arts);
+  }
+});
+
+// Poll every 5 seconds for game state changes (same-page context)
+setInterval(checkWeekAdvance, 5000);
+</script>
+</body>
+</html>

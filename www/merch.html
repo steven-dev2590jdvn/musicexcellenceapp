@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merch Empire | Music Excellence</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+:root {
+    --primary:#3B82F6;--primary-dark:#1E40AF;--secondary:#8B5CF6;
+    --bg-primary:#0F0F23;--bg-secondary:#1A1A2E;--bg-tertiary:#16213E;
+    --text-primary:#FFFFFF;--text-secondary:#94A3B8;
+    --success:#10B981;--error:#EF4444;--warning:#F59E0B;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:radial-gradient(circle at top right,rgba(30,64,175,0.5) 0%,var(--bg-primary) 40%),radial-gradient(circle at bottom left,rgba(139,92,246,0.3) 0%,var(--bg-secondary) 40%);background-attachment:fixed;color:var(--text-primary);min-height:100vh}
+.container{max-width:800px;margin:0 auto;padding:20px;padding-bottom:80px}
+.glass-panel{background:rgba(20,25,45,0.45);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,0.1);box-shadow:0 8px 32px rgba(0,0,0,0.3);border-radius:16px;transition:all 0.3s ease}
+.top-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding:16px 20px;position:sticky;top:20px;z-index:50}
+.top-header h1{font-size:20px;font-weight:900;margin:0;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,var(--text-primary),var(--text-secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.top-header h1 i{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.action-btn{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.05);color:white;cursor:pointer;transition:0.3s;text-decoration:none;font-size:16px}
+.action-btn:hover{background:rgba(255,255,255,0.15);transform:translateY(-2px)}
+.action-btn.primary{background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;box-shadow:0 4px 15px rgba(59,130,246,0.3)}
+.action-btn.primary:hover{box-shadow:0 6px 20px rgba(59,130,246,0.5)}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.stat-card{padding:20px 16px;text-align:center}
+.stat-val{font-size:22px;font-weight:900;color:var(--primary);margin-bottom:6px;text-shadow:0 2px 10px rgba(59,130,246,0.3)}
+.stat-label{font-size:11px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:1px;font-weight:600}
+#inventory-view,#create-view{animation:fadeIn 0.4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+.create-card{padding:32px 24px}
+.wizard-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:32px;position:relative}
+.wizard-nav::before{content:'';position:absolute;top:50%;left:0;right:0;height:2px;background:rgba(255,255,255,0.1);z-index:0;transform:translateY(-50%)}
+.step-dot{width:40px;height:40px;border-radius:50%;background:var(--bg-tertiary);border:2px solid rgba(255,255,255,0.1);color:var(--text-secondary);display:flex;align-items:center;justify-content:center;font-weight:700;position:relative;z-index:1;transition:all 0.3s ease}
+.step-dot.active{background:var(--primary);border-color:var(--primary);color:white;box-shadow:0 0 20px rgba(59,130,246,0.5)}
+.step-dot.completed{background:var(--success);border-color:var(--success);color:white}
+.step-label{position:absolute;top:48px;font-size:11px;white-space:nowrap;color:var(--text-secondary);font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.step-dot.active .step-label{color:var(--text-primary)}
+.wizard-step{display:none}
+.wizard-step.active{display:block;animation:fadeIn 0.3s ease}
+.step-actions{display:flex;justify-content:space-between;margin-top:32px;gap:12px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.form-group{margin-bottom:20px}
+.form-group label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+select,input{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);color:white;padding:14px;border-radius:12px;font-family:inherit;font-size:15px;transition:0.3s}
+select:focus,input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,0.2);background:rgba(0,0,0,0.5)}
+.cost-display{background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);padding:16px;border-radius:12px;font-size:15px;display:flex;justify-content:space-between;margin-top:24px;align-items:center}
+.cost-val{color:var(--warning);font-weight:800;font-size:20px}
+.btn-main{padding:14px 24px;background:linear-gradient(135deg,var(--primary),var(--secondary));border:none;border-radius:12px;color:white;font-weight:700;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;transition:0.3s}
+.btn-main:hover{opacity:0.95;transform:translateY(-2px);box-shadow:0 8px 25px rgba(59,130,246,0.4)}
+.btn-secondary{padding:14px 24px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:12px;color:white;font-weight:700;cursor:pointer;font-size:15px;transition:0.3s;display:flex;align-items:center;gap:8px}
+.btn-secondary:hover{background:rgba(255,255,255,0.15)}
+.btn-block{width:100%}
+.edition-desc{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.05);border-radius:12px;padding:16px;margin-bottom:20px;font-size:13px;color:var(--text-secondary);line-height:1.6}
+.edition-desc strong{color:var(--text-primary);font-size:14px;display:inline-flex;align-items:center;gap:6px}
+.slot-grid{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.slot-chip{padding:8px 14px;border-radius:10px;font-size:12px;font-weight:700;display:flex;align-items:center;gap:8px;backdrop-filter:blur(5px)}
+.slot-label{font-size:11px;color:var(--text-secondary);margin-bottom:12px;font-weight:600;text-transform:uppercase}
+.slot-filled{background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);color:#FCA5A5}
+.slot-open{background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#6EE7B7}
+
+/* ─── SIGNATURE PAD OVERLAY ─── */
+#sig-pad-view{
+    position:fixed;top:0;left:0;width:100%;height:100%;
+    background:#0a0a1a;z-index:2000;
+    display:none;flex-direction:column;align-items:center;justify-content:center;
+}
+#sig-pad-view.active{display:flex}
+.sig-pad-header{width:100%;padding:16px 20px;display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,0.6);border-bottom:1px solid rgba(255,255,255,0.08)}
+.sig-pad-header h2{font-size:17px;font-weight:800;background:linear-gradient(135deg,#BF5AF2,#9B42D6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sig-pad-hint{color:var(--text-secondary);font-size:12px;text-align:center;margin:10px 0 6px;display:flex;align-items:center;justify-content:center;gap:6px}
+#sig-canvas{
+    background:#fff;border-radius:10px;
+    box-shadow:0 20px 60px rgba(0,0,0,0.7);
+    cursor:crosshair;touch-action:none;
+    display:block;
+}
+.sig-color-row{display:flex;gap:10px;align-items:center;justify-content:center;margin:12px 0 6px}
+.sig-color-btn{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s;box-shadow:0 2px 8px rgba(0,0,0,0.5)}
+.sig-color-btn.active{border-color:white;transform:scale(1.2)}
+.sig-thickness-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:10px}
+.sig-thickness-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:white;cursor:pointer;transition:0.2s}
+.sig-thickness-btn.active{background:rgba(191,90,242,0.3);border-color:#BF5AF2;color:#E9A8FF}
+.sig-actions{display:flex;gap:12px;margin-top:12px}
+
+/* Signature preview badge on the form */
+#sig-preview-area{display:none;margin-top:14px;padding:12px;background:rgba(191,90,242,0.1);border:1px solid rgba(191,90,242,0.3);border-radius:12px;align-items:center;gap:12px}
+#sig-preview-img{height:44px;max-width:180px;object-fit:contain;background:#fff;border-radius:6px;padding:4px}
+.sig-badge{font-size:11px;color:#E9A8FF;font-weight:700;display:flex;align-items:center;gap:6px}
+
+/* ── COVER EDITOR ── */
+#cover-editor-view{position:fixed;top:0;left:0;width:100%;height:100%;background:#0a0a1a;z-index:1000;overflow-y:auto;display:none;flex-direction:column;align-items:center}
+#cover-editor-view.active{display:flex}
+.editor-header{width:100%;max-width:600px;padding:20px;display:flex;align-items:center;justify-content:space-between}
+.editor-header h2{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.editor-body{width:100%;max-width:600px;padding:0 20px 40px}
+.mockup-area{display:flex;justify-content:center;align-items:center;margin-bottom:14px}
+canvas#mockup-canvas{border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.6);cursor:pointer;max-width:100%}
+.canvas-hint{text-align:center;color:var(--text-secondary);font-size:12px;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:6px}
+.editor-section-label{font-size:11px;color:var(--text-secondary);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.swatch-row{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:4px;align-items:center}
+.color-swatch,.disc-swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.2s ease;box-shadow:0 2px 8px rgba(0,0,0,0.5);flex-shrink:0}
+.color-swatch:hover,.disc-swatch:hover{transform:scale(1.2)}
+.color-swatch.active,.disc-swatch.active{border-color:white;transform:scale(1.2)}
+.editor-input{margin-bottom:20px}
+.editor-input label{display:block;font-size:12px;color:var(--text-secondary);margin-bottom:8px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px}
+.editor-input input{width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);color:white;padding:14px 16px;border-radius:12px;font-family:inherit;font-size:15px}
+.editor-input input:focus{outline:none;border-color:var(--primary)}
+.editor-actions{display:flex;gap:12px}
+.editor-actions button{flex:1}
+.file-input{display:none}
+
+/* Inventory compact */
+.inventory-grid{display:grid;gap:10px}
+.merch-compact{padding:14px 16px;display:flex;align-items:center;gap:14px;cursor:pointer;transition:all 0.2s ease}
+.merch-compact:hover{background:rgba(59,130,246,0.08)}
+.merch-compact.edition-signed{border-left:3px solid #BF5AF2}
+.merch-compact.edition-original{border-left:3px solid #3B82F6}
+.merch-compact.edition-2nd{border-left:3px solid #10B981}
+.compact-thumb{width:52px;height:52px;border-radius:8px;object-fit:cover;background:rgba(0,0,0,0.5);flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.3)}
+.compact-info{flex:1;min-width:0}
+.compact-name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:4px}
+.compact-badges{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.compact-badge{font-size:9px;padding:3px 7px;border-radius:5px;text-transform:uppercase;font-weight:800}
+.badge-type-vinyl{background:rgba(59,130,246,0.2);color:#93C5FD;border:1px solid rgba(59,130,246,0.3)}
+.badge-type-cd{background:rgba(139,92,246,0.2);color:#C4B5FD;border:1px solid rgba(139,92,246,0.3)}
+.badge-type-digital{background:rgba(6,182,212,0.2);color:#67E8F9;border:1px solid rgba(6,182,212,0.3)}
+.badge-signed-b{background:rgba(191,90,242,0.2);color:#E9A8FF;border:1px solid rgba(191,90,242,0.3)}
+.badge-original-b{background:rgba(59,130,246,0.15);color:#BAD1FD;border:1px solid rgba(59,130,246,0.2)}
+.badge-2nd-b{background:rgba(16,185,129,0.15);color:#6EE7B7;border:1px solid rgba(16,185,129,0.2)}
+.compact-stock-bar{height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin-top:6px;overflow:hidden}
+.compact-stock-fill{height:100%;border-radius:2px}
+.stock-high{background:linear-gradient(90deg,#10B981,#34D399)}
+.stock-med{background:linear-gradient(90deg,#F59E0B,#FBBF24)}
+.stock-low{background:linear-gradient(90deg,#EF4444,#F87171)}
+.compact-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.compact-stock-pct{font-size:12px;font-weight:700;color:var(--text-secondary);min-width:36px;text-align:right}
+.expand-icon{font-size:11px;color:var(--text-secondary);transition:transform 0.25s}
+.expand-icon.open{transform:rotate(180deg)}
+.detail-panel{display:none;padding:16px 20px 20px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.2);animation:fadeIn 0.2s ease}
+.detail-panel.open{display:block}
+.detail-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.detail-stat{text-align:center;background:rgba(255,255,255,0.03);border-radius:10px;padding:10px 6px}
+.detail-stat-val{font-size:15px;font-weight:800;color:white;margin-bottom:2px}
+.detail-stat-label{font-size:10px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.5px}
+.detail-stock-row{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--text-secondary);margin-bottom:12px}
+.detail-actions{display:flex;gap:10px}
+.btn-restock{padding:10px 16px;font-size:12px;font-weight:700;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:white;border-radius:10px;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:6px}
+.btn-restock:hover{background:rgba(255,255,255,0.12)}
+.btn-delete{padding:10px 16px;font-size:12px;font-weight:700;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#ef4444;border-radius:10px;cursor:pointer;transition:0.2s;display:flex;align-items:center;gap:6px}
+.btn-delete:hover{background:rgba(239,68,68,0.2)}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100;display:none;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-content{padding:32px;width:90%;max-width:450px;max-height:85vh;overflow-y:auto}
+.modal-list{max-height:350px;overflow-y:auto;margin-top:20px;border-radius:12px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.05)}
+.select-option{padding:16px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:0.2s}
+.select-option:hover{background:rgba(59,130,246,0.15)}
+.select-option:last-child{border-bottom:none}
+.warning-box{color:var(--warning);font-size:13px;margin-top:16px;display:none;padding:14px;background:rgba(245,158,11,0.1);border-radius:10px;border:1px solid rgba(245,158,11,0.3);line-height:1.5}
+.error-box{color:var(--error);font-size:13px;margin-top:16px;display:none;padding:14px;background:rgba(239,68,68,0.1);border-radius:10px;border:1px solid rgba(239,68,68,0.3);line-height:1.5}
+.release-group-header{font-size:14px;font-weight:800;color:var(--primary);text-transform:uppercase;letter-spacing:1px;padding:24px 0 12px;border-bottom:2px solid rgba(59,130,246,0.2);margin-bottom:16px;margin-top:8px;display:flex;align-items:center;gap:8px}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div id="inventory-view">
+        <div class="top-header glass-panel">
+            <a href="music.html" class="action-btn"><i class="fas fa-arrow-left"></i></a>
+            <h1><i class="fas fa-headphones"></i> Merch Empire</h1>
+            <button class="action-btn primary" onclick="showCreate()"><i class="fas fa-plus"></i></button>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card glass-panel"><div class="stat-val" id="total-revenue">$0</div><div class="stat-label">Total Revenue</div></div>
+            <div class="stat-card glass-panel"><div class="stat-val" id="total-sold">0</div><div class="stat-label">Units Sold</div></div>
+            <div class="stat-card glass-panel"><div class="stat-val" id="active-items">0</div><div class="stat-label">Active Items</div></div>
+        </div>
+        <div class="inventory-grid" id="inventory-list"></div>
+    </div>
+
+    <div id="create-view" style="display:none">
+        <div class="top-header glass-panel">
+            <button class="action-btn" onclick="showInventory()"><i class="fas fa-times"></i></button>
+            <h1><i class="fas fa-magic"></i> Launch Merch</h1>
+            <div style="width:42px"></div>
+        </div>
+        <div class="create-card glass-panel">
+            <div class="wizard-nav">
+                <div class="step-dot active" id="dot-1">1<span class="step-label">Target</span></div>
+                <div class="step-dot" id="dot-2">2<span class="step-label">Format</span></div>
+                <div class="step-dot" id="dot-3">3<span class="step-label">Pricing</span></div>
+            </div>
+            <div id="step-1" class="wizard-step active">
+                <div class="form-group">
+                    <label>Select a Release</label>
+                    <button class="btn-main btn-block" style="background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);justify-content:space-between;padding:16px;color:white" onclick="openSelector()">
+                        <span id="selected-release-name" style="font-weight:normal">Choose Song or Album...</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="age-warning" class="warning-box"></div>
+                </div>
+                <div class="step-actions" style="justify-content:flex-end">
+                    <button class="btn-main" onclick="goToStep(2)">Next Step <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="step-2" class="wizard-step">
+                <div id="slot-section" style="display:none;margin-bottom:24px;background:rgba(0,0,0,0.2);padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.05)">
+                    <div class="slot-label"><i class="fas fa-layer-group"></i> Current Merch Lines</div>
+                    <div class="slot-grid" id="slot-grid"></div>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Format</label>
+                        <select id="merch-type" onchange="onTypeChange()">
+                            <option value="vinyl">Vinyl Record</option>
+                            <option value="cd">CD</option>
+                            <option value="digital">Digital Pack</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Edition</label>
+                        <select id="merch-edition" onchange="onEditionChange()">
+                            <option value="original">Original (1st Press)</option>
+                            <option value="signed">Signed Edition</option>
+                            <option value="2nd_edition">2nd Edition</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="edition-desc" id="edition-desc">Select an edition to see details.</div>
+
+                <!-- Signature section — only shown when Signed Edition is selected -->
+                <div id="sig-section" style="display:none;margin-bottom:20px;padding:16px;background:rgba(191,90,242,0.08);border:1px solid rgba(191,90,242,0.25);border-radius:12px">
+                    <div style="font-size:12px;color:#C084FC;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px"><i class="fas fa-signature"></i> Your Signature</div>
+                    <p style="font-size:12px;color:var(--text-secondary);margin-bottom:12px;line-height:1.5">Sign your name on a full landscape page — it will be printed on every copy of this edition.</p>
+                    <button class="btn-main" onclick="openSigPad()" style="background:linear-gradient(135deg,#7C3AED,#BF5AF2);width:100%;justify-content:center">
+                        <i class="fas fa-pen-nib"></i> Draw Your Signature
+                    </button>
+                    <div id="sig-preview-area" style="display:none;margin-top:12px;padding:10px;background:rgba(191,90,242,0.1);border:1px solid rgba(191,90,242,0.3);border-radius:10px;display:none;align-items:center;gap:10px">
+                        <img id="sig-preview-img" style="height:40px;max-width:160px;object-fit:contain;background:#fff;border-radius:5px;padding:3px">
+                        <div style="flex:1">
+                            <div style="font-size:11px;color:#C084FC;font-weight:800"><i class="fas fa-check-circle"></i> Signature saved</div>
+                            <div style="font-size:10px;color:var(--text-secondary);margin-top:2px">Will be overlaid on the sleeve</div>
+                        </div>
+                        <button onclick="clearSignature()" style="background:none;border:none;color:#EF4444;cursor:pointer;font-size:13px"><i class="fas fa-times"></i></button>
+                    </div>
+                </div>
+
+                <div id="slot-error" class="error-box"></div>
+                <div class="step-actions">
+                    <button class="btn-secondary" onclick="goToStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button class="btn-main" onclick="goToStep(3)">Next Step <i class="fas fa-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="step-3" class="wizard-step">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Production Qty</label>
+                        <input type="number" id="qty" value="500" min="10" oninput="updateEstimates()">
+                    </div>
+                    <div class="form-group">
+                        <label>Selling Price ($) <span id="price-hint" style="color:var(--text-secondary);font-size:10px"></span></label>
+                        <input type="number" id="price" placeholder="e.g. 45" oninput="updateEstimates()">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Cover Art</label>
+                    <button class="btn-main btn-block" onclick="openCoverEditor()" style="margin-bottom:12px;background:linear-gradient(135deg,rgba(139,92,246,0.5),rgba(59,130,246,0.5));border:1px solid rgba(139,92,246,0.5)">
+                        <i class="fas fa-paint-brush"></i> Design Cover Art
+                    </button>
+                    <div id="img-preview-area" style="display:none;text-align:center">
+                        <img id="image-preview" style="max-height:180px;border-radius:12px;max-width:100%;object-fit:contain">
+                        <div onclick="clearImage(event)" style="font-size:12px;color:var(--error);margin-top:8px;cursor:pointer;font-weight:700"><i class="fas fa-times"></i> Remove Image</div>
+                    </div>
+                </div>
+                <div id="price-warning" class="warning-box"></div>
+                <div class="cost-display"><span>Total Production Cost:</span><span class="cost-val" id="total-cost">$0</span></div>
+                <div class="step-actions">
+                    <button class="btn-secondary" onclick="goToStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+                    <button class="btn-main" onclick="createMerch()"><i class="fas fa-rocket"></i> Launch Merch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Selector Modal -->
+<div class="modal" id="selector-modal">
+    <div class="modal-content glass-panel">
+        <h3 style="margin-bottom:8px;font-size:22px"><i class="fas fa-compact-disc"></i> Select Release</h3>
+        <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px">Choose the album or single to manufacture for.</p>
+        <div class="modal-list" id="release-list"></div>
+        <button class="btn-secondary btn-block" style="margin-top:20px" onclick="document.getElementById('selector-modal').style.display='none'">Cancel</button>
+    </div>
+</div>
+
+<!-- ═══ SIGNATURE PAD ═══ -->
+<div id="sig-pad-view">
+    <div class="sig-pad-header">
+        <button class="action-btn" onclick="closeSigPad()"><i class="fas fa-arrow-left"></i></button>
+        <h2><i class="fas fa-signature"></i> Draw Your Signature</h2>
+        <button class="action-btn primary" onclick="saveSignature()"><i class="fas fa-check"></i></button>
+    </div>
+    <div style="width:100%;max-width:700px;padding:10px 20px;display:flex;flex-direction:column;align-items:center;flex:1;justify-content:center">
+        <p class="sig-pad-hint"><i class="fas fa-hand-pointer"></i> Sign your name in the white area below — use your finger or stylus</p>
+        <canvas id="sig-canvas"></canvas>
+        <div class="sig-color-row">
+            <span style="font-size:11px;color:var(--text-secondary);font-weight:700;margin-right:4px">INK:</span>
+            <div class="sig-color-btn active" data-sc="#1a1a1a" style="background:#1a1a1a;border-color:rgba(255,255,255,0.3)" onclick="setSigColor(this)" title="Black"></div>
+            <div class="sig-color-btn" data-sc="#1a3a80" style="background:#1a3a80" onclick="setSigColor(this)" title="Navy Blue"></div>
+            <div class="sig-color-btn" data-sc="#8B0000" style="background:#8B0000" onclick="setSigColor(this)" title="Deep Red"></div>
+            <div class="sig-color-btn" data-sc="#2d6a2d" style="background:#2d6a2d" onclick="setSigColor(this)" title="Forest Green"></div>
+            <div class="sig-color-btn" data-sc="#5b2a86" style="background:#5b2a86" onclick="setSigColor(this)" title="Purple"></div>
+        </div>
+        <div class="sig-thickness-row">
+            <span style="font-size:11px;color:var(--text-secondary);font-weight:700;margin-right:4px">WEIGHT:</span>
+            <button class="sig-thickness-btn" onclick="setSigThickness(1.5,this)">Thin</button>
+            <button class="sig-thickness-btn active" onclick="setSigThickness(2.8,this)">Regular</button>
+            <button class="sig-thickness-btn" onclick="setSigThickness(4.5,this)">Bold</button>
+            <button class="sig-thickness-btn" onclick="setSigThickness(7,this)">Thick</button>
+        </div>
+        <div class="sig-actions">
+            <button class="btn-secondary" onclick="clearSigCanvas()"><i class="fas fa-eraser"></i> Clear</button>
+            <button class="btn-main" onclick="saveSignature()"><i class="fas fa-check"></i> Use This Signature</button>
+        </div>
+    </div>
+</div>
+
+<!-- ═══ COVER EDITOR ═══ -->
+<div id="cover-editor-view">
+    <div class="editor-header glass-panel" style="border-radius:0;border-left:none;border-right:none;border-top:none;background:rgba(10,10,26,0.95)">
+        <button class="action-btn" onclick="closeCoverEditor()"><i class="fas fa-arrow-left"></i></button>
+        <h2><i class="fas fa-paint-brush"></i> Cover Designer</h2>
+        <button class="action-btn primary" onclick="saveCoverArt()"><i class="fas fa-check"></i></button>
+    </div>
+    <div class="editor-body">
+        <!-- Mode switcher -->
+        <div style="text-align:center;margin-bottom:16px">
+            <div style="display:inline-flex;gap:8px;background:rgba(255,255,255,0.05);border-radius:12px;padding:6px">
+                <button onclick="setEditorMode('vinyl')"   id="mode-vinyl"   class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px">🎵 Vinyl</button>
+                <button onclick="setEditorMode('cd')"      id="mode-cd"      class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px">💿 CD</button>
+                <button onclick="setEditorMode('digital')" id="mode-digital" class="btn-secondary" style="padding:8px 16px;font-size:13px;border-radius:8px">📦 Digital</button>
+            </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="mockup-area">
+            <canvas id="mockup-canvas" width="400" height="280"></canvas>
+        </div>
+        <p class="canvas-hint"><i class="fas fa-hand-pointer"></i> Tap the sleeve/cover to upload your photo</p>
+
+        <!-- Hidden inputs -->
+        <input type="file" id="editor-img-upload" class="file-input" accept="image/*" onchange="handleEditorImageUpload(event)">
+        <input type="file" id="label-img-upload"  class="file-input" accept="image/*" onchange="handleLabelImageUpload(event)">
+
+        <!-- ── VINYL OPTIONS (hidden for cd/digital) ── -->
+        <div id="vinyl-options">
+            <!-- Disc body colour -->
+            <div style="margin-bottom:22px">
+                <div class="editor-section-label">Vinyl Disc Colour</div>
+                <div class="swatch-row">
+                    <div class="disc-swatch active" data-ds="classic"  style="background:#1a1a1a"                                                       onclick="setDiscStyle(this)" title="Classic Black"></div>
+                    <div class="disc-swatch"         data-ds="crimson"  style="background:#2d0000"                                                       onclick="setDiscStyle(this)" title="Crimson"></div>
+                    <div class="disc-swatch"         data-ds="midnight" style="background:#000d2e"                                                       onclick="setDiscStyle(this)" title="Midnight Blue"></div>
+                    <div class="disc-swatch"         data-ds="forest"   style="background:#001800"                                                       onclick="setDiscStyle(this)" title="Forest Green"></div>
+                    <div class="disc-swatch"         data-ds="violet"   style="background:#0d001a"                                                       onclick="setDiscStyle(this)" title="Deep Violet"></div>
+                    <div class="disc-swatch"         data-ds="crystal"  style="background:linear-gradient(135deg,rgba(180,210,255,0.7),rgba(230,245,255,0.95));border-color:rgba(200,230,255,0.6)" onclick="setDiscStyle(this)" title="Crystal"></div>
+                    <div class="disc-swatch"         data-ds="aurora"   style="background:linear-gradient(135deg,#1565c0,#6a1b9a,#0277bd)"              onclick="setDiscStyle(this)" title="Aurora Gradient"></div>
+                    <div class="disc-swatch"         data-ds="flame"    style="background:linear-gradient(135deg,#b71c1c,#e65100,#f9a825)"              onclick="setDiscStyle(this)" title="Flame Gradient"></div>
+                    <div class="disc-swatch"         data-ds="ocean"    style="background:linear-gradient(135deg,#006064,#0277bd,#00bcd4)"              onclick="setDiscStyle(this)" title="Ocean Gradient"></div>
+                    <div class="disc-swatch"         data-ds="splatter" style="background:conic-gradient(#e91e63,#2196f3,#4caf50,#ff9800,#9c27b0,#e91e63)" onclick="setDiscStyle(this)" title="Splatter"></div>
+                </div>
+            </div>
+
+            <!-- Label colour -->
+            <div style="margin-bottom:22px">
+                <div class="editor-section-label">Label Colour</div>
+                <div class="swatch-row" id="color-swatches">
+                    <div class="color-swatch active" data-color="#c0392b" style="background:#c0392b"                          onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#000000" style="background:#000;border-color:rgba(255,255,255,0.3)" onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#ffffff" style="background:#fff;border-color:rgba(255,255,255,0.3)" onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#1a1a8c" style="background:#1a1a8c"                         onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#2e7d32" style="background:#2e7d32"                         onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#f9a825" style="background:#f9a825"                         onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#6a1b9a" style="background:#6a1b9a"                         onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#e91e63" style="background:#e91e63"                         onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#ff6d00" style="background:#ff6d00"                         onclick="setLabelColor(this)"></div>
+                    <div class="color-swatch"         data-color="#37474f" style="background:#37474f"                         onclick="setLabelColor(this)"></div>
+                </div>
+            </div>
+
+            <!-- Label photo -->
+            <div style="margin-bottom:22px">
+                <div class="editor-section-label">Label Photo (optional)</div>
+                <div style="display:flex;align-items:center;gap:10px">
+                    <button onclick="document.getElementById('label-img-upload').click()" class="btn-secondary" style="flex:1;padding:10px 14px;font-size:12px;justify-content:center">
+                        <i class="fas fa-image"></i> Upload Label Photo
+                    </button>
+                    <div id="label-img-preview" style="display:none;align-items:center;gap:8px">
+                        <img id="label-preview-img" style="width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid rgba(255,255,255,0.3)">
+                        <button onclick="clearLabelImage()" class="btn-secondary" style="padding:8px 10px;border-radius:8px;font-size:12px">✕</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Item name -->
+        <div class="editor-input">
+            <label>Item Name / Title (optional)</label>
+            <input type="text" id="editor-item-name" placeholder="e.g. Album Name..." oninput="redrawCanvas()">
+        </div>
+
+        <div class="editor-actions">
+            <button class="btn-secondary" onclick="clearEditorImage()"><i class="fas fa-trash"></i> Clear Art</button>
+            <button class="btn-main" onclick="saveCoverArt()"><i class="fas fa-save"></i> Save to Merch</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const COSTS={vinyl:35,cd:15,digital:5};
+const SUGGEST={vinyl:{original:45,signed:90,'2nd_edition':30},cd:{original:18,signed:45,'2nd_edition':12},digital:{original:10,signed:22,'2nd_edition':7}};
+const FAIR={vinyl:{original:50,signed:100,'2nd_edition':35},cd:{original:20,signed:50,'2nd_edition':15},digital:{original:12,signed:25,'2nd_edition':8}};
+const EDITION_INFO={
+    original:{label:'Original (1st Press)',badge:'badge-original',icon:'<i class="fas fa-certificate"></i>',desc:'<strong>Best seller.</strong> Standard first pressing. Broad appeal, fastest moving format.'},
+    signed:{label:'Signed Edition',badge:'badge-signed',icon:'<i class="fas fa-signature"></i>',desc:'<strong>Premium Tier.</strong> Hand-signed, individually numbered. Slower but top dollar from superfans.'},
+    '2nd_edition':{label:'2nd Edition',badge:'badge-2nd',icon:'<i class="fas fa-clone"></i>',desc:'<strong>Repress / reissue.</strong> Slightly revised packaging. Steady sales after original sells through.'}
+};
+const TYPE_ICONS={vinyl:'<i class="fas fa-record-vinyl"></i>',cd:'<i class="fas fa-compact-disc"></i>',digital:'<i class="fas fa-box"></i>'};
+
+// Groove colors per disc style
+const GROOVE={
+    classic: ['#111','#1e1e1e','#333','#2a2a2a'],
+    crimson: ['#160000','#2d0000','#400000','#200000'],
+    midnight:['#00051a','#000d2e','#001440','#000820'],
+    forest:  ['#001000','#002000','#003000','#001800'],
+    violet:  ['#08000f','#110020','#1a0030','#0d0018'],
+    crystal: ['rgba(160,200,255,0.1)','rgba(200,225,255,0.2)','rgba(220,240,255,0.28)','rgba(150,190,255,0.14)'],
+    aurora:  ['#111','#1e1e1e','#333','#2a2a2a'],
+    flame:   ['#111','#1e1e1e','#333','#2a2a2a'],
+    ocean:   ['#111','#1e1e1e','#333','#2a2a2a'],
+    splatter:['#111','#1e1e1e','#333','#2a2a2a']
+};
+
+let selectedRelease=null,currentImage=null,currentStep=1;
+let editorMode='vinyl',editorUserImage=null,editorLabelColor='#c0392b',editorDiscStyle='classic',editorLabelImage=null;
+
+// ════ SIGNATURE PAD STATE ════
+let signatureData = null;   // base64 PNG of the saved signature
+let sigDrawing = false;
+let sigColor = '#1a1a1a';
+let sigThickness = 2.8;
+let sigLastX = 0, sigLastY = 0;
+
+function openSigPad(){
+    const view = document.getElementById('sig-pad-view');
+    view.classList.add('active');
+    sizeSigCanvas();
+    // Pre-load existing signature if any
+    if(signatureData){
+        const img = new Image();
+        img.onload = () => {
+            const sc = document.getElementById('sig-canvas');
+            const ctx = sc.getContext('2d');
+            ctx.clearRect(0,0,sc.width,sc.height);
+            ctx.drawImage(img,0,0);
+        };
+        img.src = signatureData;
+    }
+}
+
+function closeSigPad(){
+    document.getElementById('sig-pad-view').classList.remove('active');
+}
+
+function sizeSigCanvas(){
+    const sc = document.getElementById('sig-canvas');
+    // Full landscape: fill available width, shorter height for a realistic sig strip
+    const maxW = Math.min(window.innerWidth - 40, 660);
+    const ratio = window.devicePixelRatio || 1;
+    sc.style.width  = maxW + 'px';
+    sc.style.height = Math.round(maxW * 0.32) + 'px';
+    sc.width  = Math.round(maxW * ratio);
+    sc.height = Math.round(maxW * 0.32 * ratio);
+    const ctx = sc.getContext('2d');
+    ctx.scale(ratio, ratio);
+    // White background
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, sc.width, sc.height);
+    // Guide line
+    const ly = Math.round(maxW * 0.32 * 0.75);
+    ctx.strokeStyle = 'rgba(191,90,242,0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(20, ly); ctx.lineTo(maxW - 20, ly); ctx.stroke();
+}
+
+function clearSigCanvas(){
+    const sc = document.getElementById('sig-canvas');
+    const ctx = sc.getContext('2d');
+    const ratio = window.devicePixelRatio || 1;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, sc.width / ratio, sc.height / ratio);
+    const ly = Math.round((sc.height / ratio) * 0.75);
+    ctx.strokeStyle = 'rgba(191,90,242,0.25)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(20, ly); ctx.lineTo(sc.width / ratio - 20, ly); ctx.stroke();
+}
+
+function setSigColor(el){
+    document.querySelectorAll('.sig-color-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    sigColor = el.dataset.sc;
+}
+
+function setSigThickness(t, el){
+    document.querySelectorAll('.sig-thickness-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    sigThickness = t;
+}
+
+function saveSignature(){
+    const sc = document.getElementById('sig-canvas');
+    signatureData = sc.toDataURL('image/png');
+    // Show preview badge on the form
+    const prev = document.getElementById('sig-preview-area');
+    const prevImg = document.getElementById('sig-preview-img');
+    prevImg.src = signatureData;
+    prev.style.display = 'flex';
+    closeSigPad();
+    // Re-draw cover canvas so signature overlay updates
+    redrawCanvas();
+}
+
+function clearSignature(){
+    signatureData = null;
+    const prev = document.getElementById('sig-preview-area');
+    prev.style.display = 'none';
+    redrawCanvas();
+}
+
+// Pointer events for sig canvas (touch + mouse)
+(function(){
+    function getPos(e, canvas){
+        const rect = canvas.getBoundingClientRect();
+        const src = e.touches ? e.touches[0] : e;
+        return {
+            x: (src.clientX - rect.left),
+            y: (src.clientY - rect.top)
+        };
+    }
+    function onDown(e){
+        e.preventDefault();
+        sigDrawing = true;
+        const sc = document.getElementById('sig-canvas');
+        const p = getPos(e, sc);
+        sigLastX = p.x; sigLastY = p.y;
+    }
+    function onMove(e){
+        if(!sigDrawing) return;
+        e.preventDefault();
+        const sc = document.getElementById('sig-canvas');
+        const ctx = sc.getContext('2d');
+        const p = getPos(e, sc);
+        ctx.beginPath();
+        ctx.moveTo(sigLastX, sigLastY);
+        ctx.lineTo(p.x, p.y);
+        ctx.strokeStyle = sigColor;
+        ctx.lineWidth = sigThickness;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.stroke();
+        sigLastX = p.x; sigLastY = p.y;
+    }
+    function onUp(){ sigDrawing = false; }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sc = document.getElementById('sig-canvas');
+        sc.addEventListener('mousedown',  onDown);
+        sc.addEventListener('mousemove',  onMove);
+        sc.addEventListener('mouseup',    onUp);
+        sc.addEventListener('mouseleave', onUp);
+        sc.addEventListener('touchstart', onDown, {passive:false});
+        sc.addEventListener('touchmove',  onMove, {passive:false});
+        sc.addEventListener('touchend',   onUp);
+    });
+})();
+
+// ════ COVER EDITOR ════
+function setDiscStyle(el){document.querySelectorAll('.disc-swatch').forEach(s=>s.classList.remove('active'));el.classList.add('active');editorDiscStyle=el.dataset.ds;redrawCanvas();}
+function setLabelColor(el){document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));el.classList.add('active');editorLabelColor=el.dataset.color;redrawCanvas();}
+
+function openCoverEditor(){
+    const type=document.getElementById('merch-type').value||'vinyl';
+    setEditorMode(type);
+    document.getElementById('cover-editor-view').classList.add('active');
+    if(selectedRelease){const ni=document.getElementById('editor-item-name');if(!ni.value)ni.value=selectedRelease.name;}
+    if(currentImage){const img=new Image();img.onload=()=>{editorUserImage=img;redrawCanvas();};img.src=currentImage;}
+    redrawCanvas();
+}
+function closeCoverEditor(){document.getElementById('cover-editor-view').classList.remove('active');}
+
+function setEditorMode(mode){
+    editorMode=mode;
+    document.querySelectorAll('#cover-editor-view .btn-secondary[id^="mode-"]').forEach(b=>{b.style.background='transparent';b.style.borderColor='rgba(255,255,255,0.1)';b.style.color='var(--text-secondary)';});
+    const ab=document.getElementById('mode-'+mode);
+    if(ab){ab.style.background='rgba(59,130,246,0.3)';ab.style.borderColor='rgba(59,130,246,0.5)';ab.style.color='white';}
+    const vo=document.getElementById('vinyl-options');
+    if(vo)vo.style.display=mode==='vinyl'?'block':'none';
+    redrawCanvas();
+}
+
+function redrawCanvas(){
+    const canvas=document.getElementById('mockup-canvas');if(!canvas)return;
+    const ctx=canvas.getContext('2d');ctx.clearRect(0,0,canvas.width,canvas.height);
+    if(editorMode==='vinyl')drawVinylMockup(ctx,canvas);
+    else if(editorMode==='cd')drawCDMockup(ctx,canvas);
+    else drawDigitalMockup(ctx,canvas);
+
+    // ── Overlay signature on sleeve if signed edition + sig exists ──
+    const edition = document.getElementById('merch-edition')?.value || '';
+    if(signatureData && edition==='signed' && editorMode!=='digital'){
+        const img = new Image();
+        img.onload = () => {
+            // Sleeve area is 205x205 starting at x=12, y=(H-205)/2
+            const H = canvas.height;
+            const sx=12, sy=(H-205)/2, sw=205, sh=205;
+            // Place sig in bottom-right quadrant of the sleeve, occupying ~55% width
+            const sigW = Math.round(sw * 0.58);
+            const sigH = Math.round(sh * 0.22);
+            const sigX = sx + sw - sigW - 10;
+            const sigY = sy + sh - sigH - 12;
+            ctx.save();
+            ctx.globalAlpha = 0.82;
+            // Blend with multiply so white paper becomes transparent over dark images
+            ctx.globalCompositeOperation = editorUserImage ? 'multiply' : 'source-over';
+            ctx.drawImage(img, sigX, sigY, sigW, sigH);
+            ctx.restore();
+        };
+        img.src = signatureData;
+    }
+
+    const name=document.getElementById('editor-item-name')?.value||'';
+    if(name){ctx.save();ctx.font='bold 12px Inter,sans-serif';ctx.fillStyle='rgba(255,255,255,0.8)';ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=5;ctx.textAlign='center';ctx.fillText(name.length>32?name.substring(0,32)+'…':name,canvas.width/2,canvas.height-8);ctx.restore();}
+}
+
+// ════ VINYL MOCKUP ════
+function drawVinylMockup(ctx,canvas){
+    const W=canvas.width,H=canvas.height;
+    const sw=205,sh=205,sx=12,sy=(H-sh)/2;
+    const sr=sx+sw;
+    const rD=100,cx=sr,cy=H/2;
+    const gc=GROOVE[editorDiscStyle]||GROOVE.classic;
+
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.75)';ctx.shadowBlur=18;ctx.shadowOffsetX=4;ctx.shadowOffsetY=4;
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.fillStyle=gc[3];ctx.fill();ctx.restore();
+
+    const g=ctx.createRadialGradient(cx,cy,rD*0.13,cx,cy,rD);
+    g.addColorStop(0.00,gc[3]);
+    g.addColorStop(0.10,gc[0]);g.addColorStop(0.11,gc[1]);
+    g.addColorStop(0.29,gc[0]);g.addColorStop(0.30,gc[1]);
+    g.addColorStop(0.48,gc[0]);g.addColorStop(0.49,gc[1]);
+    g.addColorStop(0.67,gc[0]);g.addColorStop(0.68,gc[1]);
+    g.addColorStop(0.86,gc[0]);g.addColorStop(1.00,gc[2]);
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+
+    applyDiscOverlay(ctx,cx,cy,rD,editorDiscStyle);
+
+    ctx.save();const sh2=ctx.createLinearGradient(cx-rD,cy-rD,cx+rD,cy+rD);
+    sh2.addColorStop(0,'rgba(255,255,255,0.07)');sh2.addColorStop(0.4,'rgba(255,255,255,0)');sh2.addColorStop(1,'rgba(255,255,255,0.03)');
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.fillStyle=sh2;ctx.fill();ctx.restore();
+
+    ctx.beginPath();ctx.arc(cx,cy,36,0,Math.PI*2);ctx.fillStyle=editorLabelColor;ctx.fill();
+    const lh=ctx.createRadialGradient(cx-7,cy-7,0,cx,cy,36);
+    lh.addColorStop(0,'rgba(255,255,255,0.38)');lh.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.beginPath();ctx.arc(cx,cy,36,0,Math.PI*2);ctx.fillStyle=lh;ctx.fill();
+
+    if(editorLabelImage){ctx.save();ctx.beginPath();ctx.arc(cx,cy,34,0,Math.PI*2);ctx.clip();ctx.drawImage(editorLabelImage,cx-34,cy-34,68,68);ctx.restore();}
+
+    ctx.beginPath();ctx.arc(cx,cy,5,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,0.9)';ctx.fill();
+
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=16;ctx.shadowOffsetX=3;ctx.shadowOffsetY=3;
+    ctx.fillStyle='#e5e5e5';ctx.fillRect(sx,sy,sw,sh);ctx.restore();
+    ctx.fillStyle='#e5e5e5';ctx.fillRect(sx,sy,sw,sh);
+    if(editorUserImage){
+        ctx.drawImage(editorUserImage,sx,sy,sw,sh);
+    }else{
+        ctx.fillStyle='#efefef';ctx.fillRect(sx,sy,sw,sh);
+        ctx.fillStyle='#bbb';ctx.font='12px Inter,sans-serif';ctx.textAlign='center';
+        ctx.fillText('Tap to add cover art',sx+sw/2,sy+sh/2-10);
+        ctx.font='22px sans-serif';ctx.fillText('🎨',sx+sw/2,sy+sh/2+14);
+    }
+    ctx.strokeStyle='rgba(0,0,0,0.14)';ctx.lineWidth=1;ctx.strokeRect(sx,sy,sw,sh);
+}
+
+// ════ CD MOCKUP ════
+function drawCDMockup(ctx,canvas){
+    const W=canvas.width,H=canvas.height;
+    const sw=205,sh=205,sx=12,sy=(H-sh)/2;
+    const sr=sx+sw;
+    const rD=88,cx=sr,cy=H/2;
+
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=16;ctx.shadowOffsetX=3;ctx.shadowOffsetY=3;
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.fillStyle='#f0f0f0';ctx.fill();ctx.restore();
+
+    const cdg=ctx.createLinearGradient(cx-rD,cy-rD,cx+rD,cy+rD);
+    cdg.addColorStop(0,'#f8f8f8');cdg.addColorStop(0.2,'#e8f0ff');cdg.addColorStop(0.4,'#ffe8f8');
+    cdg.addColorStop(0.6,'#f8ffe8');cdg.addColorStop(0.8,'#e8ffff');cdg.addColorStop(1,'#f0e8ff');
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.fillStyle=cdg;ctx.fill();
+
+    for(let i=0;i<5;i++){ctx.beginPath();ctx.arc(cx,cy,20+i*16,0,Math.PI*2);ctx.strokeStyle=`rgba(140,140,200,${0.07-i*0.01})`;ctx.lineWidth=1;ctx.stroke();}
+
+    const cs=ctx.createLinearGradient(cx-rD,cy,cx+rD,cy);
+    cs.addColorStop(0,'rgba(255,255,255,0.5)');cs.addColorStop(0.4,'rgba(255,255,255,0)');cs.addColorStop(1,'rgba(255,255,255,0.2)');
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.fillStyle=cs;ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,rD,0,Math.PI*2);ctx.strokeStyle='rgba(0,0,0,0.08)';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy,19,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,19,0,Math.PI*2);ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=1;ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy,6,0,Math.PI*2);ctx.fillStyle='rgba(0,0,0,0.18)';ctx.fill();
+
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=16;ctx.shadowOffsetX=3;ctx.shadowOffsetY=3;
+    ctx.fillStyle='#e5e5e5';ctx.fillRect(sx,sy,sw,sh);ctx.restore();
+    ctx.fillStyle='#e5e5e5';ctx.fillRect(sx,sy,sw,sh);
+    if(editorUserImage){
+        ctx.drawImage(editorUserImage,sx,sy,sw,sh);
+    }else{
+        ctx.fillStyle='#efefef';ctx.fillRect(sx,sy,sw,sh);
+        ctx.fillStyle='#bbb';ctx.font='12px Inter,sans-serif';ctx.textAlign='center';
+        ctx.fillText('Tap to add cover art',sx+sw/2,sy+sh/2-10);
+        ctx.font='22px sans-serif';ctx.fillText('🎨',sx+sw/2,sy+sh/2+14);
+    }
+    ctx.strokeStyle='rgba(0,0,0,0.14)';ctx.lineWidth=1;ctx.strokeRect(sx,sy,sw,sh);
+}
+
+// ════ DIGITAL MOCKUP ════
+function drawDigitalMockup(ctx,canvas){
+    const W=canvas.width,H=canvas.height,size=240,x=(W-size)/2,y=(H-size)/2;
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.5)';ctx.shadowBlur=22;ctx.shadowOffsetX=4;ctx.shadowOffsetY=4;ctx.fillStyle='#ddd';ctx.fillRect(x,y,size,size);ctx.restore();
+    if(editorUserImage){ctx.drawImage(editorUserImage,x,y,size,size);}
+    else{ctx.fillStyle='#e5e5e5';ctx.fillRect(x,y,size,size);ctx.fillStyle='#bbb';ctx.font='12px Inter,sans-serif';ctx.textAlign='center';ctx.fillText('Tap to add cover art',W/2,H/2-8);ctx.font='26px sans-serif';ctx.fillText('🎨',W/2,H/2+18);}
+    ctx.fillStyle='rgba(59,130,246,0.9)';rRect(ctx,x+10,y+10,84,24,5);
+    ctx.font='bold 10px Inter,sans-serif';ctx.fillStyle='white';ctx.textAlign='center';ctx.fillText('DIGITAL PACK',x+10+42,y+10+16);
+}
+
+// ════ DISC COLOUR OVERLAYS ════
+function applyDiscOverlay(ctx,cx,cy,r,style){
+    if(!['aurora','flame','ocean','splatter'].includes(style))return;
+    ctx.save();ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.clip();
+    if(style==='aurora'){
+        ctx.globalCompositeOperation='screen';ctx.globalAlpha=0.42;
+        const g=ctx.createLinearGradient(cx-r,cy-r,cx+r,cy+r);
+        g.addColorStop(0,'#1565c0');g.addColorStop(0.4,'#7b1fa2');g.addColorStop(0.7,'#0277bd');g.addColorStop(1,'#00897b');
+        ctx.fillStyle=g;ctx.fillRect(cx-r,cy-r,r*2,r*2);
+    }else if(style==='flame'){
+        ctx.globalCompositeOperation='screen';ctx.globalAlpha=0.48;
+        const g=ctx.createRadialGradient(cx,cy+r*0.2,0,cx,cy,r);
+        g.addColorStop(0,'#f9a825');g.addColorStop(0.4,'#e65100');g.addColorStop(1,'#b71c1c');
+        ctx.fillStyle=g;ctx.fillRect(cx-r,cy-r,r*2,r*2);
+    }else if(style==='ocean'){
+        ctx.globalCompositeOperation='screen';ctx.globalAlpha=0.44;
+        const g=ctx.createLinearGradient(cx-r,cy,cx+r,cy+r*0.5);
+        g.addColorStop(0,'#006064');g.addColorStop(0.5,'#0288d1');g.addColorStop(1,'#00bcd4');
+        ctx.fillStyle=g;ctx.fillRect(cx-r,cy-r,r*2,r*2);
+    }else if(style==='splatter'){
+        const cols=['#e91e63','#2196f3','#4caf50','#ff9800','#9c27b0','#00bcd4'];
+        const pts=[[0.28,-0.42],[-0.5,0.22],[0.08,0.5],[-0.3,-0.32],[0.58,0.1],[-0.12,-0.6],[0.4,0.5],[-0.58,0.4]];
+        pts.forEach(([dx,dy],i)=>{
+            const bx=cx+dx*r*0.75,by=cy+dy*r*0.75,br=r*(0.18+(i%3)*0.07);
+            const cg=ctx.createRadialGradient(bx,by,0,bx,by,br);
+            cg.addColorStop(0,cols[i%cols.length]);cg.addColorStop(1,'rgba(0,0,0,0)');
+            ctx.globalAlpha=0.52;ctx.globalCompositeOperation='screen';
+            ctx.fillStyle=cg;ctx.fillRect(cx-r,cy-r,r*2,r*2);
+        });
+    }
+    ctx.restore();
+}
+
+function rRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.fill();}
+
+// Canvas click → upload cover art (sleeve side x < 220)
+document.getElementById('mockup-canvas').addEventListener('click',function(e){
+    const rect=this.getBoundingClientRect(),scaleX=this.width/rect.width,clickX=(e.clientX-rect.left)*scaleX;
+    if(clickX<220)document.getElementById('editor-img-upload').click();
+});
+
+function handleEditorImageUpload(e){
+    const file=e.target.files[0];if(!file)return;
+    const r=new FileReader();r.onload=ev=>{const img=new Image();img.onload=()=>{editorUserImage=img;redrawCanvas();};img.src=ev.target.result;};r.readAsDataURL(file);
+}
+function handleLabelImageUpload(e){
+    const file=e.target.files[0];if(!file)return;
+    const r=new FileReader();r.onload=ev=>{
+        const img=new Image();img.onload=()=>{editorLabelImage=img;document.getElementById('label-preview-img').src=ev.target.result;document.getElementById('label-img-preview').style.display='flex';redrawCanvas();};img.src=ev.target.result;
+    };r.readAsDataURL(file);
+}
+function clearEditorImage(){editorUserImage=null;document.getElementById('editor-img-upload').value='';redrawCanvas();}
+function clearLabelImage(){editorLabelImage=null;document.getElementById('label-img-upload').value='';document.getElementById('label-img-preview').style.display='none';redrawCanvas();}
+function saveCoverArt(){
+    // Merge signature into the saved image
+    const canvas = document.getElementById('mockup-canvas');
+    currentImage = canvas.toDataURL('image/png');
+    document.getElementById('image-preview').src=currentImage;
+    document.getElementById('img-preview-area').style.display='block';
+    closeCoverEditor();
+}
+
+// ════ CORE GAME LOGIC ════
+function init(){showInventory();onEditionChange();}
+function clearImage(ev){if(ev)ev.stopPropagation();currentImage=null;document.getElementById('img-preview-area').style.display='none';}
+function formatMoney(n){return'$'+n.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0});}
+function showCreate(){document.getElementById('inventory-view').style.display='none';document.getElementById('create-view').style.display='block';window.scrollTo(0,0);}
+function showInventory(){document.getElementById('create-view').style.display='none';document.getElementById('inventory-view').style.display='block';loadInventory();window.scrollTo(0,0);}
+
+function goToStep(step){
+    if(step===2&&!selectedRelease)return alert('Please select a release first.');
+    if(step===3&&!checkSlotAvailability())return alert('Resolve the format issue before proceeding.');
+    document.querySelectorAll('.wizard-step').forEach(e=>e.classList.remove('active'));
+    document.querySelectorAll('.step-dot').forEach(e=>{e.classList.remove('active');e.classList.remove('completed');});
+    document.getElementById('step-'+step).classList.add('active');currentStep=step;
+    for(let i=1;i<=3;i++){const d=document.getElementById('dot-'+i);if(i<step)d.classList.add('completed');if(i===step)d.classList.add('active');}
+    if(step===3)updateEstimates();
+}
+
+function onTypeChange(){onEditionChange();updateEstimates();}
+function onEditionChange(){
+    const t=document.getElementById('merch-type').value,e=document.getElementById('merch-edition').value,info=EDITION_INFO[e];
+    document.getElementById('edition-desc').innerHTML=`${info.icon} <strong>${info.label}</strong><br>${info.desc}`;
+    const s=SUGGEST[t][e];document.getElementById('price-hint').textContent=`suggested $${s}`;document.getElementById('price').placeholder=`e.g. ${s}`;
+    // Show/hide signature section based on edition
+    const sigSec = document.getElementById('sig-section');
+    if(sigSec) sigSec.style.display = (e==='signed') ? 'block' : 'none';
+    updateEstimates();updateSlotSection();setEditorMode(t);
+}
+
+function updateSlotSection(){
+    if(!selectedRelease){document.getElementById('slot-section').style.display='none';return;}
+    const inv=JSON.parse(localStorage.getItem('merchInventory')||'[]'),forR=inv.filter(i=>(i.releaseName||i.name)===selectedRelease.name),ut={};
+    forR.forEach(i=>{if(!ut[i.type])ut[i.type]=[];ut[i.type].push(i.edition||'original');});
+    const g=document.getElementById('slot-grid');g.innerHTML='';
+    ['vinyl','cd','digital'].forEach(t=>{const u=ut[t]?ut[t].length:0;const c=document.createElement('div');c.className=`slot-chip ${u>=3?'slot-filled':'slot-open'}`;c.innerHTML=`${TYPE_ICONS[t]} ${t.toUpperCase()} <span style="opacity:.7">${u}/3</span>`;g.appendChild(c);});
+    document.getElementById('slot-section').style.display='block';checkSlotAvailability();
+}
+
+function checkSlotAvailability(){
+    if(!selectedRelease)return true;
+    const t=document.getElementById('merch-type').value,e=document.getElementById('merch-edition').value,eb=document.getElementById('slot-error');
+    const inv=JSON.parse(localStorage.getItem('merchInventory')||'[]');
+    if(inv.find(i=>(i.releaseName||i.name)===selectedRelease.name&&i.type===t&&(i.edition||'original')===e)){eb.innerHTML=`<i class="fas fa-ban"></i> You already have a <strong>${EDITION_INFO[e].label} ${t}</strong> for this release.`;eb.style.display='block';return false;}
+    if(inv.filter(i=>(i.releaseName||i.name)===selectedRelease.name&&i.type===t).length>=3){eb.innerHTML=`<i class="fas fa-ban"></i> Max 3 editions per format reached.`;eb.style.display='block';return false;}
+    eb.style.display='none';return true;
+}
+
+function updateEstimates(){
+    const t=document.getElementById('merch-type').value,e=document.getElementById('merch-edition').value;
+    const qty=parseInt(document.getElementById('qty').value)||0,price=parseFloat(document.getElementById('price').value)||0;
+    document.getElementById('total-cost').textContent=formatMoney(COSTS[t]*qty);
+    const fair=FAIR[t][e],w=document.getElementById('price-warning');
+    if(price>fair*1.8){w.innerHTML='<i class="fas fa-exclamation-triangle"></i> <strong>Very High Price:</strong> Demand will crater.';w.style.display='block';}
+    else if(price>fair*1.3){w.innerHTML='<i class="fas fa-exclamation-triangle"></i> <strong>High Price:</strong> Sales will be slower.';w.style.display='block';}
+    else if(price<fair*0.6&&price>0){w.innerHTML='<i class="fas fa-info-circle"></i> <strong>Below Fair Price:</strong> Fast mover, slim margins.';w.style.display='block';}
+    else w.style.display='none';
+    if(currentStep===2)checkSlotAvailability();
+}
+
+function openSelector(){
+    const m=document.getElementById('selector-modal'),l=document.getElementById('release-list');l.innerHTML='';
+    const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    const scheduled=JSON.parse(localStorage.getItem('scheduledReleases')||'[]');
+    if(scheduled.length>0){const h=document.createElement('div');h.innerHTML='<div style="color:var(--warning);font-size:12px;font-weight:700;margin:10px 0 5px;padding-left:16px;"><i class="fas fa-clock"></i> SCHEDULED (PREORDER)</div>';l.appendChild(h);[...scheduled].reverse().forEach(sc=>{const d=sc.data,nm=d.name||d.songName||d.albumName||'Untitled',isAlbum=sc.type==='album';const el=document.createElement('div');el.className='select-option';el.innerHTML=`<div style="display:flex;align-items:center;gap:12px;"><i class="fas ${isAlbum?'fa-compact-disc':'fa-music'}" style="color:var(--warning);font-size:18px"></i><span style="font-weight:600;font-size:15px">${nm}</span></div><span style="font-size:11px;color:var(--warning);background:rgba(245,158,11,0.15);padding:4px 8px;border-radius:6px;font-weight:700">Preorder</span>`;el.onclick=()=>selectRelease({name:nm,type:isAlbum?'Album':'Single',date:sc.releaseDate,img:d.coverArt,isPreorder:true});l.appendChild(el);});}
+    if(albums.length>0){const h=document.createElement('div');h.innerHTML='<div style="color:var(--secondary);font-size:12px;font-weight:700;margin:10px 0 5px;padding-left:16px;">ALBUMS</div>';l.appendChild(h);[...albums].reverse().forEach(a=>{const d=document.createElement('div');d.className='select-option';d.innerHTML=`<div style="display:flex;align-items:center;gap:12px;"><i class="fas fa-compact-disc" style="color:var(--secondary);font-size:18px"></i><span style="font-weight:600;font-size:15px">${a.name||a.albumName}</span></div><span style="font-size:11px;color:#888;background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:6px;font-weight:700">Album</span>`;d.onclick=()=>selectRelease({name:a.name||a.albumName,type:'Album',date:a.releaseDate,img:a.coverArt});l.appendChild(d);});}
+    if(songs.length>0){const h=document.createElement('div');h.innerHTML='<div style="color:var(--success);font-size:12px;font-weight:700;margin:15px 0 5px;padding-left:16px;">SONGS / SINGLES</div>';l.appendChild(h);[...songs].reverse().forEach(s=>{const isSingle=(s.trackType||'single').toLowerCase()!=='album';const d=document.createElement('div');d.className='select-option';d.innerHTML=`<div style="display:flex;align-items:center;gap:12px;"><i class="fas fa-music" style="color:${isSingle?'var(--success)':'#888'};font-size:18px"></i><span style="font-weight:600;font-size:15px">${s.name||s.songName}</span></div><span style="font-size:11px;color:#888;background:rgba(255,255,255,0.1);padding:4px 8px;border-radius:6px;font-weight:700">${isSingle?'Single':'Track'}</span>`;d.onclick=()=>selectRelease({name:s.name||s.songName,type:'Single',date:s.releaseDate,img:s.coverArt});l.appendChild(d);});}
+    if(!albums.length&&!songs.length&&!scheduled.length)l.innerHTML='<div style="text-align:center;padding:40px;color:#666;"><i class="fas fa-ghost" style="font-size:32px;margin-bottom:12px;"></i><br>No music released yet.</div>';
+    m.style.display='flex';
+}
+
+function selectRelease(item){
+    selectedRelease=item;
+    const preorderTag=item.isPreorder?' <span style="opacity:.8;font-size:11px;margin-left:6px;color:var(--warning);font-weight:700"><i class="fas fa-clock"></i> PREORDER</span>':'';
+    document.getElementById('selected-release-name').innerHTML=`<b style="font-size:16px">${item.name}</b> <span style="opacity:.6;font-size:12px;margin-left:6px">(${item.type})</span>${preorderTag}`;
+    document.getElementById('selector-modal').style.display='none';
+    if(item.img&&!currentImage){currentImage=item.img;document.getElementById('image-preview').src=currentImage;document.getElementById('img-preview-area').style.display='block';const img=new Image();img.onload=()=>{editorUserImage=img;};img.src=item.img;}
+    const ab=document.getElementById('age-warning');
+    if(item.isPreorder){
+        ab.innerHTML='<i class="fas fa-info-circle"></i> <b>Preorder:</b> Sales count live but stay pending — everything ships and hits charts together on release week.';
+        ab.style.display='block';
+    } else {
+        const gd=new Date(localStorage.getItem('currentDate')),rd=new Date(item.date||gd),dw=Math.ceil(Math.abs(gd-rd)/(1000*60*60*24*7));
+        if(dw>24){ab.innerHTML='<i class="fas fa-clock"></i> <b>Old Release:</b> Over 6 months — demand will be lower.';ab.style.display='block';}else ab.style.display='none';
+    }
+    updateSlotSection();updateEstimates();
+}
+
+function createMerch(){
+    if(!selectedRelease){goToStep(1);return alert('Select a release first!');}
+    const type=document.getElementById('merch-type').value,edition=document.getElementById('merch-edition').value;
+    const qty=parseInt(document.getElementById('qty').value),price=parseFloat(document.getElementById('price').value);
+    if(!qty||!price)return alert('Enter quantity and price.');
+    if(!checkSlotAvailability()){goToStep(2);return alert('This edition already exists. Choose a different one.');}
+    // Warn if signed edition has no signature
+    if(edition==='signed'&&!signatureData){
+        if(!confirm('No signature drawn yet — launch anyway without one?'))return;
+    }
+    const tc=COSTS[type]*qty,money=parseFloat(localStorage.getItem('money')||0);
+    if(money<tc)return alert(`Not enough money! Need ${formatMoney(tc)}.`);
+    localStorage.setItem('money',money-tc);
+    const isPreorder=!!selectedRelease.isPreorder;
+    const ni={
+        id:Date.now(),releaseName:selectedRelease.name,name:selectedRelease.name,
+        releaseType:selectedRelease.type.toLowerCase(),type,edition,
+        stock:qty,initialStock:qty,sellingPrice:price,
+        image:currentImage,createdDate:localStorage.getItem('currentDate'),
+        releaseDate:selectedRelease.date,
+        totalSales:0,totalRevenue:0,
+        weeklySales:0,
+        signatureData: (edition==='signed' && signatureData) ? signatureData : null,
+        isPreorder:isPreorder,
+        pendingUnits: isPreorder ? 0 : undefined,
+        pendingRevenue: isPreorder ? 0 : undefined
+    };
+    let inv=JSON.parse(localStorage.getItem('merchInventory')||'[]');inv.unshift(ni);localStorage.setItem('merchInventory',JSON.stringify(inv));
+    alert(isPreorder ? `${EDITION_INFO[edition].label} ${type.toUpperCase()} preorder is live! Sales count now but ship — and pay out — together on release week.` : `${EDITION_INFO[edition].label} ${type.toUpperCase()} created! Sales update each week.`);location.reload();
+}
+
+function restock(id){
+    let inv=JSON.parse(localStorage.getItem('merchInventory')||'[]');const item=inv.find(i=>i.id==id);if(!item)return;
+    let qty=prompt(`Restock "${item.releaseName}" ${item.type}?\nEnter quantity:`,500);if(!qty)return;qty=parseInt(qty);
+    const cost=COSTS[item.type]*qty,money=parseFloat(localStorage.getItem('money')||0);
+    if(money<cost)return alert(`Need ${formatMoney(cost)} to restock.`);
+    if(confirm(`Cost: ${formatMoney(cost)}. Confirm?`)){localStorage.setItem('money',money-cost);item.stock+=qty;item.initialStock+=qty;localStorage.setItem('merchInventory',JSON.stringify(inv));loadInventory();}
+}
+
+function deleteItem(id){
+    if(!confirm('Delete this item? Remaining stock will be lost.'))return;
+    let inv=JSON.parse(localStorage.getItem('merchInventory')||'[]');
+    const item=inv.find(i=>i.id==id);
+    if(item){let hist=JSON.parse(localStorage.getItem('merchHistory')||'[]');if(!hist.find(h=>h.releaseName===(item.releaseName||item.name)&&h.type===item.type&&h.edition===(item.edition||'original'))){hist.push({releaseName:item.releaseName||item.name,type:item.type,edition:item.edition||'original',deletedDate:new Date().toISOString(),totalSales:item.totalSales||0});localStorage.setItem('merchHistory',JSON.stringify(hist));}}
+    inv=inv.filter(i=>i.id!=id);localStorage.setItem('merchInventory',JSON.stringify(inv));loadInventory();
+}
+
+function loadInventory(){
+    const list=document.getElementById('inventory-list'),inv=JSON.parse(localStorage.getItem('merchInventory')||'[]');list.innerHTML='';
+    if(inv.length===0){list.innerHTML='<div style="text-align:center;padding:60px 20px;color:#666"><i class="fas fa-box-open" style="font-size:48px;margin-bottom:16px;opacity:.3"></i><br><p style="font-size:16px">No merchandise yet.</p><button class="btn-main" style="margin:20px auto 0;width:auto" onclick="showCreate()"><i class="fas fa-plus"></i> Create First Item</button></div>';updateStats();return;}
+    const groups={};inv.forEach(item=>{const k=item.releaseName||item.name;if(!groups[k])groups[k]=[];groups[k].push(item);});
+    Object.keys(groups).forEach(relName=>{
+        const gi=groups[relName];const hdr=document.createElement('div');hdr.className='release-group-header';
+        hdr.innerHTML=`<i class="fas fa-compact-disc"></i> ${relName} <span style="font-size:10px;background:rgba(59,130,246,0.1);padding:4px 8px;border-radius:6px;margin-left:8px;">${(gi[0].releaseType||'release').toUpperCase()}</span>`;list.appendChild(hdr);
+        gi.forEach(item=>{
+            const edition=item.edition||'original',edInfo=EDITION_INFO[edition]||EDITION_INFO.original;
+            const sp=Math.max(0,(item.stock/item.initialStock)*100);
+            let cc='stock-high';if(sp<50)cc='stock-med';if(sp<20)cc='stock-low';
+            const tbc={vinyl:'badge-type-vinyl',cd:'badge-type-cd',digital:'badge-type-digital'}[item.type]||'badge-type-vinyl';
+            const ebc={original:'badge-original-b',signed:'badge-signed-b','2nd_edition':'badge-2nd-b'}[edition]||'badge-original-b';
+            const sigBadge = (item.signatureData) ? `<span class="compact-badge" style="background:rgba(191,90,242,0.2);color:#C084FC;border:1px solid rgba(191,90,242,0.3)"><i class="fas fa-signature"></i> Signed</span>` : '';
+            const preorderBadge = item.isPreorder ? `<span class="compact-badge" style="background:rgba(245,158,11,0.2);color:#FCD34D;border:1px solid rgba(245,158,11,0.3)"><i class="fas fa-clock"></i> Preorder</span>` : '';
+            const pendingRow = item.isPreorder ? `<div class="detail-stock-row" style="color:var(--warning)"><span><i class="fas fa-hourglass-half"></i> Pending until release: ${(item.pendingUnits||0).toLocaleString()} units</span><span>${formatMoney(item.pendingRevenue||0)} held</span></div>` : '';
+            const wrap=document.createElement('div');wrap.className=`glass-panel edition-${edition.replace('_edition','')}`;wrap.style.cssText='overflow:hidden;margin-bottom:2px;';
+            wrap.innerHTML=`
+                <div class="merch-compact edition-${edition.replace('_edition','')}" onclick="toggleDetail(${item.id})">
+                    <img src="${item.image||'https://placehold.co/52'}" class="compact-thumb" onerror="this.src='https://placehold.co/52'">
+                    <div class="compact-info">
+                        <div class="compact-name">${item.releaseName||item.name}</div>
+                        <div class="compact-badges"><span class="compact-badge ${tbc}">${TYPE_ICONS[item.type]} ${item.type.toUpperCase()}</span><span class="compact-badge ${ebc}">${edInfo.label.split(' ')[0]}</span>${sigBadge}${preorderBadge}</div>
+                        <div class="compact-stock-bar"><div class="compact-stock-fill ${cc}" style="width:${sp}%"></div></div>
+                    </div>
+                    <div class="compact-right"><span class="compact-stock-pct">${sp.toFixed(0)}%</span><i class="fas fa-chevron-down expand-icon" id="icon-${item.id}"></i></div>
+                </div>
+                <div class="detail-panel" id="detail-${item.id}">
+                    <div class="detail-grid">
+                        <div class="detail-stat"><div class="detail-stat-val">$${item.sellingPrice}</div><div class="detail-stat-label">Price</div></div>
+                        <div class="detail-stat"><div class="detail-stat-val">${(item.totalSales||0).toLocaleString()}</div><div class="detail-stat-label">Sold${item.isPreorder?' (shipped)':''}</div></div>
+                        <div class="detail-stat"><div class="detail-stat-val">${formatMoney(item.totalRevenue||0)}</div><div class="detail-stat-label">Revenue${item.isPreorder?' (paid)':''}</div></div>
+                    </div>
+                    ${pendingRow}
+                    <div class="detail-stock-row"><span>Stock: ${item.stock.toLocaleString()} / ${item.initialStock.toLocaleString()}</span><span style="color:var(--${cc==='stock-high'?'success':cc==='stock-med'?'warning':'error'})">${item.stock.toLocaleString()} remaining</span></div>
+                    <div class="detail-actions"><button class="btn-restock" onclick="restock(${item.id})"><i class="fas fa-plus"></i> Restock</button><button class="btn-delete" onclick="deleteItem(${item.id})"><i class="fas fa-trash"></i> Delete</button></div>
+                </div>`;
+            list.appendChild(wrap);
+        });
+    });updateStats();
+}
+
+function toggleDetail(id){
+    const panel=document.getElementById('detail-'+id),icon=document.getElementById('icon-'+id);if(!panel)return;
+    const open=panel.classList.contains('open');
+    document.querySelectorAll('.detail-panel.open').forEach(p=>p.classList.remove('open'));
+    document.querySelectorAll('.expand-icon.open').forEach(i=>i.classList.remove('open'));
+    if(!open){panel.classList.add('open');if(icon)icon.classList.add('open');}
+}
+
+function updateStats(){
+    const inv=JSON.parse(localStorage.getItem('merchInventory')||'[]');let r=0,s=0;
+    inv.forEach(i=>{r+=(i.totalRevenue||0);s+=(i.totalSales||0);});
+    document.getElementById('total-revenue').innerText=formatMoney(r);
+    document.getElementById('total-sold').innerText=s.toLocaleString();
+    document.getElementById('active-items').innerText=inv.length;
+}
+
+init();
+</script>
+</body>
+</html>

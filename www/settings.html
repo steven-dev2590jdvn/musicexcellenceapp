@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Music Excellence</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        *{margin:0;padding:0;box-sizing:border-box}
+        
+        :root{
+            --primary:#3B82F6;--primary-dark:#1E40AF;--secondary:#8B5CF6;--secondary-dark:#6D28D9;
+            --bg-primary:#0A0A14;--bg-secondary:#12121E;--bg-tertiary:#1A1A2E;
+            --text-primary:#FFFFFF;--text-secondary:#94A3B8;--accent:#06B6D4;
+            --success:#10B981;--warning:#F59E0B;--error:#EF4444;
+            --glass-bg:rgba(255,255,255,0.03);--glass-border:rgba(255,255,255,0.08);
+            --glass-shadow:rgba(0,0,0,0.4);--glow-primary:rgba(59,130,246,0.4);
+            --glow-secondary:rgba(139,92,246,0.4)
+        }
+        
+        body{
+            font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+            background:#0A0A14;color:var(--text-primary);min-height:100vh;
+            padding:20px;padding-bottom:100px;position:relative;overflow-x:hidden
+        }
+        
+        body::before{
+            content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+            background:radial-gradient(circle at 20% 20%,rgba(59,130,246,0.15) 0%,transparent 50%),
+                       radial-gradient(circle at 80% 80%,rgba(139,92,246,0.15) 0%,transparent 50%);
+            pointer-events:none;z-index:0
+        }
+        
+        body::after{
+            content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+            background:url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            pointer-events:none;z-index:0;opacity:0.5
+        }
+        
+        .container{max-width:650px;margin:0 auto;position:relative;z-index:1}
+        
+        h1{
+            font-size:clamp(28px,5vw,38px);font-weight:900;
+            background:linear-gradient(135deg,#3B82F6 0%,#8B5CF6 50%,#06B6D4 100%);
+            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+            margin-bottom:32px;text-align:center;letter-spacing:-0.02em;
+            filter:drop-shadow(0 0 20px var(--glow-primary));
+            animation:titleGlow 3s ease-in-out infinite
+        }
+        
+        @keyframes titleGlow{0%,100%{filter:drop-shadow(0 0 20px var(--glow-primary))}50%{filter:drop-shadow(0 0 30px var(--glow-secondary))}}
+        
+        .card{
+            background:var(--glass-bg);border:1px solid var(--glass-border);
+            border-radius:24px;padding:28px;margin-bottom:24px;
+            backdrop-filter:blur(40px) saturate(180%);
+            -webkit-backdrop-filter:blur(40px) saturate(180%);
+            box-shadow:0 8px 32px var(--glass-shadow),
+                       inset 0 1px 0 rgba(255,255,255,0.1),
+                       0 0 0 1px rgba(255,255,255,0.05);
+            position:relative;overflow:hidden;
+            transition:all 0.4s cubic-bezier(0.4,0,0.2,1)
+        }
+        
+        .card::before{
+            content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+            background:radial-gradient(circle,rgba(59,130,246,0.08) 0%,transparent 70%);
+            opacity:0;transition:opacity 0.4s ease;pointer-events:none
+        }
+        
+        .card:hover{
+            border-color:rgba(59,130,246,0.3);
+            transform:translateY(-4px) scale(1.01);
+            box-shadow:0 12px 48px rgba(59,130,246,0.2),
+                       inset 0 1px 0 rgba(255,255,255,0.15),
+                       0 0 0 1px rgba(59,130,246,0.2)
+        }
+        
+        .card:hover::before{opacity:1}
+        
+        .card h2{
+            font-size:20px;font-weight:800;color:var(--primary);margin-bottom:20px;
+            display:flex;align-items:center;gap:12px;letter-spacing:-0.01em
+        }
+        
+        .card h2 svg{width:26px;height:26px;fill:var(--primary);filter:drop-shadow(0 0 8px var(--glow-primary))}
+        
+        .setting-item{margin-bottom:24px}
+        
+        .setting-label{
+            display:block;font-weight:700;color:var(--text-primary);
+            margin-bottom:10px;font-size:15px;letter-spacing:-0.01em
+        }
+        
+        .setting-description{
+            font-size:13px;color:var(--text-secondary);margin-bottom:16px;
+            line-height:1.6;font-weight:500
+        }
+        
+        select,.difficulty-grid,.language-grid{width:100%}
+        
+        select{
+            padding:14px 18px;border:1px solid var(--glass-border);border-radius:14px;
+            background:rgba(255,255,255,0.04);color:var(--text-primary);
+            font-family:inherit;font-size:16px;cursor:pointer;font-weight:600;
+            backdrop-filter:blur(20px);transition:all 0.3s ease;
+            box-shadow:inset 0 1px 3px rgba(0,0,0,0.2)
+        }
+        
+        select:hover{border-color:var(--primary);background:rgba(59,130,246,0.05)}
+        select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(59,130,246,0.1)}
+        select:disabled{opacity:0.4;cursor:not-allowed}
+        
+        .difficulty-grid,.language-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+        
+        .difficulty-option,.language-option{
+            background:var(--glass-bg);border:2px solid var(--glass-border);
+            border-radius:18px;padding:20px;cursor:pointer;
+            transition:all 0.3s cubic-bezier(0.4,0,0.2,1);text-align:center;
+            backdrop-filter:blur(20px);position:relative;overflow:hidden
+        }
+        
+        .difficulty-option::before,.language-option::before{
+            content:'';position:absolute;top:0;left:0;width:100%;height:100%;
+            background:linear-gradient(135deg,rgba(59,130,246,0.1),rgba(139,92,246,0.1));
+            opacity:0;transition:opacity 0.3s ease
+        }
+        
+        .difficulty-option:hover,.language-option:hover{
+            border-color:var(--primary);transform:translateY(-4px) scale(1.02);
+            box-shadow:0 8px 24px rgba(59,130,246,0.3)
+        }
+        
+        .difficulty-option:hover::before,.language-option:hover::before{opacity:1}
+        
+        .difficulty-option.selected,.language-option.selected{
+            border-color:var(--primary);background:rgba(59,130,246,0.12);
+            box-shadow:0 0 20px rgba(59,130,246,0.4),inset 0 0 20px rgba(59,130,246,0.1)
+        }
+        
+        .difficulty-option.locked{
+            opacity:0.4;cursor:not-allowed;border-color:var(--error);
+            background:rgba(239,68,68,0.05)
+        }
+        
+        .difficulty-option.locked .lock-icon{
+            display:block;margin:12px auto 0;width:24px;height:24px;
+            fill:var(--error);filter:drop-shadow(0 0 8px var(--error))
+        }
+        
+        .difficulty-title,.language-title{
+            font-weight:800;font-size:17px;margin-bottom:6px;
+            display:flex;align-items:center;justify-content:center;gap:8px
+        }
+        
+        .difficulty-easy{color:var(--success)}
+        .difficulty-realistic{color:var(--warning)}
+        .difficulty-hard{color:var(--error)}
+        
+        .difficulty-desc,.language-code{
+            font-size:12px;color:var(--text-secondary);margin-top:6px;font-weight:600
+        }
+        
+        .btn{
+            display:block;width:100%;padding:16px 24px;margin:10px 0;border:none;
+            border-radius:16px;font-family:inherit;font-weight:800;font-size:16px;
+            text-align:center;cursor:pointer;transition:all 0.3s cubic-bezier(0.4,0,0.2,1);
+            text-decoration:none;color:var(--text-primary);position:relative;overflow:hidden;
+            letter-spacing:-0.01em;text-transform:uppercase;font-size:14px
+        }
+        
+        .btn::before{
+            content:'';position:absolute;top:50%;left:50%;width:0;height:0;
+            border-radius:50%;background:rgba(255,255,255,0.2);
+            transform:translate(-50%,-50%);transition:width 0.6s,height 0.6s
+        }
+        
+        .btn:hover::before{width:400px;height:400px}
+        
+        .btn-primary{
+            background:linear-gradient(135deg,#3B82F6 0%,#8B5CF6 100%);
+            box-shadow:0 4px 20px rgba(59,130,246,0.4),0 0 0 1px rgba(255,255,255,0.1) inset
+        }
+        
+        .btn-primary:hover{
+            transform:translateY(-3px) scale(1.02);
+            box-shadow:0 8px 32px rgba(59,130,246,0.6),0 0 40px rgba(139,92,246,0.4)
+        }
+        
+        .btn-danger{
+            background:linear-gradient(135deg,#EF4444 0%,#DC2626 100%);
+            box-shadow:0 4px 20px rgba(239,68,68,0.4),0 0 0 1px rgba(255,255,255,0.1) inset
+        }
+        
+        .btn-danger:hover{
+            transform:translateY(-3px) scale(1.02);
+            box-shadow:0 8px 32px rgba(239,68,68,0.6)
+        }
+        
+        .btn-secondary{
+            background:linear-gradient(135deg,rgba(255,255,255,0.05),rgba(255,255,255,0.02));
+            border:1px solid var(--glass-border);
+            backdrop-filter:blur(20px)
+        }
+        
+        .btn-secondary:hover{
+            border-color:var(--primary);background:rgba(59,130,246,0.08);
+            transform:translateY(-2px)
+        }
+        
+        .btn:disabled{opacity:0.3;cursor:not-allowed;transform:none}
+        .btn:disabled:hover{box-shadow:none}
+        
+        .loading-overlay{
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(10,10,20,0.98);backdrop-filter:blur(40px);
+            z-index:9999;display:none;justify-content:center;align-items:center;flex-direction:column
+        }
+        
+        .loading-overlay.active{display:flex}
+        
+        .loading-content{text-align:center;max-width:450px;padding:50px}
+        
+        .loading-title{
+            font-size:28px;font-weight:900;margin-bottom:24px;
+            background:linear-gradient(135deg,var(--primary),var(--secondary));
+            -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent
+        }
+        
+        .progress-bar-container{
+            width:100%;height:14px;background:rgba(255,255,255,0.08);
+            border-radius:8px;overflow:hidden;margin:24px 0;
+            box-shadow:inset 0 2px 4px rgba(0,0,0,0.3)
+        }
+        
+        .progress-bar{
+            height:100%;background:linear-gradient(90deg,#3B82F6,#8B5CF6,#06B6D4);
+            width:0%;transition:width 0.3s ease;
+            box-shadow:0 0 20px rgba(59,130,246,0.8);
+            background-size:200% 100%;animation:progressShine 2s linear infinite
+        }
+        
+        @keyframes progressShine{0%{background-position:200% 0}100%{background-position:-200% 0}}
+        
+        .progress-text{color:var(--text-secondary);font-size:14px;margin-top:12px;font-weight:600}
+        
+        .warning-box{
+            background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);
+            border-radius:12px;padding:16px;margin-top:16px;font-size:13px;
+            color:var(--error);display:flex;align-items:center;gap:12px;
+            backdrop-filter:blur(20px);font-weight:600
+        }
+        
+        .warning-box svg{width:22px;height:22px;fill:var(--error);flex-shrink:0}
+        
+        .info-box{
+            background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.3);
+            border-radius:12px;padding:16px;margin-top:16px;font-size:13px;
+            color:var(--primary);backdrop-filter:blur(20px);font-weight:600
+        }
+        
+        .back-link{
+            display:inline-flex;align-items:center;gap:10px;color:var(--primary);
+            text-decoration:none;font-weight:700;margin-bottom:24px;
+            transition:all 0.3s cubic-bezier(0.4,0,0.2,1);font-size:15px;
+            padding:10px 16px;border-radius:12px;background:rgba(59,130,246,0.05)
+        }
+        
+        .back-link:hover{
+            transform:translateX(-6px);background:rgba(59,130,246,0.12);
+            box-shadow:0 4px 12px rgba(59,130,246,0.2)
+        }
+        
+        .back-link svg{width:20px;height:20px;fill:currentColor}
+        
+        #premium-btn-container{display:none;margin-bottom:24px}
+        
+        .premium-btn{
+            width:100%;padding:24px;
+            background:linear-gradient(135deg,#2563EB 0%,#7C3AED 50%,#1D4ED8 100%);
+            border:2px solid rgba(96,165,250,0.5);border-radius:20px;color:white;
+            font-weight:900;font-size:17px;text-transform:uppercase;cursor:pointer;
+            box-shadow:0 0 40px rgba(59,130,246,0.6),inset 0 1px 0 rgba(255,255,255,0.2);
+            animation:premiumPulse 2s infinite;display:flex;align-items:center;
+            justify-content:center;gap:12px;transition:all 0.3s ease;
+            position:relative;overflow:hidden;letter-spacing:0.05em
+        }
+        
+        .premium-btn::before{
+            content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+            background:linear-gradient(45deg,transparent,rgba(255,255,255,0.1),transparent);
+            transform:rotate(45deg);animation:premiumShine 3s linear infinite
+        }
+        
+        @keyframes premiumShine{0%{transform:rotate(45deg) translateY(-100%)}100%{transform:rotate(45deg) translateY(100%)}}
+        
+        .premium-btn:hover{
+            transform:translateY(-4px) scale(1.02);
+            box-shadow:0 0 60px rgba(59,130,246,0.9),0 8px 32px rgba(124,58,237,0.5)
+        }
+        
+        @keyframes premiumPulse{
+            0%,100%{box-shadow:0 0 40px rgba(59,130,246,0.6),inset 0 1px 0 rgba(255,255,255,0.2)}
+            50%{box-shadow:0 0 60px rgba(124,58,237,0.8),inset 0 1px 0 rgba(255,255,255,0.3)}
+        }
+        
+        .premium-overlay{
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background:rgba(10,10,20,0.98);z-index:10000;display:none;
+            overflow-y:auto;padding:20px;backdrop-filter:blur(40px)
+        }
+        
+        .premium-overlay.active{display:block}
+        
+        .cheat-group{
+            background:rgba(255,255,255,0.03);padding:20px;border-radius:16px;
+            margin-bottom:20px;border:1px solid rgba(255,255,255,0.08);
+            backdrop-filter:blur(20px);transition:all 0.3s ease
+        }
+        
+        .cheat-group:hover{
+            border-color:rgba(59,130,246,0.3);
+            box-shadow:0 4px 20px rgba(59,130,246,0.2)
+        }
+        
+        .cheat-label{
+            color:#93c5fd;font-size:13px;font-weight:900;text-transform:uppercase;
+            margin-bottom:10px;display:block;letter-spacing:0.05em
+        }
+        
+        .cheat-input{
+            width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(59,130,246,0.3);
+            padding:12px 16px;color:white;border-radius:10px;font-family:inherit;
+            transition:all 0.3s ease;font-weight:600;font-size:15px
+        }
+        
+        .cheat-input:focus{
+            outline:none;border-color:var(--primary);
+            box-shadow:0 0 0 3px rgba(59,130,246,0.2),0 0 20px rgba(59,130,246,0.3)
+        }
+        
+        .auth-input{
+            width:100%;padding:14px 18px;margin-bottom:12px;
+            background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);
+            border-radius:12px;color:white;font-family:inherit;font-weight:600;
+            transition:all 0.3s ease
+        }
+        
+        .auth-input:focus{
+            outline:none;border-color:var(--primary);
+            box-shadow:0 0 0 3px rgba(59,130,246,0.1)
+        }
+        
+        .auth-buttons{display:flex;gap:12px}
+        .auth-buttons .btn{margin:0}
+        
+        .icon-container{
+            display:inline-flex;align-items:center;justify-content:center;
+            width:28px;height:28px;border-radius:10px;
+            background:rgba(59,130,246,0.1);padding:6px
+        }
+        
+        .lock-icon{display:none}
+        
+        @media(max-width:640px){
+            .container{padding:0 10px}
+            .card{padding:20px;border-radius:20px}
+            h1{font-size:26px}
+            .difficulty-grid,.language-grid{grid-template-columns:1fr}
+            .auth-buttons{flex-direction:column}
+        }
+        
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        
+        .floating{animation:float 3s ease-in-out infinite}
+    </style>
+</head>
+<body>
+
+<!-- PREMIUM OVERLAY -->
+<div id="premium-overlay" class="premium-overlay">
+    <div class="container">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;">
+            <h2 style="color:#3b82f6;font-size:26px;font-weight:900;display:flex;align-items:center;gap:10px;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="#3b82f6">
+                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                </svg>
+                EDITOR'S CHOICE
+            </h2>
+            <button onclick="togglePremium(false)" style="background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);width:44px;height:44px;border-radius:12px;color:white;font-size:24px;cursor:pointer;transition:all 0.3s ease;">✕</button>
+        </div>
+
+        <div class="cheat-group">
+            <label class="cheat-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#93c5fd" style="display:inline;vertical-align:middle;margin-right:6px;">
+                    <path d="M15.5 5H11l5 7-5 7h4.5l5-7z"/>
+                    <path d="M8.5 5H4l5 7-5 7h4.5l5-7z"/>
+                </svg>
+                SKIP WEEKS (Max 30)
+            </label>
+            <p style="color:var(--error);font-size:12px;margin-bottom:10px;font-weight:600;">Warning: Charts freeze during skip.</p>
+            <div style="display:flex;gap:12px;">
+                <input type="number" id="p-skip" class="cheat-input" value="2" min="2" max="30">
+                <button onclick="pSkipWeeks()" class="btn btn-primary" style="margin:0;width:90px;padding:12px;">GO</button>
+            </div>
+        </div>
+
+        <div class="cheat-group">
+            <label class="cheat-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#93c5fd" style="display:inline;vertical-align:middle;margin-right:6px;">
+                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                </svg>
+                ARTIST IDENTITY
+            </label>
+            <input type="text" id="p-name" class="cheat-input" placeholder="Change Name">
+            <button onclick="pChangeName()" class="btn btn-primary">Update Name</button>
+            <div style="margin-top:18px;">
+                <label class="cheat-label">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="#93c5fd" style="display:inline;vertical-align:middle;margin-right:6px;">
+                        <path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/>
+                    </svg>
+                    MULTI-GENRE
+                </label>
+                <input type="text" id="p-genres" class="cheat-input" placeholder="e.g. Pop, Rock, Rap">
+                <button onclick="pChangeGenres()" class="btn btn-primary">Set Genres</button>
+            </div>
+        </div>
+
+        <div class="cheat-group">
+            <label class="cheat-label">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#93c5fd" style="display:inline;vertical-align:middle;margin-right:6px;">
+                    <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h2v4h2V8h2v4h2V8h2v4h2V8h2v4h2V8h2v8z"/>
+                </svg>
+                SANDBOX STATS
+            </label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <input type="number" id="s-money" class="cheat-input" placeholder="Money">
+                <input type="number" id="s-pop" class="cheat-input" placeholder="Popularity">
+                <input type="number" id="s-resp" class="cheat-input" placeholder="Respect">
+                <input type="number" id="s-reach" class="cheat-input" placeholder="Followers">
+            </div>
+            <button onclick="pApplyStats()" class="btn btn-primary">Apply Sandbox Stats</button>
+        </div>
+        
+        <button onclick="pMaxSkills()" class="btn" style="background:linear-gradient(135deg,var(--success),#059669);box-shadow:0 4px 20px rgba(16,185,129,0.4)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="display:inline;vertical-align:middle;margin-right:8px;">
+                <path d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+            </svg>
+            MAX ALL SKILLS (100)
+        </button>
+        <button onclick="pUnlockDiff()" class="btn" style="background:linear-gradient(135deg,var(--warning),#D97706);box-shadow:0 4px 20px rgba(245,158,11,0.4)">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" style="display:inline;vertical-align:middle;margin-right:8px;">
+                <path d="M12 17c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm6-9h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6h1.9c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm0 12H6V10h12v10z"/>
+            </svg>
+            UNLOCK DIFFICULTY LOCK
+        </button>
+    </div>
+</div>
+
+<div class="container">
+    <a href="music.html" class="back-link">
+        <svg viewBox="0 0 24 24">
+            <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+        </svg>
+        Back to Game
+    </a>
+    
+    <!-- FIREBASE AUTH CARD -->
+    <div class="card">
+        <h2>
+            <svg viewBox="0 0 24 24">
+                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+            </svg>
+            Cloud Account
+        </h2>
+        <div id="logged-out">
+            <input type="email" id="fb-email" class="auth-input" placeholder="Email">
+            <input type="password" id="fb-pass" class="auth-input" placeholder="Password">
+            <div class="auth-buttons">
+                <button id="btn-login" class="btn btn-primary">Login</button>
+                <button id="btn-signup" class="btn btn-secondary">Sign Up</button>
+            </div>
+        </div>
+        <div id="logged-in" style="display:none;text-align:center;">
+            <p id="display-email" style="color:var(--success);margin-bottom:12px;font-weight:700;font-size:15px;"></p>
+            <button id="btn-logout" class="btn btn-danger" style="margin-top:0;">Logout</button>
+        </div>
+    </div>
+
+    <!-- PREMIUM BUTTON -->
+    <div id="premium-btn-container">
+        <button class="premium-btn floating" onclick="togglePremium(true)">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            EDITOR'S CHOICE PREMIUM
+        </button>
+    </div>
+    
+    <h1>
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="url(#settingsGradient)" style="display:inline;vertical-align:middle;margin-right:12px;">
+            <defs>
+                <linearGradient id="settingsGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" style="stop-color:#3B82F6"/>
+                    <stop offset="100%" style="stop-color:#8B5CF6"/>
+                </linearGradient>
+            </defs>
+            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+        </svg>
+        Settings
+    </h1>
+    
+    <!-- DIFFICULTY SETTINGS -->
+    <div class="card">
+        <h2>
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+            </svg>
+            Game Difficulty
+        </h2>
+        
+        <div class="setting-item">
+            <label class="setting-label">Choose Your Experience</label>
+            <p class="setting-description">
+                This affects stream counts, popularity growth, and success rates. 
+                <strong>Can only be set once!</strong>
+            </p>
+            
+            <div class="difficulty-grid" id="difficulty-grid">
+                <div class="difficulty-option" data-difficulty="easy" onclick="selectDifficulty('easy')">
+                    <div class="difficulty-title difficulty-easy">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#10B981">
+                            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                        </svg>
+                        EASY
+                    </div>
+                    <div class="difficulty-desc">Easy - Breezy</div>
+                    <svg class="lock-icon" viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                </div>
+                
+                <div class="difficulty-option" data-difficulty="realistic" onclick="selectDifficulty('realistic')">
+                    <div class="difficulty-title difficulty-realistic">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#F59E0B">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        REALISTIC
+                    </div>
+                    <div class="difficulty-desc">Balanced experience</div>
+                    <svg class="lock-icon" viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                </div>
+                
+                <div class="difficulty-option" data-difficulty="hard" onclick="selectDifficulty('hard')">
+                    <div class="difficulty-title difficulty-hard">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#EF4444">
+                            <path d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zM13 16h-2v2h2v-2zm0-6h-2v4h2v-4z"/>
+                        </svg>
+                        HARD
+                    </div>
+                    <div class="difficulty-desc">Challenge Yourself</div>
+                    <svg class="lock-icon" viewBox="0 0 24 24">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="warning-box" id="difficulty-warning" style="display:none;">
+                <svg viewBox="0 0 24 24">
+                    <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
+                </svg>
+                <span>Difficulty is locked! You cannot change this setting.</span>
+            </div>
+            
+            <button class="btn btn-primary" id="save-difficulty-btn" onclick="saveDifficulty()" disabled>
+                Save Difficulty
+            </button>
+        </div>
+    </div>
+    
+    <!-- LANGUAGE SETTINGS -->
+    <div class="card">
+        <h2>
+            <svg viewBox="0 0 24 24">
+                <path d="M12.87 15.07l-2.54-2.51.03-.03c1.74-1.94 2.98-4.17 3.71-6.53H17V4h-7V2H8v2H1v1.99h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04zM18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12zm-2.62 7l1.62-4.33L19.12 17h-3.24z"/>
+            </svg>
+            Language / اللغة
+        </h2>
+        
+        <div class="setting-item">
+            <label class="setting-label">Select Interface Language</label>
+            <p class="setting-description">
+                Changes all menus, buttons, and labels. Translations are cached for offline use.
+            </p>
+            
+            <div class="language-grid" id="language-grid">
+                <div class="language-option selected" data-lang="en" onclick="selectLanguage('en')">
+                    <div class="language-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        English
+                    </div>
+                    <div class="language-code">Default</div>
+                </div>
+                
+                <div class="language-option" data-lang="ar" onclick="selectLanguage('ar')">
+                    <div class="language-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        العربية
+                    </div>
+                    <div class="language-code">Arabic</div>
+                </div>
+                
+                <div class="language-option" data-lang="zu" onclick="selectLanguage('zu')">
+                    <div class="language-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        isiZulu
+                    </div>
+                    <div class="language-code">Zulu</div>
+                </div>
+                
+                <div class="language-option" data-lang="nl" onclick="selectLanguage('nl')">
+                    <div class="language-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        Nederlands
+                    </div>
+                    <div class="language-code">Dutch</div>
+                </div>
+                
+                <div class="language-option" data-lang="fr" onclick="selectLanguage('fr')">
+                    <div class="language-title">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                        </svg>
+                        Français
+                    </div>
+                    <div class="language-code">French</div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:8px;">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+                </svg>
+                First-time translation may take 10-30 seconds. Subsequent loads are instant.
+            </div>
+            
+            <button class="btn btn-primary" id="apply-language-btn" onclick="applyLanguage()" disabled>
+                Apply Language
+            </button>
+        </div>
+    </div>
+    
+    <!-- DATA MANAGEMENT -->
+    <div class="card">
+        <h2>
+            <svg viewBox="0 0 24 24">
+                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+            </svg>
+            Data Management
+        </h2>
+        
+        <div class="setting-item">
+            <button class="btn btn-secondary" onclick="exportSave()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:8px;">
+                    <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+                </svg>
+                Export Save Data
+            </button>
+            
+            <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:8px;">
+                    <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6-.67l-2.59 2.58L9 12.5l5-5 5 5-1.41 1.41L15 11.33V21h-2z"/>
+                </svg>
+                Import Save Data
+            </button>
+            <input type="file" id="import-file" accept=".json" style="display:none" onchange="importSave(event)">
+            
+            <button class="btn btn-danger" onclick="confirmReset()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style="display:inline;vertical-align:middle;margin-right:8px;">
+                    <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                Delete All Data & Reset Game
+            </button>
+        </div>
+    </div>
+    
+    <!-- ABOUT -->
+    <div class="card">
+        <h2>
+            <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/>
+            </svg>
+            About
+        </h2>
+        
+        <div style="color:var(--text-secondary);font-size:14px;line-height:1.8;font-weight:500;">
+            <p style="color:var(--text-primary);font-weight:800;font-size:16px;margin-bottom:8px;">Music Excellence 2025</p>
+            <p style="margin-bottom:4px;"><strong style="color:var(--primary);">Version:</strong> 8.1</p>
+            <p style="margin-bottom:16px;">A music industry simulation game</p>
+            <p style="margin-bottom:4px;"><strong style="color:var(--primary);">Translation powered by:</strong> MyMemory API</p>
+            <p><strong style="color:var(--primary);">Credits:</strong> Game by Music Excellence Ltd / Steven</p>
+        </div>
+    </div>
+</div>
+
+<!-- LOADING OVERLAY -->
+<div class="loading-overlay" id="loading-overlay">
+    <div class="loading-content">
+        <div class="loading-title">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="url(#loadingGradient)" style="display:inline;vertical-align:middle;margin-right:12px;animation:spin 2s linear infinite;">
+                <defs>
+                    <linearGradient id="loadingGradient">
+                        <stop offset="0%" style="stop-color:#3B82F6"/>
+                        <stop offset="100%" style="stop-color:#8B5CF6"/>
+                    </linearGradient>
+                </defs>
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            Translating...
+        </div>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <div class="progress-text" id="progress-text">Preparing translation...</div>
+    </div>
+</div>
+
+<style>
+@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}
+</style>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    const firebaseConfig = {
+        apiKey: "AIzaSyAAkmh5MvkQ6X86u2qxAUFawRe3B1WhB20",
+        authDomain: "editorschoice-ace3c.firebaseapp.com",
+        databaseURL: "https://editorschoice-ace3c-default-rtdb.firebaseio.com",
+        projectId: "editorschoice-ace3c",
+        storageBucket: "editorschoice-ace3c.firebasestorage.app",
+        messagingSenderId: "902609269552",
+        appId: "1:902609269552:web:27c5238802cbf62a8fcef5"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    onAuthStateChanged(auth, (user) => {
+    const outDiv = document.getElementById('logged-out');
+    const inDiv = document.getElementById('logged-in');
+    const premBtn = document.getElementById('premium-btn-container');
+
+    if (user) {
+        outDiv.style.display = 'none';
+        inDiv.style.display = 'block';
+        document.getElementById('display-email').textContent = `Logged in: ${user.email}`;
+        
+        const safeEmail = user.email.replace(/\./g, ',');
+        onValue(ref(db, `users/${safeEmail}/premium`), (snap) => {
+            const isPremium = snap.val() === 'yes';
+            premBtn.style.display = isPremium ? 'block' : 'none';
+            localStorage.setItem('isPremium', isPremium);
+        });
+    } else {
+        outDiv.style.display = 'block';
+        inDiv.style.display = 'none';
+        premBtn.style.display = 'none';
+        localStorage.setItem('isPremium', 'false');
+    }
+});
+
+    document.getElementById('btn-login').onclick = () => {
+        signInWithEmailAndPassword(auth, document.getElementById('fb-email').value, document.getElementById('fb-pass').value)
+            .catch(e => alert('Login failed: ' + e.message));
+    };
+    
+    document.getElementById('btn-signup').onclick = () => {
+    const email = document.getElementById('fb-email').value;
+    const password = document.getElementById('fb-pass').value;
+    
+    createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Auto-add user to database with premium: no
+            const safeEmail = email.replace(/\./g, ',');
+            const userRef = ref(db, `users/${safeEmail}`);
+            set(userRef, {
+                email: email,
+                premium: 'no',
+                createdAt: new Date().toISOString()
+            });
+        })
+        .catch(e => alert('Sign up failed: ' + e.message));
+};
+    
+    document.getElementById('btn-logout').onclick = () => signOut(auth);
+</script>
+
+<script>
+    // --- INDEXEDDB HELPER ---
+const dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open('MusicExcellenceDB', 1);
+    req.onupgradeneeded = (e) => e.target.result.createObjectStore('images');
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+});
+async function saveImageToDB(key, data) {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').put(data, key);
+    return new Promise(r => tx.oncomplete = r);
+}
+async function getImageFromDB(key) {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readonly');
+    const req = tx.objectStore('images').get(key);
+    return new Promise(r => req.onsuccess = () => r(req.result));
+}
+async function clearImageDB() {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').clear();
+    return new Promise(r => tx.oncomplete = r);
+}
+// ------------------------
+
+    let selectedDifficulty = null;
+    
+    function initializeDifficulty() {
+        const saved = localStorage.getItem('gameDifficulty');
+        const locked = localStorage.getItem('difficultyLocked') === 'true';
+        
+        if (locked && saved) {
+            document.querySelectorAll('.difficulty-option').forEach(opt => {
+                if (opt.dataset.difficulty === saved) {
+                    opt.classList.add('selected');
+                } else {
+                    opt.classList.add('locked');
+                }
+            });
+            document.getElementById('difficulty-warning').style.display = 'flex';
+            document.getElementById('save-difficulty-btn').style.display = 'none';
+        } else if (saved) {
+            selectedDifficulty = saved;
+            document.querySelector(`[data-difficulty="${saved}"]`).classList.add('selected');
+            document.getElementById('save-difficulty-btn').disabled = false;
+        }
+    }
+    
+    function selectDifficulty(difficulty) {
+        const locked = localStorage.getItem('difficultyLocked') === 'true';
+        if (locked) return;
+        
+        selectedDifficulty = difficulty;
+        
+        document.querySelectorAll('.difficulty-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        document.querySelector(`[data-difficulty="${difficulty}"]`).classList.add('selected');
+        document.getElementById('save-difficulty-btn').disabled = false;
+    }
+    
+    function saveDifficulty() {
+        if (!selectedDifficulty) return;
+        
+        if (confirm(`Lock difficulty to ${selectedDifficulty.toUpperCase()}? This cannot be changed later!`)) {
+            localStorage.setItem('gameDifficulty', selectedDifficulty);
+            localStorage.setItem('difficultyLocked', 'true');
+            
+            alert(`✅ Difficulty set to ${selectedDifficulty.toUpperCase()} and locked!`);
+            initializeDifficulty();
+        }
+    }
+    
+    let selectedLanguage = localStorage.getItem('gameLanguage') || 'en';
+    
+    function initializeLanguage() {
+        document.querySelectorAll('.language-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        document.querySelector(`[data-lang="${selectedLanguage}"]`).classList.add('selected');
+    }
+    
+    function selectLanguage(lang) {
+        selectedLanguage = lang;
+        
+        document.querySelectorAll('.language-option').forEach(opt => {
+            opt.classList.remove('selected');
+        });
+        
+        document.querySelector(`[data-lang="${lang}"]`).classList.add('selected');
+        document.getElementById('apply-language-btn').disabled = false;
+    }
+    
+    async function applyLanguage() {
+        if (selectedLanguage === 'en') {
+            localStorage.setItem('gameLanguage', 'en');
+            alert('✅ Language set to English');
+            return;
+        }
+        
+        const cached = localStorage.getItem(`translations_${selectedLanguage}`);
+        if (cached) {
+            localStorage.setItem('gameLanguage', selectedLanguage);
+            alert('✅ Language applied! Reload the game to see changes.');
+            return;
+        }
+        
+        if (confirm('First-time translation will take 10-30 seconds. Continue?')) {
+            await translateInterface(selectedLanguage);
+        }
+    }
+    
+    async function translateInterface(targetLang) {
+        const overlay = document.getElementById('loading-overlay');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        
+        overlay.classList.add('active');
+        
+        const stringsToTranslate = {
+            gameTitle: 'Music Excellence',
+            currentDate: 'Current Date',
+            balance: 'Balance',
+            mailbox: 'Mailbox',
+            popularityRespect: 'Popularity & Respect',
+            popularity: 'Popularity',
+            respect: 'Respect',
+            nextWeek: 'NEXT WEEK',
+            resetGame: 'Reset Game',
+            studioSession: 'STUDIO SESSION',
+            makeSong: 'MAKE SONG',
+            makeRemix: 'MAKE REMIX',
+            makeAlbum: 'MAKE ALBUM',
+            makeVideo: 'MAKE VIDEO',
+            upgradeSkills: 'Upgrade Your Skills',
+            vocals: 'Vocals',
+            rapping: 'Rapping',
+            songwriting: 'Songwriting',
+            creativity: 'Creativity',
+            internet: 'INTERNET',
+            apps: 'Apps',
+            home: 'Home',
+            studio: 'Studio',
+            createYourArtist: 'Create Your Artist',
+            name: 'Name',
+            age: 'Age',
+            origin: 'Origin',
+            genre: 'Genre',
+            startYear: 'Start Year',
+            startCareer: 'Start Your Career',
+            loading: 'Loading...',
+            save: 'Save',
+            cancel: 'Cancel',
+            confirm: 'Confirm',
+            success: 'Success',
+            error: 'Error',
+            streams: 'Streams',
+            followers: 'Followers',
+            likes: 'Likes',
+            views: 'Views',
+            weekComplete: 'Week Complete',
+            skillsUpgraded: 'Skills Upgraded!',
+            notEnoughMoney: 'Not Enough Money',
+            backToHome: 'Back to Home',
+            selectSlot: 'Select Your Slot',
+            slot: 'Slot',
+            upgrade: 'Upgrade',
+            level: 'Level',
+            cost: 'Cost',
+            charts: 'Charts',
+            rank: 'Rank',
+            lastWeek: 'Last Week',
+            peakPosition: 'Peak Position',
+            weeksOnChart: 'Weeks on Chart',
+            social: 'Social',
+            posts: 'Posts',
+            following: 'Following',
+            tours: 'Tours',
+            tickets: 'Tickets',
+            revenue: 'Revenue',
+            merchandise: 'Merchandise',
+            inventory: 'Inventory',
+            price: 'Price',
+            stock: 'Stock',
+            recordDeal: 'Record Deal',
+            independent: 'Independent',
+            contract: 'Contract',
+            royalty: 'Royalty',
+            awards: 'Awards',
+            nominations: 'Nominations',
+            winner: 'Winner',
+            single: 'Single',
+            album: 'Album',
+            ep: 'EP',
+            mixtape: 'Mixtape',
+            pop: 'Pop',
+            rock: 'Rock',
+            rap: 'Rap',
+            rnb: 'R&B',
+            dance: 'Dance',
+            kpop: 'K-Pop'
+        };
+        
+        const total = Object.keys(stringsToTranslate).length;
+        let completed = 0;
+        const translations = {};
+        
+        for (const [key, text] of Object.entries(stringsToTranslate)) {
+            try {
+                progressText.textContent = `Translating: ${text}`;
+                
+                const translated = await translateText(text, targetLang);
+                translations[key] = translated;
+                
+                completed++;
+                const progress = (completed / total) * 100;
+                progressBar.style.width = progress + '%';
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+            } catch (error) {
+                console.error(`Failed to translate "${text}":`, error);
+                translations[key] = text;
+            }
+        }
+        
+        localStorage.setItem(`translations_${targetLang}`, JSON.stringify(translations));
+        localStorage.setItem('gameLanguage', targetLang);
+        
+        overlay.classList.remove('active');
+        
+        alert('✅ Translation complete! Reload the game to see changes.');
+    }
+    
+    async function translateText(text, targetLang) {
+        if (text.length <= 100) {
+            return await translateChunk(text, targetLang);
+        } else {
+            const chunks = text.match(/.{1,100}/g) || [text];
+            const translated = await Promise.all(
+                chunks.map(chunk => translateChunk(chunk, targetLang))
+            );
+            return translated.join('');
+        }
+    }
+    
+    async function translateChunk(text, targetLang) {
+        try {
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            
+            if (data.responseStatus === 200) {
+                return data.responseData.translatedText;
+            } else {
+                throw new Error('Translation failed');
+            }
+        } catch (error) {
+            console.error('Translation API error:', error);
+            return text;
+        }
+    }
+    
+    function exportSave() {
+        const saveData = {};
+        
+        for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            saveData[key] = localStorage.getItem(key);
+        }
+        
+        const dataStr = JSON.stringify(saveData, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `music-excellence-save-${Date.now()}.json`;
+        a.click();
+        
+        URL.revokeObjectURL(url);
+        alert('✅ Save data exported!');
+    }
+    
+    function importSave(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const saveData = JSON.parse(e.target.result);
+                
+                if (confirm('⚠️ This will overwrite your current save. Continue?')) {
+                    localStorage.clear();
+                    
+                    for (const [key, value] of Object.entries(saveData)) {
+                        localStorage.setItem(key, value);
+                    }
+                    
+                    alert('✅ Save data imported! Reload the game.');
+                    window.location.href = 'music.html';
+                }
+            } catch (error) {
+                alert('❌ Invalid save file!');
+            }
+        };
+        reader.readAsText(file);
+    }
+    
+    function confirmReset() {
+    if (confirm('⚠️ DELETE ALL DATA? This cannot be undone!')) {
+        if (confirm('Are you absolutely sure? Type YES in the next prompt.')) {
+            const userInput = prompt('Type YES to confirm total data wipe:');
+            if (userInput === 'YES') {
+                localStorage.clear();
+
+                // Also wipe all IndexedDB databases so posts don't survive
+                const dbs = ['VibetokDB', 'InstaifyDB', 'InstaifyGifDB', 'MusicGameDB', 'MusicVideoDB', 'MusicExcellenceDB'];
+                dbs.forEach(name => indexedDB.deleteDatabase(name));
+
+                alert('✅ All data deleted. Redirecting...');
+                window.location.href = 'music.html';
+            }
+        }
+    }
+
+    }
+
+    function togglePremium(show) {
+        document.getElementById('premium-overlay').classList.toggle('active', show);
+        if(show) {
+            document.getElementById('s-money').value = localStorage.getItem('money') || 0;
+            document.getElementById('s-pop').value = localStorage.getItem('popularity') || 0;
+            document.getElementById('s-resp').value = localStorage.getItem('respect') || 0;
+        }
+    }
+
+    function pSkipWeeks() {
+        const w = parseInt(document.getElementById('p-skip').value);
+        let d = new Date(localStorage.getItem('currentDate') || new Date());
+        d.setDate(d.getDate() + (w * 7));
+        localStorage.setItem('currentDate', d.toISOString());
+        alert(`✅ Skipped ${w} weeks.`);
+    }
+
+    function pChangeName() {
+        const n = document.getElementById('p-name').value;
+        if (!n) return alert('❌ Enter a name!');
+        let details = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+        details.name = n;
+        localStorage.setItem('artistDetails', JSON.stringify(details));
+        alert("✅ Name Updated.");
+    }
+
+    function pChangeGenres() {
+        const g = document.getElementById('p-genres').value;
+        if (!g) return alert('❌ Enter genres!');
+        let details = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+        details.genre = g;
+        localStorage.setItem('artistDetails', JSON.stringify(details));
+        alert("✅ Genres Updated.");
+    }
+
+    function pApplyStats() {
+        localStorage.setItem('money', document.getElementById('s-money').value || 0);
+        localStorage.setItem('popularity', document.getElementById('s-pop').value || 0);
+        localStorage.setItem('respect', document.getElementById('s-resp').value || 0);
+        alert("✅ Stats Applied.");
+    }
+
+    function pMaxSkills() {
+        localStorage.setItem('vocalsLevel', 100);
+        localStorage.setItem('rappingLevel', 100);
+        localStorage.setItem('songwritingLevel', 100);
+        localStorage.setItem('creativityLevel', 100);
+        alert("✅ Skills Maxed to 100.");
+    }
+
+    function pUnlockDiff() {
+        localStorage.setItem('difficultyLocked', 'false');
+        alert("✅ Difficulty lock removed.");
+        initializeDifficulty();
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeDifficulty();
+        initializeLanguage();
+    });
+</script>
+</body>
+</html>

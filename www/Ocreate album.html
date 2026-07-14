@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Create New Project</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #0A84FF;
+            --accent-glow: rgba(10, 132, 255, 0.4);
+            --live-accent: #FF6B35;
+            --live-glow: rgba(255, 107, 53, 0.4);
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-highlight: rgba(255, 255, 255, 0.2);
+            --blur: blur(24px);
+            --text: #ffffff;
+            --text2: rgba(255, 255, 255, 0.6);
+        }
+        
+        * {margin:0; padding:0; box-sizing:border-box;}
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 15% 0%, #2a2a4a 0%, #050505 60%), 
+                        radial-gradient(circle at 85% 100%, #1a3a4a 0%, #050505 60%);
+            background-attachment: fixed;
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: 100px;
+            overflow-x: hidden;
+        }
+
+        .container { max-width: 550px; margin: 0 auto; padding: 20px; }
+
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 5px 0;
+        }
+
+        .back-btn {
+            width: 38px; height: 38px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: grid; place-items: center;
+            transition: .3s;
+            font-size: 16px;
+            color: var(--text);
+        }
+        .back-btn:hover { background: var(--glass-highlight); }
+
+        h1 { font-size: 24px; font-weight: 900; letter-spacing: -0.5px; text-transform: uppercase; }
+
+        .stepper {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            position: relative;
+            padding: 0 10px;
+        }
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 20px; right: 20px;
+            height: 2px;
+            background: var(--glass-border);
+            transform: translateY(-50%);
+            z-index: 1;
+        }
+        .step-indicator {
+            position: relative;
+            z-index: 2;
+            background: #111;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid var(--glass-border);
+            font-weight: 900; font-size: 14px;
+            color: var(--text2);
+            transition: .4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-indicator.active {
+            border-color: var(--accent); color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+            transform: scale(1.1);
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+        }
+        .step-indicator.active.live-mode {
+            border-color: var(--live-accent); color: var(--live-accent);
+            box-shadow: 0 0 15px var(--live-glow);
+        }
+        .step-indicator.completed { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+        .step-content {
+            display: none;
+            animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .step-content.active { display: block; }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            display: block; color: var(--text2); font-size: 12px;
+            text-transform: uppercase; font-weight: 800; margin-bottom: 8px; letter-spacing: 1px;
+        }
+
+        input, select {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 16px; font-weight: 800; font-family: inherit;
+            outline: none; transition: .3s;
+            backdrop-filter: var(--blur);
+            -webkit-backdrop-filter: var(--blur);
+        }
+        input::placeholder { color: rgba(255, 255, 255, 0.3); font-weight: 700; }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); background: rgba(0,0,0,0.5); }
+        select option { background: #111; }
+
+        /* Tour picker card */
+        .tour-picker {
+            display: none;
+            animation: slideIn 0.3s ease forwards;
+        }
+        .tour-picker.visible { display: block; }
+
+        .tour-card-item {
+            padding: 14px 16px;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: .2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .tour-card-item:hover { background: rgba(255, 107, 53, 0.1); border-color: var(--live-accent); }
+        .tour-card-item.selected {
+            background: rgba(255, 107, 53, 0.15);
+            border-color: var(--live-accent);
+        }
+        .tour-card-item.disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        .tour-radio {
+            width: 20px; height: 20px;
+            border-radius: 50%; border: 2px solid var(--text2);
+            display: grid; place-items: center; font-size: 10px;
+            color: transparent; transition: .2s; flex-shrink: 0;
+        }
+        .tour-card-item.selected .tour-radio {
+            background: var(--live-accent); border-color: var(--live-accent); color: #fff;
+        }
+        .tour-info-text { flex: 1; }
+        .tour-name-text { font-weight: 800; font-size: 14px; text-transform: uppercase; }
+        .tour-meta-text { font-size: 11px; color: var(--text2); font-weight: 700; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        .live-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--live-accent), #FF8C42);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .no-tours-msg {
+            text-align: center;
+            padding: 30px 20px;
+            color: var(--text2);
+            font-size: 13px;
+            font-weight: 700;
+            border: 1px dashed var(--glass-border);
+            border-radius: 14px;
+        }
+        .no-tours-msg i { display: block; font-size: 28px; margin-bottom: 10px; opacity: 0.4; }
+
+        .req-card {
+            padding: 14px 18px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .req-text { font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;}
+        .req-text.live { color: var(--live-accent); }
+        .progress-indicator { font-size: 14px; color: #fff; font-weight: 900; }
+
+        .section-title {
+            display: flex; justify-content: space-between; align-items: flex-end;
+            margin-bottom: 15px; font-size: 18px; font-weight: 900; text-transform: uppercase;
+        }
+
+        .songs-grid {
+            display: grid; grid-template-columns: 1fr;
+            gap: 10px; max-height: 50vh; overflow-y: auto; padding-right: 5px; padding-bottom: 10px;
+        }
+        .songs-grid::-webkit-scrollbar { width: 4px; }
+        .songs-grid::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 10px; }
+
+        .song-card {
+            padding: 14px;
+            border-radius: 14px;
+            cursor: pointer; transition: .2s;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .song-card:active { transform: scale(0.98); }
+        .song-card.selected {
+            background: rgba(10, 132, 255, 0.15);
+            border-color: var(--accent);
+        }
+        .song-card.live-song.selected {
+            background: rgba(255, 107, 53, 0.15);
+            border-color: var(--live-accent);
+        }
+
+        .check-circle {
+            width: 20px; height: 20px;
+            border-radius: 50%; border: 2px solid var(--text2);
+            display: grid; place-items: center; font-size: 10px;
+            color: transparent; transition: .2s; flex-shrink: 0;
+        }
+        .song-card.selected .check-circle { background: var(--accent); border-color: var(--accent); color: #fff; }
+        .song-card.live-song.selected .check-circle { background: var(--live-accent); border-color: var(--live-accent); color: #fff; }
+
+        .song-info { flex: 1; overflow: hidden; }
+        .song-name { font-weight: 800; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-transform: uppercase; }
+        .song-meta { font-size: 11px; color: var(--text2); font-weight: 700; margin-top: 3px; text-transform: uppercase; letter-spacing: 0.5px;}
+
+        .review-box {
+            border-radius: 18px; padding: 30px 20px; text-align: center;
+        }
+        .review-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 5px; text-transform: uppercase;}
+        .review-meta { font-size: 14px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 25px;}
+        .review-meta.live { color: var(--live-accent); }
+        .review-stats { font-size: 20px; font-weight: 900; }
+
+        .action-bar {
+            position: fixed;
+            bottom: 25px; left: 50%; transform: translateX(-50%);
+            width: calc(100% - 40px); max-width: 510px;
+            padding: 12px; border-radius: 24px;
+            display: flex; justify-content: space-between; gap: 10px;
+            z-index: 100;
+        }
+
+        .btn {
+            padding: 14px 20px;
+            border-radius: 16px;
+            font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;
+            cursor: pointer; border: none; transition: .3s; flex: 1; text-align: center;
+        }
+
+        .btn-secondary { 
+            background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--glass-border); 
+        }
+        .btn-secondary:hover { background: var(--glass-highlight); }
+        
+        .btn-primary { 
+            background: var(--accent); color: #fff; box-shadow: 0 4px 15px var(--accent-glow); 
+        }
+        .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+        .btn-primary.live-btn {
+            background: var(--live-accent);
+            box-shadow: 0 4px 15px var(--live-glow);
+        }
+        
+        .empty-state {
+            grid-column: 1 / -1; text-align: center; padding: 40px 20px;
+            color: var(--text2); border-radius: 14px; border: 1px dashed var(--glass-border);
+            font-weight: 700;
+        }
+
+        @media(max-width: 600px) {
+            .action-bar { bottom: 15px; width: calc(100% - 30px); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <button class="back-btn glass-panel" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+            <h1>New Project</h1>
+        </div>
+
+        <div class="stepper">
+            <div class="step-indicator active" id="ind-1">1</div>
+            <div class="step-indicator" id="ind-2">2</div>
+            <div class="step-indicator" id="ind-3">3</div>
+        </div>
+
+        <!-- STEP 1: Type + Name (+ Tour picker for Live albums) -->
+        <div id="step-1" class="step-content active">
+            <div class="input-group">
+                <label>Project Title</label>
+                <input type="text" id="album-name" placeholder="E.g., DARK SIDE OF THE MOON">
+            </div>
+            <div class="input-group">
+                <label>Release Format</label>
+                <select id="album-type" onchange="handleTypeChange()">
+                    <option value="Studio">Studio Album (7–49 Tracks)</option>
+                    <option value="EP">EP (2–6 Tracks)</option>
+                    <option value="SinglePack">Single Pack (2–8 Tracks)</option>
+                    <option value="Live">Live Album (from a completed tour)</option>
+                    <option value="Compilation">Compilation / Best Of</option>
+                    <option value="Mixtape">Mixtape</option>
+                </select>
+            </div>
+
+            <!-- Tour picker — only visible when Live is selected -->
+            <div class="tour-picker" id="tour-picker">
+                <div class="live-badge">🎤 Live Albums</div>
+                <div class="input-group" style="margin-bottom:12px;">
+                    <label>Select a Completed Tour</label>
+                    <p style="font-size:11px; color:var(--text2); font-weight:700; margin-bottom:10px;">
+                        One live album per tour. Songs are auto-loaded from the tour's setlist.
+                    </p>
+                    <div id="tour-list"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Track Selection -->
+        <div id="step-2" class="step-content">
+            <div class="req-card glass-panel">
+                <div class="req-text" id="req-text-elem"><i class="fas fa-bolt" style="margin-right:6px;"></i> <span id="req-msg">Select 7–49 songs</span></div>
+                <div class="progress-indicator" id="count-display">0 SELECTED</div>
+            </div>
+
+            <div class="section-title">
+                <span id="song-list-title">Vault Tracks</span>
+                <span style="font-size:10px; color:var(--text2); font-weight:800; letter-spacing:0.5px" id="filter-status">FILTERING UNRELEASED</span>
+            </div>
+
+            <div class="songs-grid" id="songs-list"></div>
+        </div>
+
+        <!-- STEP 3: Review -->
+        <div id="step-3" class="step-content">
+            <div class="review-box glass-panel">
+                <div style="font-size: 36px; color: var(--accent); margin-bottom: 12px;" id="review-icon">
+                    <i class="fas fa-compact-disc fa-spin"></i>
+                </div>
+                <div class="review-title" id="rev-title">ALBUM TITLE</div>
+                <div class="review-meta" id="rev-type">STUDIO ALBUM</div>
+                <div id="rev-tour-info" style="display:none; font-size:12px; color:var(--text2); font-weight:700; margin-bottom:15px;"></div>
+                
+                <div style="width: 40px; height: 3px; background: var(--glass-border); margin: 0 auto 20px;"></div>
+                
+                <div class="review-stats"><span id="rev-count" style="color: var(--accent);">0</span> TRACKS</div>
+                <p style="font-weight: 700; color: var(--text2); margin-top: 10px; font-size: 12px; text-transform: uppercase;" id="rev-sub">Ready to finalize project</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="action-bar glass-panel">
+        <button class="btn btn-secondary" id="btn-back" onclick="navigate(-1)">Cancel</button>
+        <button class="btn btn-primary" id="btn-next" onclick="navigate(1)">Next <i class="fas fa-arrow-right" style="margin-left:6px;"></i></button>
+    </div>
+
+    <script>
+        // ── State ──────────────────────────────────────────────────
+        let currentStep = 1;
+        let selectedSongs = new Set();
+        let allAvailableSongs = [];
+        let selectedTourId = null;
+        let selectedTourObj = null;   // full tour object
+        let selectedVenue   = null;   // venue pulled from tour route
+        let isLiveMode = false;
+
+        document.addEventListener('DOMContentLoaded', init);
+
+        function init() {
+            handleTypeChange();
+            updateUI();
+        }
+
+        function goBack() {
+            if (currentStep > 1) navigate(-1);
+            else { try { window.history.back(); } catch(e) { window.location.href = 'unreleased music.html'; } }
+        }
+
+        // ── Wizard Nav ─────────────────────────────────────────────
+        function navigate(direction) {
+            if (direction === 1) {
+
+                // ── Step 1 validation ──
+                if (currentStep === 1) {
+                    const name = document.getElementById('album-name').value.trim();
+                    if (!name) return alert("Please enter a project title to continue.");
+
+                    const type = document.getElementById('album-type').value;
+                    if (type === 'Live') {
+                        if (!selectedTourId) return alert("Please select a completed tour to create a live album.");
+                        // Auto-load setlist songs into song list
+                        loadLiveAlbumSongs();
+                    }
+                }
+
+                // ── Step 2 validation ──
+                if (currentStep === 2) {
+                    const type = document.getElementById('album-type').value;
+                    const count = selectedSongs.size;
+
+                    if (count === 0) return alert("You must select at least one track.");
+                    if (type === 'EP' && (count < 2 || count > 6)) return alert("EPs require exactly 2–6 songs.");
+                    if (type === 'SinglePack' && (count < 2 || count > 8)) return alert("Single Packs require 2–8 songs.");
+                    if (type === 'Studio' && (count < 7 || count > 49)) return alert("Studio albums require 7–49 songs.");
+
+                    // Populate review
+                    const isLive = type === 'Live';
+                    const revType = document.getElementById('rev-type');
+                    revType.textContent = type === 'EP' ? 'EP' : type === 'SinglePack' ? 'SINGLE PACK' : type + ' ALBUM';
+                    revType.className = 'review-meta' + (isLive ? ' live' : '');
+
+                    document.getElementById('rev-title').textContent = document.getElementById('album-name').value;
+                    document.getElementById('rev-count').textContent = count;
+                    document.getElementById('rev-count').style.color = isLive ? 'var(--live-accent)' : 'var(--accent)';
+
+                    // Tour info in review
+                    const revTourInfo = document.getElementById('rev-tour-info');
+                    if (isLive && selectedTourObj) {
+                        revTourInfo.style.display = 'block';
+                        revTourInfo.textContent = `📍 From: ${selectedTourObj.name}`;
+                    } else {
+                        revTourInfo.style.display = 'none';
+                    }
+
+                    document.getElementById('review-icon').innerHTML = isLive
+                        ? '<i class="fas fa-microphone-alt fa-spin" style="color:var(--live-accent)"></i>'
+                        : '<i class="fas fa-compact-disc fa-spin"></i>';
+
+                    document.getElementById('rev-sub').textContent = isLive
+                        ? 'Live recordings • Streams scale with studio counterparts'
+                        : 'Ready to finalize project';
+                }
+
+                if (currentStep === 3) {
+                    return createAlbum();
+                }
+            }
+
+            currentStep += direction;
+            if (currentStep < 1) currentStep = 1;
+            if (currentStep > 3) currentStep = 3;
+
+            updateUI();
+        }
+
+        function updateUI() {
+            for (let i = 1; i <= 3; i++) {
+                document.getElementById(`step-${i}`).classList.toggle('active', currentStep === i);
+            }
+
+            for (let i = 1; i <= 3; i++) {
+                const ind = document.getElementById(`ind-${i}`);
+                ind.classList.toggle('active', currentStep === i);
+                ind.classList.toggle('live-mode', currentStep === i && isLiveMode);
+                ind.classList.toggle('completed', currentStep > i);
+                ind.innerHTML = currentStep > i ? '<i class="fas fa-check"></i>' : i;
+            }
+
+            const btnNext = document.getElementById('btn-next');
+            const btnBack = document.getElementById('btn-back');
+
+            if (currentStep === 1) {
+                btnBack.innerHTML = "Cancel";
+                btnNext.innerHTML = 'Next <i class="fas fa-arrow-right" style="margin-left:6px;"></i>';
+            } else if (currentStep === 2) {
+                btnBack.innerHTML = "Back";
+                btnNext.innerHTML = 'Review <i class="fas fa-arrow-right" style="margin-left:6px;"></i>';
+            } else {
+                btnBack.innerHTML = "Back";
+                btnNext.innerHTML = 'Finish <i class="fas fa-check" style="margin-left:6px;"></i>';
+            }
+
+            // Live colour on Next button
+            btnNext.className = 'btn btn-primary' + (isLiveMode ? ' live-btn' : '');
+        }
+
+        // ── Core Data Helpers ──────────────────────────────────────
+        function getData(key) {
+            try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; }
+        }
+
+        function getUsedSongNames() {
+            const relAlbums  = getData('releasedAlbums');
+            const unrelAlbums = getData('unreleasedAlbums');
+            const used = new Set();
+            [...relAlbums, ...unrelAlbums].forEach(alb => {
+                if (alb.type === 'SinglePack') return; // Pack songs stay available for real albums
+                if (alb.songs && Array.isArray(alb.songs)) {
+                    alb.songs.forEach(s => {
+                        const name = typeof s === 'string' ? s : (s.songName || s.name);
+                        if (name) used.add(name);
+                    });
+                }
+            });
+            return used;
+        }
+
+        // ── Type-change handler ─────────────────────────────────────
+        function handleTypeChange() {
+            const type   = document.getElementById('album-type').value;
+            const picker = document.getElementById('tour-picker');
+            const reqMsg = document.getElementById('req-msg');
+            const reqEl  = document.getElementById('req-text-elem');
+            const statusMsg = document.getElementById('filter-status');
+
+            isLiveMode = (type === 'Live');
+
+            // Show / hide tour picker
+            picker.classList.toggle('visible', type === 'Live');
+
+            if (type === 'Live') {
+                reqEl.className = 'req-text live';
+                reqMsg.textContent = 'SELECT SETLIST SONGS';
+                document.getElementById('song-list-title').textContent = 'Setlist Tracks';
+                statusMsg.textContent = 'FROM TOUR SETLIST';
+                populateTourList();
+                // Songs not loaded yet — wait for tour selection
+                return;
+            }
+
+            reqEl.className = 'req-text';
+            document.getElementById('song-list-title').textContent = 'Vault Tracks';
+
+            if (type === 'Studio')      { reqMsg.textContent = "REQUIRED: 7–49 TRACKS"; statusMsg.textContent = "HIDING TRACKS ON ALBUMS"; }
+            else if (type === 'EP')     { reqMsg.textContent = "REQUIRED: 2–6 TRACKS";  statusMsg.textContent = "HIDING TRACKS ON ALBUMS"; }
+            else if (type === 'Compilation') { reqMsg.textContent = "ANY AMOUNT";        statusMsg.textContent = "SHOWING ENTIRE CATALOG"; }
+            else                        { reqMsg.textContent = "NO STRICT LIMITS";       statusMsg.textContent = "HIDING TRACKS ON ALBUMS"; }
+
+            // Reset
+            selectedTourId = null;
+            selectedTourObj = null;
+            selectedVenue   = null;
+            selectedSongs.clear();
+            updateCount();
+
+            // Regular song list
+            const rel    = getData('releasedSongs');
+            const unrel  = getData('unreleasedSongs');
+            const relMapped   = rel.map(s => ({ ...s, _source: 'Released' }));
+            const unrelMapped = unrel.map(s => ({ ...s, _source: 'Unreleased' }));
+
+            let sourceSongs;
+            if (type === 'Compilation') {
+                sourceSongs = [...unrelMapped, ...relMapped];
+            } else {
+                const usedNames = getUsedSongNames();
+                const allPotential = [...unrelMapped, ...relMapped];
+                sourceSongs = allPotential.filter(s => {
+                    const name = s.songName || s.name;
+                    return !usedNames.has(name);
+                });
+            }
+
+            renderList(sourceSongs, false);
+        }
+
+        // ── Tour list for Live Album picker ─────────────────────────
+        function populateTourList() {
+            const tourListEl = document.getElementById('tour-list');
+            const tours = getData('tycoon_tours').filter(t => t.status === 'completed');
+
+            if (tours.length === 0) {
+                tourListEl.innerHTML = `<div class="no-tours-msg">
+                    <i class="fas fa-route"></i>
+                    No completed tours yet.<br>Finish a tour first to record a live album.
+                </div>`;
+                return;
+            }
+
+            tourListEl.innerHTML = '';
+            tours.forEach(tour => {
+                const alreadyHasLiveAlbum = !!tour.liveAlbumCreated;
+                const setlistCount = (tour.setlist || []).length;
+                const profit = tour.revenue - tour.totalCost;
+                const profitStr = profit >= 0 ? `+$${profit.toLocaleString()}` : `-$${Math.abs(profit).toLocaleString()}`;
+
+                const card = document.createElement('div');
+                card.className = 'tour-card-item glass-panel' + (alreadyHasLiveAlbum ? ' disabled' : '');
+                card.onclick = () => !alreadyHasLiveAlbum && selectTour(tour.id, card);
+
+                card.innerHTML = `
+                    <div class="tour-radio"><i class="fas fa-check" style="font-size:9px;"></i></div>
+                    <div class="tour-info-text">
+                        <div class="tour-name-text">${tour.name}</div>
+                        <div class="tour-meta-text">
+                            ${tour.route ? tour.route.length : '?'} stops •
+                            ${setlistCount} songs •
+                            ${profitStr}
+                            ${alreadyHasLiveAlbum ? ' • <span style="color:var(--live-accent)">LIVE ALBUM EXISTS</span>' : ''}
+                        </div>
+                    </div>
+                `;
+                tourListEl.appendChild(card);
+            });
+        }
+
+        function selectTour(tourId, card) {
+            // Deselect all
+            document.querySelectorAll('.tour-card-item').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+
+            const tours = getData('tycoon_tours');
+            selectedTourObj = tours.find(t => t.id === tourId);
+            selectedTourId  = tourId;
+
+            // ── Pick venue from tour route ──────────────────────────
+            const route = selectedTourObj.route || [];
+            selectedVenue = null;
+            if (route.length > 0) {
+                // Use the last stop as the "headline" venue
+                const stop = route[route.length - 1];
+                if (typeof stop === 'string') {
+                    selectedVenue = stop;
+                } else {
+                    selectedVenue = stop.venue || stop.city || stop.name || stop.location || null;
+                }
+            }
+
+            // Show setlist preview + venue in req msg
+            const setlist = selectedTourObj.setlist || [];
+            const trackCount = setlist.length;
+            const venueStr   = selectedVenue ? ' \u2022 \uD83D\uDCCD ' + selectedVenue : '';
+            const preview    = trackCount > 0
+                ? trackCount + ' SETLIST TRACKS LOADED' + venueStr
+                : 'NO SETLIST FOUND ON THIS TOUR';
+
+            document.getElementById('req-msg').textContent = 'TOUR SELECTED \u2022 ' + preview;
+        }
+
+        // ── Load live album songs into the song picker ──────────────
+        function loadLiveAlbumSongs() {
+            if (!selectedTourObj) return;
+
+            const setlist = selectedTourObj.setlist || [];
+            const releasedSongs   = getData('releasedSongs');
+            const unreleasedSongs = getData('unreleasedSongs');
+            const allSongs        = [...releasedSongs, ...unreleasedSongs];
+
+            // Setlist entries can be strings OR objects — normalise to a name string first
+            const liveSongs = setlist.map(entry => {
+                const songName = typeof entry === 'string'
+                    ? entry
+                    : (entry.songName || entry.name || entry.title || '');
+
+                const match = allSongs.find(s =>
+                    (s.songName || s.name || '').toLowerCase() === songName.toLowerCase()
+                );
+                return match
+                    ? { ...match, _source: 'Live Recording', _isLive: true }
+                    : { songName, name: songName, _source: 'Live Recording', _isLive: true };
+            }).filter(s => (s.songName || s.name)); // drop blanks
+
+            renderList(liveSongs, true);
+
+            // Auto-select all setlist songs
+            liveSongs.forEach((_, idx) => selectedSongs.add(idx));
+            document.querySelectorAll('.song-card').forEach(c => {
+                c.classList.add('selected', 'live-song');
+            });
+            updateCount();
+        }
+
+        // ── Song list renderer ──────────────────────────────────────
+        function renderList(songs, isLive = false) {
+            const container = document.getElementById('songs-list');
+            container.innerHTML = '';
+            allAvailableSongs = songs;
+            selectedSongs.clear();
+
+            if (songs.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state glass-panel">
+                        <i class="fas fa-music" style="font-size:30px; margin-bottom:12px; opacity:0.3"></i>
+                        <p style="font-size:16px;">${isLive ? 'NO SETLIST SONGS FOUND' : 'NO AVAILABLE TRACKS FOUND'}</p>
+                        <p style="font-size:11px; margin-top:6px;">${isLive ? 'This tour has no setlist data.' : 'Record new music to populate your vault.'}</p>
+                    </div>`;
+                return;
+            }
+
+            songs.forEach((song, idx) => {
+                const name    = song.songName || song.name || 'Untitled';
+                const source  = song._source || 'Unreleased';
+                const quality = song.quality ? ` • ${song.quality}% QLTY` : '';
+
+                const card = document.createElement('div');
+                card.className = 'song-card glass-panel' + (isLive ? ' live-song' : '');
+                card.dataset.idx = idx;
+                card.onclick = () => toggleSong(idx, card, isLive);
+
+                card.innerHTML = `
+                    <div class="check-circle"><i class="fas fa-check"></i></div>
+                    <div class="song-info">
+                        <div class="song-name">${name}</div>
+                        <div class="song-meta">${source}${quality}</div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleSong(idx, card, isLive = false) {
+            if (selectedSongs.has(idx)) {
+                selectedSongs.delete(idx);
+                card.classList.remove('selected');
+            } else {
+                selectedSongs.add(idx);
+                card.classList.add('selected');
+                if (isLive) card.classList.add('live-song');
+            }
+            updateCount();
+        }
+
+        function updateCount() {
+            document.getElementById('count-display').textContent = `${selectedSongs.size} SELECTED`;
+        }
+
+        // ── Create Album ────────────────────────────────────────────
+        function createAlbum() {
+            const name = document.getElementById('album-name').value.trim();
+            const type = document.getElementById('album-type').value;
+
+            const finalSongs = Array.from(selectedSongs).map(i => allAvailableSongs[i]);
+
+            // For compilation: track which songs are already released (to prevent duplication)
+            const alreadyReleasedSongNames = (type === 'Compilation')
+                ? finalSongs.filter(s => s._source === 'Released').map(s => s.songName || s.name)
+                : [];
+
+            // For live album: tag each song as a live track referencing the original
+            const liveSuffix = selectedVenue
+                ? '(Live At ' + selectedVenue + ')'
+                : '(Live)';
+
+            const songNames = finalSongs.map(s => {
+                if (type === 'Live') {
+                    return {
+                        songName: (s.songName || s.name) + ' ' + liveSuffix,
+                        originalSongName: s.songName || s.name,
+                        isLiveTrack: true,
+                        venue: selectedVenue || null,
+                        genre: s.genre || 'Pop',
+                        quality: s.quality || 100
+                    };
+                }
+                return s.songName || s.name;
+            });
+
+            const newAlbum = {
+                name,
+                albumName: name,
+                type,
+                songs: songNames,
+                coverArt: '',
+                createdDate: new Date().toISOString(),
+                editionType: 'standard',
+                // Live album metadata
+                isLiveAlbum: type === 'Live',
+                isSinglePack: type === 'SinglePack',
+                tourId: type === 'Live' ? selectedTourId : null,
+                tourName: type === 'Live' && selectedTourObj ? selectedTourObj.name : null,
+                venueAlbumRecordedAt: type === 'Live' ? (selectedVenue || null) : null,
+                // Compilation metadata — tells release code which songs NOT to re-add to releasedSongs
+                alreadyReleasedSongNames: alreadyReleasedSongNames.length > 0 ? alreadyReleasedSongNames : undefined
+            };
+
+            const unreleasedAlbums = getData('unreleasedAlbums');
+            unreleasedAlbums.push(newAlbum);
+            localStorage.setItem('unreleasedAlbums', JSON.stringify(unreleasedAlbums));
+
+            // Mark tour as having a live album so it can't be used again
+            if (type === 'Live' && selectedTourId) {
+                const tours = getData('tycoon_tours');
+                const tour = tours.find(t => t.id === selectedTourId);
+                if (tour) {
+                    tour.liveAlbumCreated = true;
+                    tour.liveAlbumName = name;
+                    localStorage.setItem('tycoon_tours', JSON.stringify(tours));
+                }
+            }
+
+            alert(`${type === 'Live' ? '🎤 Live Album' : 'Project'} "${name}" created! Redirecting to Vault...`);
+            window.location.href = "unreleased music.html";
+        }
+    </script>
+</body>
+</html>

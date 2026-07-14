@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Webify – Artist Site</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a1a;
+  --surface: #111126;
+  --surface2: #16162e;
+  --border: rgba(255,255,255,0.08);
+  --accent: #c9a96e;
+  --accent2: #e8c98a;
+  --text: #f0eee8;
+  --muted: #8a8a9a;
+  --danger: #ef4444;
+  --radius: 14px;
+}
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+#cover-editor-view { background: #0a0a1a; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+/* TOP BAR */
+.top-bar {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  height:54px; display:flex; align-items:center;
+  background:rgba(10,10,26,.95); backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.settings-btn {
+  width:54px; height:54px; display:flex; align-items:center; justify-content:center;
+  background:none; border:none; cursor:pointer; color:var(--muted); font-size:18px;
+  transition:color .2s; flex-shrink:0;
+}
+.settings-btn:hover { color:var(--accent); }
+.top-nav { display:flex; flex:1; justify-content:center; }
+.nav-spacer { width:54px; flex-shrink:0; }
+.nav-tab {
+  padding:0 18px; height:54px; background:none; border:none;
+  color:var(--muted); font-family:'DM Sans',sans-serif;
+  font-size:12px; font-weight:700; letter-spacing:1.8px; text-transform:uppercase;
+  cursor:pointer; transition:color .25s; position:relative;
+}
+.nav-tab::after {
+  content:''; position:absolute; bottom:0; left:20%; right:20%;
+  height:2px; background:var(--accent); border-radius:2px 2px 0 0;
+  transform:scaleX(0); transition:transform .3s;
+}
+.nav-tab.active { color:var(--accent); }
+.nav-tab.active::after { transform:scaleX(1); }
+
+/* PAGES */
+.page { display:none; padding-top:54px; padding-bottom:96px; min-height:100vh; }
+.page.active { display:block; }
+
+/* ═══ HOME ═══ */
+.home-hero {
+  position:relative; width:100%; height:52vh; min-height:300px;
+  overflow:hidden; display:flex; align-items:flex-end;
+}
+.home-hero-img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; filter:brightness(.5) saturate(1.1);
+}
+.home-hero-ph {
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse at 60% 20%,#1e1545 0%,#0a0a1a 70%);
+  display:flex; align-items:center; justify-content:center;
+}
+.hero-ph-icon { font-size:90px; color:rgba(201,169,110,.07); }
+.home-hero-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top,#0a0a1a 0%,rgba(10,10,26,.3) 55%,transparent 100%);
+}
+.home-hero-content { position:relative; z-index:2; width:100%; padding:28px 22px; }
+.home-welcome-line { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--accent); font-weight:600; margin-bottom:5px; }
+.home-artist-name { font-family:'Cormorant Garamond',serif; font-size:clamp(36px,9vw,64px); font-weight:700; line-height:1.0; color:#fff; letter-spacing:-1px; text-shadow:0 2px 20px rgba(0,0,0,.5); }
+.home-website-sub { font-size:13px; color:rgba(255,255,255,.45); margin-top:4px; font-weight:300; }
+
+/* Latest Release */
+.home-latest { padding:24px 20px; }
+.section-label { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--muted); font-weight:700; margin-bottom:14px; }
+.latest-card {
+  display:flex; gap:16px; background:var(--surface);
+  border:1px solid var(--border); border-radius:var(--radius);
+  overflow:hidden; padding:15px; align-items:center;
+  transition:border-color .3s;
+}
+.latest-card:hover { border-color:rgba(201,169,110,.3); }
+.latest-art-img { width:76px; height:76px; border-radius:10px; object-fit:cover; flex-shrink:0; background:var(--surface2); }
+.latest-art-ph {
+  width:76px; height:76px; border-radius:10px;
+  background:radial-gradient(circle,#1e1a3e 0%,#0a0a1a 100%);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.latest-art-ph i { font-size:26px; color:rgba(201,169,110,.3); }
+.latest-info { flex:1; min-width:0; }
+.latest-type { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:4px; }
+.latest-title { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:700; font-style:italic; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom:5px; }
+.latest-streams { font-size:12px; color:var(--muted); font-weight:500; }
+.latest-streams strong { color:var(--text); font-weight:700; }
+.latest-badge { font-size:9px; font-weight:700; padding:3px 8px; border-radius:20px; background:rgba(201,169,110,.1); color:var(--accent); border:1px solid rgba(201,169,110,.2); letter-spacing:1px; text-transform:uppercase; display:inline-block; margin-top:6px; }
+.no-release { text-align:center; padding:40px 20px; color:var(--muted); }
+.no-release i { font-size:34px; opacity:.2; margin-bottom:10px; display:block; }
+
+/* ═══ MERCH ═══ */
+.merch-banner-wrap {
+  position:relative; width:100%; height:190px;
+  background:var(--surface); display:flex; align-items:center; justify-content:center;
+  overflow:hidden; cursor:pointer;
+}
+.merch-banner-wrap img { width:100%; height:100%; object-fit:cover; display:none; }
+.merch-banner-wrap img.shown { display:block; }
+.merch-overlay { position:absolute; inset:0; background:linear-gradient(to bottom,transparent 40%,rgba(10,10,26,.8) 100%); pointer-events:none; }
+.banner-ph { display:flex; flex-direction:column; align-items:center; gap:8px; }
+.banner-ph i { font-size:28px; color:var(--accent); opacity:.4; }
+.banner-ph span { font-size:12px; color:var(--muted); }
+.banner-change { position:absolute; bottom:12px; right:12px; background:rgba(10,10,26,.75); backdrop-filter:blur(8px); border:1px solid var(--border); color:var(--text); font-size:11px; padding:6px 12px; border-radius:20px; cursor:pointer; font-family:'DM Sans',sans-serif; display:none; }
+#merchBannerInput,#homePhotoInput,#sHeroInput,#sMerchInput { display:none; }
+
+.merch-head { padding:20px 20px 12px; display:flex; align-items:center; justify-content:space-between; }
+.merch-heading { font-family:'Cormorant Garamond',serif; font-size:24px; font-weight:700; font-style:italic; }
+.merch-count { font-size:11px; color:var(--muted); letter-spacing:1px; text-transform:uppercase; }
+.merch-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:11px; padding:0 14px 20px; }
+.merch-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden; cursor:pointer; transition:all .3s; position:relative; }
+.merch-card:hover { transform:translateY(-4px); border-color:rgba(201,169,110,.25); box-shadow:0 10px 28px rgba(0,0,0,.4); }
+.m-thumb { width:100%; aspect-ratio:1; object-fit:cover; background:var(--surface2); display:block; }
+.m-vinyl { width:100%; aspect-ratio:1; background:radial-gradient(#1a1a30,#080812); display:flex; align-items:center; justify-content:center; }
+.vinyl-s { width:64px; height:64px; border-radius:50%; background:radial-gradient(circle,#252540 20%,#0d0d1e 21%,#0d0d1e 38%,#1a1a2e 39%,#0d0d1e 55%,#252540 56%); border:1px solid rgba(201,169,110,.2); position:relative; transition:transform .5s; }
+.merch-card:hover .vinyl-s { transform:rotate(25deg); }
+.vs-lbl { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+.vs-hole { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:#0a0a1a; }
+.m-body { padding:10px 11px 12px; }
+.m-name { font-size:13px; font-weight:700; color:var(--text); line-height:1.3; margin-bottom:4px; overflow:hidden; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; }
+.m-price { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:700; color:var(--accent); }
+.sold-badge { position:absolute;top:7px;left:7px;background:var(--danger);color:#fff;font-size:8px;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:1px;text-transform:uppercase; }
+.merch-empty { grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--muted); }
+.merch-empty i { font-size:36px;opacity:.2;margin-bottom:12px;display:block; }
+
+/* ═══ TOUR ═══ */
+.tour-top { padding:28px 22px 14px; display:flex; align-items:flex-end; justify-content:space-between; }
+.tour-heading { font-family:'Cormorant Garamond',serif; font-size:30px; font-weight:700; font-style:italic; }
+.live-pill { background:#16a34a;color:#fff;font-size:10px;font-weight:700;padding:5px 10px;border-radius:20px;letter-spacing:1px;text-transform:uppercase; }
+.no-tour-wrap { display:flex;flex-direction:column;align-items:center;text-align:center;padding:70px 30px;gap:18px; }
+.no-tour-icon { width:88px;height:88px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:34px;color:var(--muted);opacity:.4; }
+.no-tour-text { font-family:'Cormorant Garamond',serif;font-size:50px;font-weight:900;color:var(--text);opacity:.22;letter-spacing:2px; }
+.no-tour-sub { font-size:13px;color:var(--muted);max-width:230px;line-height:1.6; }
+.tour-list { padding:0 14px; }
+.tour-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:14px; }
+.t-banner { width:100%;height:125px;object-fit:cover;display:block; }
+.t-banner-ph { width:100%;height:125px;background:linear-gradient(135deg,#1e1545,#0a0a1a);display:flex;align-items:center;justify-content:center;font-size:38px;color:rgba(201,169,110,.1); }
+.t-body { padding:15px; }
+.t-top { display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:9px; }
+.t-name { font-family:'Cormorant Garamond',serif;font-size:19px;font-weight:700;font-style:italic;flex:1; }
+.t-badge { font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:1px;text-transform:uppercase;flex-shrink:0;margin-left:8px;margin-top:2px; }
+.tb-pre { background:rgba(234,179,8,.12);color:#facc15;border:1px solid rgba(234,179,8,.25); }
+.tb-live { background:rgba(22,163,74,.12);color:#4ade80;border:1px solid rgba(22,163,74,.25); }
+.t-meta { font-size:11px;color:var(--muted);margin-bottom:13px; }
+.venue-item { display:flex;align-items:center;justify-content:space-between;padding:9px 11px;background:var(--bg);border-radius:8px;border:1px solid var(--border);margin-bottom:7px; }
+.v-name { font-size:12px;font-weight:600;color:var(--text);margin-bottom:2px; }
+.v-loc { font-size:10px;color:var(--muted); }
+.v-badge { font-size:8px;font-weight:700;padding:3px 6px;border-radius:4px;letter-spacing:.5px; }
+.vb-sold { background:rgba(239,68,68,.12);color:#f87171;border:1px solid rgba(239,68,68,.2); }
+.vb-avail { background:rgba(22,163,74,.12);color:#4ade80;border:1px solid rgba(22,163,74,.2); }
+.t-prog { margin-top:12px; }
+.t-prog-bar { height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden; }
+.t-prog-fill { height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px; }
+.t-prog-lbls { display:flex;justify-content:space-between;margin-top:5px;font-size:10px;color:var(--muted); }
+
+/* ═══ MODAL ═══ */
+.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:flex;align-items:flex-end;opacity:0;visibility:hidden;transition:.3s; }
+.modal-overlay.active { opacity:1;visibility:visible; }
+.modal-sheet { background:var(--surface);border-radius:22px 22px 0 0;border-top:1px solid var(--border);width:100%;max-height:85vh;overflow-y:auto;transform:translateY(30px);transition:transform .35s cubic-bezier(.16,1,.3,1); }
+.modal-overlay.active .modal-sheet { transform:translateY(0); }
+.modal-handle { width:34px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin:14px auto 0; }
+.m-modal-img { width:100%;max-height:240px;object-fit:cover;display:block;background:var(--surface2); }
+.m-vinyl-wrap { width:100%;height:190px;background:radial-gradient(#1a1a30,#080812);display:flex;align-items:center;justify-content:center; }
+.vinyl-lg { width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,#252540 20%,#0d0d1e 21%,#0d0d1e 38%,#1a1a2e 39%,#0d0d1e 55%,#252540 56%);border:2px solid rgba(201,169,110,.25);position:relative;animation:spinv 5s linear infinite; }
+@keyframes spinv{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+.vlg-lbl { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2)); }
+.vlg-hole { position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:#0a0a1a; }
+.m-modal-body { padding:20px; }
+.m-modal-name { font-family:'Cormorant Garamond',serif;font-size:25px;font-weight:700;font-style:italic;margin-bottom:4px; }
+.m-modal-type { font-size:11px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px; }
+.m-modal-price { font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--accent);margin-bottom:18px; }
+.m-stats-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:18px; }
+.m-stat { background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:11px;text-align:center; }
+.m-stat-v { font-size:15px;font-weight:700;color:var(--accent);display:block;margin-bottom:2px; }
+.m-stat-l { font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px; }
+.m-buy-btn { width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a1a;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;cursor:pointer;transition:.25s;text-transform:uppercase; }
+.m-buy-btn:hover { opacity:.88;transform:translateY(-1px); }
+
+/* ═══ SETTINGS ═══ */
+.s-scrim { position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:599;opacity:0;visibility:hidden;transition:.3s; }
+.s-scrim.open { opacity:1;visibility:visible; }
+.s-panel { position:fixed;top:0;left:0;bottom:0;width:82%;max-width:310px;background:var(--surface);border-right:1px solid var(--border);z-index:600;transform:translateX(-100%);transition:transform .35s cubic-bezier(.16,1,.3,1);overflow-y:auto;padding-bottom:30px; }
+.s-panel.open { transform:translateX(0); }
+.s-head { padding:20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border); }
+.s-head h2 { font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:700;font-style:italic; }
+.s-close { width:34px;height:34px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+.s-section { padding:20px 20px 0; }
+.s-section-lbl { font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:12px; }
+.upload-row { display:flex;align-items:center;gap:12px;padding:13px;background:var(--bg);border:1px solid var(--border);border-radius:10px;cursor:pointer;transition:border-color .25s;margin-bottom:10px; }
+.upload-row:hover { border-color:rgba(201,169,110,.35); }
+.upload-thumb { width:46px;height:46px;border-radius:8px;background:var(--surface2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:18px;color:var(--muted);overflow:hidden; }
+.upload-thumb img { width:100%;height:100%;object-fit:cover; }
+.upload-info { flex:1;min-width:0; }
+.upload-title { font-size:13px;font-weight:600;margin-bottom:2px; }
+.upload-sub { font-size:11px;color:var(--muted); }
+.upload-arrow { color:var(--accent);font-size:16px; }
+
+/* ═══ PLATFORM BAR ═══ */
+.platform-bar { position:fixed;bottom:0;left:0;right:0;z-index:300;background:rgba(10,10,26,.97);backdrop-filter:blur(24px);border-top:1px solid var(--border);padding:7px 0 11px;display:flex;justify-content:space-around;align-items:flex-start;overflow-x:auto; }
+.platform-bar::-webkit-scrollbar { display:none; }
+.p-btn { display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;background:none;border:none;cursor:pointer;transition:transform .2s;padding:2px 4px;min-width:50px; }
+.p-btn:hover { transform:translateY(-3px); }
+.p-icon { width:36px;height:36px;border-radius:9px;overflow:hidden;background:var(--surface2);flex-shrink:0; }
+.p-icon img { width:100%;height:100%;object-fit:cover;display:block; }
+.p-label { font-size:8.5px;color:var(--muted);font-weight:600;letter-spacing:.2px;white-space:nowrap; }
+
+/* ═══ LOADING ═══ */
+.loading-screen { position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:9999;gap:14px;transition:opacity .4s; }
+.load-vinyl { width:54px;height:54px;border-radius:50%;background:radial-gradient(circle,#252540 25%,#0a0a1a 26%);border:2px solid rgba(201,169,110,.35);animation:spinv 1.2s linear infinite; }
+.load-text { font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase; }
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.fu{animation:fadeUp .45s ease both}
+.fu1{animation:fadeUp .45s .08s ease both}
+</style>
+</head>
+<body id="cover-editor-view">
+
+<div class="loading-screen" id="loadingScreen">
+  <div class="load-vinyl"></div>
+  <div class="load-text">Loading Artist Site</div>
+</div>
+
+<!-- TOP BAR -->
+<div class="top-bar">
+  <button class="settings-btn" onclick="openSettings()"><i class="fas fa-cog"></i></button>
+  <nav class="top-nav">
+    <button class="nav-tab active" onclick="showPage('home')">Home</button>
+    <button class="nav-tab" onclick="showPage('merch')">Merch</button>
+    <button class="nav-tab" onclick="showPage('tour')">Tour</button>
+  </nav>
+  <div class="nav-spacer"></div>
+</div>
+
+<!-- ══════ HOME ══════ -->
+<div class="page active" id="page-home">
+  <div class="home-hero">
+    <img class="home-hero-img" id="homeHeroImg" style="display:none" alt="">
+    <div class="home-hero-ph" id="homeHeroPh"><i class="fas fa-compact-disc hero-ph-icon"></i></div>
+    <div class="home-hero-overlay"></div>
+    <div class="home-hero-content">
+      <div class="home-welcome-line">Welcome to</div>
+      <div class="home-artist-name" id="homeArtistName">Artist</div>
+      <div class="home-website-sub" id="homeWebsiteSub">'s official website</div>
+    </div>
+  </div>
+
+  <div class="home-latest fu1">
+    <div class="section-label">Latest Release</div>
+    <div id="latestArea">
+      <div class="no-release"><i class="fas fa-music"></i><p>No releases yet</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MERCH ══════ -->
+<div class="page" id="page-merch">
+  <div class="merch-banner-wrap" id="merchBannerWrap" onclick="document.getElementById('merchBannerInput').click()">
+    <img id="merchBannerImg" alt="Banner">
+    <div class="merch-overlay"></div>
+    <div class="banner-ph" id="bannerPh">
+      <i class="fas fa-image"></i><span>Tap to add banner photo</span>
+    </div>
+    <button class="banner-change" id="bannerChangeBtn" onclick="event.stopPropagation();document.getElementById('merchBannerInput').click()">
+      <i class="fas fa-camera"></i> Change
+    </button>
+  </div>
+  <input type="file" id="merchBannerInput" accept="image/*">
+
+  <div class="merch-head">
+    <div class="merch-heading">Official Merch</div>
+    <div class="merch-count" id="merchCountLabel">— items</div>
+  </div>
+  <div class="merch-grid" id="merchGrid"></div>
+</div>
+
+<!-- ══════ TOUR ══════ -->
+<div class="page" id="page-tour">
+  <div class="tour-top">
+    <div class="tour-heading" id="tourHeading">Tour</div>
+    <div class="live-pill" id="livePill" style="display:none">● Live</div>
+  </div>
+  <div id="tourContent"></div>
+</div>
+
+<!-- MERCH DETAIL MODAL -->
+<div class="modal-overlay" id="merchModal" onclick="handleModalClick(event)">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<!-- SETTINGS PANEL -->
+<div class="s-scrim" id="sScrim" onclick="closeSettings()"></div>
+<div class="s-panel" id="sPanel">
+  <div class="s-head">
+    <h2>Settings</h2>
+    <button class="s-close" onclick="closeSettings()"><i class="fas fa-times"></i></button>
+  </div>
+  <div class="s-section">
+    <div class="s-section-lbl">Photos</div>
+
+    <div class="upload-row" onclick="document.getElementById('sHeroInput').click()">
+      <div class="upload-thumb" id="sHeroThumb"><i class="fas fa-user"></i></div>
+      <div class="upload-info">
+        <div class="upload-title">Artist Hero Photo</div>
+        <div class="upload-sub">Shown on Home page</div>
+      </div>
+      <i class="fas fa-chevron-right upload-arrow"></i>
+    </div>
+
+    <div class="upload-row" onclick="document.getElementById('sMerchInput').click()">
+      <div class="upload-thumb" id="sMerchThumb"><i class="fas fa-image"></i></div>
+      <div class="upload-info">
+        <div class="upload-title">Merch Page Banner</div>
+        <div class="upload-sub">Banner on Merch page</div>
+      </div>
+      <i class="fas fa-chevron-right upload-arrow"></i>
+    </div>
+
+    <input type="file" id="sHeroInput" accept="image/*">
+    <input type="file" id="sMerchInput" accept="image/*">
+  </div>
+</div>
+
+<!-- PLATFORM BAR — real image files -->
+<nav class="platform-bar">
+  <a href="musify.html" class="p-btn">
+    <div class="p-icon"><img src="Musify.png" alt="Musify" onerror="this.style.display='none'"></div>
+    <span class="p-label">Musify</span>
+  </a>
+  <a href="videoify.html" class="p-btn">
+    <div class="p-icon"><img src="Video.png" alt="Videoify" onerror="this.style.display='none'"></div>
+    <span class="p-label">Videoify</span>
+  </a>
+  <a href="tuneify.html" class="p-btn">
+    <div class="p-icon"><img src="Odownload (1).png" alt="Tuneify" onerror="this.style.display='none'"></div>
+    <span class="p-label">Tuneify</span>
+  </a>
+  <a href="Qiconcloud.html" class="p-btn">
+    <div class="p-icon"><img src="Q1.png" alt="Iconcloud" onerror="this.style.display='none'"></div>
+    <span class="p-label">Iconcloud</span>
+  </a>
+  <a href="OApple mu.html" class="p-btn">
+    <div class="p-icon"><img src="Oapple.png" alt="Apple Music" onerror="this.style.display='none'"></div>
+    <span class="p-label">Apple Music</span>
+  </a>
+  <a href="q music.html" class="p-btn">
+    <div class="p-icon"><img src="q.png" alt="Q Music" onerror="this.style.display='none'"></div>
+    <span class="p-label">Q Music</span>
+  </a>
+  <a href="xifyhome.html" class="p-btn">
+    <div class="p-icon"><img src="Xify.png" alt="Xify" onerror="this.style.display='none'"></div>
+    <span class="p-label">Xify</span>
+  </a>
+  <a href="vibetok.html" class="p-btn">
+    <div class="p-icon"><img src="Vibetok.png" alt="Vibetok" onerror="this.style.display='none'"></div>
+    <span class="p-label">Vibetok</span>
+  </a>
+  <a href="Oinsta.html" class="p-btn">
+    <div class="p-icon"><img src="O.png" alt="Insta-Glam" onerror="this.style.display='none'"></div>
+    <span class="p-label">Insta-Glam</span>
+  </a>
+</nav>
+
+<script>
+function getLocal(k, fallback) {
+  try { return JSON.parse(localStorage.getItem(k) || JSON.stringify(fallback)); }
+  catch(e) { return fallback; }
+}
+function getArtistName() {
+  const d = getLocal('artistDetails', {});
+  return d.name || 'Artist';
+}
+function fmtNum(n) {
+  n = Number(n) || 0;
+  if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+  if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+  if (n >= 1e3) return (n/1e3).toFixed(0)+'K';
+  return String(n);
+}
+function fmtMoney(a) {
+  a = Number(a)||0;
+  if (a >= 1e6) return '$'+(a/1e6).toFixed(1)+'M';
+  if (a >= 1e3) return '$'+(a/1e3).toFixed(0)+'K';
+  return '$'+a.toFixed(0);
+}
+
+// Navigation
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  document.querySelectorAll('.nav-tab')[{home:0,merch:1,tour:2}[name]].classList.add('active');
+  if (name === 'merch') renderMerch();
+  if (name === 'tour') renderTour();
+}
+
+// Home
+function initHome() {
+  const name = getArtistName();
+  document.getElementById('homeArtistName').textContent = name;
+  document.getElementById('homeWebsiteSub').textContent = "'s official website";
+  document.title = name + ' – Official Site';
+
+  const heroSrc = localStorage.getItem('webifyHeroPhoto') || localStorage.getItem('artistPhoto');
+  if (heroSrc) applyHeroPhoto(heroSrc);
+
+  // Latest release
+  const albums = getLocal('releasedAlbums', []);
+  const songs = getLocal('releasedSongs', []);
+  let latest = null, latestType = '', latestStreams = 0;
+
+  if (albums.length) {
+    const sorted = [...albums].sort((a,b) => new Date(b.releaseDate||0) - new Date(a.releaseDate||0));
+    const alb = sorted[0];
+    let streams = 0;
+    (alb.songs||[]).forEach(ref => {
+      const sn = typeof ref === 'object' ? (ref.name||ref.songName) : ref;
+      const so = songs.find(s => s.songName===sn || s.name===sn);
+      if (so) streams += (so.weeklyStreams||so.streams||0);
+    });
+    latest = { name: alb.name||alb.albumName, coverArt: alb.coverArt||'' };
+    latestType = alb.type || 'Album';
+    latestStreams = streams;
+  } else if (songs.length) {
+    const sorted = [...songs].sort((a,b) => new Date(b.releaseDate||0) - new Date(a.releaseDate||0));
+    const s = sorted[0];
+    latest = { name: s.songName||s.name, coverArt: s.coverArt||'' };
+    latestType = s.trackType || 'Single';
+    latestStreams = s.weeklyStreams||s.streams||0;
+  }
+
+  const area = document.getElementById('latestArea');
+  if (!latest) {
+    area.innerHTML = `<div class="no-release"><i class="fas fa-music"></i><p>No releases yet</p></div>`;
+    return;
+  }
+
+  const artEl = latest.coverArt
+    ? `<img class="latest-art-img" src="${latest.coverArt}" alt="${latest.name}" onerror="this.style.display='none'">`
+    : `<div class="latest-art-ph"><i class="fas fa-compact-disc"></i></div>`;
+
+  area.innerHTML = `
+    <div class="latest-card fu">
+      ${artEl}
+      <div class="latest-info">
+        <div class="latest-type">${latestType}</div>
+        <div class="latest-title">${latest.name||'Unknown'}</div>
+        <div class="latest-streams"><strong>${fmtNum(latestStreams)}</strong> streams this week</div>
+        <div class="latest-badge">Latest</div>
+      </div>
+    </div>`;
+}
+
+function applyHeroPhoto(src) {
+  const img = document.getElementById('homeHeroImg');
+  img.src = src; img.style.display = 'block';
+  document.getElementById('homeHeroPh').style.display = 'none';
+}
+
+// Merch
+function renderMerch() {
+  const src = localStorage.getItem('webifyMerchBanner');
+  if (src) applyMerchBanner(src);
+
+  const inv = getLocal('merchInventory', []);
+  const grid = document.getElementById('merchGrid');
+  document.getElementById('merchCountLabel').textContent = inv.length + ' item' + (inv.length !== 1 ? 's' : '');
+
+  if (!inv.length) {
+    grid.innerHTML = `<div class="merch-empty fu"><i class="fas fa-compact-disc"></i><p>No merchandise available yet</p></div>`;
+    return;
+  }
+  grid.innerHTML = inv.map((item, i) => {
+    const soldOut = (item.stock||0) === 0;
+    const visual = item.image
+      ? `<img class="m-thumb" src="${item.image}" alt="${item.releaseName||''}" loading="lazy">`
+      : `<div class="m-vinyl"><div class="vinyl-s"><div class="vs-lbl"></div><div class="vs-hole"></div></div></div>`;
+    return `<div class="merch-card fu" style="animation-delay:${i*.04}s" onclick="openMerchModal(${item.id})">
+      ${soldOut ? '<div class="sold-badge">Sold Out</div>' : ''}
+      ${visual}
+      <div class="m-body">
+        <div class="m-name">${item.releaseName||'Unknown'}</div>
+        <div class="m-price">${fmtMoney(item.sellingPrice||0)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function applyMerchBanner(src) {
+  const img = document.getElementById('merchBannerImg');
+  img.src = src; img.classList.add('shown');
+  document.getElementById('bannerPh').style.display = 'none';
+  document.getElementById('bannerChangeBtn').style.display = 'block';
+}
+
+document.getElementById('merchBannerInput').addEventListener('change', function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => { localStorage.setItem('webifyMerchBanner', ev.target.result); applyMerchBanner(ev.target.result); setThumb('sMerchThumb', ev.target.result); };
+  r.readAsDataURL(file);
+});
+
+// Merch Modal
+function openMerchModal(id) {
+  const inv = getLocal('merchInventory', []);
+  const item = inv.find(i => i.id == id); if (!item) return;
+  const soldOut = (item.stock||0) === 0;
+  const typeLabel = {vinyl:'Vinyl',cd:'CD',digital:'Digital'}[item.type] || 'Item';
+  const edition = {signed:' · Signed','2nd_edition':' · 2nd Ed.'}[item.edition] || '';
+  const total = (item.totalSales||0)+(item.stock||0);
+  const pct = total > 0 ? Math.round((item.totalSales||0)/total*100) : 0;
+  const visual = item.image
+    ? `<img class="m-modal-img" src="${item.image}" alt="${item.releaseName||''}">`
+    : `<div class="m-vinyl-wrap"><div class="vinyl-lg"><div class="vlg-lbl"></div><div class="vlg-hole"></div></div></div>`;
+  document.getElementById('modalContent').innerHTML = `
+    ${visual}
+    <div class="m-modal-body">
+      <div class="m-modal-name">${item.releaseName||'Unknown'}</div>
+      <div class="m-modal-type">${typeLabel}${edition} · ${(item.releaseType||'single').charAt(0).toUpperCase()+(item.releaseType||'single').slice(1)}</div>
+      <div class="m-modal-price">${fmtMoney(item.sellingPrice||0)}</div>
+      <div class="m-stats-grid">
+        <div class="m-stat"><span class="m-stat-v">${item.stock||0}</span><span class="m-stat-l">In Stock</span></div>
+        <div class="m-stat"><span class="m-stat-v">${item.totalSales||0}</span><span class="m-stat-l">Sold</span></div>
+        <div class="m-stat"><span class="m-stat-v">${pct}%</span><span class="m-stat-l">Sell Rate</span></div>
+      </div>
+      <button class="m-buy-btn" ${soldOut?'disabled style="opacity:.4;cursor:not-allowed"':''}>
+        ${soldOut?'✕  Sold Out':'On Sell'}
+      </button>
+    </div>`;
+  document.getElementById('merchModal').classList.add('active');
+}
+function handleModalClick(e) { if (e.target === document.getElementById('merchModal')) document.getElementById('merchModal').classList.remove('active'); }
+document.addEventListener('keydown', e => { if (e.key==='Escape') document.getElementById('merchModal').classList.remove('active'); });
+
+// Tour
+function renderTour() {
+  const tours = getLocal('tycoon_tours', []);
+  const active = tours.filter(t => t.status !== 'completed');
+  const content = document.getElementById('tourContent');
+
+  if (!active.length) {
+    document.getElementById('tourHeading').textContent = 'No Tour';
+    document.getElementById('livePill').style.display = 'none';
+    content.innerHTML = `
+      <div class="no-tour-wrap fu">
+        <div class="no-tour-icon"><i class="fas fa-route"></i></div>
+        <div class="no-tour-text"><strong>NO TOUR</strong></div>
+        <div class="no-tour-sub">No upcoming shows scheduled right now. Check back later for tour announcements.</div>
+      </div>`;
+    return;
+  }
+
+  const hasLive = active.some(t => t.status==='live'||t.status==='active');
+  document.getElementById('tourHeading').textContent = 'On Tour';
+  document.getElementById('livePill').style.display = hasLive ? 'flex' : 'none';
+
+  content.innerHTML = `<div class="tour-list fu">${active.map(t => {
+    const pct = t.totalCapacity > 0 ? Math.round((t.ticketsSold||0)/t.totalCapacity*100) : 0;
+    let priceRange = t.price ? `$${t.price}` : '';
+    if (t.prices) priceRange = `$${t.prices.discount} – $${t.prices.vip}`;
+    let badge = t.status==='selling' ? `<span class="t-badge tb-pre">Pre-Sale</span>`
+      : (t.status==='live'||t.status==='active') ? `<span class="t-badge tb-live">● Live</span>` : '';
+    const bannerEl = t.banner
+      ? `<div style="position:relative"><img class="t-banner" src="${t.banner}" alt=""><div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 40%,var(--surface))"></div></div>`
+      : `<div class="t-banner-ph"><i class="fas fa-route"></i></div>`;
+    const venueRows = (t.route||[]).slice(0,5).map(v => {
+      const so = pct >= 98;
+      return `<div class="venue-item"><div><div class="v-name">${v.name||'TBA'}</div><div class="v-loc">${v.location||''}</div></div><span class="v-badge ${so?'vb-sold':'vb-avail'}">${so?'Sold Out':'Available'}</span></div>`;
+    }).join('');
+    const more = (t.route||[]).length > 5 ? `<div style="font-size:11px;color:var(--muted);text-align:center;padding:6px 0">+${(t.route||[]).length-5} more venues</div>` : '';
+    return `
+    <div class="tour-card">
+      ${bannerEl}
+      <div class="t-body">
+        <div class="t-top"><div class="t-name">${t.name||'World Tour'}</div>${badge}</div>
+        <div class="t-meta">${(t.route||[]).length} Venues · ${priceRange}</div>
+        ${venueRows}${more}
+        <div class="t-prog">
+          <div class="t-prog-bar"><div class="t-prog-fill" style="width:${pct}%"></div></div>
+          <div class="t-prog-lbls"><span>${(t.ticketsSold||0).toLocaleString()} sold</span><span>${pct}% filled</span></div>
+        </div>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+// Settings
+function openSettings() { document.getElementById('sPanel').classList.add('open'); document.getElementById('sScrim').classList.add('open'); }
+function closeSettings() { document.getElementById('sPanel').classList.remove('open'); document.getElementById('sScrim').classList.remove('open'); }
+function setThumb(id, src) { const el = document.getElementById(id); el.innerHTML = `<img src="${src}" alt="">`; }
+
+document.getElementById('sHeroInput').addEventListener('change', function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => { localStorage.setItem('webifyHeroPhoto', ev.target.result); applyHeroPhoto(ev.target.result); setThumb('sHeroThumb', ev.target.result); closeSettings(); };
+  r.readAsDataURL(file);
+});
+document.getElementById('sMerchInput').addEventListener('change', function(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => { localStorage.setItem('webifyMerchBanner', ev.target.result); applyMerchBanner(ev.target.result); setThumb('sMerchThumb', ev.target.result); closeSettings(); };
+  r.readAsDataURL(file);
+});
+
+// Init
+document.addEventListener('DOMContentLoaded', () => {
+  initHome();
+  const h = localStorage.getItem('webifyHeroPhoto')||localStorage.getItem('artistPhoto');
+  if (h) setThumb('sHeroThumb', h);
+  const m = localStorage.getItem('webifyMerchBanner');
+  if (m) setThumb('sMerchThumb', m);
+  setTimeout(() => {
+    const ls = document.getElementById('loadingScreen');
+    ls.style.opacity = '0';
+    setTimeout(() => ls.style.display='none', 400);
+  }, 700);
+});
+</script>
+</body>
+</html>

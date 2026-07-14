@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#050208">
+    <title>VMA Experience</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syncopate:wght@400;700&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    
+    <style>
+        /* --- THEME VARIABLES --- */
+        :root {
+            --vma-bg: #050208;
+            --vma-card: #121212;
+            --vma-accent: #5838ff;
+            --vma-gold: #ffd700;
+            --vma-neon: #00f3ff;
+            --font-main: 'Inter', sans-serif;
+            --font-display: 'Syncopate', sans-serif;
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+        }
+
+        /* --- NATIVE APP BASE --- */
+        html, body {
+            height: 100%;
+            overflow: hidden; /* Prevent body scroll, handle inside containers */
+            background-color: var(--vma-bg);
+            color: white;
+            font-family: var(--font-main);
+            -webkit-user-select: none; /* App feel: no text selection */
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-image: 
+                radial-gradient(circle at 50% 0%, #1e1035 0%, var(--vma-bg) 60%);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- SCROLLABLE CONTENT AREA --- */
+        .app-scroll {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding-bottom: calc(100px + var(--safe-bottom));
+            -webkit-overflow-scrolling: touch;
+        }
+        /* Hide Scrollbar */
+        .app-scroll::-webkit-scrollbar { display: none; }
+
+        /* --- UI COMPONENTS --- */
+        .font-vma { font-family: var(--font-display); }
+        
+        /* Glassmorphism Header */
+        .glass-header {
+            padding-top: max(16px, var(--safe-top));
+            padding-bottom: 16px;
+            padding-left: 20px; 
+            padding-right: 20px;
+            background: rgba(5, 2, 8, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            z-index: 50;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+
+        /* Cards */
+        .vma-card {
+            background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cat-badge {
+            font-family: var(--font-display);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 8px;
+        }
+        
+        .cat-title {
+            font-family: var(--font-main);
+            font-size: 20px; 
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.5px;
+            margin-bottom: 16px;
+        }
+
+        /* Native Buttons */
+        .vma-btn {
+            width: 100%; height: 50px;
+            display: flex; align-items: center; justify-content: center;
+            background: white; color: black;
+            font-weight: 800; font-size: 14px; letter-spacing: 0.5px;
+            border-radius: 14px;
+            border: none;
+            transition: transform 0.1s;
+        }
+        .vma-btn:active { transform: scale(0.96); }
+        
+        .vma-btn-gold { 
+            background: var(--vma-gold); 
+            box-shadow: 0 4px 20px rgba(255, 215, 0, 0.2);
+        }
+        
+        .vma-btn-glass {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* --- CEREMONY STAGE (Redesigned) --- */
+        #ceremony-overlay {
+            position: fixed; inset: 0; z-index: 2000;
+            background: black;
+            display: none;
+            flex-direction: column;
+        }
+
+        .stage-container {
+            flex: 1;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #222 0%, #000 70%);
+            perspective: 1000px;
+            padding: 20px;
+            padding-top: var(--safe-top);
+        }
+
+        /* LED Screen Realism */
+        .led-screen-frame {
+            width: 100%; max-width: 500px;
+            aspect-ratio: 16/9;
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            box-shadow: 0 0 0 2px #1a1a1a, 0 20px 50px rgba(0,0,0,0.8);
+            position: relative;
+            overflow: hidden;
+            transform: rotateX(2deg);
+            margin-bottom: 40px;
+        }
+        
+        .led-content {
+            position: absolute; inset: 2px;
+            background-color: black;
+            border-radius: 8px;
+            /* Pixel Grid Effect */
+            background-image: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            text-align: center;
+            overflow: hidden;
+        }
+        
+        .led-glow {
+            position: absolute; inset: 0; pointer-events: none;
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.8);
+            z-index: 10;
+        }
+
+        .screen-category {
+            font-family: var(--font-display);
+            color: var(--vma-neon);
+            font-size: 18px; letter-spacing: 2px;
+            margin-bottom: 15px;
+            text-shadow: 0 0 8px var(--vma-accent);
+        }
+
+        .screen-nominee-row {
+            width: 80%;
+            display: flex; justify-content: space-between;
+            font-size: 12px; color: #aaa;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* Winner Mode */
+        .led-content.winner-state {
+            background-color: var(--vma-gold);
+            color: black;
+            animation: screen-flash 0.5s;
+        }
+        .led-content.winner-state .screen-category { color: black; text-shadow: none; opacity: 0.6; }
+        .led-content.winner-state .screen-nominee-row { border-color: rgba(0,0,0,0.2); color: #333; }
+        .led-content.winner-state .pixel-grid { opacity: 0.2; } /* Fade grid on bright bg */
+
+        .winner-big-text {
+            font-family: var(--font-display);
+            font-size: 36px; font-weight: 900;
+            line-height: 1; text-transform: uppercase;
+            animation: zoom-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes screen-flash { 0% { filter: brightness(5); } 100% { filter: brightness(1); } }
+        @keyframes zoom-in { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        /* Floating Moonman */
+        .moonman-trophy {
+            width: 140px; height: 140px;
+            filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.3));
+            opacity: 0; transform: translateY(50px) scale(0.8);
+            transition: 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .moonman-trophy.visible { opacity: 1; transform: translateY(0) scale(1); }
+
+    </style>
+</head>
+<body>
+
+    <!-- APP HEADER -->
+    <nav class="glass-header">
+        <button onclick="history.back()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/5 active:bg-white/20 transition">
+            <svg width="20" height="20" viewBox="0 0 24 24" stroke="white" stroke-width="2" fill="none"><path d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        
+        <!-- Dynamic Logo -->
+        <div class="flex items-center gap-1">
+            <span class="font-vma font-bold text-2xl tracking-tighter">VMA</span>
+            <span id="nav-year" class="font-vma text-xs text-white/50 pt-1">--</span>
+        </div>
+        
+        <div style="width:40px"></div> <!-- Spacer for balance -->
+    </nav>
+
+    <!-- SCROLL AREA -->
+    <div class="app-scroll">
+        
+        <!-- HERO -->
+        <div class="px-6 pt-8 pb-4 text-center">
+            <svg class="w-16 h-16 mx-auto mb-4 text-gray-300 drop-shadow-[0_0_15px_rgba(88,56,255,0.4)]" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                <path d="M15.5 13.5c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2z" fill="#000"/>
+            </svg>
+            
+            <div id="status-pill" class="inline-block px-3 py-1 rounded-full bg-white/10 text-[10px] font-bold tracking-widest uppercase mb-4 backdrop-blur-md border border-white/10">Loading...</div>
+            
+            <h1 class="font-vma text-3xl font-bold leading-none mb-1">VIDEO MUSIC<br>AWARDS</h1>
+            <p id="sub-hero" class="text-white/40 text-xs font-medium tracking-widest uppercase mt-2">Live Broadcast</p>
+        </div>
+
+        <!-- DYNAMIC CONTENT -->
+        <div id="app-content" class="px-5 mt-4">
+            <!-- Injected -->
+        </div>
+    </div>
+
+    <!-- CEREMONY FULLSCREEN OVERLAY -->
+    <div id="ceremony-overlay">
+        
+        <!-- SCENE 1: RED CARPET -->
+        <div id="scene-carpet" class="stage-container" style="background: radial-gradient(circle at 50% 100%, #4a0404 0%, #000 60%);">
+            <h2 class="font-vma text-4xl mb-1">RED CARPET</h2>
+            <p class="text-white/50 text-xs tracking-[0.3em] uppercase mb-12">Arrivals</p>
+            
+            <div class="w-full max-w-sm space-y-3">
+                <button onclick="Ceremony.carpetChoice('wild')" class="vma-btn vma-btn-glass h-16 flex-col items-start px-5">
+                    <span class="text-[10px] opacity-60 font-normal">TRENDING</span>
+                    <span class="text-lg">WILD OUTFIT</span>
+                </button>
+                <button onclick="Ceremony.carpetChoice('elegant')" class="vma-btn vma-btn-glass h-16 flex-col items-start px-5">
+                    <span class="text-[10px] opacity-60 font-normal">CRITIC'S CHOICE</span>
+                    <span class="text-lg">ELEGANT COUTURE</span>
+                </button>
+                <button onclick="Ceremony.carpetChoice('street')" class="vma-btn vma-btn-glass h-16 flex-col items-start px-5">
+                    <span class="text-[10px] opacity-60 font-normal">LOW KEY</span>
+                    <span class="text-lg">STREETWEAR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- SCENE 2: STAGE -->
+        <div id="scene-stage" class="stage-container" style="display:none;">
+            
+            <!-- THE LED SCREEN -->
+            <div class="led-screen-frame">
+                <div class="led-glow"></div>
+                <div id="screen-inner" class="led-content">
+                    <!-- Dynamic Screen Content -->
+                </div>
+            </div>
+
+            <!-- THE TROPHY -->
+            <svg id="moonman-trophy" class="moonman-trophy" viewBox="0 0 24 24">
+                <defs>
+                    <linearGradient id="silverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#fff;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#ccc;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#777;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <path fill="url(#silverGrad)" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+            </svg>
+
+            <!-- CONTROLS -->
+            <div class="absolute bottom-0 w-full p-6 pb-[calc(20px+var(--safe-bottom))] bg-gradient-to-t from-black to-transparent">
+                <button id="btn-reveal" onclick="Ceremony.revealWinner()" class="vma-btn vma-btn-gold" style="display:none;">REVEAL WINNER</button>
+                
+                <div id="speech-ui" style="display:none;" class="w-full">
+                    <input type="text" id="speech-input" class="w-full bg-white/10 border border-white/20 rounded-xl p-3 text-white text-center mb-3 outline-none" placeholder="Acceptance Speech..." autocomplete="off">
+                    <button onclick="Ceremony.submitSpeech()" class="vma-btn vma-btn-gold">ACCEPT AWARD</button>
+                </div>
+                
+                <button id="btn-next" onclick="Ceremony.nextCategory()" class="vma-btn vma-btn-glass" style="display:none;">NEXT CATEGORY</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- DATA ---
+    const CATEGORIES = [
+        { id: 'vidYear', name: 'Video of the Year', genre: 'all' },
+        { id: 'bestPop', name: 'Best Pop', genre: 'Pop' },
+        { id: 'bestHipHop', name: 'Best Hip-Hop', genre: 'Rap' },
+        { id: 'bestRnB', name: 'Best R&B', genre: 'R&B' },
+        { id: 'bestRock', name: 'Best Rock', genre: 'Rock' },
+        { id: 'bestKpop', name: 'Best K-Pop', genre: 'K-Pop' },
+        { id: 'newArtist', name: 'Best New Artist', genre: 'all' }, 
+        { id: 'artistYear', name: 'Artist of the Year', genre: 'all' },
+        { id: 'bestDir', name: 'Best Direction', genre: 'all' },
+        { id: 'bestArt', name: 'Best Art Direction', genre: 'all' },
+        { id: 'bestVfx', name: 'Best Visual Effects', genre: 'all' },
+        { id: 'bestChoreo', name: 'Best Choreography', genre: 'all' },
+        { id: 'bestEdit', name: 'Best Editing', genre: 'all' },
+        { id: 'bestCine', name: 'Best Cinematography', genre: 'all' },
+        { id: 'vanguard', name: 'Video Vanguard', genre: 'all' }
+    ];
+
+    const NPCS = [
+        "Taylor Swift", "Kendrick Lamar", "Ariana Grande", "The Weeknd", "Doja Cat", "Drake", "SZA", "Beyoncé", 
+        "Harry Styles", "Dua Lipa", "Bad Bunny", "Olivia Rodrigo", "Travis Scott", "Billie Eilish", "Sabrina Carpenter"
+    ];
+
+    const SONG_TITLES = [
+    "Blinding Lights", "Shape of You", "Bad Guy", "Uptown Funk", "Rolling in the Deep",
+    "Smells Like Teen Spirit", "Billie Jean", "Lose Yourself", "Hey Jude", "Hotel California",
+    "Bohemian Rhapsody", "Thriller", "Someone Like You", "Old Town Road", "Humble",
+    "All of Me", "Viva La Vida", "Stayin' Alive", "Shake It Off", "Wonderwall"
+];
+
+    // --- STATE ---
+    let State = {
+        date: new Date(),
+        year: 2025, // Default
+        phase: 0, 
+        submissions: [],
+        nominations: {},
+        history: [],
+        artist: {},
+        stats: { pop: 0, respect: 0 }
+    };
+
+    function init() {
+        // 1. Load Data
+        const dStr = localStorage.getItem('currentDate');
+        State.date = dStr ? new Date(dStr) : new Date();
+        State.year = State.date.getFullYear(); // DYNAMIC YEAR
+
+        const aDetails = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+        State.artist = {
+            name: aDetails.name || "You",
+            genre: aDetails.genre || "Pop",
+            startYear: parseInt(aDetails.startYear || State.year)
+        };
+        State.stats.pop = parseFloat(localStorage.getItem('popularity') || 0);
+        State.stats.respect = parseFloat(localStorage.getItem('respect') || 0);
+        State.submissions = JSON.parse(localStorage.getItem('vmaSubmissions') || '[]');
+        State.nominations = JSON.parse(localStorage.getItem('vmaNominations') || '{}');
+        State.history = JSON.parse(localStorage.getItem('vmaHistory') || '[]');
+
+        // 2. Update UI with Dynamic Year
+        const shortYear = State.year.toString().slice(-2);
+        document.getElementById('nav-year').innerText = shortYear;
+        document.title = `VMA ${State.year}`;
+
+        checkPhase();
+    }
+
+    function checkPhase() {
+        const month = State.date.getMonth(); // July is 6
+        const day = State.date.getDate();
+        
+        const pill = document.getElementById('status-pill');
+        const subHero = document.getElementById('sub-hero');
+
+        if (month !== 6) { 
+            State.phase = 0;
+            pill.innerText = "OFF SEASON";
+            pill.className = "inline-block px-3 py-1 rounded-full bg-white/5 text-white/50 text-[10px] font-bold tracking-widest uppercase mb-4";
+            subHero.innerText = `SEE YOU IN ${State.year + 1}`;
+            renderOffSeason();
+        } else if (day <= 7) {
+            State.phase = 1;
+            pill.innerText = "SUBMISSIONS OPEN";
+            pill.className = "inline-block px-3 py-1 rounded-full bg-vma-accent text-white text-[10px] font-bold tracking-widest uppercase mb-4";
+            subHero.innerText = "Eligible Videos from " + State.year;
+            renderSubmissions();
+        } else if (day <= 14) {
+            State.phase = 2;
+            pill.innerText = "VOTING LIVE";
+            pill.className = "inline-block px-3 py-1 rounded-full bg-white text-black text-[10px] font-bold tracking-widest uppercase mb-4";
+            subHero.innerText = "Nominees Announced";
+            generateNominations();
+            renderNominations();
+        } else if (day <= 21) {
+            State.phase = 3;
+            pill.innerText = "● LIVE NOW";
+            pill.className = "inline-block px-3 py-1 rounded-full bg-red-600 text-white text-[10px] font-bold tracking-widest uppercase mb-4 animate-pulse";
+            subHero.innerText = "Live from New York";
+            renderCeremonyGate();
+        } else {
+            State.phase = 4;
+            pill.innerText = "EVENT CONCLUDED";
+            subHero.innerText = "Winners Announced";
+            renderOffSeason();
+        }
+    }
+
+    // --- PHASE 1: SUBMISSIONS ---
+    function renderSubmissions() {
+        const content = document.getElementById('app-content');
+        content.innerHTML = '';
+
+        const allVideos = JSON.parse(localStorage.getItem('musicVideos') || '[]');
+        const eligibleVideos = allVideos.filter(v => {
+            if (!v.publishedDate) return false;
+            return new Date(v.publishedDate).getFullYear() === State.year && v.views >= 5000000;
+        });
+
+        // Vanguard Eligibility
+        const careerLen = State.year - State.artist.startYear;
+        const totalWins = State.history.length;
+        const hasVanguard = State.history.some(h => h.cat === 'Video Vanguard');
+        const canGetVanguard = careerLen >= 10 && totalWins >= 15 && !hasVanguard;
+
+        CATEGORIES.forEach(cat => {
+            if (cat.genre !== 'all' && cat.genre !== State.artist.genre) return;
+            if (cat.id === 'vanguard' && !canGetVanguard) return;
+
+            const sub = State.submissions.find(s => s.catId === cat.id && s.year === State.year);
+            const everSubmittedNewArtist = cat.id === 'newArtist' && State.submissions.some(s => s.catId === 'newArtist');
+            
+            let html = `
+            <div class="vma-card">
+                <div class="cat-badge">Category</div>
+                <div class="cat-title">${cat.name}</div>`;
+
+            if (sub) {
+                html += `
+                <div class="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5">
+                    <div class="w-8 h-8 rounded-full bg-vma-accent flex items-center justify-center text-xs">✓</div>
+                    <div>
+                        <div class="text-xs text-white/50 uppercase">Submitted</div>
+                        <div class="font-bold text-sm">${sub.entryName}</div>
+                    </div>
+                </div>`;
+            } else if (everSubmittedNewArtist) {
+                html += `<div class="p-3 bg-white/5 rounded-xl border border-white/5 text-center text-white/40 text-xs uppercase tracking-widest">Ineligible (Previous Submission)</div>`;
+            } else {
+                if (cat.id === 'artistYear' || cat.id === 'newArtist') {
+                    html += `<button class="vma-btn" onclick="submitEntry('${cat.id}', '${State.artist.name}', 'artist')">Submit Campaign</button>`;
+                } else if (cat.id === 'vanguard') {
+                    html += `<button class="vma-btn vma-btn-gold" onclick="submitEntry('${cat.id}', '${State.artist.name}', 'artist')">ACCEPT LEGACY HONOR</button>`;
+                } else {
+                    if (eligibleVideos.length > 0) {
+                        html += `
+                        <div class="relative mb-3">
+                            <select id="sel-${cat.id}" class="w-full bg-black/40 text-white p-4 pr-10 rounded-xl appearance-none border border-white/20 outline-none focus:border-vma-accent">
+                                ${eligibleVideos.map(v => `<option value="${v.title}">${v.title}</option>`).join('')}
+                            </select>
+                            <div class="absolute right-4 top-4 text-white/50 pointer-events-none">▼</div>
+                        </div>
+                        <button class="vma-btn" onclick="submitSelect('${cat.id}')">Submit Video</button>`;
+                    } else {
+                        html += `<div class="text-center text-white/30 text-xs py-2">No eligible videos found.</div>`;
+                    }
+                }
+            }
+            html += `</div>`;
+            content.innerHTML += html;
+        });
+    }
+
+    window.submitSelect = (id) => submitEntry(id, document.getElementById('sel-'+id).value, 'video');
+    window.submitEntry = (id, name, type) => {
+        State.submissions.push({ catId: id, entryName: name, type: type, year: State.year });
+        localStorage.setItem('vmaSubmissions', JSON.stringify(State.submissions));
+        renderSubmissions();
+    };
+
+    // --- PHASE 2: NOMINATIONS ---
+    function generateNominations() {
+        if (State.nominations[State.year]) return;
+
+        const yearNoms = {};
+        CATEGORIES.forEach(cat => {
+            if (cat.id === 'vanguard') { // Auto-win for user if submitted
+                const sub = State.submissions.find(s => s.catId === 'vanguard' && s.year === State.year);
+                if (sub) yearNoms['vanguard'] = [{ name: State.artist.name, artist: State.artist.name, isUser: true, score: 9999 }];
+                return;
+            }
+
+            const noms = [];
+            const userSub = State.submissions.find(s => s.catId === cat.id && s.year === State.year);
+            let userScore = (State.stats.pop * 0.7) + (State.stats.respect * 0.3);
+
+            if (userSub && userScore > 40) {
+                noms.push({ name: userSub.entryName, artist: State.artist.name, isUser: true, score: userScore });
+            }
+
+            for(let i=0; i<4; i++) {
+                const npcName = NPCS[Math.floor(Math.random() * NPCS.length)];
+                const randomSong = SONG_TITLES[Math.floor(Math.random() * SONG_TITLES.length)];
+                
+                noms.push({ 
+                    name: cat.id.includes('Artist') ? npcName : randomSong, 
+                    artist: cat.id.includes('Artist') ? "Artist" : npcName, 
+                    isUser: false, 
+                    score: 40 + Math.random() * 55 
+                });
+            }
+            yearNoms[cat.id] = noms.sort((a,b) => b.score - a.score).slice(0, 5);
+        });
+        State.nominations[State.year] = yearNoms;
+        localStorage.setItem('vmaNominations', JSON.stringify(State.nominations));
+    }
+
+    function renderNominations() {
+        const content = document.getElementById('app-content');
+        content.innerHTML = '';
+        const yearNoms = State.nominations[State.year];
+
+        Object.keys(yearNoms).forEach(catId => {
+            const catDef = CATEGORIES.find(c => c.id === catId);
+            if(!catDef) return;
+            
+            let html = `<div class="vma-card"><div class="cat-badge">Category</div><div class="cat-title">${catDef.name}</div><div class="space-y-2">`;
+            
+            yearNoms[catId].forEach((nom, i) => {
+                html += `
+                <div class="flex items-center p-3 rounded-xl ${nom.isUser ? 'bg-vma-accent/20 border border-vma-accent' : 'bg-white/5'}">
+                    <div class="w-6 text-center font-bold text-white/30 text-sm mr-3">${i+1}</div>
+                    <div class="flex-1">
+                        <div class="text-sm font-bold text-white">${nom.name}</div>
+                        <div class="text-[10px] text-white/50 uppercase tracking-wider">${nom.artist}</div>
+                    </div>
+                    ${nom.isUser ? '<div class="text-[10px] bg-white text-black font-bold px-2 py-1 rounded">YOU</div>' : ''}
+                </div>`;
+            });
+            html += `</div></div>`;
+            content.innerHTML += html;
+        });
+    }
+
+    // --- PHASE 3: CEREMONY ---
+    function renderCeremonyGate() {
+        if (localStorage.getItem(`vmaAttended_${State.year}`)) {
+            document.getElementById('app-content').innerHTML = `<div class="vma-card text-center"><h3 class="font-vma text-xl mb-2">WRAPPED</h3><p class="text-sm text-white/50">See you next year.</p></div>`;
+            return;
+        }
+        let nomCount = 0;
+        let hasVanguard = false;
+        Object.keys(State.nominations[State.year] || {}).forEach(k => {
+            if (State.nominations[State.year][k].some(n => n.isUser)) nomCount++;
+            if (k === 'vanguard' && State.nominations[State.year][k][0].isUser) hasVanguard = true;
+        });
+
+        document.getElementById('app-content').innerHTML = `
+            <div class="vma-card text-center py-10 border-vma-gold/20" style="background: linear-gradient(180deg, rgba(255,215,0,0.05), rgba(0,0,0,0));">
+                <h2 class="font-vma text-2xl mb-2">INVITATION</h2>
+                <div class="text-4xl font-bold mb-1 text-vma-gold">${nomCount}</div>
+                <div class="text-xs text-white/50 uppercase tracking-widest mb-6">Nominations Tonight</div>
+                ${hasVanguard ? '<div class="mb-6 p-3 bg-vma-gold text-black font-bold text-xs uppercase tracking-widest rounded">Receiving Vanguard Award</div>' : ''}
+                <button class="vma-btn vma-btn-gold" onclick="Ceremony.start()">ENTER VENUE</button>
+            </div>
+        `;
+    }
+
+    const Ceremony = {
+        queue: [],
+        idx: 0,
+        currentWinner: null,
+
+        start: function() {
+            document.getElementById('ceremony-overlay').style.display = 'flex';
+        },
+
+        carpetChoice: function(type) {
+            if(type === 'wild') { State.stats.pop += 3; State.stats.respect -= 1; }
+            else if (type === 'elegant') { State.stats.respect += 3; }
+            else { State.stats.pop += 1; State.stats.respect += 1; }
+            localStorage.setItem('popularity', State.stats.pop);
+            localStorage.setItem('respect', State.stats.respect);
+
+            document.getElementById('scene-carpet').style.display = 'none';
+            this.beginShow();
+        },
+
+        beginShow: function() {
+            document.getElementById('scene-stage').style.display = 'flex';
+            
+            // Re-order categories to put Vanguard last
+            const activeCats = CATEGORIES.filter(c => State.nominations[State.year] && State.nominations[State.year][c.id]);
+            this.queue = [...activeCats.filter(c => c.id !== 'vanguard')];
+            const vanguard = activeCats.find(c => c.id === 'vanguard');
+            if (vanguard) this.queue.push(vanguard);
+
+            this.idx = 0;
+            this.loadScreen();
+        },
+
+        loadScreen: function() {
+            if (this.idx >= this.queue.length) {
+                this.endShow();
+                return;
+            }
+
+            const cat = this.queue[this.idx];
+            const noms = State.nominations[State.year][cat.id];
+            
+            // UI Reset
+            document.getElementById('moonman-trophy').classList.remove('visible');
+            document.getElementById('btn-reveal').style.display = 'block';
+            document.getElementById('btn-next').style.display = 'none';
+            document.getElementById('speech-ui').style.display = 'none';
+            
+            // Screen: Nominee Mode
+            const screen = document.getElementById('screen-inner');
+            screen.className = 'led-content'; // Reset classes
+            screen.innerHTML = `
+                <div class="screen-category">${cat.name.toUpperCase()}</div>
+                ${noms.map(n => `
+                    <div class="screen-nominee-row">
+                        <span>${n.artist}</span>
+                        <span style="opacity:0.5">${n.name.substring(0,10)}...</span>
+                    </div>
+                `).join('')}
+            `;
+
+            // Calculate Winner
+            let winner = noms[0]; 
+            if (Math.random() < 0.15 && noms[1]) winner = noms[1]; // 15% upset
+            if (cat.id === 'vanguard') winner = noms[0]; // Vanguard fixed
+
+            this.currentWinner = winner;
+        },
+
+        revealWinner: function() {
+            document.getElementById('btn-reveal').style.display = 'none';
+            
+            // Screen: Winner Mode
+            const screen = document.getElementById('screen-inner');
+            screen.classList.add('winner-state');
+            screen.innerHTML = `
+                <div class="screen-category" style="font-size:12px; margin-bottom:5px;">WINNER</div>
+                <div class="winner-big-text">${this.currentWinner.artist}</div>
+                <div style="font-size:12px; font-weight:bold; margin-top:5px; opacity:0.8">${this.currentWinner.name}</div>
+            `;
+
+            document.getElementById('moonman-trophy').classList.add('visible');
+
+            if (this.currentWinner.isUser) {
+                this.confetti();
+                document.getElementById('speech-ui').style.display = 'block';
+                // Record History
+                State.history.push({ year: State.year, cat: this.queue[this.idx].name, entry: this.currentWinner.name });
+                localStorage.setItem('vmaHistory', JSON.stringify(State.history));
+            } else {
+                document.getElementById('btn-next').style.display = 'block';
+            }
+        },
+
+        submitSpeech: function() {
+            if(document.getElementById('speech-input').value) {
+                State.stats.pop += 2; 
+                localStorage.setItem('popularity', State.stats.pop);
+            }
+            document.getElementById('speech-input').value = "";
+            this.nextCategory();
+        },
+
+        nextCategory: function() {
+            document.querySelectorAll('.confetti').forEach(c => c.remove());
+            this.idx++;
+            this.loadScreen();
+        },
+
+        confetti: function() {
+            for(let i=0; i<40; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.cssText = `
+                    position:fixed; width:8px; height:8px; top:-10px;
+                    left:${Math.random()*100}%; background:${['#ffd700','#fff','#5838ff'][Math.floor(Math.random()*3)]};
+                    animation:fall ${2+Math.random()*3}s linear forwards; z-index:9999;
+                `;
+                document.body.appendChild(c);
+            }
+        },
+
+        endShow: function() {
+            localStorage.setItem(`vmaAttended_${State.year}`, 'true');
+            alert("Show Concluded");
+            location.reload();
+        }
+    };
+
+    function renderOffSeason() {
+        document.getElementById('app-content').innerHTML = `
+            <div class="vma-card">
+                <div class="cat-badge">Legacy</div>
+                <div class="cat-title">Trophy Case</div>
+                ${State.history.map(h => `<div class="mb-3 pb-3 border-b border-white/5 last:border-0"><div class="text-xs text-white/40">${h.year}</div><div class="font-bold text-sm text-vma-gold">${h.cat}</div><div class="text-xs">${h.entry}</div></div>`).join('')}
+                ${State.history.length===0?'<div class="text-xs text-white/30">No awards yet.</div>':''}
+            </div>`;
+    }
+
+    // Add CSS for Confetti fall
+    const s = document.createElement("style");
+    s.innerHTML = "@keyframes fall { to { transform: translateY(110vh) rotate(720deg); }}";
+    document.head.appendChild(s);
+
+    init();
+</script>
+</body>
+</html>
+

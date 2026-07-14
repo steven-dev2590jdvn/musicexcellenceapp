@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog Sales | Music Excellence</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --primary: #3B82F6;
+            --secondary: #8B5CF6;
+            --accent: #06B6D4;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --dark: #0F0F23;
+            --card-bg: rgba(30, 30, 50, 0.6);
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at top center, #1e1e2f 0%, #0f0f23 100%);
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            padding-bottom: 50px;
+        }
+
+        /* Background Animation */
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%);
+        }
+
+        /* Header */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 20px;
+            background: rgba(15, 15, 35, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .back-btn {
+            position: absolute;
+            left: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 12px;
+            color: #ccc;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            transform: translateX(-5px);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        /* No Offers State */
+        .no-offers {
+            text-align: center;
+            padding: 80px 20px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .no-offers-icon {
+            font-size: 64px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.3));
+        }
+
+        .requirements-box {
+            margin-top: 30px;
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            display: inline-block;
+            text-align: left;
+            max-width: 500px;
+        }
+
+        .requirements-box h3 {
+            color: var(--warning);
+            font-size: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .req-list li {
+            margin: 8px 0;
+            color: #ccc;
+            font-size: 14px;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .req-list li i {
+            font-size: 10px;
+            color: var(--warning);
+        }
+
+        /* Offers Grid */
+        .offers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 30px;
+        }
+
+        /* Offer Card */
+        .offer-card {
+            background: linear-gradient(145deg, rgba(30, 30, 50, 0.8), rgba(20, 20, 35, 0.9));
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: slideUp 0.6s ease backwards;
+        }
+
+        .offer-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            border-color: rgba(255,255,255,0.3);
+        }
+
+        /* Card Header */
+        .card-header {
+            padding: 24px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .company-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .company-logo::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), transparent);
+        }
+
+        .company-info h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .company-badge {
+            display: inline-block;
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: #94a3b8;
+            margin-top: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Offer Body */
+        .card-body {
+            padding: 24px;
+        }
+
+        .offer-value {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .value-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #94a3b8;
+            margin-bottom: 4px;
+        }
+
+        .value-amount {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 20%, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        /* Stats Grid */
+        .deal-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .stat-lbl {
+            font-size: 11px;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+
+        /* Song List Preview */
+        .song-preview {
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .preview-header {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .song-list-scroll {
+            max-height: 100px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        /* Custom Scrollbar */
+        .song-list-scroll::-webkit-scrollbar { width: 4px; }
+        .song-list-scroll::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+        .song-list-scroll::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 2px; }
+
+        .preview-item {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 6px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .preview-item:last-child { border-bottom: none; }
+        .preview-item span:first-child { color: #e2e8f0; font-weight: 500; }
+        .preview-item span:last-child { color: #64748b; font-variant-numeric: tabular-nums; }
+
+        /* Timer */
+        .timer-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            margin: 0 auto 20px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        /* Action Button */
+        .sell-btn {
+            width: 100%;
+            padding: 18px;
+            border-radius: 16px;
+            border: none;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sell-btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+
+        .sell-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.5);
+        }
+
+        .sell-btn:hover::after {
+            transform: translateX(100%);
+        }
+
+        .disclaimer {
+            font-size: 10px;
+            color: #64748b;
+            text-align: center;
+            margin-top: 12px;
+            line-height: 1.4;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .container { padding: 0 16px; }
+            .header h1 { font-size: 20px; }
+            .offers-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <header class="header">
+        <a href="music.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <div>
+            <h1>Catalog Sales</h1>
+            <div class="header-subtitle">Acquisition Market</div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="offers-container">
+            <!-- Content Injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        class CatalogSales {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.loadOffers();
+                this.displayOffers();
+            }
+
+            // Correctly get song name regardless of save format
+            getSongName(song) {
+                return song.songName || song.name || "Untitled Track";
+            }
+
+            getUnsoldSongs() {
+                const releasedSongs = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+                return releasedSongs.filter(song => !song.sold);
+            }
+
+            generateOffer() {
+                const unsoldSongs = this.getUnsoldSongs();
+                const popularity = parseFloat(localStorage.getItem('popularity')) || 25;
+                const totalStreams = unsoldSongs.reduce((sum, song) => sum + (song.streams || 0), 0);
+                
+                // Minimum requirements to generate offer
+                // 10M streams minimum to get an offer
+                if (totalStreams < 10000000 || unsoldSongs.length < 5) return null;
+
+                const companies = [
+                    {name: 'Universal Media', logo: 'UMG', color: '#ffd700', type: 'Global Major'},
+                    {name: 'Sony Publishing', logo: 'SON', color: '#fff', type: 'Publishing Giant'},
+                    {name: 'Warner Corp', logo: 'WMG', color: '#3b82f6', type: 'Music Group'},
+                    {name: 'Kobalt Capital', logo: 'KOB', color: '#10b981', type: 'Investment Fund'},
+                    {name: 'Hipgnosis', logo: 'HIP', color: '#f472b6', type: 'Song Fund'},
+                    {name: 'Blackstone Music', logo: 'BLK', color: '#94a3b8', type: 'Private Equity'}
+                ];
+
+                const company = companies[Math.floor(Math.random() * companies.length)];
+                
+                // --- NEW VALUATION LOGIC ---
+                // Base Rate: $0.002 to $0.0035 per stream (Standard Industry Calculation)
+                // 1 Million streams = ~$2,500
+                // 1 Billion streams = ~$2.5 Million
+                // 40 Billion streams = ~$100 Million
+                
+                const baseRatePerStream = 0.002 + (Math.random() * 0.0015);
+                const popularityMultiplier = 1 + (popularity / 200); // Up to 1.5x bonus for high fame
+                
+                const rawValuation = totalStreams * baseRatePerStream * popularityMultiplier;
+                
+                // Add some randomness to the offer (85% to 115% of fair value)
+                const negotiationFactor = 0.85 + (Math.random() * 0.3);
+                
+                const offerAmount = Math.floor(rawValuation * negotiationFactor);
+                
+                // Determine how many songs to take (30% to 100% of catalog)
+                const takePercent = 0.3 + (Math.random() * 0.7);
+                const songsToTakeCount = Math.min(
+                    Math.max(3, Math.floor(unsoldSongs.length * takePercent)),
+                    unsoldSongs.length
+                );
+
+                // Select the highest streaming songs first (Labels want hits)
+                const selectedSongs = unsoldSongs
+                    .sort((a, b) => (b.streams || 0) - (a.streams || 0))
+                    .slice(0, songsToTakeCount);
+
+                const selectedStreams = selectedSongs.reduce((acc, s) => acc + (s.streams || 0), 0);
+                
+                // Recalculate offer specifically for selected songs
+                const finalOfferAmount = Math.floor(selectedStreams * baseRatePerStream * popularityMultiplier * negotiationFactor);
+
+                const currentDate = new Date(localStorage.getItem('currentDate') || new Date());
+                const expiresDate = new Date(currentDate);
+                expiresDate.setDate(expiresDate.getDate() + (7 + Math.floor(Math.random() * 14))); // 1-3 weeks expiry
+
+                return {
+                    id: Date.now() + Math.random(),
+                    company,
+                    amount: finalOfferAmount,
+                    selectedSongs, // Store full objects
+                    songsAffected: songsToTakeCount,
+                    totalStreamsIncluded: selectedStreams,
+                    createdDate: currentDate.toISOString(),
+                    expiresDate: expiresDate.toISOString()
+                };
+            }
+
+            shouldGenerateOffer() {
+                const offers = JSON.parse(localStorage.getItem('catalogOffers')) || [];
+                if (offers.length >= 2) return false; // Max 2 active offers
+
+                const unsoldSongs = this.getUnsoldSongs();
+                const totalStreams = unsoldSongs.reduce((sum, song) => sum + (song.streams || 0), 0);
+                
+                // Chance increases with streams
+                let chance = 0.1;
+                if (totalStreams > 100000000) chance = 0.4;
+                if (totalStreams > 1000000000) chance = 0.8;
+                
+                return Math.random() < chance;
+            }
+
+            loadOffers() {
+                let offers = JSON.parse(localStorage.getItem('catalogOffers')) || [];
+                const currentDate = new Date(localStorage.getItem('currentDate') || new Date());
+
+                // Filter expired
+                offers = offers.filter(offer => new Date(offer.expiresDate) > currentDate);
+
+                // Generate new if needed
+                if (this.shouldGenerateOffer()) {
+                    const newOffer = this.generateOffer();
+                    if (newOffer) {
+                        offers.push(newOffer);
+                    }
+                }
+
+                localStorage.setItem('catalogOffers', JSON.stringify(offers));
+                this.offers = offers;
+            }
+
+            formatMoney(amount) {
+                if (amount >= 1000000000) return '$' + (amount / 1000000000).toFixed(2) + 'B';
+                if (amount >= 1000000) return '$' + (amount / 1000000).toFixed(1) + 'M';
+                if (amount >= 1000) return '$' + (amount / 1000).toFixed(0) + 'K';
+                return '$' + amount.toLocaleString();
+            }
+
+            formatStreams(num) {
+                if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+                if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+                if (num >= 1000) return (num / 1000).toFixed(0) + 'k';
+                return num.toString();
+            }
+
+            getTimeUntilExpiry(expiresDate) {
+                const now = new Date(localStorage.getItem('currentDate') || new Date());
+                const expires = new Date(expiresDate);
+                const diffTime = expires - now;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays <= 0) return 'Expires Today';
+                if (diffDays === 1) return '1 Day Left';
+                return `${diffDays} Days Left`;
+            }
+
+            sellCatalog(offerId) {
+                if(!confirm("Are you sure? Selling your catalog is permanent. You will lose ownership of these songs.")) return;
+
+                const offers = JSON.parse(localStorage.getItem('catalogOffers')) || [];
+                const offerIndex = offers.findIndex(offer => offer.id === offerId);
+                
+                if (offerIndex === -1) return;
+
+                const offer = offers[offerIndex];
+                
+                // Add Money
+                let currentMoney = parseFloat(localStorage.getItem('money')) || 0;
+                currentMoney += offer.amount;
+                localStorage.setItem('money', currentMoney.toString());
+
+                // Mark Songs as Sold
+                let releasedSongs = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+                
+                offer.selectedSongs.forEach(selectedSong => {
+                    // Match by ID if possible, fallback to name
+                    const songIndex = releasedSongs.findIndex(song => 
+                        (song.id && song.id === selectedSong.id) || 
+                        (this.getSongName(song) === this.getSongName(selectedSong))
+                    );
+
+                    if (songIndex !== -1) {
+                        releasedSongs[songIndex].sold = true;
+                        releasedSongs[songIndex].soldTo = offer.company.name;
+                        releasedSongs[songIndex].soldDate = new Date().toISOString();
+                        // Remove streams from future earning calculations but keep history?
+                        // Usually selling catalog means you don't get royalties anymore.
+                        // Logic in music.html handles "sold" check if implemented, 
+                        // otherwise we assume 'sold' flag is used to stop revenue.
+                    }
+                });
+                
+                localStorage.setItem('releasedSongs', JSON.stringify(releasedSongs));
+
+                // Remove Offer
+                offers.splice(offerIndex, 1);
+                localStorage.setItem('catalogOffers', JSON.stringify(offers));
+
+                // Refresh
+                this.displayOffers();
+                
+                // Animation/Feedback
+                alert(`CONGRATULATIONS! Deal Closed. $${offer.amount.toLocaleString()} added to your account.`);
+                window.location.href = 'music.html'; // Return home to see money
+            }
+
+            displayOffers() {
+                const container = document.getElementById('offers-container');
+                
+                // Only showing active, non-expired offers
+                const activeOffers = this.offers;
+
+                if (!activeOffers || activeOffers.length === 0) {
+                    const unsoldSongs = this.getUnsoldSongs();
+                    const totalStreams = unsoldSongs.reduce((sum, song) => sum + (song.streams || 0), 0);
+                    
+                    container.innerHTML = `
+                        <div class="no-offers">
+                            <div class="no-offers-icon">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <h2 style="font-size: 24px; margin-bottom: 10px;">Market Quiet</h2>
+                            <p style="color: #94a3b8; margin-bottom: 20px;">
+                                Investors are watching. Keep growing your streaming numbers to attract high-value acquisition offers.
+                            </p>
+                            
+                            <div class="requirements-box">
+                                <h3><i class="fas fa-chart-line"></i> Current Valuation Metrics</h3>
+                                <ul class="req-list">
+                                    <li><i class="fas fa-music"></i> Eligible Tracks: <strong>${unsoldSongs.length}</strong></li>
+                                    <li><i class="fas fa-play"></i> Total Eligible Streams: <strong>${this.formatStreams(totalStreams)}</strong></li>
+                                    <li><i class="fas fa-check-circle"></i> Minimum for Offers: <strong>10M Streams</strong></li>
+                                </ul>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = `<div class="offers-grid">
+                    ${activeOffers.map((offer, index) => {
+                        // Fix for song names in map
+                        const songListHTML = offer.selectedSongs.map(s => `
+                            <div class="preview-item">
+                                <span>${this.getSongName(s)}</span>
+                                <span>${this.formatStreams(s.streams || 0)}</span>
+                            </div>
+                        `).join('');
+
+                        return `
+                        <div class="offer-card" style="animation-delay: ${index * 100}ms">
+                            <div class="card-header">
+                                <div class="company-logo" style="color: ${offer.company.color}">
+                                    ${offer.company.logo}
+                                </div>
+                                <div class="company-info">
+                                    <h2>${offer.company.name}</h2>
+                                    <span class="company-badge">${offer.company.type}</span>
+                                </div>
+                            </div>
+
+                            <div class="card-body">
+                                <div class="offer-value">
+                                    <div class="value-label">Cash Offer</div>
+                                    <div class="value-amount">${this.formatMoney(offer.amount)}</div>
+                                </div>
+
+                                <div class="deal-stats">
+                                    <div class="stat-box">
+                                        <div class="stat-val">${offer.songsAffected}</div>
+                                        <div class="stat-lbl">Songs Included</div>
+                                    </div>
+                                    <div class="stat-box">
+                                        <div class="stat-val">${this.formatStreams(offer.totalStreamsIncluded)}</div>
+                                        <div class="stat-lbl">Total Streams</div>
+                                    </div>
+                                </div>
+
+                                <div class="song-preview">
+                                    <div class="preview-header">
+                                        <span>INCLUDED ASSETS</span>
+                                        <span>STREAMS</span>
+                                    </div>
+                                    <div class="song-list-scroll">
+                                        ${songListHTML}
+                                    </div>
+                                </div>
+
+                                <div class="timer-badge">
+                                    <i class="far fa-clock"></i>
+                                    ${this.getTimeUntilExpiry(offer.expiresDate)}
+                                </div>
+
+                                <button class="sell-btn" onclick="catalogSales.sellCatalog(${offer.id})">
+                                    Accept Deal
+                                </button>
+                                
+                                <p class="disclaimer">
+                                    By accepting, you permanently transfer 100% of rights for the selected songs to ${offer.company.name}.
+                                </p>
+                            </div>
+                        </div>
+                        `;
+                    }).join('')}
+                </div>`;
+            }
+        }
+
+        const catalogSales = new CatalogSales();
+    </script>
+</body>
+</html>
+

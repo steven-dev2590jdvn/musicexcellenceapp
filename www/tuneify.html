@@ -1,0 +1,1454 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Tuneify - Music Excellence</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        :root {
+            --primary: #fa2d48; /* Apple Music Red/Pink */
+            --bg: #ffffff;
+            --bg-secondary: #f2f2f7;
+            --text-main: #000000;
+            --text-secondary: #8e8e93;
+            --card-bg: #ffffff;
+            --border: #e5e5ea;
+            --glass: rgba(255, 255, 255, 0.85);
+            --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-main);
+            padding-bottom: calc(80px + var(--safe-area-bottom));
+            overflow-x: hidden;
+        }
+
+        /* --- Navigation Top --- */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            z-index: 100;
+            background: linear-gradient(to bottom, rgba(255,255,255,1), rgba(255,255,255,0));
+            transition: background 0.3s;
+        }
+        
+        .nav-bar.scrolled {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .nav-btn:active {
+            transform: scale(0.95);
+            background: var(--bg-secondary);
+        }
+
+        /* --- Views --- */
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+            min-height: 100vh;
+        }
+        .view.active {
+            display: block;
+        }
+
+        /* --- Hero Section (Profile) --- */
+        .hero {
+            position: relative;
+            height: 40vh;
+            min-height: 320px;
+            max-height: 450px;
+            width: 100%;
+            overflow: hidden;
+            background: var(--bg-secondary);
+        }
+
+        .hero-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.6) 50%, var(--bg) 100%);
+        }
+
+        .hero-content {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            right: 0;
+            padding: 0 24px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .artist-name {
+            font-size: clamp(32px, 8vw, 48px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            margin-bottom: 4px;
+            color: var(--text-main);
+            line-height: 1.1;
+        }
+
+        .artist-meta {
+            font-size: 15px;
+            color: var(--text-secondary);
+            font-weight: 700;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .artist-meta span.genre {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            height: 40px;
+            padding: 0 24px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 12px rgba(250, 45, 72, 0.2);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.96);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .btn-secondary:active {
+            background: #e5e5ea;
+            transform: scale(0.96);
+        }
+
+        input[type="file"] { display: none; }
+
+        /* --- Main Container --- */
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 16px;
+            margin-top: 32px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: -0.01em;
+            color: var(--text-main);
+        }
+
+        .see-all {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* --- Horizontal Scroll (Explore) --- */
+        .horizontal-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding-bottom: 16px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+        .horizontal-scroll::-webkit-scrollbar { display: none; }
+
+        .carousel-item {
+            min-width: 280px;
+            height: 180px;
+            border-radius: 12px;
+            scroll-snap-align: start;
+            position: relative;
+            overflow: hidden;
+            background: #222;
+            cursor: pointer;
+        }
+        .carousel-bg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+        }
+        .carousel-content {
+            position: absolute;
+            bottom: 16px;
+            left: 16px;
+            right: 16px;
+            color: white;
+        }
+        .carousel-badge {
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: var(--primary);
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 6px;
+        }
+        .carousel-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 4px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+        }
+        .carousel-artist {
+            font-size: 13px;
+            font-weight: 700;
+            opacity: 0.9;
+        }
+
+        /* --- Song List --- */
+        .song-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .song-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid var(--border);
+        }
+        .song-item:last-child { border-bottom: none; }
+
+        .song-item:hover, .song-item:active {
+            background: var(--bg-secondary);
+        }
+
+        .song-rank {
+            width: 24px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 800;
+            text-align: center;
+            margin-right: 12px;
+        }
+
+        .song-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 6px;
+            margin-right: 16px;
+            object-fit: cover;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .song-details {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .song-name {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: var(--text-main);
+        }
+        
+        .explicit-tag {
+            display: inline-block;
+            font-size: 9px;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+            padding: 1px 3px;
+            border-radius: 3px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: 600;
+        }
+
+        .song-stats {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* Pop Bars (||||) */
+        .pop-bars {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 14px;
+            margin-left: 12px;
+        }
+        .pop-bar {
+            width: 3px;
+            background: var(--border);
+            border-radius: 1.5px;
+        }
+        .pop-bar.filled { background: var(--text-secondary); }
+
+        /* --- Albums Grid --- */
+        .albums-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px 16px;
+        }
+        .horizontal-grid {
+            display: flex;
+            overflow-x: auto;
+            gap: 16px;
+            padding-bottom: 16px;
+            scroll-snap-type: x mandatory;
+        }
+        .horizontal-grid::-webkit-scrollbar { display: none; }
+        .horizontal-grid .album-card {
+            min-width: 140px;
+            scroll-snap-align: start;
+        }
+
+        .album-card {
+            cursor: pointer;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .album-art-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1;
+            margin-bottom: 8px;
+            transition: transform 0.2s;
+        }
+
+        .album-card:active .album-art-container {
+            transform: scale(0.97);
+            opacity: 0.8;
+        }
+
+        .album-art {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .album-title-text {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-main);
+            margin-bottom: 2px;
+            line-height: 1.3;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+        }
+
+        .album-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        /* --- Modal (Album View) --- */
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 1000;
+            overflow-y: auto;
+            transform: translateY(100%);
+            transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        .modal.active { transform: translateY(0); }
+
+        .modal-header-nav {
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 16px;
+            z-index: 10;
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Modal Inner Tabs */
+        .album-info-block {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            align-items: center;
+        }
+        .album-info-cover {
+            width: 120px;
+            height: 120px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            object-fit: cover;
+        }
+        .album-info-text h1 {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+        .album-info-text .av-artist {
+            font-size: 16px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .album-info-text .av-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+        }
+
+        .modal-tabs {
+            display: flex;
+            justify-content: center;
+            background: var(--bg-secondary);
+            margin: 0 20px;
+            border-radius: 8px;
+            padding: 2px;
+        }
+        .modal-tab {
+            flex: 1;
+            padding: 8px 0;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-tab.active {
+            background: var(--bg);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .modal-tab-content { display: none; padding: 20px; padding-bottom: 100px; }
+        .modal-tab-content.active { display: block; }
+
+        /* Review Styles */
+        .review-card {
+            background: var(--bg);
+            margin-bottom: 24px;
+        }
+        .review-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; }
+        .review-text { font-size: 14px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 24px;}
+        
+        .rating-bars-container {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .rating-score { font-size: 48px; font-weight: 800; }
+        .rating-out-of { font-size: 14px; color: var(--text-secondary); font-weight: 600; }
+        .rating-bars { flex: 1; }
+        .rating-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; font-size: 10px; color: var(--text-secondary); font-weight: 700;}
+        .rating-line { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+        .rating-fill { height: 100%; background: var(--text-main); border-radius: 2px; }
+
+        .user-review {
+            border-bottom: 1px solid var(--border);
+            padding: 16px 0;
+        }
+        .ur-stars { color: #f5a623; font-size: 12px; letter-spacing: 2px; margin-bottom: 4px; }
+        .ur-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+        .ur-text { font-size: 13px; color: var(--text-secondary); line-height: 1.4; margin-bottom: 8px; }
+        .ur-author { font-size: 12px; font-weight: 600; }
+
+        .album-total-sales {
+            text-align: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* --- Custom Stats View --- */
+        .stats-header {
+            font-size: 36px;
+            font-weight: 900;
+            margin: 20px 0;
+            padding: 0 20px;
+            letter-spacing: -0.02em;
+        }
+
+        /* Insights Custom List */
+        .insight-list {
+            padding: 0 20px;
+            margin-bottom: 32px;
+        }
+        .insight-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .insight-icon-box {
+            width: 48px; height: 48px;
+            background: rgba(250, 45, 72, 0.1);
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        .insight-info { flex: 1; }
+        .insight-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--text-main); }
+        .insight-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.4; }
+
+        /* Regions Custom List */
+        .regions-list {
+            padding: 0 20px 40px 20px;
+        }
+        .region-card {
+            display: flex;
+            flex-direction: column;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        .region-card-top {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;
+        }
+        .region-card-left { display: flex; align-items: center; gap: 12px; }
+        .region-rank { font-weight: 800; color: var(--text-secondary); font-size: 14px; width: 20px;}
+        .region-name { font-weight: 600; font-size: 15px; color: var(--text-main); }
+        .region-sales { font-weight: 700; font-size: 14px; color: var(--primary); }
+        .region-bar-bg { width: 100%; height: 6px; background: var(--bg-secondary); border-radius: 3px; overflow:hidden; }
+        .region-bar-fill { height: 100%; background: var(--primary); border-radius: 3px; }
+
+        /* --- Footer Nav --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: var(--safe-area-bottom);
+            z-index: 90;
+        }
+
+        .nav-item {
+            flex: 1;
+            height: 55px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .nav-item.active { color: var(--primary); }
+        .nav-item svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round;}
+        .nav-item.active svg { fill: currentColor; }
+
+        .empty-state { padding: 40px; text-align: center; color: var(--text-secondary); font-style: italic; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        @media (max-width: 600px) {
+            .albums-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        }
+    #songs-list-scroller::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- Top Nav -->
+    <nav class="nav-bar" id="navbar">
+        <button class="nav-btn" onclick="window.location.href='music.html'">
+            <svg width="20" height="20" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+    </nav>
+
+    <!-- EXPLORE VIEW -->
+    <div id="view-explore" class="view">
+        <div class="container" style="padding-top: 60px;">
+            <div class="section-header" style="margin-top: 10px;">
+                <h2 class="section-title">Discover</h2>
+            </div>
+            <!-- Top Carousel -->
+            <div class="horizontal-scroll" id="explore-carousel"></div>
+
+            <div class="section-header">
+                <h2 class="section-title">Top Album Debuts</h2>
+                <div class="see-all">See All</div>
+            </div>
+            <div class="horizontal-grid" id="explore-debts"></div>
+
+            <div class="section-header">
+                <h2 class="section-title">Top Albums</h2>
+                <div class="see-all">See All</div>
+            </div>
+            <div class="horizontal-grid" id="explore-albums"></div>
+
+            <div class="section-header">
+                <h2 class="section-title">Top Songs</h2>
+                <div class="see-all">See All</div>
+            </div>
+            <div class="song-list" id="explore-songs"></div>
+        </div>
+    </div>
+
+    <!-- PROFILE VIEW -->
+    <div id="view-profile" class="view active">
+        <div class="hero">
+            <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=600&fit=crop" class="hero-bg" id="hero-img" alt="Artist Cover">
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <h1 class="artist-name" id="artist-name">Artist Name</h1>
+                <div class="artist-meta">
+                    <span class="genre">Pop</span> • <span id="artist-sales">0 total sales</span>
+                </div>
+                <div class="hero-actions">
+                    <button class="btn btn-primary" onclick="playAll()">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M8 5v14l11-7z"/></svg>
+                        Play
+                    </button>
+                    <button class="btn btn-secondary" onclick="toggleCombineMode()" id="combine-toggle-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                        Combine: ON
+                    </button>
+                </div>
+            </div>
+            <input type="file" id="hero-input" accept="image/*">
+        </div>
+
+        <div class="container">
+            <div id="latest-release-container" style="display:none;">
+                <div class="section-header">
+                    <h2 class="section-title">Latest Release</h2>
+                </div>
+                <div class="song-item" id="latest-release" style="border: 1px solid var(--border);">
+                    <!-- Content injected via JS -->
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Top Songs</h2>
+                <div class="see-all">See All</div>
+            </div>
+            <div style="overflow-x:auto;scroll-snap-type:x mandatory;display:flex;scrollbar-width:none;" id="songs-list-scroller">
+                <div class="song-list" id="songs-list" style="min-width:100%;flex-shrink:0;scroll-snap-align:start;"></div>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">Albums & EPs</h2>
+                <div class="see-all">See All</div>
+            </div>
+            <div class="albums-grid" id="albums-grid"></div>
+        </div>
+    </div>
+
+    <!-- STATS VIEW -->
+    <div id="view-stats" class="view">
+        <div class="container" style="padding-top: 60px; padding-left: 0; padding-right: 0;">
+            <h1 class="stats-header">Stats</h1>
+            
+                   <h2 class="section-title" style="padding: 0 20px; margin-bottom: 16px;">Milestones</h2>            <div class="insight-list" id="insights-list">
+                <!-- Insights injected -->
+            </div>
+
+            <h2 class="section-title" style="padding: 0 20px; margin-bottom: 16px;">Top Country or Region by Sales</h2>
+            <div class="regions-list" id="regions-list">
+                <!-- Regions injected -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ALBUM MODAL -->
+    <div class="modal" id="album-modal">
+        <div class="modal-header-nav">
+            <button class="back-btn" onclick="closeAlbum()">
+                <svg width="20" height="20" viewBox="0 0 24 24" style="margin-right:4px"><path d="M15 18l-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Back
+            </button>
+        </div>
+        
+        <div id="album-content"></div>
+        
+        <div class="modal-tabs">
+            <button class="modal-tab active" onclick="switchModalTab('songs', this)">Songs</button>
+            <button class="modal-tab" onclick="switchModalTab('reviews', this)">Reviews</button>
+            <button class="modal-tab" onclick="switchModalTab('related', this)">Related</button>
+        </div>
+
+        <div id="modal-tab-songs" class="modal-tab-content active"></div>
+        <div id="modal-tab-reviews" class="modal-tab-content"></div>
+        <div id="modal-tab-related" class="modal-tab-content">
+            <div class="albums-grid" id="modal-related-grid"></div>
+        </div>
+    </div>
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+        <div class="nav-item" id="nav-explore" onclick="switchMainTab('explore')">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+            <span>Explore</span>
+        </div>
+        <div class="nav-item active" id="nav-profile" onclick="switchMainTab('profile')">
+            <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Profile</span>
+        </div>
+        <div class="nav-item" id="nav-stats" onclick="switchMainTab('stats')">
+            <svg viewBox="0 0 24 24"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-4"/></svg>
+            <span>Stats</span>
+        </div>
+        <div class="nav-item" onclick="window.location.href='tc.html'">
+            <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17l-5-5-4 4-3-3"/></svg>
+            <span>Charts</span>
+        </div>
+    </div>
+
+    <script>
+        // --- Storage & DB Helpers ---
+        const photoDB = (function() {
+            const DB_NAME = 'MusicGameDB'; const STORE = 'photos'; const KEY = 'artistPhoto';
+            function open() {
+                return new Promise((resolve, reject) => {
+                    const req = indexedDB.open(DB_NAME, 1);
+                    req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+                    req.onsuccess = e => resolve(e.target.result);
+                    req.onerror = e => reject(e.target.error);
+                });
+            }
+            return {
+                load() {
+                    return open().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(STORE, 'readonly');
+                        const req = tx.objectStore(STORE).get(KEY);
+                        req.onsuccess = e => resolve(e.target.result || null);
+                        req.onerror = e => reject(e.target.error);
+                    }));
+                },
+                save(dataUrl) {
+                    return open().then(db => new Promise((resolve, reject) => {
+                        const tx = db.transaction(STORE, 'readwrite');
+                        const req = tx.objectStore(STORE).put(dataUrl, KEY);
+                        req.onsuccess = () => resolve();
+                        req.onerror = e => reject(e.target.error);
+                    }));
+                }
+            };
+        })();
+
+        // Data Access
+        const getLocal = (key) => JSON.parse(localStorage.getItem(key) || '[]');
+        const getSongs = () => {
+            const mySongs = getLocal('releasedSongs');
+            const collabs = getLocal('acceptedCollaborations').map(c => ({
+                ...c, songName: `${c.songName} (feat. ${c.npcArtist})`, isCollab: true
+            }));
+            return [...mySongs, ...collabs].filter(s => s?.songName || s?.name);
+        };
+        const getAlbums = () => getLocal('releasedAlbums').filter(a => a?.name || a?.albumName);
+        const getChartSongs = () => getLocal('chart_songs_final');
+        const getChartAlbums = () => getLocal('chart_albums_final');
+
+        const getSales = (song) => song?.totalSalesUnits || Math.floor((song?.streams || 0) / 1350);
+        const getAlbumSales = (albumStreams) => Math.floor((albumStreams || 0) / 2700);
+
+        function formatNumber(n) {
+            if (!n) return '0';
+            if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+            if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+            if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+            return n.toString();
+        }
+
+        // --- Main Tab Switching ---
+        function switchMainTab(tab) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.bottom-nav .nav-item').forEach(n => n.classList.remove('active'));
+            
+            document.getElementById(`view-${tab}`).classList.add('active');
+            document.getElementById(`nav-${tab}`).classList.add('active');
+            window.scrollTo(0, 0);
+
+            if(tab === 'explore') loadExplore();
+            if(tab === 'stats') loadStats();
+        }
+
+        // --- EXPLORE VIEW LOGIC ---
+        function loadExplore() {
+            const songs = getChartSongs();
+            const albums = getChartAlbums();
+
+            // Carousel (Random Top Songs)
+            const carousel = document.getElementById('explore-carousel');
+            if(songs.length > 0) {
+                let shuffled = [...songs].sort(() => 0.5 - Math.random()).slice(0, 5);
+                carousel.innerHTML = shuffled.map(s => `
+                    <div class="carousel-item" onclick="playSong('${s.title.replace(/'/g, "\\'")}')">
+                        <img src="${s.art}" class="carousel-bg">
+                        <div class="carousel-content">
+                            <div class="carousel-badge">Listen Now</div>
+                            <div class="carousel-title">${s.title}</div>
+                            <div class="carousel-artist">${s.artist}</div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Debuts (New Albums)
+            const debuts = albums.filter(a => a.isDebut || a.weeks === 1).slice(0, 5);
+            const debCont = document.getElementById('explore-debts');
+            debCont.innerHTML = debuts.length ? debuts.map(a => renderSquareItem(a)).join('') : '<div class="empty-state">No new debuts this week.</div>';
+
+            // Top Albums
+            const topAlbums = [...albums].sort((a,b) => b.units - a.units).slice(0, 10);
+            document.getElementById('explore-albums').innerHTML = topAlbums.map(a => renderSquareItem(a)).join('');
+
+            // Top Songs
+            const topSongsList = [...songs].sort((a,b) => b.streams - a.streams).slice(0, 10);
+            document.getElementById('explore-songs').innerHTML = topSongsList.map((s, i) => `
+                <div class="song-item" onclick="playSong('${s.title.replace(/'/g, "\\'")}')">
+                    <div class="song-rank">${i + 1}</div>
+                    <img src="${s.art}" class="song-img">
+                    <div class="song-details">
+                        <div class="song-name">${s.title}</div>
+                        <div class="song-stats">${s.artist}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderSquareItem(item) {
+            return `
+                <div class="album-card">
+                    <div class="album-art-container">
+                        <img src="${item.art}" class="album-art">
+                    </div>
+                    <div class="album-title-text">${item.title}</div>
+                    <div class="album-meta">${item.artist}</div>
+                </div>
+            `;
+        }
+
+        // --- PROFILE VIEW LOGIC ---
+        async function loadProfile() {
+            const d = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+            let p = await photoDB.load().catch(() => null);
+            if (!p) p = localStorage.getItem('artistPhoto');
+            
+            document.getElementById('artist-name').textContent = d.name || 'Artist Name';
+            if (p) document.getElementById('hero-img').src = p;
+            
+            const songs = getSongs();
+            const albums = getAlbums();
+
+            const totalSongSales = songs.reduce((s, song) => s + getSales(song), 0);
+            const totalAlbumSales = albums.reduce((s, album) => {
+                const albumStreams = album.songs ? album.songs.reduce((sum, track) => {
+                    const rs = songs.find(s => (s.songName || s.name) === (track.songName || track.name || track));
+                    return sum + (rs ? rs.streams || 0 : 0);
+                }, 0) : 0;
+                return s + getAlbumSales(albumStreams);
+            }, 0);
+            document.getElementById('artist-sales').textContent = formatNumber(totalSongSales + totalAlbumSales) + ' total sales';
+
+            // Latest
+            const all = [
+                ...songs.map(s => ({ ...s, type: 'Single', date: s.releaseDate || '2025' })),
+                ...albums.map(a => ({ ...a, type: a.songs?.length <= 6 ? 'EP' : 'Album', date: a.releaseDate || a.releaseYear || '2025' }))
+            ].sort((a,b) => new Date(a.date) - new Date(b.date));
+
+            if (all.length > 0) {
+                document.getElementById('latest-release-container').style.display = 'block';
+                const latest = all[all.length - 1];
+                const name = latest.type === 'Single' ? (latest.songName||latest.name) : (latest.name||latest.albumName);
+                const cover = latest.coverArt || 'https://placehold.co/200';
+                document.getElementById('latest-release').innerHTML = `
+                    <img src="${cover}" class="song-img" style="width:60px; height:60px;">
+                    <div class="song-details">
+                        <div style="font-size:10px; color:var(--text-secondary); font-weight:700; text-transform:uppercase;">Latest ${latest.type}</div>
+                        <div class="song-name" style="font-size:16px;">${name}</div>
+                        <div class="song-stats">${new Date(latest.date).getFullYear()}</div>
+                    </div>
+                `;
+                document.getElementById('latest-release').onclick = () => {
+                    if(latest.type === 'Single') playSong(name);
+                    else openAlbum(albums.findIndex(a => a.name === latest.name || a.albumName === latest.albumName));
+                };
+            }
+
+                        // Combine Toggle State
+            window.isCombinedMode = localStorage.getItem('tuneifyCombineMode') !== 'false';
+            if (document.getElementById('combine-toggle-btn')) {
+                document.getElementById('combine-toggle-btn').innerHTML = `
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+                    Combine: ${isCombinedMode ? 'ON' : 'OFF'}
+                `;
+            }
+
+            // Top Songs Data Aggregation
+            const allReleasedSongs = getLocal('releasedSongs');
+            const exclusiveRemixes = allReleasedSongs.filter(s => s.isRemix && s.remixType === 'Exclusive');
+            let displaySongs = [];
+            
+            if (isCombinedMode) {
+                // OPTION A: Combine original + its exclusive remixes
+                const originals = [...allReleasedSongs].filter(s => !s.isRemix);
+                displaySongs = originals.map(s => {
+                    const myRemixes = exclusiveRemixes.filter(r => r.originalParent === (s.songName || s.name));
+                    const totalStreams = (s.streams || 0) + myRemixes.reduce((sum, r) => sum + (r.streams || 0), 0);
+                    const totalSales = getSales(s) + myRemixes.reduce((sum, r) => sum + getSales(r), 0);
+                    const weeklyStreams = (s.weeklyStreams || 0) + myRemixes.reduce((sum, r) => sum + (r.weeklyStreams || 0), 0);
+                    return { ...s, displayStreams: totalStreams, displaySales: totalSales, displayWeekly: weeklyStreams };
+                });
+            } else {
+                // OPTION B: Separate. Show originals and remixes as individual tracks
+                displaySongs = [...allReleasedSongs].map(s => {
+                    return { ...s, displayStreams: s.streams || 0, displaySales: getSales(s), displayWeekly: s.weeklyStreams || 0 };
+                });
+            }
+
+            // Sort and render Top 10
+            displaySongs.sort((a, b) => b.displayStreams - a.displayStreams);
+            const topSongs = displaySongs.slice(0, 15);
+            const maxStreams = topSongs[0]?.displayStreams || 1;
+
+            const PAGE_SIZE = 5;
+            const pages = [];
+            for (let p = 0; p < topSongs.length; p += PAGE_SIZE) pages.push(topSongs.slice(p, p + PAGE_SIZE));
+            const scroller = document.getElementById('songs-list-scroller');
+            scroller.innerHTML = pages.length ? pages.map((page, pi) => {
+                const pageHTML = page.map((s, i) => {
+                    const globalI = pi * PAGE_SIZE + i;
+                    const songName = s.songName || s.name;
+                    const barsCount = Math.ceil((s.displayStreams / maxStreams) * 5);
+                    let barsHTML = Array.from({length:5}).map((_, b) => `<div class="pop-bar ${b < barsCount ? 'filled' : ''}" style="height:${6 + b*2}px"></div>`).join('');
+                    const myRemixes = isCombinedMode ? exclusiveRemixes.filter(r => r.originalParent === (s.songName || s.name)) : [];
+                    const remixRowsHTML = '';
+                    return `
+<div>
+    <div class="song-item" onclick="${myRemixes.length > 0 ? `openSongDetail('${songName.replace(/'/g, "\\'")}')` : `playSong('${songName.replace(/'/g, "\\'")}')`}">
+        <div class="song-rank">${globalI + 1}</div>
+        <img src="${s.coverArt || 'https://placehold.co/100'}" class="song-img">
+        <div class="song-details">
+            <div class="song-name">${songName} ${s.isRemix ? '' : '<span class="explicit-tag">E</span>'}</div>
+            <div class="song-stats">${formatNumber(s.displaySales)} sales <span style="color:#a78bfa;font-weight:700;margin-left:6px;">[$${(s.displaySales > 500000 ? 1.29 : s.displaySales > 100000 ? 0.99 : 0.69).toFixed(2)}]</span></div>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:#a78bfa;white-space:nowrap;">[$${(s.displaySales > 500000 ? 1.29 : s.displaySales > 100000 ? 0.99 : 0.69).toFixed(2)}]</div>
+    </div>
+    ${myRemixes.length > 0 ? `<div style="padding-left:52px;margin-top:-6px;margin-bottom:6px;font-size:11px;color:#a78bfa;font-weight:700;">${myRemixes.length} version${myRemixes.length>1?'s':''}</div>` : ''}
+</div>`;
+                }).join('');
+                return `<div class="song-list" style="min-width:100%;flex-shrink:0;scroll-snap-align:start;">${pageHTML}</div>`;
+            }).join('') : '<div class="song-list" style="min-width:100%;"><div class="empty-state">No songs released.</div></div>';
+            
+            // Albums
+            document.getElementById('albums-grid').innerHTML = albums.length ? albums.map((album, i) => {
+                const type = album.songs?.length <= 6 ? 'EP' : 'Album';
+                return `
+                <div class="album-card" onclick="openAlbum(${i})">
+                    <div class="album-art-container"><img src="${album.coverArt || 'https://placehold.co/400'}" class="album-art"></div>
+                                     <div class="album-title-text">${album.name || album.albumName}</div>
+                    <div class="album-meta">${album.releaseYear || '2025'} • ${type}</div>
+                    <div class="album-meta" style="color:#f5a623;letter-spacing:1px;font-weight:700;font-size:15px;">${'★'.repeat(Math.round(3.5 + (([...(album.name||'x')].reduce((a,c)=>a+c.charCodeAt(0),0)*9301+49297)%233280)/233280*1.5)) + '☆'.repeat(5-Math.round(3.5+(([...(album.name||'x')].reduce((a,c)=>a+c.charCodeAt(0),0)*9301+49297)%233280)/233280*1.5))}</div>                </div>
+                `;
+            }).join('') : '<div class="empty-state">No albums released.</div>';
+        }
+    
+    function toggleRemixes(id, btn) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            const hidden = el.style.display === 'none';
+            el.style.display = hidden ? 'block' : 'none';
+            if (btn) {
+                const count = el.querySelectorAll('.song-item').length;
+                btn.textContent = hidden
+                    ? 'Hide Versions'
+                    : `Show ${count} Exclusive Version${count > 1 ? 's' : ''}`;
+            }
+        }
+
+        // --- ALBUM MODAL LOGIC ---
+        let currentAlbumData = null;
+        function openAlbum(index) {
+            const albums = getAlbums();
+            currentAlbumData = albums[index];
+            if (!currentAlbumData) return;
+
+            const songs = getSongs();
+            const type = currentAlbumData.songs?.length <= 6 ? 'EP' : 'Album';
+            const year = currentAlbumData.releaseYear || new Date().getFullYear();
+            const cover = currentAlbumData.coverArt || 'https://placehold.co/600';
+            const d = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+            const genre = d.genre || "Pop";
+
+            // Header info
+            document.getElementById('album-content').innerHTML = `
+                <div class="album-info-block">
+                    <img src="${cover}" class="album-info-cover">
+                    <div class="album-info-text">
+                        <h1>${currentAlbumData.name || currentAlbumData.albumName}</h1>
+                        <div class="av-artist">${d.name || 'Artist'}</div>
+                        <div class="av-meta">${genre} • ${year} • ${currentAlbumData.songs?.length || 0} Songs</div>
+                    </div>
+                </div>
+            `;
+
+            // Tab 1: Songs
+            let trackSalesList = [];
+            const trackListHTML = currentAlbumData.songs ? currentAlbumData.songs.map((track, i) => {
+                const tName = track.songName || track.name || track;
+                const rs = songs.find(s => (s.songName || s.name) === tName);
+                const streams = rs ? (rs.streams || 0) : 0;
+                trackSalesList.push(streams);
+                return { name: tName, streams };
+            }) : [];
+            
+            const maxStreams = Math.max(...trackSalesList, 1);
+            const totalAlbumSales = getAlbumSales(trackSalesList.reduce((a,b)=>a+b, 0));
+
+            let songsHTML = trackListHTML.map((t, i) => {
+                const barsCount = Math.ceil((t.streams / maxStreams) * 5);
+                let bars = Array.from({length:5}).map((_, b) => `<div class="pop-bar ${b < barsCount ? 'filled' : ''}" style="height:${6 + b*2}px"></div>`).join('');
+                return `
+                    <div class="song-item" onclick="playSong('${t.name.replace(/'/g, "\\'")}')" style="border:none; padding: 14px 0;">
+                        <div class="song-rank" style="font-size:13px;">${i + 1}</div>
+                        <div class="song-details"><div class="song-name">${t.name}</div></div>
+                        <div class="pop-bars">${bars}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            songsHTML += `<div class="album-total-sales">${formatNumber(totalAlbumSales)} Total ${type} Sales</div>`;
+            document.getElementById('modal-tab-songs').innerHTML = songsHTML;
+
+                   // Tab 2: Reviews — seeded by album name so score is consistent per album
+            const albumSeed = [...(currentAlbumData.name || 'x')].reduce((acc, c) => acc + c.charCodeAt(0), 0);
+            const seededRand = (offset) => ((albumSeed * 9301 + offset * 49297) % 233280) / 233280;
+            const score = 3.5 + seededRand(1) * 1.5;
+            const roundedScore = score.toFixed(1);
+            const starsFull = Math.round(score);
+            const starsHTML = '★'.repeat(starsFull) + '☆'.repeat(5 - starsFull);
+
+            const staffReviews = [
+                {
+                    text: `"${currentAlbumData.name}" is a confident, layered body of work that rewards repeated listens. The artist navigates between vulnerability and bravado with ease, and the production choices feel intentional throughout. A strong entry in an already impressive catalog.`,
+                    author: 'Jordan Ellis'
+                },
+                {
+                    text: `From the opening track to the final note, "${currentAlbumData.name}" sustains a mood that few ${type.toLowerCase()}s manage to hold. There's a maturity to the songwriting here — less about hooks, more about atmosphere — and it largely pays off.`,
+                    author: 'Priya Nair'
+                },
+                {
+                    text: `"${currentAlbumData.name}" doesn't reinvent the wheel, but it does everything right. The ${currentAlbumData.songs?.length || 0}-track runtime feels earned rather than padded, and the standout cuts here will likely define this era of the artist's career.`,
+                    author: 'Marcus Webb'
+                }
+            ];
+            const staffPick = staffReviews[albumSeed % staffReviews.length];
+
+            const userReviews = [
+                { stars: '★★★★★', title: 'Absolutely flawless', text: 'Every track hits. I had this on repeat for a week straight — easily one of the best releases this year.', author: 'Aaliyah Torres' },
+                { stars: '★★★★☆', title: 'Really solid project', text: 'A few tracks could have been tightened up, but overall this is a genuinely great listen from start to finish.', author: 'Finn Okafor' },
+                { stars: '★★★★☆', title: 'Grew on me', text: 'Wasn\'t sure at first but after a few listens it clicked. The production is top-tier and the writing is sharp.', author: 'Simone Brecht' },
+                { stars: '★★★★★', title: 'Instant classic', text: 'The cohesion across all these tracks is remarkable. You can tell every decision was intentional.', author: 'Devraj Kapoor' }
+            ];
+            const userPick = userReviews[(albumSeed + 3) % userReviews.length];
+
+            const albumReleaseDate = currentAlbumData.releaseDate
+                ? new Date(currentAlbumData.releaseDate).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                : (localStorage.getItem('currentDate')
+                    ? new Date(localStorage.getItem('currentDate')).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+                    : 'Unknown Date');
+
+            document.getElementById('modal-tab-reviews').innerHTML = `
+                <div class="review-card">
+                    <div class="review-title">Staff Review</div>
+                    <div style="font-size:12px;color:var(--text-secondary);margin-bottom:10px;">Released ${albumReleaseDate}</div>
+                    <div class="review-text">${staffPick.text}</div>
+                    <div style="font-size:13px;font-weight:600;color:var(--text-secondary);">by ${staffPick.author}, Tuneify Editorial</div>
+                </div>
+                <div class="review-title" style="margin-top:24px;">Rating and Reviews</div>
+                <div class="rating-bars-container">
+                    <div style="text-align:center;">
+                        <div class="rating-score">${roundedScore}</div>
+                        <div class="rating-out-of">out of 5</div>
+                    </div>
+                    <div class="rating-bars">
+                        <div class="rating-row">5 <div class="rating-line"><div class="rating-fill" style="width:${Math.floor(seededRand(2)*40+60)}%"></div></div></div>
+                        <div class="rating-row">4 <div class="rating-line"><div class="rating-fill" style="width:${Math.floor(seededRand(3)*30+20)}%"></div></div></div>
+                        <div class="rating-row">3 <div class="rating-line"><div class="rating-fill" style="width:${Math.floor(seededRand(4)*15)}%"></div></div></div>
+                        <div class="rating-row">2 <div class="rating-line"><div class="rating-fill" style="width:0%"></div></div></div>
+                        <div class="rating-row">1 <div class="rating-line"><div class="rating-fill" style="width:2%"></div></div></div>
+                    </div>
+                </div>
+                <div class="user-review">
+                    <div class="ur-stars">${userPick.stars}</div>
+                    <div class="ur-title">${userPick.title}</div>
+                    <div class="ur-text">${userPick.text}</div>
+                    <div class="ur-author">by ${userPick.author}</div>
+                </div>
+            `;
+
+            // Tab 3: Related (Other user albums)
+            const otherAlbums = albums.filter(a => a.name !== currentAlbumData.name);
+            document.getElementById('modal-related-grid').innerHTML = otherAlbums.length ? otherAlbums.map((a, j) => {
+                const originalIndex = albums.findIndex(x => x.name === a.name);
+                return renderSquareItem({ art: a.coverArt||'https://placehold.co/200', title: a.name, artist: d.name })
+            }).join('') : '<div class="empty-state">No other projects found.</div>';
+
+            // Add click to related
+            document.getElementById('modal-related-grid').querySelectorAll('.album-card').forEach((el, j) => {
+                const aName = otherAlbums[j].name;
+                const originalIndex = albums.findIndex(x => x.name === aName);
+                el.onclick = () => openAlbum(originalIndex);
+            });
+
+            switchModalTab('songs');
+            document.getElementById('album-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAlbum() {
+            document.getElementById('album-modal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function openSongDetail(songName) {
+            const allSongs = getSongs();
+            const d = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+            const parent = allSongs.find(s => (s.songName || s.name) === songName);
+            if (!parent) return;
+            const versions = allSongs.filter(s => s.isRemix && s.remixType === 'Exclusive' && s.originalParent === songName);
+            const allVersions = [{ ...parent, _isParent: true }, ...versions];
+
+            const cover = parent.coverArt || 'https://placehold.co/600';
+            const releaseDate = parent.releaseDate
+                ? new Date(parent.releaseDate).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' })
+                : '';
+
+            document.getElementById('album-content').innerHTML = `
+                <div class="album-info-block">
+                    <img src="${cover}" class="album-info-cover">
+                    <div class="album-info-text">
+                        <h1>${songName}</h1>
+                        <div class="av-artist">${d.name || 'Artist'}</div>
+                        <div class="av-meta">${parent.genre || 'Single'} • ${releaseDate} • ${allVersions.length} Version${allVersions.length > 1 ? 's' : ''}</div>
+                    </div>
+                </div>
+            `;
+
+            const maxStr = Math.max(...allVersions.map(v => v.streams || 0), 1);
+            let songsHTML = allVersions.map((v, i) => {
+                const vName = v.songName || v.name;
+                const streams = v.streams || 0;
+                const prevStreams = v.prevWeekStreams || 0;
+                const sales = getSales(v);
+                const barsCount = Math.ceil((streams / maxStr) * 5);
+                const bars = Array.from({length:5}).map((_, b) => `<div class="pop-bar ${b < barsCount ? 'filled' : ''}" style="height:${6 + b*2}px"></div>`).join('');
+                let trend = '';
+                const currentDate = new Date(localStorage.getItem('currentDate') || Date.now());
+                const releaseDate = v.releaseDate ? new Date(v.releaseDate) : null;
+                const weeksOld = releaseDate ? Math.floor((currentDate - releaseDate) / (7 * 24 * 60 * 60 * 1000)) : 999;
+                const isNew = weeksOld < 2;
+                if (prevStreams > 0) {
+                    const diff = streams - prevStreams;
+                    const pct = Math.abs(Math.round((diff / prevStreams) * 100));
+                    trend = diff >= 0
+                        ? `<span style="color:#22c55e;font-size:11px;font-weight:700;">▲ ${pct}%</span>`
+                        : `<span style="color:#ef4444;font-size:11px;font-weight:700;">▼ ${pct}%</span>`;
+                } else if (isNew) {
+                    trend = `<span style="color:#a78bfa;font-size:11px;font-weight:700;">NEW</span>`;
+                }
+                return `
+                    <div class="song-item" style="border:none; padding:14px 0; ${i > 0 ? 'padding-left:0;opacity:0.9;' : ''}">
+                        <div class="song-rank" style="font-size:${i === 0 ? '13px' : '11px'};">${i === 0 ? '●' : '↳'}</div>
+                        <img src="${v.coverArt || cover}" class="song-img">
+                        <div class="song-details">
+                            <div class="song-name">${vName}</div>
+                            <div class="song-stats">${formatNumber(sales)} sales <span style="color:#a78bfa;font-weight:700;margin-left:6px;">[$${(sales > 500000 ? 1.29 : sales > 100000 ? 0.99 : 0.69).toFixed(2)}]</span></div>
+                            <div style="margin-top:2px;">${trend}</div>
+                        </div>
+                        <div class="pop-bars">${bars}</div>
+                    </div>
+                `;
+            }).join('');
+
+            const totalSales = allVersions.reduce((a, v) => a + getSales(v), 0);
+            songsHTML += `<div class="album-total-sales">${formatNumber(totalSales)} Total Sales</div>`;
+
+            document.getElementById('modal-tab-songs').innerHTML = songsHTML;
+            document.getElementById('modal-tab-reviews').innerHTML = '';
+            document.getElementById('modal-related-grid').innerHTML = '';
+
+            switchModalTab('songs');
+            document.getElementById('album-modal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function switchModalTab(tabId, clickedBtn) {
+            document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.modal-tab-content').forEach(c => c.classList.remove('active'));
+            
+            const btn = clickedBtn || document.querySelector(`.modal-tab[onclick*="${tabId}"]`);
+            if (btn) btn.classList.add('active');
+            document.getElementById(`modal-tab-${tabId}`).classList.add('active');
+        }
+
+        // --- STATS VIEW LOGIC (Custom Insights & Regions) ---
+        function loadStats() {
+            const songs = getSongs();
+            const albums = getAlbums();
+
+            // Total Sales Calc
+            const totalSongSales = songs.reduce((s, song) => s + getSales(song), 0);
+            const totalAlbumSales = albums.reduce((s, album) => {
+                const albumStreams = album.songs ? album.songs.reduce((sum, track) => {
+                    const rs = songs.find(s => (s.songName || s.name) === (track.songName || track.name || track));
+                    return sum + (rs ? rs.streams || 0 : 0);
+                }, 0) : 0;
+                return s + getAlbumSales(albumStreams);
+            }, 0);
+            const totalSales = totalSongSales + totalAlbumSales;
+            
+                     // MILESTONES
+            let insightsHTML = '';
+            if (totalSales === 0) {
+                insightsHTML = `<div class="empty-state">Release music to generate milestones.</div>`;            } else {
+                // 1. Total Milestone
+                               insightsHTML += `
+                    <div class="insight-item">
+                        <div class="insight-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg></div>                        <div class="insight-info">
+                            <div class="insight-title">Career Milestone</div>
+                            <div class="insight-desc">You have accumulated <strong>${formatNumber(totalSales)}</strong> total sales across all your projects.</div>
+                        </div>
+                    </div>
+                `;
+
+                // 2. Top Track
+                let topS = [...songs].sort((a,b)=> (a.streams||0) - (b.streams||0)).reverse()[0];
+                if (topS && topS.streams > 0) {
+                    let sales = getSales(topS);
+                    insightsHTML += `
+                        <div class="insight-item">
+                                                     <div class="insight-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div>                            <div class="insight-info">
+                                <div class="insight-title">Hit Track</div>
+                                <div class="insight-desc"><strong>${topS.songName || topS.title || topS.name}</strong> is your best-performing track with <strong>${formatNumber(sales)}</strong> sales.</div>
+                            </div>
+                        </div>
+                    `;
+                }
+
+                // 3. Top Album
+                let topA = [...albums].sort((a,b)=> {
+                    let as = a.songs ? a.songs.reduce((sum, t) => sum + (songs.find(s=>(s.songName||s.name)===(t.name||t.songName||t))?.streams||0),0) : 0;
+                    let bs = b.songs ? b.songs.reduce((sum, t) => sum + (songs.find(s=>(s.songName||s.name)===(t.name||t.songName||t))?.streams||0),0) : 0;
+                    return bs - as;
+                })[0];
+
+                if (topA) {
+                    let as = topA.songs ? topA.songs.reduce((sum, t) => sum + (songs.find(s=>(s.songName||s.name)===(t.name||t.songName||t))?.streams||0),0) : 0;
+                    let sales = getAlbumSales(as);
+                    if (sales > 0) {
+                        insightsHTML += `
+                            <div class="insight-item">
+                                <div class="insight-icon-box"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg></div>                                <div class="insight-info">
+                                    <div class="insight-title">Top Project</div>
+                                    <div class="insight-desc"><strong>${topA.name || topA.albumName}</strong> is leading your discography with <strong>${formatNumber(sales)}</strong> sales.</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            }
+            document.getElementById('insights-list').innerHTML = insightsHTML;
+
+            // REGIONS
+         const origin = (JSON.parse(localStorage.getItem('playerData') || '{}').origin || '').trim();
+            const regionsData = [
+                { name: 'North America', flag: '🇺🇸', pct: origin === 'North America' ? 0.40 : 0.30 },
+                { name: 'Europe',        flag: '🇪🇺', pct: origin === 'Europe'        ? 0.35 : 0.25 },
+                { name: 'Asia',          flag: '🌏', pct: origin === 'Asia'          ? 0.30 : 0.20 },
+                { name: 'South America', flag: '🌎', pct: origin === 'South America' ? 0.25 : 0.12 },
+                { name: 'Africa',        flag: '🌍', pct: origin === 'Africa'        ? 0.25 : 0.08 },
+                { name: 'Australia',     flag: '🇦🇺', pct: origin === 'Australia'     ? 0.20 : 0.05 },
+            ].sort((a, b) => b.pct - a.pct);
+
+            if (totalSales === 0) {
+                document.getElementById('regions-list').innerHTML = `<div class="empty-state">No regional data available yet.</div>`;
+            } else {
+                document.getElementById('regions-list').innerHTML = regionsData.map((r, i) => {
+                    const rSales = Math.floor(totalSales * r.pct);
+                    return `
+                        <div class="region-card">
+                            <div class="region-card-top">
+                                <div class="region-card-left">
+                                    <div class="region-rank">${i+1}</div>
+                                    <div class="region-name">${r.flag} ${r.name}</div>
+                                </div>
+                                <div class="region-sales">${formatNumber(rSales)}</div>
+                            </div>
+                            <div class="region-bar-bg">
+                                <div class="region-bar-fill" style="width: ${r.pct * 100}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // --- Image Upload ---
+        function setupImage() {
+            const img = document.getElementById('hero-img');
+            const input = document.getElementById('hero-input');
+            document.querySelector('.hero').onclick = (e) => {
+                if(e.target.tagName !== 'BUTTON' && !e.target.closest('button')) input.click();
+            };
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        img.src = ev.target.result;
+                        photoDB.save(ev.target.result).catch(() => localStorage.setItem('artistPhoto', ev.target.result));
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+        }
+
+        // --- Mock Player ---
+        const playAll = () => alert('Playing all songs...');
+        const shuffleAll = () => alert('Shuffling all songs...');
+        const playSong = name => {};
+        const playAlbum = index => alert(`Playing album: ${getAlbums()[index].name}`);
+        const shuffleAlbum = index => alert(`Shuffling album: ${getAlbums()[index].name}`);
+
+        // --- Nav Scrolling ---
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 10) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+            window.toggleCombineMode = function() {
+            window.isCombinedMode = !window.isCombinedMode;
+            localStorage.setItem('tuneifyCombineMode', window.isCombinedMode);
+            loadProfile();
+        };
+
+
+        // --- Init ---
+        document.addEventListener('DOMContentLoaded', () => {
+            setupImage();
+            loadProfile(); // Init default view
+        });
+
+    </script>
+</body>
+</html>
+
+

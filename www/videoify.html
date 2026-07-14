@@ -1,0 +1,2688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Videoify - Enhanced</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Unique Fonts for Playlists -->
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Righteous&family=Bungee+Shade&family=Monoton&family=Creepster&family=Lobster&display=swap" rel="stylesheet">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root {
+    --primary: #FF0000;
+    --secondary: #6366f1;
+    --bg: #000000;
+    --surface: #111111;
+    --border: #272727;
+    --text: #FFFFFF;
+    --text-secondary: #AAAAAA;
+    --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --radius: 12px;
+    --gold: #FFD700;
+    --silver: #C0C0C0;
+    --bronze: #CD7F32;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    padding-bottom: 90px;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 420px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--bg);
+}
+
+.header {
+    padding: 16px 20px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo i { color: var(--primary); font-size: 1.8em; }
+.logo span { font-size: 1.6em; font-weight: 800; color: var(--text); }
+
+.user-avatar, .profile-avatar, .channel-avatar, .comment-avatar, .video-channel-avatar, .npc-avatar {
+    border-radius: 50%;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    border: 2px solid var(--border);
+    background-size: cover;
+    background-position: center;
+    box-shadow: var(--shadow);
+    flex-shrink: 0;
+}
+.user-avatar { width: 36px; height: 36px; font-size: 0.9em; }
+
+.feed { padding: 0; }
+
+.video-card {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.video-thumbnail {
+    width: 100%;
+    height: 220px;
+    background: var(--surface);
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+.video-info {
+    display: flex;
+    gap: 12px;
+    padding: 16px 12px;
+    align-items: flex-start;
+}
+.channel-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 0.9em;
+    margin-top: 2px;
+}
+.video-text {
+    flex: 1;
+}
+.video-title {
+    font-size: 1em;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 4px;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.video-meta {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    font-weight: 500;
+}
+
+/* Profile Section */
+.profile-section { padding: 0; }
+.profile-banner {
+    background: linear-gradient(135deg, #ff0066, #6366f1);
+    height: 120px;
+    position: relative;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.profile-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 0 20px;
+    position: relative;
+    top: -40px;
+    margin-bottom: -30px;
+    text-align: center;
+}
+.profile-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 2em;
+    border: 4px solid var(--bg);
+}
+.profile-info { flex: 1; width: 100%; }
+.profile-info h2 {
+    font-size: 1.8em;
+    font-weight: 800;
+    margin-bottom: 8px;
+    color: var(--text);
+}
+.profile-meta {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+.profile-bio {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 16px;
+    font-weight: 500;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.edit-profile-btn {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    padding: 10px 24px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9em;
+}
+.edit-profile-btn:hover {
+    background: var(--border);
+    transform: translateY(-2px);
+}
+
+.section-tabs {
+    display: flex;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+}
+.section-tab {
+    padding: 16px 20px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.3s;
+    flex: 1;
+    text-align: center;
+    position: relative;
+    text-transform: uppercase;
+}
+.section-tab.active {
+    color: var(--text);
+    border-bottom-color: var(--text);
+}
+
+.video-list { padding: 0 12px; }
+.video-item {
+    display: flex;
+    padding: 10px 0;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: var(--radius);
+}
+.video-item:hover {
+    background: var(--surface);
+    padding: 10px;
+    margin: 0 -10px;
+}
+.video-thumb {
+    border-radius: var(--radius);
+    background: var(--surface);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    width: 120px;
+    height: 68px;
+    flex-shrink: 0;
+}
+.video-thumb::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.3), rgba(0,0,0,0.1));
+    border-radius: var(--radius);
+}
+.video-details { flex: 1; padding-top: 2px; }
+.video-details .title {
+    font-size: 0.95em;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 6px;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.video-details .meta {
+    color: var(--text-secondary);
+    font-size: 0.8em;
+    line-height: 1.3;
+    font-weight: 500;
+}
+
+/* Bottom Navigation Bar */
+.nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    background: var(--bg);
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-around;
+    padding: 0 20px;
+    z-index: 1001;
+}
+.nav-item {
+    padding: 14px 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-weight: 600;
+    border-radius: var(--radius);
+    position: relative;
+}
+.nav-item i {
+    font-size: 1.5em;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-secondary);
+    transition: color 0.3s;
+}
+.nav-item span {
+    font-size: 0.7em;
+    font-weight: 700;
+    color: var(--text-secondary);
+    transition: color 0.3s;
+}
+.nav-item.active i, .nav-item.active span {
+    color: var(--primary);
+}
+
+.hidden { display: none; }
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-secondary);
+}
+.empty-state i {
+    font-size: 4em;
+    margin-bottom: 24px;
+    color: var(--border);
+}
+.empty-state h3 {
+    font-size: 1.3em;
+    margin-bottom: 12px;
+    color: var(--text);
+    font-weight: 700;
+}
+
+/* Enhanced Video Detail Page */
+.video-detail {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    background: var(--bg);
+    z-index: 1000;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+.video-detail .header { background: var(--bg); }
+.back-btn {
+    color: var(--text);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 8px;
+    border-radius: 50%;
+    transition: all 0.3s;
+}
+.back-btn:hover { background: var(--surface); }
+
+.video-detail .video-thumbnail {
+    height: 240px;
+    background: var(--surface);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.video-detail .play-button {
+    width: 80px;
+    height: 80px;
+    font-size: 2.2em;
+    backdrop-filter: blur(20px);
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+.video-detail-content { padding: 20px; min-height: calc(100vh - 240px); }
+.video-detail-title {
+    font-size: 1.3em;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.4;
+}
+.video-detail-meta {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+
+/* Enhanced Action Buttons (matching reference image) */
+.video-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    background: var(--surface);
+    padding: 12px;
+    border-radius: var(--radius);
+}
+.action-btn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+    color: var(--text);
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.3s;
+    padding: 8px 12px;
+    border-radius: 20px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    flex: 1;
+    justify-content: center;
+}
+.action-btn i { font-size: 1.1em; }
+.action-btn span { font-size: 0.85em; }
+.action-btn:hover { background: var(--border); }
+.action-btn.liked {
+    color: var(--primary);
+    background: rgba(255, 0, 0, 0.1);
+    border-color: var(--primary);
+}
+.action-btn.disliked { 
+    color: var(--text-secondary); 
+    background: var(--border); 
+}
+
+.video-channel-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    padding: 16px;
+    background: var(--surface);
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.video-channel-info:hover { background: var(--border); }
+.video-channel-avatar {
+    width: 40px;
+    height: 40px;
+    font-size: 0.9em;
+}
+.video-channel-details h4 {
+    font-size: 1em;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.video-channel-details .subscribers {
+    font-size: 0.85em;
+    color: var(--text-secondary);
+}
+.subscribe-btn {
+    margin-left: auto;
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.subscribe-btn:hover { transform: scale(1.05); }
+
+/* Comments Section (Enhanced) */
+.comments-section { 
+    border-top: 1px solid var(--border); 
+    padding-top: 20px; 
+    margin-top: 20px;
+}
+.comments-header { 
+    font-size: 1.1em; 
+    font-weight: 700; 
+    margin-bottom: 16px; 
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.comments-header i {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+.comments-list { margin-bottom: 20px; }
+.comment {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+}
+.comment:last-child { border-bottom: none; }
+.comment-avatar { width: 32px; height: 32px; font-size: 0.7em; }
+.comment-content { flex: 1; }
+.comment-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+.comment-author {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--text);
+}
+.comment-time { font-size: 0.8em; color: var(--text-secondary); }
+.comment-text {
+    font-size: 0.9em;
+    color: var(--text);
+    line-height: 1.5;
+    margin-bottom: 12px;
+}
+.comment-actions { display: flex; align-items: center; gap: 20px; }
+.comment-like, .comment-dislike {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    font-size: 0.8em;
+    cursor: pointer;
+}
+.comment-reply {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.show-more-comments {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 600;
+    border-radius: var(--radius);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin: 20px 0;
+}
+.suggested-videos {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border);
+}
+.suggested-videos h3 {
+    font-size: 1.2em;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: var(--text);
+}
+.suggested-grid { display: grid; gap: 16px; }
+.suggested-video {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+}
+.suggested-video:hover {
+    background: var(--surface);
+    border-color: var(--border);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+.suggested-thumbnail {
+    width: 120px;
+    height: 68px;
+    border-radius: var(--radius);
+    background: var(--surface);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.suggested-thumbnail::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--gradient);
+    opacity: 0.1;
+    border-radius: var(--radius);
+}
+.video-duration {
+    position: absolute;
+    bottom: 6px;
+    right: 6px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.7em;
+    font-weight: 600;
+}
+.suggested-info { flex: 1; padding-top: 2px; }
+.suggested-title {
+    font-size: 0.95em;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 6px;
+    color: var(--text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.suggested-channel {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+.suggested-meta {
+    font-size: 0.8em;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* NEW: Videofy Discovery Page */
+.videofy-section {
+    padding: 20px 12px;
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+.section-header h2 {
+    font-size: 1.2em;
+    font-weight: 800;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.section-header h2 i {
+    color: var(--primary);
+    font-size: 0.95em;
+}
+.section-header .see-all {
+    color: var(--primary);
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--primary);
+    transition: all 0.2s;
+}
+.section-header .see-all:hover {
+    background: rgba(255,0,0,0.1);
+}
+
+/* Top Trending Videos Grid */
+/* Top Trending Videos Grid */
+.trending-grid {
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    margin-bottom: 40px;
+    padding-bottom: 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+.trending-grid::-webkit-scrollbar {
+    height: 6px;
+}
+.trending-grid::-webkit-scrollbar-track {
+    background: var(--surface);
+    border-radius: 10px;
+}
+.trending-grid::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 10px;
+}
+.trending-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
+}
+    
+.trending-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+    position: relative;
+    min-width: 200px;
+    max-width: 200px;
+    flex-shrink: 0;
+    scroll-snap-align: start;
+}
+
+    
+.trending-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: var(--primary);
+}
+.trending-card .rank-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: var(--bg);
+    color: var(--text);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.9em;
+    border: 2px solid var(--gold);
+    z-index: 10;
+}
+.trending-card .rank-badge.gold { border-color: var(--gold); color: var(--gold); }
+.trending-card .rank-badge.silver { border-color: var(--silver); color: var(--silver); }
+.trending-card .rank-badge.bronze { border-color: var(--bronze); color: var(--bronze); }
+
+.trending-card .thumbnail {
+    height: 112px;
+    background: var(--surface);
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+    
+.trending-card .thumbnail::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+.trending-card .info {
+    padding: 12px;
+}
+.trending-card .info .title {
+    font-size: 1em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.trending-card .info .meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    margin-bottom: 8px;
+}
+.trending-card .info .channel {
+    font-weight: 600;
+    color: var(--text);
+}
+.trending-card .info .stats {
+    display: flex;
+    gap: 16px;
+    font-size: 0.8em;
+    color: var(--text-secondary);
+}
+.trending-card .info .stats span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* REPLACE the existing .playlists-grid CSS with this: */
+
+.playlists-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.playlist-card {
+    height: 180px;
+    border-radius: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+    border: 2px solid transparent;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+
+.playlist-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+    border-color: rgba(255,255,255,0.2);
+}
+
+/* 2x2 mosaic grid of album arts */
+.playlist-mosaic {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+.mosaic-cell {
+    background-size: cover;
+    background-position: center;
+    background-color: var(--border);
+}
+
+/* Dark gradient scrim over mosaic */
+.playlist-mosaic-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        160deg,
+        rgba(0,0,0,0.15) 0%,
+        rgba(0,0,0,0.55) 50%,
+        rgba(0,0,0,0.88) 100%
+    );
+}
+
+/* Small icon badge top-left */
+.playlist-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 34px;
+    height: 34px;
+    background: rgba(255,255,255,0.18);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    border: 1.5px solid rgba(255,255,255,0.35);
+}
+.playlist-badge i {
+    font-size: 14px;
+    color: white;
+}
+
+.playlist-card .playlist-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    padding: 14px 14px 16px;
+    text-align: left;
+}
+
+.playlist-card .playlist-title {
+    font-size: 1.15em;
+    font-weight: 900;
+    margin-bottom: 4px;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    line-height: 1.15;
+    color: #fff;
+    letter-spacing: 0.3px;
+}
+
+.playlist-card .playlist-count {
+    font-size: 0.78em;
+    color: rgba(255,255,255,0.75);
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.playlist-card .playlist-count i {
+    font-size: 0.85em;
+}
+
+/* Unique Playlist Title Styles */
+.playlist-today-hits .playlist-title {
+    font-family: 'Bebas Neue', sans-serif;
+    color: #FF4D4D;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.5em;
+}
+
+.playlist-video-showcase .playlist-title {
+    font-family: 'Righteous', sans-serif;
+    color: #00E5FF;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1.3em;
+}
+
+.playlist-excellence-views .playlist-title {
+    font-family: 'Bungee Shade', sans-serif;
+    color: #FFD700;
+    letter-spacing: 0.5px;
+    font-size: 1.2em;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 380px) {
+    .playlists-grid {
+        grid-template-columns: 1fr;
+    }
+    .playlist-card {
+        height: 160px;
+    }
+}
+/* Top Channels Section */
+.channels-grid {
+    display: grid;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.channel-card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: relative;
+}
+.channel-card:hover {
+    background: var(--border);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow);
+}
+.channel-card .rank {
+    font-size: 1.5em;
+    font-weight: 900;
+    color: var(--text-secondary);
+    width: 36px;
+    text-align: center;
+}
+.channel-card .rank.top3 {
+    color: var(--gold);
+}
+.channel-card .npc-avatar {
+    width: 56px;
+    height: 56px;
+    font-size: 1.2em;
+}
+.channel-card .channel-info {
+    flex: 1;
+}
+.channel-card .channel-name {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+.channel-card .channel-subs {
+    color: var(--text-secondary);
+    font-size: 0.85em;
+    font-weight: 500;
+}
+.channel-card .verified {
+    color: #1DA1F2;
+    margin-left: 4px;
+}
+
+/* Loading State */
+.loading-spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+.spinner {
+    border: 3px solid var(--border);
+    border-top: 3px solid var(--primary);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Edit Profile Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 20px;
+}
+.modal-overlay:not(.hidden) {
+    display: flex;
+}
+.modal-content {
+    background: var(--surface);
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 380px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid var(--border);
+}
+.modal-header {
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.modal-header h3 {
+    font-size: 1.3em;
+    font-weight: 700;
+}
+.modal-header .close-btn {
+    color: var(--text-secondary);
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+.modal-header .close-btn:hover {
+    color: var(--text);
+}
+.modal-body {
+    padding: 20px;
+}
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 0.9em;
+    color: var(--text-secondary);
+}
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95em;
+    transition: all 0.3s;
+}
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+.upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 8px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    background: var(--bg);
+}
+.upload-area:hover {
+    border-color: var(--primary);
+    background: var(--surface);
+}
+.upload-area i {
+    font-size: 2em;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+}
+.upload-area p {
+    color: var(--text-secondary);
+    font-size: 0.9em;
+}
+.upload-area input[type="file"] {
+    display: none;
+}
+.preview-image {
+    width: 100%;
+    height: 120px;
+    border-radius: 8px;
+    background-size: cover;
+    background-position: center;
+    margin-top: 12px;
+}
+.modal-footer {
+    padding: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+}
+.modal-footer button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: none;
+    font-size: 0.95em;
+}
+.btn-cancel {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+.btn-cancel:hover {
+    background: var(--border);
+}
+.btn-save {
+    background: var(--primary);
+    color: white;
+}
+.btn-save:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 0, 0, 0.4);
+}
+
+/* Playlist Detail View */
+.playlist-detail {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 420px;
+    height: 100vh;
+    background: var(--bg);
+    z-index: 1000;
+    overflow-y: auto;
+    padding-bottom: 90px;
+}
+.playlist-detail .playlist-hero {
+    height: 200px;
+    background: var(--gradient);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-size: cover;
+    background-position: center;
+}
+.playlist-detail .playlist-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+}
+.playlist-detail .playlist-hero .content {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 20px;
+}
+.playlist-detail .playlist-hero h2 {
+    font-size: 2em;
+    font-weight: 900;
+    margin-bottom: 8px;
+    text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
+}
+.playlist-detail .playlist-hero p {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+.playlist-detail .playlist-videos {
+    padding: 20px 12px;
+}
+    
+
+
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header" id="main-header">
+    <div class="back-btn" onclick="history.back()" style="margin-right: 8px;">
+        <i class="fas fa-arrow-left"></i>
+    </div>
+    <div class="logo">
+        <i class="fab fa-youtube"></i>
+        <span>Videoify</span>
+    </div>
+    <div class="user-avatar" id="header-avatar">V</div>
+</div>
+
+<!-- Home Section -->
+<div id="home-section" class="feed">
+    <div id="home-content"></div>
+</div>
+
+<!-- NEW: Videofy Discovery Section -->
+<div id="videofy-section" class="videofy-section hidden">
+    <div id="videofy-content">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Profile Section -->
+<div id="profile-section" class="profile-section hidden">
+    <div class="profile-banner" id="profile-banner"></div>
+    <div class="profile-header">
+        <div class="profile-avatar" id="profile-avatar">V</div>
+        <div class="profile-info">
+            <h2 id="profile-name">Videoify Creator</h2>
+            <div class="profile-meta" id="profile-meta">0 subscribers • 0 videos</div>
+            <div class="profile-bio" id="profile-bio">Add a description...</div>
+            <button class="edit-profile-btn" onclick="openEditModal()">
+                <i class="fas fa-edit"></i> Edit Profile
+            </button>
+        </div>
+    </div>
+
+    <div class="section-tabs">
+        <div class="section-tab active" onclick="switchProfileSort('newest')">Newest</div>
+        <div class="section-tab" onclick="switchProfileSort('popular')">Popular</div>
+        <div class="section-tab" onclick="switchProfileSort('oldest')">Oldest</div>
+    </div>
+
+    <div class="video-list">
+        <div id="profile-content"></div>
+    </div>
+</div>
+
+<!-- Video Detail Section -->
+<div id="video-detail-section" class="video-detail hidden">
+    <div class="header">
+        <div class="back-btn" onclick="goBackFromVideo()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="logo">
+            <span>Video Details</span>
+        </div>
+    </div>
+
+    <div class="video-thumbnail" id="detail-thumbnail">
+        <div class="play-button">
+            <i class="fas fa-play"></i>
+        </div>
+    </div>
+
+    <div class="video-detail-content">
+        <div class="video-detail-title" id="detail-title"></div>
+        <div class="video-detail-meta" id="detail-meta"></div>
+        
+        <div class="video-actions">
+            <div class="action-btn" id="like-btn" onclick="toggleLike()">
+                <i class="fas fa-thumbs-up"></i>
+                <span id="like-count">0</span>
+            </div>
+            <div class="action-btn" id="dislike-btn" onclick="toggleDislike()">
+                <i class="fas fa-thumbs-down"></i>
+                <span id="dislike-count">0</span>
+            </div>
+            <div class="action-btn">
+                <i class="fas fa-share"></i>
+                <span>Share</span>
+            </div>
+            <div class="action-btn">
+                <i class="fas fa-download"></i>
+                <span>Save</span>
+            </div>
+        </div>
+
+        <div class="video-channel-info" onclick="navigateToChannel()">
+            <div class="video-channel-avatar" id="detail-channel-avatar">V</div>
+            <div class="video-channel-details">
+                <h4 id="detail-channel-name">Videoify Creator</h4>
+                <div class="subscribers" id="detail-subscribers">0 subscribers</div>
+            </div>
+            <button class="subscribe-btn">Subscribe</button>
+        </div>
+
+        <div class="comments-section">
+            <div id="comments-content"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Playlist Detail Section -->
+<div id="playlist-detail-section" class="playlist-detail hidden">
+    <div class="header">
+        <div class="back-btn" onclick="goBackFromPlaylist()">
+            <i class="fas fa-arrow-left"></i>
+        </div>
+        <div class="logo">
+            <span id="playlist-detail-title">Playlist</span>
+        </div>
+    </div>
+
+    <div class="playlist-hero" id="playlist-hero">
+        <div class="content">
+            <h2 id="playlist-hero-title">Playlist</h2>
+            <p id="playlist-hero-count">0 videos</p>
+        </div>
+    </div>
+
+    <div class="playlist-videos">
+        <div id="playlist-videos-content"></div>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="nav-bar">
+    <div class="nav-item active" onclick="showSection('home')">
+        <i class="fas fa-home"></i>
+        <span>Home</span>
+    </div>
+    <div class="nav-item" onclick="showSection('videofy')">
+        <i class="fas fa-fire"></i>
+        <span>Videofy</span>
+    </div>
+    <div class="nav-item" onclick="showSection('profile')">
+        <i class="fas fa-user"></i>
+        <span>Profile</span>
+    </div>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="edit-modal" class="modal-overlay hidden" onclick="closeEditModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Edit Profile</h3>
+            <div class="close-btn" onclick="closeEditModal()">
+                <i class="fas fa-times"></i>
+            </div>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="edit-name" placeholder="Your channel name">
+            </div>
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea id="edit-bio" placeholder="Tell viewers about your channel"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Profile Picture</label>
+                <div class="upload-area" onclick="document.getElementById('avatar-upload').click()">
+                    <i class="fas fa-image"></i>
+                    <p>Click to upload profile picture</p>
+                    <input type="file" id="avatar-upload" accept="image/*" onchange="previewAvatar(event)">
+                </div>
+                <div id="avatar-preview" class="preview-image hidden"></div>
+            </div>
+            <div class="form-group">
+                <label>Banner Image</label>
+                <div class="upload-area" onclick="document.getElementById('banner-upload').click()">
+                    <i class="fas fa-image"></i>
+                    <p>Click to upload banner image</p>
+                    <input type="file" id="banner-upload" accept="image/*" onchange="previewBanner(event)">
+                </div>
+                <div id="banner-preview" class="preview-image hidden"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" onclick="closeEditModal()">Cancel</button>
+            <button class="btn-save" onclick="saveProfile()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script>
+    const photoDB = (function() {
+    const DB_NAME = 'MusicGameDB', STORE = 'photos';
+    function open() {
+        return new Promise((res, rej) => {
+            const r = indexedDB.open(DB_NAME, 1);
+            r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            r.onsuccess = e => res(e.target.result);
+            r.onerror = e => rej(e.target.error);
+        });
+    }
+    function idbGet(key) {
+        return open().then(db => new Promise((res, rej) => {
+            const r = db.transaction(STORE,'readonly').objectStore(STORE).get(key);
+            r.onsuccess = e => res(e.target.result || null);
+            r.onerror = e => rej(e.target.error);
+        }));
+    }
+    function idbPut(key, val) {
+        return open().then(db => new Promise((res, rej) => {
+            const r = db.transaction(STORE,'readwrite').objectStore(STORE).put(val, key);
+            r.onsuccess = () => res();
+            r.onerror = e => rej(e.target.error);
+        }));
+    }
+    return {
+        loadPhoto()  { return idbGet('artistPhoto'); },
+        loadBanner() { return idbGet('artistBanner'); },
+        savePhoto(v) { return idbPut('artistPhoto', v); },
+        saveBanner(v){ return idbPut('artistBanner', v); }
+    };
+})();
+    
+// --- INDEXEDDB HELPER ---
+const dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open('MusicExcellenceDB', 1);
+    req.onupgradeneeded = (e) => e.target.result.createObjectStore('images');
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+});
+    async function renderDBImages() {
+    document.querySelectorAll('[data-bg]').forEach(async (el) => {
+        const key = el.getAttribute('data-bg');
+        if (key && key.startsWith('img_')) {
+            const base64 = await getImageFromDB(key);
+            if (base64) el.style.backgroundImage = `url('${base64}')`;
+        } else if (key) {
+            el.style.backgroundImage = `url('${key}')`;
+        }
+    });
+}
+
+async function saveImageToDB(key, data) {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').put(data, key);
+    return new Promise(r => tx.oncomplete = r);
+}
+async function getImageFromDB(key) {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readonly');
+    const req = tx.objectStore('images').get(key);
+    return new Promise(r => req.onsuccess = () => r(req.result));
+}
+async function clearImageDB() {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').clear();
+    return new Promise(r => tx.oncomplete = r);
+}
+// ------------------------
+
+    // ============================================
+// GLOBAL STATE
+// ============================================
+let currentSection = 'home';
+let currentProfileSort = 'newest';
+let currentVideo = null;
+let currentPlaylist = null;
+let userLikedVideos = JSON.parse(localStorage.getItem('userLikedVideos')) || {};
+let userDislikedVideos = JSON.parse(localStorage.getItem('userDislikedVideos')) || {};
+let showingAllComments = false;
+let itunesCache = JSON.parse(localStorage.getItem('itunesCache')) || {};
+let npcSubscribers = JSON.parse(localStorage.getItem('npcSubscribers')) || {};
+let loadedPlaylists = {};
+
+// ============================================
+// ITUNES API FUNCTIONS
+// ============================================
+
+async function fetchItunesTrending(limit = 100) {
+    try {
+        // Check cache first (cache for 1 hour)
+        const cacheKey = 'trending_' + limit;
+        const cached = itunesCache[cacheKey];
+        if (cached && Date.now() - cached.timestamp < 3600000) {
+            return cached.data;
+        }
+
+        const response = await fetch(`https://itunes.apple.com/us/rss/topsongs/limit=${limit}/json`);
+        const data = await response.json();
+        
+        const songs = data.feed.entry.map((entry, index) => ({
+            id: 'itunes_' + entry.id.attributes['im:id'],
+            title: entry.title.label + ' (Official Audio)',
+            artist: entry['im:artist'].label,
+            coverArt: entry['im:image'][2].label, // Largest image
+            views: generateRealisticViews(index),
+            type: 'itunes',
+            published: true,
+            createdAt: Date.now() - (index * 100000),
+            artistId: entry['im:artist'].attributes?.href || null
+        }));
+
+        // Cache the result
+        itunesCache[cacheKey] = {
+            data: songs,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('itunesCache', JSON.stringify(itunesCache));
+
+        return songs;
+    } catch (error) {
+        console.error('iTunes API error:', error);
+        return [];
+    }
+}
+
+async function searchItunesArtist(artistName) {
+    try {
+        const cacheKey = 'artist_' + artistName;
+        const cached = itunesCache[cacheKey];
+        if (cached && Date.now() - cached.timestamp < 86400000) { // 24 hour cache
+            return cached.data;
+        }
+
+        const response = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=musicArtist&limit=1`);
+        const data = await response.json();
+        
+        if (data.results && data.results.length > 0) {
+            const artist = data.results[0];
+            const artistData = {
+                name: artist.artistName,
+                image: artist.artistLinkUrl ? await fetchArtistImage(artist.artistId) : null,
+                id: artist.artistId
+            };
+
+            itunesCache[cacheKey] = {
+                data: artistData,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('itunesCache', JSON.stringify(itunesCache));
+
+            return artistData;
+        }
+        return null;
+    } catch (error) {
+        console.error('Artist search error:', error);
+        return null;
+    }
+}
+
+async function fetchArtistImage(artistId) {
+    try {
+        const response = await fetch(`https://itunes.apple.com/lookup?id=${artistId}&entity=album&limit=1`);
+        const data = await response.json();
+        if (data.results && data.results.length > 1) {
+            return data.results[1].artworkUrl100.replace('100x100', '600x600');
+        }
+        return null;
+    } catch (error) {
+        return null;
+    }
+}
+
+function generateRealisticViews(rank) {
+    // Top songs get more views, with some randomness
+    const baseViews = Math.floor(10000000 / (rank + 1));
+    const variance = Math.floor(Math.random() * baseViews * 0.3);
+    return baseViews + variance;
+}
+
+// ============================================
+// NPC SUBSCRIBER MANAGEMENT
+// ============================================
+
+function getNPCSubscriberCount(artistName, rank) {
+    // If we already have a count, return it (persistent)
+    if (npcSubscribers[artistName]) {
+        return npcSubscribers[artistName];
+    }
+
+    // Generate based on rank (top artists have more subs)
+    let baseSubs;
+    if (rank <= 3) {
+        baseSubs = Math.floor(Math.random() * 5000000) + 10000000; // 10M-15M
+    } else if (rank <= 10) {
+        baseSubs = Math.floor(Math.random() * 3000000) + 5000000; // 5M-8M
+    } else {
+        baseSubs = Math.floor(Math.random() * 2000000) + 1000000; // 1M-3M
+    }
+
+    npcSubscribers[artistName] = baseSubs;
+    localStorage.setItem('npcSubscribers', JSON.stringify(npcSubscribers));
+    return baseSubs;
+}
+
+function updateNPCSubscribers() {
+    // When user's subscribers go up, NPC subscribers also increase slightly
+    const userTotalViews = getUnifiedVideos().filter(v => v.published).reduce((sum, v) => sum + (v.views || 0), 0);
+    const userSubs = Math.floor(userTotalViews / 150);
+    
+    Object.keys(npcSubscribers).forEach(artist => {
+        // Increase by 0.01% of user's growth
+        const growth = Math.floor(userSubs * 0.0001);
+        npcSubscribers[artist] += growth;
+    });
+    
+    localStorage.setItem('npcSubscribers', JSON.stringify(npcSubscribers));
+}
+
+// ============================================
+// DATA MANAGEMENT
+// ============================================
+
+function getUnifiedVideos() {
+    const videos = JSON.parse(localStorage.getItem('musicVideos')) || [];
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+    
+    const totalLength = videos.length + songs.length;
+    const timeInterval = 10000000;
+    
+    const allVideos = videos.map((video, index) => ({
+        ...video,
+        createdAt: video.createdAt || new Date(Date.now() - (totalLength - index) * timeInterval).getTime(),
+        views: video.views || 0,
+        type: video.type || 'user'
+    }));
+    
+    const allAudios = songs.map((song, index) => ({
+        id: 'audio_' + (song.songName || '').replace(/\s+/g, '_') + '_' + index,
+        title: `${song.songName} (Official Audio)`,
+        coverArt: song.coverArt,
+        views: Math.floor((song.streams || 0) / 18),
+        published: true,
+        type: 'audio',
+        createdAt: new Date(Date.now() - (totalLength - (index + videos.length)) * timeInterval).getTime()
+    }));
+    
+    return [...allVideos, ...allAudios];
+}
+
+// ============================================
+// NAVIGATION
+// ============================================
+
+function showSection(section) {
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    const navItem = Array.from(document.querySelectorAll('.nav-item')).find(item => 
+        item.onclick.toString().includes(`'${section}'`)
+    );
+    if (navItem) navItem.classList.add('active');
+
+    document.getElementById('main-header').classList.toggle('hidden', section !== 'home');
+    document.getElementById('home-section').classList.toggle('hidden', section !== 'home');
+    document.getElementById('videofy-section').classList.toggle('hidden', section !== 'videofy');
+    document.getElementById('profile-section').classList.toggle('hidden', section !== 'profile');
+    document.getElementById('video-detail-section').classList.add('hidden');
+    document.getElementById('playlist-detail-section').classList.add('hidden');
+    
+    document.querySelector('.nav-bar').classList.remove('hidden');
+    currentSection = section;
+
+    if (section === 'home') loadHomeFeed();
+    else if (section === 'videofy') loadVideofyPage();
+    else if (section === 'profile') loadProfile();
+}
+
+function switchProfileSort(sortType) {
+    document.querySelectorAll('.section-tab').forEach(t => t.classList.remove('active'));
+    document.querySelector(`[onclick="switchProfileSort('${sortType}')"]`).classList.add('active');
+    currentProfileSort = sortType;
+    loadProfileContent();
+}
+
+// ============================================
+// HOME PAGE
+// ============================================
+
+async function loadHomeFeed() {
+    const allContent = getUnifiedVideos();
+    const publishedContent = allContent.filter(v => v.published);
+    const feed = document.getElementById('home-content');
+
+    if (publishedContent.length === 0) {
+        feed.innerHTML = `
+            <div class="empty-state" style="padding-top: 150px;">
+                <i class="fas fa-video"></i>
+                <h3>No videos yet</h3>
+                <p>Create and publish your first video!</p>
+            </div>`;
+        return;
+    }
+    
+    const sortedByNewest = [...publishedContent].sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    const cards = await Promise.all(sortedByNewest.map(video => createVideoCard(video)));
+    feed.innerHTML = cards.join('');
+    loadUserData();
+    renderDBImages();
+}
+
+ async function createVideoCard(video) {
+    const artistDetails = JSON.parse(localStorage.getItem('artistDetails')) || {};
+    const savedPhoto = await photoDB.loadPhoto().catch(() => localStorage.getItem('artistPhoto'));
+    const name = video.type === 'itunes' ? video.artist : (artistDetails.name || 'Videoify Creator');
+    
+    let avatarStyle = '', avatarText = '';
+    if (video.type === 'itunes' && video.artistImage) {
+        avatarStyle = `style="background-image:url(${video.artistImage})"`;
+    } else if (savedPhoto) {
+        avatarStyle = `style="background-image:url(${savedPhoto})"`;
+    } else {
+        avatarText = name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+    }
+    
+    let thumbUrl = '';
+    if (video.coverArt && video.coverArt.startsWith('img_')) {
+        thumbUrl = await getImageFromDB(video.coverArt).catch(() => '');
+    } else {
+        thumbUrl = video.coverArt || '';
+    }
+
+    return `
+    <div class="video-card" onclick="showVideoDetail('${video.id}')">
+        <div class="video-thumbnail" style="background-image:url('${thumbUrl}')"></div>
+        <div class="video-info">
+            <div class="channel-avatar" ${avatarStyle}>${avatarText}</div>
+            <div class="video-text">
+                <div class="video-title">${video.title}</div>
+                <div class="video-meta">
+                    ${name} • ${formatViews(video.views || 0)} views
+                </div>
+            </div>
+        </div>
+    </div>`;
+}
+
+// ============================================
+// VIDEOFY DISCOVERY PAGE
+// ============================================
+
+async function loadVideofyPage() {
+    const container = document.getElementById('videofy-content');
+    container.innerHTML = '<div class="loading-spinner"><div class="spinner"></div></div>';
+
+    try {
+        // Get game date for weekly refresh
+        const gameDate = new Date(localStorage.getItem('currentDate') || Date.now());
+        const weekNumber = Math.floor(gameDate.getTime() / (7 * 24 * 60 * 60 * 1000));
+        
+        const [itunesTrending] = await Promise.all([
+            fetchItunesTrending(50)
+        ]);
+
+        const userVideos = getUnifiedVideos().filter(v => v.published);
+        
+        // Mix user and iTunes, shuffle weekly
+        const allVideos = [...userVideos, ...itunesTrending];
+        
+        // Seed random with week number for consistent weekly results
+        const seededShuffle = (arr, seed) => {
+            let shuffled = [...arr];
+            let random = (seed) => {
+                const x = Math.sin(seed++) * 10000;
+                return x - Math.floor(x);
+            };
+            for (let i = shuffled.length - 1; i > 0; i--) {
+                const j = Math.floor(random(seed + i) * (i + 1));
+                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+            }
+            return shuffled;
+        };
+
+        // Trending Videos: Sort by views then shuffle with weekly seed
+        const trendingVideos = seededShuffle(
+            allVideos.sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 30),
+            weekNumber
+        ).slice(0, 10);
+
+        // Trending Audios: iTunes only, shuffled weekly
+        const trendingAudios = seededShuffle(
+            itunesTrending.slice(0, 30),
+            weekNumber + 1000 // Different seed
+        ).slice(0, 10);
+
+        // Build playlists with DIVERSE content
+        const playlists = [
+            { 
+                id: 'today-hits', 
+                name: 'Today Hits', 
+                class: 'playlist-today-hits', 
+                videos: seededShuffle([...userVideos, ...itunesTrending], weekNumber).slice(0, 20)
+            },
+            { 
+                id: 'video-showcase', 
+                name: 'VideoShowcase', 
+                class: 'playlist-video-showcase', 
+                videos: seededShuffle(allVideos.filter(v => v.type !== 'audio'), weekNumber + 2000).slice(0, 20)
+            },
+            { 
+                id: 'excellence-views', 
+                name: 'Excellence Views', 
+                class: 'playlist-excellence-views', 
+                videos: seededShuffle(allVideos, weekNumber + 3000).slice(0, 20)
+            }
+        ];
+
+        // Store playlists globally so openPlaylist() can access iTunes videos too
+        playlists.forEach(p => { loadedPlaylists[p.id] = p; });
+
+        // Get DIVERSE top channels (not just trending video creators)
+        const topChannels = await buildDiverseTopChannels(itunesTrending);
+
+        container.innerHTML = `
+            ${buildTrendingVideosSection(trendingVideos)}
+            ${buildTrendingAudiosSection(trendingAudios)}
+            ${buildPlaylistsSection(playlists)}
+            ${buildTopChannelsSection(topChannels)}
+        `;
+    } catch (error) {
+        console.error('Error loading Videofy:', error);
+        container.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Error loading content</h3>
+                <p>Please try again later</p>
+            </div>`;
+    }
+    renderDBImages(); // ✅ ADD AT THE END
+
+}
+    
+    async function buildDiverseTopChannels(itunesSongs) {
+    const channels = [];
+    
+    // Add user channel
+    const userVideos = getUnifiedVideos().filter(v => v.published);
+    const userViews = userVideos.reduce((sum, v) => sum + (v.views || 0), 0);
+    const userSubs = Math.floor(userViews / 150);
+    const artistDetails = JSON.parse(localStorage.getItem('artistDetails')) || {};
+    const savedPhoto = await photoDB.loadPhoto().catch(() => localStorage.getItem('artistPhoto'));    
+    channels.push({
+        name: artistDetails.name || 'Videoify Creator',
+        subscribers: userSubs,
+        image: savedPhoto,
+        isUser: true
+    });
+
+    // Get ALL unique artists from iTunes (not just trending)
+    const artistMap = new Map();
+    
+    // Pull from MULTIPLE iTunes categories
+    const categories = [
+        fetchItunesTrending(200), // Top songs
+        fetch('https://itunes.apple.com/us/rss/topsongs/limit=100/genre=20/json').then(r => r.json()).then(d => 
+            d.feed.entry.map(e => ({
+                artist: e['im:artist'].label,
+                views: Math.floor(Math.random() * 5000000) + 1000000
+            }))
+        ).catch(() => [])
+    ];
+
+    const allArtists = await Promise.all(categories);
+    const flatArtists = allArtists.flat();
+
+    flatArtists.forEach(song => {
+        const artist = song.artist;
+        if (!artistMap.has(artist)) {
+            artistMap.set(artist, {
+                name: artist,
+                views: song.views || 0,
+                image: null
+            });
+        } else {
+            artistMap.get(artist).views += song.views || 0;
+        }
+    });
+
+    // Get top 50 artists by total views
+    const topArtists = Array.from(artistMap.values())
+        .sort((a, b) => b.views - a.views)
+        .slice(0, 50);
+
+    // Fetch images for top 20 only (performance)
+    for (let i = 0; i < Math.min(20, topArtists.length); i++) {
+        const artist = topArtists[i];
+        const artistData = await searchItunesArtist(artist.name);
+        channels.push({
+            name: artist.name,
+            subscribers: getNPCSubscriberCount(artist.name, i),
+            image: artistData?.image,
+            isUser: false
+        });
+    }
+
+    // Sort all by subscribers
+    channels.sort((a, b) => b.subscribers - a.subscribers);
+
+    return channels;
+}
+
+function buildTrendingVideosSection(videos) {
+    return `
+        <div class="section-header">
+            <h2><i class="fas fa-fire"></i> Top Trending Videos</h2>
+        </div>
+        <div class="trending-grid">
+            ${videos.map((video, index) => {
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                return `
+                <div class="trending-card" onclick="showVideoDetail('${video.id}')">
+                    <div class="rank-badge ${rankClass}">${index + 1}</div>
+                    <div class="thumbnail" style="background-image:url('${video.coverArt}')"></div>
+                    <div class="info">
+                        <div class="title">${video.title}</div>
+                        <div class="meta">
+                            <span class="channel">${video.artist || 'Videoify'}</span>
+                        </div>
+                        <div class="stats">
+                            <span><i class="fas fa-eye"></i> ${formatViews(video.views || 0)}</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+function buildTrendingAudiosSection(audios) {
+    return `
+        <div class="section-header">
+            <h2><i class="fas fa-music"></i> Trending Audios</h2>
+        </div>
+        <div class="trending-grid">
+            ${audios.map((audio, index) => {
+                const rankClass = index === 0 ? 'gold' : index === 1 ? 'silver' : index === 2 ? 'bronze' : '';
+                return `
+                <div class="trending-card" onclick="showVideoDetail('${audio.id}')">
+                    <div class="rank-badge ${rankClass}">${index + 1}</div>
+                    <div class="thumbnail" style="background-image:url('${audio.coverArt}')"></div>
+                    <div class="info">
+                        <div class="title">${audio.title}</div>
+                        <div class="meta">
+                            <span class="channel">${audio.artist}</span>
+                        </div>
+                        <div class="stats">
+                            <span><i class="fas fa-headphones"></i> ${formatViews(audio.views || 0)}</span>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+function buildPlaylistsSection(playlists) {
+    return `
+        <div class="section-header">
+            <h2><i class="fas fa-list"></i> Playlists</h2>
+        </div>
+        <div class="playlists-grid">
+            ${playlists.map(playlist => {
+                // Build 2x2 mosaic from up to 4 unique covers
+                const covers = [...new Set(playlist.videos.map(v => v.coverArt).filter(Boolean))].slice(0, 4);
+                while (covers.length < 4) covers.push('');
+                const mosaicHtml = covers.map(c => 
+                    `<div class="mosaic-cell" style="${c ? `background-image:url('${c}')` : 'background:var(--border)'}"></div>`
+                ).join('');
+
+                const iconMap = {
+                    'playlist-today-hits': 'fa-fire',
+                    'playlist-video-showcase': 'fa-play-circle',
+                    'playlist-excellence-views': 'fa-star'
+                };
+                const icon = iconMap[playlist.class] || 'fa-music';
+
+                return `
+                <div class="playlist-card ${playlist.class}" onclick="openPlaylist('${playlist.id}')">
+                    <div class="playlist-mosaic">${mosaicHtml}</div>
+                    <div class="playlist-mosaic-overlay"></div>
+                    <div class="playlist-badge"><i class="fas ${icon}"></i></div>
+                    <div class="playlist-content">
+                        <div class="playlist-title">${playlist.name}</div>
+                        <div class="playlist-count"><i class="fas fa-music"></i> ${playlist.videos.length} tracks</div>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+
+
+function buildTopChannelsSection(channels) {
+    return `
+        <div class="section-header">
+            <h2><i class="fas fa-trophy"></i> Top Channels</h2>
+        </div>
+        <div class="channels-grid">
+            ${channels.slice(0, 10).map((channel, index) => {
+                let avatarStyle = '', avatarText = '';
+                if (channel.image) {
+                    avatarStyle = `style="background-image:url(${channel.image})"`;
+                } else {
+                    avatarText = channel.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+                }
+                
+                const rankClass = index < 3 ? 'top3' : '';
+                
+                return `
+                <div class="channel-card" onclick="${channel.isUser ? "showSection('profile')" : "alert('Give me money😭😭😭!')"}">
+                    <div class="rank ${rankClass}">${index + 1}</div>
+                    <div class="npc-avatar" ${avatarStyle}>${avatarText}</div>
+                    <div class="channel-info">
+                        <div class="channel-name">
+                            ${channel.name}
+                            ${index < 5 ? '<i class="fas fa-check-circle verified"></i>' : ''}
+                        </div>
+                        <div class="channel-subs">${formatSubscribers(channel.subscribers)}</div>
+                    </div>
+                </div>`;
+            }).join('')}
+        </div>
+    `;
+}
+
+// ============================================
+// PLAYLIST DETAIL
+// ============================================
+
+function openPlaylist(playlistId) {
+    const playlistMeta = {
+        'today-hits': { name: 'Today Hits', class: 'playlist-today-hits' },
+        'video-showcase': { name: 'VideoShowcase', class: 'playlist-video-showcase' },
+        'excellence-views': { name: 'Excellence Views', class: 'playlist-excellence-views' }
+    };
+
+    currentPlaylist = playlistId;
+    const playlist = playlistMeta[playlistId];
+    
+    // Use globally cached playlists (includes iTunes data), fallback to user-only
+    let videos = [];
+    if (loadedPlaylists[playlistId] && loadedPlaylists[playlistId].videos.length > 0) {
+        videos = loadedPlaylists[playlistId].videos;
+    } else {
+        const allVideos = getUnifiedVideos().filter(v => v.published);
+        if (playlistId === 'today-hits') {
+            videos = allVideos.sort((a, b) => (b.views || 0) - (a.views || 0)).slice(0, 20);
+        } else if (playlistId === 'video-showcase') {
+            videos = allVideos.filter(v => v.type !== 'audio').slice(0, 20);
+        } else {
+            videos = allVideos.slice(0, 20);
+        }
+    }
+
+    document.getElementById('playlist-detail-title').textContent = playlist.name;
+    document.getElementById('playlist-hero-title').textContent = playlist.name;
+    document.getElementById('playlist-hero-count').textContent = `${videos.length} videos`;
+    
+    const hero = document.getElementById('playlist-hero');
+    hero.style.backgroundImage = `url('${videos[0]?.coverArt || ''}')`;
+    hero.querySelector('.content h2').className = playlist.class.replace('playlist-', '');
+
+    document.getElementById('playlist-videos-content').innerHTML = videos.length > 0
+        ? videos.map(v => createVideoListItem(v)).join('')
+        : '<div class="empty-state"><i class="fas fa-music"></i><h3>No videos yet</h3><p>Come back soon!</p></div>';
+
+    document.getElementById('playlist-detail-section').classList.remove('hidden');
+    document.querySelector('.nav-bar').classList.add('hidden');
+}
+
+function goBackFromPlaylist() {
+    document.getElementById('playlist-detail-section').classList.add('hidden');
+    document.querySelector('.nav-bar').classList.remove('hidden');
+    showSection('videofy');
+}
+
+// ============================================
+// PROFILE PAGE
+// ============================================
+
+function loadProfile() {
+    const allContent = getUnifiedVideos();
+    const publishedContent = allContent.filter(v => v.published && v.type !== 'itunes');
+    
+    const totalViews = publishedContent.reduce((sum, v) => sum + (v.views || 0), 0);
+    const subscriberCount = Math.floor(totalViews / 150);
+    const videoCount = allContent.filter(v => v.type !== 'itunes').length;
+    const artistBio = localStorage.getItem('artistBio') || 'Add a description...';
+
+    document.getElementById('profile-meta').textContent = 
+        `${formatSubscribers(subscriberCount, true)} • ${videoCount} videos`;
+    document.getElementById('profile-bio').textContent = artistBio;
+    
+    loadProfileContent();
+}
+
+function loadProfileContent() {
+    const content = document.getElementById('profile-content');
+    let allContent = getUnifiedVideos().filter(v => v.type !== 'itunes');
+
+    if (allContent.length === 0) {
+        content.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-video"></i>
+                <h3>No videos created</h3>
+                <p>Start creating your first video!</p>
+            </div>`;
+        return;
+    }
+    
+    if (currentProfileSort === 'popular') {
+        allContent.sort((a, b) => (b.views || 0) - (a.views || 0));
+    } else if (currentProfileSort === 'oldest') {
+        allContent.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+    } else {
+        allContent.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    }
+
+    content.innerHTML = allContent.map(video => createVideoListItem(video)).join('');
+
+    renderDBImages(); // ✅ ADD AT THE END
+}
+
+function createVideoListItem(video) {
+    let meta = video.type === 'audio' || video.type === 'itunes'
+        ? `${formatViews(video.views || 0)} views` 
+        : `${formatViews(video.views || 0)} views • ${video.published ? 'Published' : 'Draft'}`;
+
+    return `
+    <div class="video-item" onclick="showVideoDetail('${video.id}')">
+        <div class="video-thumb" data-bg="${video.coverArt || ''}"></div>
+        <div class="video-details">
+            <div class="title">${video.title}</div>
+            <div class="meta">${meta}</div>
+        </div>
+    </div>`;
+}
+
+async function loadUserData() {
+    const artistDetails = JSON.parse(localStorage.getItem('artistDetails')) || {};
+    const savedPhoto = await photoDB.loadPhoto().catch(() => localStorage.getItem('artistPhoto'));    const bannerPhoto = await photoDB.loadBanner().catch(() => localStorage.getItem('artistBanner'));
+    const artistBio = localStorage.getItem('artistBio') || 'Add a description...';
+    const name = artistDetails.name || 'Videoify Creator';
+    
+    document.getElementById('profile-name').textContent = name;
+    
+    const profileAvatar = document.getElementById('profile-avatar');
+    const headerAvatar = document.getElementById('header-avatar');
+    
+    if (savedPhoto) {
+        profileAvatar.style.backgroundImage = `url(${savedPhoto})`;
+        headerAvatar.style.backgroundImage = `url(${savedPhoto})`;
+        profileAvatar.textContent = '';
+        headerAvatar.textContent = '';
+    } else {
+        const initials = name.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+        profileAvatar.textContent = initials;
+        headerAvatar.textContent = initials;
+    }
+
+    const profileBannerEl = document.getElementById('profile-banner');
+    if (bannerPhoto && profileBannerEl) {
+        profileBannerEl.style.backgroundImage = `url(${bannerPhoto})`;
+    }
+    
+    const profileBioEl = document.getElementById('profile-bio');
+    if (profileBioEl) {
+        profileBioEl.textContent = artistBio;
+    }
+}
+
+// ============================================
+// VIDEO DETAIL PAGE
+// ============================================
+
+async function showVideoDetail(videoId) {
+    // First check user videos
+    let allContent = getUnifiedVideos();
+    let video = allContent.find(v => String(v.id) === String(videoId));
+    
+    // If not found in user content, check iTunes cache
+    if (!video) {
+        const itunesSongs = await fetchItunesTrending(100);
+        video = itunesSongs.find(v => String(v.id) === String(videoId));
+    }
+    
+    if (!video) {
+        console.error('Video not found:', videoId);
+        return;
+    }
+    
+    currentVideo = video;
+    showingAllComments = false;
+    
+    if (video.coverArt && video.coverArt.startsWith('img_')) {
+    getImageFromDB(video.coverArt).then(res => {
+        document.getElementById('detail-thumbnail').style.backgroundImage = `url('${res || ''}')`;
+    });
+} else {
+    document.getElementById('detail-thumbnail').style.backgroundImage = `url('${video.coverArt || ''}')`;
+}
+    document.getElementById('detail-title').textContent = video.title || 'Untitled Video';
+    document.getElementById('detail-meta').textContent = `${formatViews(video.views || 0)} views`;
+    
+    // Set channel info
+    const channelName = video.type === 'itunes' ? video.artist : (JSON.parse(localStorage.getItem('artistDetails'))?.name || 'Videoify Creator');
+    document.getElementById('detail-channel-name').textContent = channelName;
+    
+    const channelAvatar = document.getElementById('detail-channel-avatar');
+    if (video.type === 'itunes' && video.artistImage) {
+        channelAvatar.style.backgroundImage = `url(${video.artistImage})`;
+        channelAvatar.textContent = '';
+    } else {
+        const savedPhoto = await photoDB.loadPhoto().catch(() => localStorage.getItem('artistPhoto'));        if (savedPhoto) {
+            channelAvatar.style.backgroundImage = `url(${savedPhoto})`;
+            channelAvatar.textContent = '';
+        } else {
+            const initials = channelName.split(' ').map(word => word[0]).join('').toUpperCase().slice(0, 2);
+            channelAvatar.textContent = initials;
+        }
+    }
+    
+    // Calculate subscribers
+    let subscriberCount;
+    if (video.type === 'itunes') {
+        subscriberCount = getNPCSubscriberCount(video.artist, 0);
+    } else {
+        const allPublished = allContent.filter(v => v.published && v.type !== 'itunes');
+        const totalViews = allPublished.reduce((sum, v) => sum + (v.views || 0), 0);
+        subscriberCount = Math.floor(totalViews / 150);
+    }
+    
+    document.getElementById('detail-subscribers').textContent = formatSubscribers(subscriberCount);
+    
+    // Likes and dislikes
+    const baseLikes = Math.floor((video.views || 0) * 0.05);
+    const baseDislikes = Math.floor((video.views || 0) * 0.005);
+    
+    let currentLikes = baseLikes;
+    let currentDislikes = baseDislikes;
+    
+    if(userLikedVideos[video.id]) currentLikes++;
+    if(userDislikedVideos[video.id]) currentDislikes++;
+    
+    document.getElementById('like-count').textContent = formatViews(currentLikes);
+    document.getElementById('dislike-count').textContent = formatViews(currentDislikes);
+    
+    document.getElementById('like-btn').classList.toggle('liked', userLikedVideos[video.id]);
+    document.getElementById('dislike-btn').classList.toggle('disliked', userDislikedVideos[video.id]);
+    
+    loadCommentsSection(video);
+    
+    document.getElementById('video-detail-section').classList.remove('hidden');
+    document.querySelector('.nav-bar').classList.add('hidden');
+}
+
+function goBackFromVideo() {
+    document.getElementById('video-detail-section').classList.add('hidden');
+    document.querySelector('.nav-bar').classList.remove('hidden');
+    
+    if (currentSection === 'home') showSection('home');
+    else if (currentSection === 'videofy') showSection('videofy');
+    else showSection('profile');
+}
+
+function navigateToChannel() {
+    if (currentVideo?.type === 'itunes') {
+        alert(`This is ${currentVideo.artist}, a real artist from iTunes!`);
+    } else {
+        goBackFromVideo();
+        showSection('profile');
+    }
+}
+
+// ============================================
+// LIKES & DISLIKES
+// ============================================
+
+function toggleLike() {
+    if (!currentVideo) return;
+    const likeBtn = document.getElementById('like-btn');
+    const dislikeBtn = document.getElementById('dislike-btn');
+    const likeCount = document.getElementById('like-count');
+    const dislikeCount = document.getElementById('dislike-count');
+    
+    let likes = parseInt(likeCount.textContent.replace(/[^\d]/g, '')) || 0;
+    let dislikes = parseInt(dislikeCount.textContent.replace(/[^\d]/g, '')) || 0;
+    
+    if (userLikedVideos[currentVideo.id]) {
+        likes--;
+        userLikedVideos[currentVideo.id] = false;
+        likeBtn.classList.remove('liked');
+    } else {
+        likes++;
+        userLikedVideos[currentVideo.id] = true;
+        likeBtn.classList.add('liked');
+        if (userDislikedVideos[currentVideo.id]) {
+            dislikes = Math.max(0, dislikes - 1);
+            userDislikedVideos[currentVideo.id] = false;
+            dislikeBtn.classList.remove('disliked');
+        }
+    }
+    likeCount.textContent = formatViews(likes);
+    dislikeCount.textContent = formatViews(dislikes);
+    localStorage.setItem('userLikedVideos', JSON.stringify(userLikedVideos));
+    localStorage.setItem('userDislikedVideos', JSON.stringify(userDislikedVideos));
+}
+
+function toggleDislike() {
+    if (!currentVideo) return;
+    const likeBtn = document.getElementById('like-btn');
+    const dislikeBtn = document.getElementById('dislike-btn');
+    const likeCount = document.getElementById('like-count');
+    const dislikeCount = document.getElementById('dislike-count');
+
+    let likes = parseInt(likeCount.textContent.replace(/[^\d]/g, '')) || 0;
+    let dislikes = parseInt(dislikeCount.textContent.replace(/[^\d]/g, '')) || 0;
+    
+    if (userDislikedVideos[currentVideo.id]) {
+        dislikes--;
+        userDislikedVideos[currentVideo.id] = false;
+        dislikeBtn.classList.remove('disliked');
+    } else {
+        dislikes++;
+        userDislikedVideos[currentVideo.id] = true;
+        dislikeBtn.classList.add('disliked');
+        if (userLikedVideos[currentVideo.id]) {
+            likes = Math.max(0, likes - 1);
+            userLikedVideos[currentVideo.id] = false;
+            likeBtn.classList.remove('liked');
+        }
+    }
+    likeCount.textContent = formatViews(likes);
+    dislikeCount.textContent = formatViews(dislikes);
+    localStorage.setItem('userLikedVideos', JSON.stringify(userLikedVideos));
+    localStorage.setItem('userDislikedVideos', JSON.stringify(userDislikedVideos));
+}
+
+// ============================================
+// COMMENTS
+// ============================================
+
+function loadCommentsSection(video) {
+    const commentsSection = document.getElementById('comments-content');
+    const totalComments = Math.floor((video.views || 0) * 0.02) || 15;
+    
+    commentsSection.innerHTML = `
+        <div class="comments-header">
+            <i class="fas fa-comment"></i> ${formatViews(totalComments)} Comments
+        </div>
+        <div class="comments-list">
+            ${generateComments(video, showingAllComments ? 15 : 3)}
+        </div>
+        ${!showingAllComments && totalComments > 3 ? `
+            <div class="show-more-comments" onclick="toggleAllComments()">
+                <span>Show all ${totalComments} comments</span>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        ` : ''}
+        <div class="suggested-videos">
+            <h3>More Videos</h3>
+            <div class="suggested-grid">
+                ${generateSuggestedVideos(video.id)}
+            </div>
+        </div>
+    `;
+}
+
+function toggleAllComments() {
+    showingAllComments = true;
+    loadCommentsSection(currentVideo);
+}
+
+function generateComments(video, count = 5) {
+    const realisticComments = [
+        'This is absolutely incredible! The production quality is insane 🔥',
+        'Been waiting for this drop! Finally here and it\'s everything I hoped for',
+        'The beat hits different... can\'t stop replaying this',
+        'Who else is still listening to this in 2025? This never gets old',
+        'This deserves way more recognition. Criminally underrated',
+        'The visuals in this music video are on another level 🎬',
+        'This song got me through some tough times. Thank you for this masterpiece',
+        'Can we just appreciate how talented this artist is? Pure genius',
+        'The lyrics really speak to me. This is what real music sounds like',
+        'I\'ve been following since day one and this is definitely your best work yet',
+        'Algorithm brought me here and I\'m not disappointed',
+        'This needs to be on every playlist RIGHT NOW',
+        'My new favorite song, been on repeat for hours',
+        'The talent is unreal. Can\'t wait to see what\'s next!',
+        'Finally some good music in 2025 👏'
+    ];
+    
+    const realisticNames = [
+        'MichaelJohnson2k', 'SarahMusicLover', 'DavidBeatmaster', 'EmmaVibes92',
+        'AlexSoundWave', 'JessicaMelody', 'RyanBassHead', 'LaurenTuneQueen',
+        'BradleyBeats', 'AmandaRhythm', 'ChrisVibes', 'NinaMusica',
+        'JakeMelodies', 'OliviaBeats', 'EthanGrooves'
+    ];
+    
+    let commentsHtml = '';
+    
+    for (let i = 0; i < count; i++) {
+        const randomComment = realisticComments[Math.floor(Math.random() * realisticComments.length)];
+        const randomName = realisticNames[Math.floor(Math.random() * realisticNames.length)];
+        const likes = Math.floor(Math.random() * 2500) + 10;
+        const time = ['1 day ago', '2 days ago', '5 days ago', '1 week ago', '2 weeks ago'][Math.floor(Math.random() * 5)];
+        
+        commentsHtml += `
+            <div class="comment">
+                <div class="comment-avatar">${randomName[0].toUpperCase()}</div>
+                <div class="comment-content">
+                    <div class="comment-header">
+                        <span class="comment-author">@${randomName}</span>
+                        <span class="comment-time">${time}</span>
+                    </div>
+                    <div class="comment-text">${randomComment}</div>
+                    <div class="comment-actions">
+                        <div class="comment-like"><i class="far fa-thumbs-up"></i> <span>${formatViews(likes)}</span></div>
+                        <div class="comment-dislike"><i class="far fa-thumbs-down"></i></div>
+                        <span class="comment-reply">Reply</span>
+                    </div>
+                </div>
+            </div>`;
+    }
+    return commentsHtml;
+}
+
+function generateSuggestedVideos(currentVideoId) {
+    const allContent = getUnifiedVideos();
+    const publishedVideos = allContent.filter(v => v.published && String(v.id) !== String(currentVideoId));
+    
+    if (publishedVideos.length === 0) {
+        return '<div style="text-align:center; color: var(--text-secondary); padding: 20px;">No other videos available</div>';
+    }
+    
+    const suggestedVideos = publishedVideos.sort(() => 0.5 - Math.random()).slice(0, 4);
+    
+    return suggestedVideos.map(video => {
+        const artistName = video.type === 'itunes' ? video.artist : (JSON.parse(localStorage.getItem('artistDetails'))?.name || 'Videoify Creator');
+        
+        return `
+        <div class="suggested-video" onclick="showVideoDetail('${video.id}')">
+            <div class="suggested-thumbnail" style="background-image: url('${video.coverArt || ''}')">
+                <div class="video-duration">3:42</div>
+            </div>
+            <div class="suggested-info">
+                <div class="suggested-title">${video.title}</div>
+                <div class="suggested-channel">${artistName}</div>
+                <div class="suggested-meta">${formatViews(video.views || 0)} views</div>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+// ============================================
+// PROFILE EDITING
+// ============================================
+
+async function openEditModal() {
+    const artistDetails = JSON.parse(localStorage.getItem('artistDetails')) || {};
+    const artistBio = localStorage.getItem('artistBio') || '';
+    const savedPhoto = await photoDB.loadPhoto().catch(() => localStorage.getItem('artistPhoto'));
+    const bannerPhoto = await photoDB.loadBanner().catch(() => localStorage.getItem('artistBanner'));
+    
+    document.getElementById('edit-name').value = artistDetails.name || '';
+    document.getElementById('edit-bio').value = artistBio;
+    
+    if (savedPhoto) {
+        const preview = document.getElementById('avatar-preview');
+        preview.style.backgroundImage = `url(${savedPhoto})`;
+        preview.classList.remove('hidden');
+    }
+    
+    if (bannerPhoto) {
+        const preview = document.getElementById('banner-preview');
+        preview.style.backgroundImage = `url(${bannerPhoto})`;
+        preview.classList.remove('hidden');
+    }
+    
+    document.getElementById('edit-modal').classList.remove('hidden');
+}
+
+function closeEditModal(event) {
+    document.getElementById('edit-modal').classList.add('hidden');
+}
+
+function previewAvatar(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('avatar-preview');
+            preview.style.backgroundImage = `url(${e.target.result})`;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function previewBanner(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const preview = document.getElementById('banner-preview');
+            preview.style.backgroundImage = `url(${e.target.result})`;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function saveProfile() {
+    const name = document.getElementById('edit-name').value.trim();
+    const bio = document.getElementById('edit-bio').value.trim();
+    
+    if (!name) {
+        alert('Please enter a channel name');
+        return;
+    }
+    
+    // Save name
+    const artistDetails = JSON.parse(localStorage.getItem('artistDetails')) || {};
+    artistDetails.name = name;
+    localStorage.setItem('artistDetails', JSON.stringify(artistDetails));
+    
+    // Save bio
+    localStorage.setItem('artistBio', bio);
+    
+    // Save avatar if changed
+    const avatarFile = document.getElementById('avatar-upload').files[0];
+    if (avatarFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            photoDB.savePhoto(e.target.result).catch(() => localStorage.setItem('artistPhoto', e.target.result));
+            loadUserData();
+        };
+        reader.readAsDataURL(avatarFile);
+    }
+    
+    // Save banner if changed
+    const bannerFile = document.getElementById('banner-upload').files[0];
+    if (bannerFile) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            photoDB.saveBanner(e.target.result).catch(() => localStorage.setItem('artistBanner', e.target.result));
+            loadUserData();
+        };
+        reader.readAsDataURL(bannerFile);
+    }
+    
+    closeEditModal();
+    loadUserData();
+    loadProfile();
+    
+    alert('Profile updated successfully!');
+}
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+function formatViews(views) {
+    if (views < 1000) return views.toString();
+    if (views < 1000000) return (views / 1000).toFixed(1).replace('.0', '') + 'K';
+    return (views / 1000000).toFixed(1).replace('.0', '') + 'M';
+}
+
+function formatSubscribers(subs, meta = false) {
+    const formatted = formatViews(subs);
+    return meta ? formatted : `${formatted} subscribers`;
+}
+
+function updateVideoViews() {
+    let videos = JSON.parse(localStorage.getItem('musicVideos')) || [];
+    let songs = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+    let updated = false;
+    
+    videos.forEach(video => {
+        if (!video.published) return;
+        const song = songs.find(s => s.songName === video.songName);
+        if (song) {
+            let newViews = video.views;
+            if (video.type === 'music-video') {
+                newViews = Math.floor((song.streams || 0) / 5);
+            } else if (video.type === 'lyric-video') {
+                newViews = Math.floor((song.streams || 0) / 12.5);
+            }
+            
+            if (newViews !== video.views) {
+                video.views = newViews;
+                updated = true;
+            }
+        }
+    });
+    
+    if (updated) {
+        localStorage.setItem('musicVideos', JSON.stringify(videos));
+        if (currentSection === 'home') loadHomeFeed();
+        else if (currentSection === 'profile') loadProfile();
+    }
+    
+    // Update NPC subscribers
+    updateNPCSubscribers();
+}
+
+function ensureVideoIds() {
+    let videos = JSON.parse(localStorage.getItem('musicVideos')) || [];
+    let updated = false;
+    
+    videos.forEach((video) => {
+        if (!video.id) {
+            video.id = 'video_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            updated = true;
+        }
+        if (!video.createdAt) {
+            video.createdAt = Date.now() - Math.floor(Math.random() * 30000000);
+            updated = true;
+        }
+    });
+    
+    if (updated) {
+        localStorage.setItem('musicVideos', JSON.stringify(videos));
+    }
+}
+
+// ============================================
+// INITIALIZATION
+// ============================================
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Check for EuroFan post pending
+(async () => {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readonly');
+    const req = tx.objectStore('images').get('eurofan_post_pending');
+    req.onsuccess = () => {
+        if (req.result) {
+            const imgKey = 'img_eurofan_' + Date.now();
+            saveImageToDB(imgKey, req.result).then(() => {
+                // Clean up pending key
+                const tx2 = db.transaction('images', 'readwrite');
+                tx2.objectStore('images').delete('eurofan_post_pending');
+            });
+
+            // Pull metadata saved by neweuro
+            const meta = JSON.parse(localStorage.getItem('eurofan_post_meta') || 'null');
+            localStorage.removeItem('eurofan_post_meta');
+
+            const artistDetails = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+            const artistName = localStorage.getItem('artistName') || artistDetails.name || artistDetails.artistName || 'Artist';
+            const title = meta ? meta.caption : `EuroFan — ${artistName}`;
+
+            // Create the video entry
+            const newPost = {
+                id: 'eurofan_' + Date.now(),
+                title,
+                artist: artistName,
+                coverArt: imgKey,
+                published: true,
+                createdAt: Date.now(),
+                views: Math.floor(Math.random() * 80000) + 20000,
+                type: 'user'
+            };
+            const videos = JSON.parse(localStorage.getItem('musicVideos') || '[]');
+            videos.unshift(newPost);
+            localStorage.setItem('musicVideos', JSON.stringify(videos));
+
+            // Navigate straight to profile so they see the post
+            setTimeout(() => showSection('profile'), 300);
+        }
+    };
+})();
+    ensureVideoIds();
+    loadUserData();
+    updateVideoViews();
+    loadHomeFeed();
+});
+
+setInterval(updateVideoViews, 5000);
+</script>
+</body>
+</html>

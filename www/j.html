@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Awards Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Cinzel:wght@700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .font-excellence { font-family: 'Cinzel', serif; }
+        .font-vma { font-family: 'Syncopate', sans-serif; }
+
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0px); } }
+        .badge-float { animation: float 3s ease-in-out infinite; }
+        
+        /* Hide scrollbar */
+        .badge-scroll::-webkit-scrollbar { display: none; }
+        
+        .hidden-row { display: none; }
+    </style>
+</head>
+<body class="bg-white min-h-screen pb-10">
+
+    <!-- HEADER & BADGES -->
+    <header class="sticky top-0 bg-white/95 backdrop-blur-md border-b border-gray-100 z-50 pt-3 pb-2 px-4 shadow-sm">
+        <div class="flex justify-between items-center mb-2">
+            <h1 class="text-xl font-extrabold tracking-tight text-gray-900">AWARDS CENTER</h1>
+            <div class="text-[10px] uppercase font-bold text-gray-400 bg-gray-100 px-2 py-1 rounded">Profile</div>
+        </div>
+        
+        <!-- Dynamic Badges -->
+        <div id="badge-container" class="badge-scroll flex gap-2 overflow-x-auto min-h-[28px]">
+            <span class="text-xs text-gray-300 italic">Play to earn titles...</span>
+        </div>
+    </header>
+
+    <main class="max-w-md mx-auto px-4 py-6 space-y-6">
+
+        <!-- STATS SUMMARY (3 Awards) -->
+        <div class="grid grid-cols-3 gap-2">
+            <a href="new.html" class="bg-gray-50 border border-gray-100 p-2.5 rounded-xl flex flex-col gap-1 hover:bg-gray-100 transition-colors cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <div class="text-[9px] text-gray-400 uppercase tracking-wider font-bold leading-tight">Excellence</div>
+                    <img src="j.png" onerror="this.src='https://placehold.co/24x24/D4AF37/FFF?text=E'" class="w-5 h-5 object-contain opacity-80">
+                </div>
+                <div id="total-exc-wins" class="text-2xl font-bold text-[#D4AF37] font-excellence">0</div>
+            </a>
+            <a href="vmas.html" class="bg-gray-50 border border-gray-100 p-2.5 rounded-xl flex flex-col gap-1 hover:bg-gray-100 transition-colors cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <div class="text-[9px] text-gray-400 uppercase tracking-wider font-bold leading-tight">VMAs</div>
+                    <img src="vmas.png" onerror="this.src='https://placehold.co/24x24/000/FFF?text=V'" class="w-5 h-5 object-contain opacity-80">
+                </div>
+                <div id="total-vma-wins" class="text-2xl font-bold text-black font-vma">0</div>
+            </a>
+            <a href="neweuro.html" class="bg-gray-50 border border-gray-100 p-2.5 rounded-xl flex flex-col gap-1 hover:bg-gray-100 transition-colors cursor-pointer">
+                <div class="flex items-center justify-between">
+                    <div class="text-[9px] text-gray-400 uppercase tracking-wider font-bold leading-tight">EuroFan</div>
+                    <img src="neweuro.png" onerror="this.src='https://placehold.co/24x24/00E5FF/000?text=E'" class="w-5 h-5 object-contain opacity-80">
+                </div>
+                <div id="total-euro-wins" class="text-2xl font-bold text-[#00c4d8]">0</div>
+            </a>
+        </div>
+
+        <!-- SECTION 1: EXCELLENCE AWARDS LIST -->
+        <section class="border border-gray-100 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+                <img src="j.png" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
+                <h2 class="font-excellence text-sm font-bold text-gray-800">Your Excellence Wins</h2>
+            </div>
+
+            <div id="excellence-list" class="space-y-2">
+                <p class="text-xs text-gray-400 italic py-2">No Excellence Awards yet.</p>
+            </div>
+            <button id="btn-more-exc" class="w-full text-center text-xs text-gray-400 font-bold mt-3 hover:text-[#D4AF37] hidden" onclick="toggleList('excellence-list', 'btn-more-exc')">▼ SEE MORE</button>
+        </section>
+
+        <!-- SECTION 2: VMA LIST -->
+        <section class="border border-gray-100 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+                <img src="vmas.png" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
+                <h2 class="font-vma text-sm font-bold text-black tracking-tighter">Your VMA Wins</h2>
+            </div>
+
+            <div id="vma-list" class="space-y-2">
+                <p class="text-xs text-gray-400 italic py-2">No Moonmen yet.</p>
+            </div>
+            <button id="btn-more-vma" class="w-full text-center text-xs text-gray-400 font-bold mt-3 hover:text-black hidden" onclick="toggleList('vma-list', 'btn-more-vma')">▼ SEE MORE</button>
+        </section>
+
+        <!-- SECTION 3: EUROFAN AWARDS LIST -->
+        <section class="border border-gray-100 rounded-2xl p-4 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+                <img src="neweuro.png" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
+                <h2 class="text-sm font-bold text-[#00c4d8] tracking-tight">Your EuroFan Wins</h2>
+            </div>
+
+            <div id="euro-list" class="space-y-2">
+                <p class="text-xs text-gray-400 italic py-2">No EuroFan Awards yet.</p>
+            </div>
+            <button id="btn-more-euro" class="w-full text-center text-xs text-gray-400 font-bold mt-3 hover:text-[#00c4d8] hidden" onclick="toggleList('euro-list', 'btn-more-euro')">▼ SEE MORE</button>
+        </section>
+
+    </main>
+
+    <script>
+        // --- 1. CONFIGURATION ---
+        const ARTIST_NAME = localStorage.getItem('artistName') || localStorage.getItem('vmaArtistName') || "You";
+
+        // --- 2. LOAD DATA ---
+        function loadData() {
+            const excHistory = JSON.parse(localStorage.getItem('awardHistory') || '[]');
+            const vmaHistory = JSON.parse(localStorage.getItem('vmaHistory') || '[]');
+            // Filter eurofanHistory to only wins (not performances)
+            const euroRaw = JSON.parse(localStorage.getItem('eurofanHistory') || '[]');
+            const euroHistory = euroRaw.filter(h => h.type !== 'performance');
+            
+            const excWins = excHistory.length;
+            const vmaWins = vmaHistory.length;
+            const euroWins = euroHistory.length;
+            const totalWins = excWins + vmaWins + euroWins;
+
+            // Stats
+            document.getElementById('total-exc-wins').innerText = excWins;
+            document.getElementById('total-vma-wins').innerText = vmaWins;
+            document.getElementById('total-euro-wins').innerText = euroWins;
+
+            // Lists (Limit 3)
+            renderWinList('excellence-list', 'btn-more-exc', excHistory, 'j.png', 'text-[#D4AF37]');
+            renderWinList('vma-list', 'btn-more-vma', vmaHistory, 'vmas.png', 'text-black');
+            renderEuroList('euro-list', 'btn-more-euro', euroHistory);
+
+            // Badges
+            renderBadges(excWins, vmaWins, euroWins, totalWins);
+        }
+
+        // --- 3. RENDER HELPERS ---
+        function renderWinList(listId, btnId, history, logo, colorClass) {
+            const container = document.getElementById(listId);
+            const btn = document.getElementById(btnId);
+            
+            if (history.length === 0) return;
+
+            container.innerHTML = '';
+            history.sort((a, b) => b.year - a.year);
+
+            history.forEach((win, index) => {
+                const isHidden = index >= 3;
+                const row = document.createElement('div');
+                row.className = `flex items-center gap-3 p-2 rounded-lg bg-gray-50 border border-gray-100 ${isHidden ? 'hidden-row' : ''}`;
+                row.innerHTML = `
+                    <div class="w-8 h-8 bg-white rounded-md flex items-center justify-center shrink-0 shadow-sm border border-gray-100">
+                        <img src="${logo}" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 text-xs truncate">${win.cat}</div>
+                        <div class="text-[10px] text-gray-500 truncate">${win.entry}</div>
+                    </div>
+                    <div class="${colorClass} text-[10px] font-bold bg-white px-2 py-1 rounded border border-gray-100 shadow-sm">
+                        ${win.year}
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            if (history.length > 3) {
+                btn.classList.remove('hidden');
+                btn.innerText = `▼ SEE ${history.length - 3} MORE`;
+            }
+        }
+
+        function renderEuroList(listId, btnId, history) {
+            const container = document.getElementById(listId);
+            const btn = document.getElementById(btnId);
+
+            if (history.length === 0) return;
+
+            container.innerHTML = '';
+            history.sort((a, b) => b.year - a.year);
+
+            history.forEach((win, index) => {
+                const isHidden = index >= 3;
+                const row = document.createElement('div');
+                row.className = `flex items-center gap-3 p-2 rounded-lg bg-gray-50 border border-gray-100 ${isHidden ? 'hidden-row' : ''}`;
+                row.innerHTML = `
+                    <div class="w-8 h-8 bg-white rounded-md flex items-center justify-center shrink-0 shadow-sm border border-gray-100">
+                        <img src="neweuro.png" class="w-5 h-5 object-contain" onerror="this.style.display='none'">
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="font-bold text-gray-900 text-xs truncate">${win.catName || win.cat}</div>
+                        <div class="text-[10px] text-gray-500 truncate">${win.entry || ''}</div>
+                    </div>
+                    <div class="text-[#00c4d8] text-[10px] font-bold bg-white px-2 py-1 rounded border border-gray-100 shadow-sm">
+                        ${win.year}
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+
+            if (history.length > 3) {
+                btn.classList.remove('hidden');
+                btn.innerText = `▼ SEE ${history.length - 3} MORE`;
+            }
+        }
+
+        window.toggleList = function(listId, btnId) {
+            const list = document.getElementById(listId);
+            const btn = document.getElementById(btnId);
+            const hiddenRows = list.querySelectorAll('.hidden-row');
+            
+            if (hiddenRows.length > 0) {
+                hiddenRows.forEach(row => {
+                    row.classList.remove('hidden-row');
+                    row.classList.add('shown-row');
+                });
+                btn.innerText = "▲ SHOW LESS";
+            } else {
+                const allRows = list.querySelectorAll('div');
+                allRows.forEach((row, index) => {
+                    if (index >= 3) {
+                        row.classList.add('hidden-row');
+                        row.classList.remove('shown-row');
+                    }
+                });
+                const total = allRows.length;
+                btn.innerText = `▼ SEE ${total - 3} MORE`;
+            }
+        }
+
+        function renderBadges(exc, vma, euro, total) {
+            const container = document.getElementById('badge-container');
+            const badges = [];
+
+            if (total > 0) badges.push({ text: "Award Winner", color: "bg-gray-100 text-gray-600 border border-gray-200" });
+            if (exc >= 3) badges.push({ text: "Excellence Darling", color: "bg-yellow-50 text-yellow-700 border border-yellow-200" });
+            if (exc >= 10) badges.push({ text: "Academy Icon", color: "bg-[#D4AF37] text-white shadow-md border border-[#bfa030]" });
+            if (vma >= 3) badges.push({ text: "VMA Darling", color: "bg-purple-50 text-purple-700 border border-purple-200" });
+            if (vma >= 10) badges.push({ text: "Video Vanguard", color: "bg-black text-white shadow-md border border-gray-800" });
+            if (euro >= 3) badges.push({ text: "EuroFan Darling", color: "bg-cyan-50 text-cyan-700 border border-cyan-200" });
+            if (euro >= 10) badges.push({ text: "Euro Icon", color: "bg-[#00c4d8] text-white shadow-md border border-[#00a8b8]" });
+            if (total >= 20) badges.push({ text: "Awards Darling", color: "bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold badge-float shadow-lg" });
+
+            if (badges.length > 0) {
+                container.innerHTML = badges.map(b => 
+                    `<span class="whitespace-nowrap px-3 py-1.5 rounded-full text-[10px] uppercase font-bold tracking-wide ${b.color}">${b.text}</span>`
+                ).join('');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadData);
+
+    </script>
+</body>
+</html>

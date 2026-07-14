@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Excellence Hot 100</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #f2f2f2;
+        --accent: #00e676; /* Bright Green */
+        --bg: #e5e5e5;
+        --text: #000000;
+        --card-bg: #ffffff;
+        --border: #e5e5e5;
+        --gray-text: #6b7280;
+    }
+
+    /* === SEASONAL THEMES === */
+    body.halloween {
+        --primary: #1a0b2e; 
+        --accent: #f97316; 
+        --bg: #000000;
+        --text: #ffffff;
+        --card-bg: #262626;
+        --border: #44403c;
+        --gray-text: #a8a29e;
+    }
+    
+    body.christmas {
+        --primary: #0f3d20; 
+        --accent: #dc2626; 
+        --bg: #fdf2f8; 
+        --text: #1f2937;
+        --card-bg: #ffffff;
+        --border: #fca5a5;
+        --gray-text: #4b5563;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); overflow-x: hidden; transition: background 0.5s ease; }
+    
+    /* Loading Overlay */
+    #loading-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--bg); z-index: 1000;
+        display: flex; flex-direction: column; justify-content: center; align-items: center;
+        transition: opacity 0.5s ease;
+    }
+    .spinner {
+        width: 50px; height: 50px; border: 5px solid var(--border);
+        border-top-color: var(--accent); border-radius: 50%;
+        animation: spin 1s linear infinite; margin-bottom: 20px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Top Utility Nav */
+    .utility-nav {
+        background: var(--text);
+        padding: 8px 20px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+    }
+    .nav-btn {
+        color: var(--bg);
+        font-size: 11px;
+        font-weight: 700;
+        text-decoration: none;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+    }
+    .nav-btn:hover { opacity: 1; }
+
+    /* Header Banner */
+    .header-banner {
+        background: var(--primary);
+        text-align: center;
+        padding: 20px 15px 15px;
+        transition: background 0.5s;
+    }
+    .main-title {
+        font-family: 'Oswald', sans-serif;
+        font-size: 32px;
+        font-weight: 700;
+        letter-spacing: -1px;
+        line-height: 1;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+    }
+    .main-title svg { width: 24px; height: 24px; fill: currentColor; }
+    .chart-date {
+        font-size: 11px;
+        font-weight: 900;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+    }
+
+    /* Green Action Bar */
+    .action-bar {
+        background: var(--accent);
+        padding: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+    }
+    .action-icon {
+        width: 24px;
+        height: 24px;
+        stroke: #000;
+        fill: none;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        cursor: pointer;
+        opacity: 0.4;
+        transition: all 0.2s;
+    }
+    .action-icon.active {
+        opacity: 1;
+        stroke-width: 2.5;
+    }
+    .action-icon:hover { opacity: 0.8; }
+
+    /* List Layout */
+    .chart-list { max-width: 700px; margin: 0 auto; background: var(--bg); min-height: 100vh; padding-top: 6px; padding-bottom: 30px; }
+    
+    /* Normal List View */
+    .row { 
+        display: grid; 
+        grid-template-columns: 40px 60px 1fr 50px; 
+        background: var(--card-bg); 
+        margin-bottom: 6px; 
+        padding: 10px 10px 10px 5px; 
+        align-items: center; 
+        gap: 12px; 
+        transition: background 0.2s; 
+    }
+    .is-user { background: rgba(37, 99, 235, 0.05) !important; border-left: 4px solid #2563eb; }
+    .rank-col { text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; }
+    .rank-num { font-size: 24px; font-weight: 900; line-height: 1; }
+    .move-indicator { display: flex; align-items: center; gap: 2px; font-size: 11px; font-weight: 700; color: var(--gray-text); }
+    .move-indicator.up { color: #16a34a; }
+    .move-indicator.down { color: #dc2626; }
+    .move-indicator.new { color: #2563eb; font-size: 9px; }
+    .arrow { width: 10px; height: 10px; stroke-width: 3; }
+    .art-img { width: 60px; height: 60px; object-fit: cover; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .text-info { display: flex; flex-direction: column; justify-content: center; overflow: hidden; }
+    .song-title { font-size: 16px; font-weight: 900; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+    .artist-name { font-size: 13px; color: var(--text); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 6px; }
+    .stats-line { font-size: 11px; color: var(--gray-text); font-weight: 400; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .stat-val { font-weight: 900; color: var(--text); }
+    .action-col { display: flex; align-items: center; justify-content: flex-end; gap: 10px; }
+    .icon-btn { width: 20px; height: 20px; fill: var(--text); cursor: pointer; opacity: 0.8; transition: opacity 0.2s; }
+    .icon-btn.plus { fill: none; stroke: var(--text); stroke-width: 1.5; }
+
+    /* Breakdowns (List View) */
+    .breakdown-panel { display:none; background:var(--card-bg); border-top:2px solid var(--accent); padding:12px 14px; gap:12px; grid-template-columns:repeat(5,1fr); text-align:center; }
+    .breakdown-panel.open { display:grid; }
+    .bd-item { display:flex; flex-direction:column; align-items:center; gap:4px; }
+    .bd-icon { width:22px; height:22px; stroke:var(--accent); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+    .bd-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--gray-text); }
+    .bd-val { font-size:13px; font-weight:900; color:var(--text); }
+    .trend-up { color:#16a34a; } .trend-down { color:#dc2626; } .trend-same { color:var(--gray-text); }
+
+
+    /* ==============================================================
+       === OPTICAL VIEW STYLES (DENSE PERFECT FIT TABLE)
+       ============================================================== */
+    .table-container {
+        width: 100vw;
+        max-width: 700px;
+        background: var(--card-bg);
+        margin: 0 auto;
+    }
+    
+    .opt-table {
+        width: 100%;
+        table-layout: fixed; /* Crucial for perfect screen fitting */
+        border-collapse: collapse;
+        font-size: 8px;      /* Extremely small base font */
+    }
+    
+    /* Strict Widths (Total: 100%) to prevent horizontal scroll */
+    .opt-table th:nth-child(1), .opt-table td:nth-child(1) { width: 6%; }  /* Rnk */
+    .opt-table th:nth-child(2), .opt-table td:nth-child(2) { width: 6%; }  /* Move */
+    .opt-table th:nth-child(3), .opt-table td:nth-child(3) { width: 23%; text-align: left; } /* Song */
+    .opt-table th:nth-child(4), .opt-table td:nth-child(4) { width: 7%; }  /* Pts */
+    .opt-table th:nth-child(5), .opt-table td:nth-child(5) { width: 7%; }  /* Trnd% */
+    .opt-table th:nth-child(6), .opt-table td:nth-child(6) { width: 5%; }  /* Pk */
+    .opt-table th:nth-child(7), .opt-table td:nth-child(7) { width: 6%; }  /* WoC */
+    .opt-table th:nth-child(8), .opt-table td:nth-child(8) { width: 8%; }  /* Sls */
+    .opt-table th:nth-child(9), .opt-table td:nth-child(9) { width: 6%; }  /* Sls% */
+    .opt-table th:nth-child(10), .opt-table td:nth-child(10) { width: 9%; } /* Str */
+    .opt-table th:nth-child(11), .opt-table td:nth-child(11) { width: 5%; } /* Str% */
+    .opt-table th:nth-child(12), .opt-table td:nth-child(12) { width: 8%; } /* Air */
+    .opt-table th:nth-child(13), .opt-table td:nth-child(13) { width: 4%; } /* Air% */
+
+    .opt-table th {
+        position: sticky;
+        top: 0;
+        background: var(--bg);
+        color: var(--text);
+        padding: 6px 0px;
+        text-align: center;
+        font-weight: 900;
+        font-size: 8px;
+        text-transform: capitalize;
+        z-index: 10;
+        border-bottom: 2px solid var(--border);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    .opt-table td {
+        padding: 4px 1px;
+        text-align: center;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Song Column Overrides */
+    .col-song { 
+        display: flex; 
+        align-items: center; 
+        gap: 3px; 
+        width: 100%;
+        overflow: hidden;
+    }
+    .col-song img { 
+        width: 18px; 
+        height: 18px; 
+        border-radius: 2px; 
+        object-fit: cover; 
+        flex-shrink: 0; 
+    }
+    .song-meta-opt { 
+        display: flex; 
+        flex-direction: column; 
+        min-width: 0; /* allows child truncation */
+        width: 100%;
+    }
+    .song-title-opt { 
+        font-weight: 800; 
+        font-size: 8.5px; 
+        color: var(--text); 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap;
+    }
+    .song-artist-opt { 
+        font-size: 7px; 
+        color: var(--gray-text); 
+        overflow: hidden; 
+        text-overflow: ellipsis; 
+        white-space: nowrap;
+        margin-top: 0.5px;
+    }
+    
+    /* Typography Overrides */
+    .opt-rank { font-weight: 900; font-size: 10px; }
+    .opt-move { font-weight: 800; font-size: 9px; }
+    .opt-move.up { color: #16a34a; }
+    .opt-move.down { color: #dc2626; }
+    .opt-move.new { color: #2563eb; }
+    .opt-move.same { color: var(--gray-text); }
+    .opt-val { font-weight: 700; color: var(--text); font-size: 8.5px; }
+    
+    /* Trend Badge */
+    .trend-badge {
+        display: inline-block;
+        padding: 1px 2px;
+        border-radius: 2px;
+        font-weight: 800;
+        font-size: 7.5px;
+        color: #000;
+    }
+    .trend-badge.up { background: #4ade80; }
+    .trend-badge.down { background: #f87171; }
+    .trend-badge.same { background: transparent; color: var(--text); font-weight: 400;}
+    
+    /* Metric Column Backgrounds */
+    .bg-sales { background: rgba(253, 224, 71, 0.25); }
+    .bg-streams { background: rgba(134, 239, 172, 0.25); }
+    .bg-airplay { background: rgba(147, 197, 253, 0.25); }
+    .opt-table th.bg-sales { background: rgba(253, 224, 71, 0.4); }
+    .opt-table th.bg-streams { background: rgba(134, 239, 172, 0.4); }
+    .opt-table th.bg-airplay { background: rgba(147, 197, 253, 0.4); }
+    
+    /* Row Status Colors */
+    .row-new { background: rgba(59, 130, 246, 0.08); }
+    .row-up { background: rgba(34, 197, 94, 0.08); }
+    .row-down { background: rgba(239, 68, 68, 0.08); }
+    .row-same { background: transparent; }
+
+    /* Offline State */
+    .error-state { padding: 50px 20px; text-align: center; color: var(--text); background: var(--card-bg); margin: 20px; border-radius: 8px; }
+    .error-icon { width: 48px; height: 48px; stroke: var(--accent); margin: 0 auto 15px; display: block; fill: none; stroke-width: 2; }
+    .error-title { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
+    .retry-btn { background: var(--accent); color: #000; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 900; margin-top: 15px; cursor: pointer; }
+
+</style>
+</head>
+<body id="body">
+
+<div id="loading-screen">
+    <div class="spinner"></div>
+    <div id="loading-text" style="font-weight:700; color:var(--text);">Loading...</div>
+</div>
+
+<div class="utility-nav">
+    <a href="mchome.html" class="nav-btn">NEWS</a>
+    <a href="mmc.html" class="nav-btn">ALBUMS</a>
+    <a href="mma.html" class="nav-btn">ARTISTS</a>
+</div>
+
+<div class="header-banner">
+    <div class="main-title">
+        <span id="season-icon">
+            <svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        </span>
+        EXCELLENCE HOT 100
+    </div>
+    <div class="chart-date" id="date">Loading...</div>
+</div>
+
+<div class="action-bar">
+    <!-- Filter User Songs Toggle -->
+    <svg id="btn-filter" class="action-icon" viewBox="0 0 24 24" onclick="toggleUserFilter()">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+    </svg>
+    <!-- List View Toggle -->
+    <svg id="btn-list" class="action-icon active" viewBox="0 0 24 24" onclick="setView('list')">
+        <line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line>
+    </svg>
+    <!-- Optical View Toggle -->
+    <svg id="btn-opt" class="action-icon" viewBox="0 0 24 24" onclick="setView('optical')">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+        <line x1="3" y1="9" x2="21" y2="9"></line><line x1="3" y1="15" x2="21" y2="15"></line>
+        <line x1="9" y1="3" x2="9" y2="21"></line><line x1="15" y1="3" x2="15" y2="21"></line>
+    </svg>
+</div>
+
+<div class="chart-list" id="list">
+    <!-- Rendered content goes here -->
+</div>
+
+<script>
+// ================= CONFIGURATION =================
+const STORAGE_KEY = 'chart_songs_final';
+const DATE_KEY = 'currentDate';
+
+let currentView = 'list';
+let showUserOnly = false; // Filter state
+let cachedData = [];
+let radioData = [];
+
+function getLocal(key) { 
+    try { return JSON.parse(localStorage.getItem(key)) || []; } catch(e) { return []; } 
+}
+
+function getGameDateObj() {
+    const raw = localStorage.getItem(DATE_KEY);
+    return raw ? new Date(raw) : new Date();
+}
+
+function getReadableDate() {
+    const d = getGameDateObj();
+    const options = { month: 'long', day: 'numeric', year: 'numeric' };
+    return `WEEK OF ${d.toLocaleDateString('en-US', options).toUpperCase()}`;
+}
+
+function showLoading(text = "Loading...") {
+    const ls = document.getElementById('loading-screen');
+    const txt = document.getElementById('loading-text');
+    if(txt) txt.innerText = text;
+    if(ls) { ls.style.display = 'flex'; requestAnimationFrame(() => ls.style.opacity = '1'); }
+}
+
+function hideLoading() {
+    const ls = document.getElementById('loading-screen');
+    if(ls) { ls.style.opacity = '0'; setTimeout(() => ls.style.display = 'none', 500); }
+}
+
+function applySeason() {
+    const d = getGameDateObj();
+    const m = d.getMonth(); 
+    const day = d.getDate();
+    const body = document.getElementById('body');
+    const iconSpan = document.getElementById('season-icon');
+
+    if(body) body.className = '';
+    const defaultIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>`;
+    if(iconSpan) iconSpan.innerHTML = defaultIcon;
+
+    if ((m === 9 && day >= 20) || (m === 10 && day <= 14)) { 
+        if(body) body.classList.add('halloween');
+        if(iconSpan) iconSpan.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c-.5 0-1 .5-1 1v2c-2.8 0-5.4 1.2-7.2 3.2C2.1 10.1 1 13 1 16c0 3.3 2.7 6 6 6h10c3.3 0 6-2.7 6-6 0-3-.1-5.9-2.8-7.8C18.4 6.2 15.8 5 13 5V3c0-.5-.5-1-1-1zm-3 9c.8 0 1.5.7 1.5 1.5S9.8 14 9 14s-1.5-.7-1.5-1.5S8.2 11 9 11zm6 0c.8 0 1.5.7 1.5 1.5S15.8 14 15 14s-1.5-.7-1.5-1.5.7-1.5 1.5-1.5zM9 16h6c0 1.7-1.3 3-3 3s-3-1.3-3-3z"/></svg>`;
+    } else if ((m === 10 && day >= 21) || (m === 11) || (m === 0 && day <= 7)) { 
+        if(body) body.classList.add('christmas');
+        if(iconSpan) iconSpan.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L1 14h4v7h14v-7h4L12 2zm0 3.5l6.5 7.5h-3.8l2.6 3H6.7l2.6-3H5.5L12 5.5z"/></svg>`;
+    }
+}
+
+function renderError(message = "Play the game and advance weeks to generate charts", title="No Chart Data") {
+    document.getElementById('list').innerHTML = `
+        <div class="error-state">
+            <svg class="error-icon" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+            <div class="error-title">${title}</div>
+            <p style="color: var(--gray-text)">${message}</p>
+            <button class="retry-btn" onclick="location.href='music.html'">Go to Game</button>
+        </div>
+    `;
+}
+
+function fmt(n) {
+    if (!n) return '0';
+    if (n >= 1e9) return (n/1e9).toFixed(1)+'B';
+    if (n >= 1e6) return (n/1e6).toFixed(1)+'M';
+    if (n >= 1e3) return (n/1e3).toFixed(1)+'K';
+    return Math.round(n).toString();
+}
+
+// Ultra compressed formatting for Optical View to save horizontal space
+function fmtOpt(n) {
+    if (!n) return '-';
+    if (n >= 1e9) return (n/1e9).toFixed(1).replace('.0','')+'b';
+    if (n >= 1e6) return (n/1e6).toFixed(1).replace('.0','')+'m';
+    if (n >= 1e3) return (n/1e3).toFixed(1).replace('.0','')+'k';
+    return Math.round(n).toString();
+}
+
+function calcPoints(item, radioPlays) {
+    const streams = item.weeklyStreams || item.streams || 0;
+    const sales   = item.weeklySalesUnits || 0;
+    return Math.round((streams + (sales * 100) + (radioPlays / 3.5)) / 880 / 175);
+}
+
+let openBreakdownId = null;
+function toggleBreakdown(id) {
+    if (openBreakdownId && openBreakdownId !== id) {
+        const old = document.getElementById('bd-' + openBreakdownId);
+        if (old) old.classList.remove('open');
+    }
+    const panel = document.getElementById('bd-' + id);
+    if (!panel) return;
+    const isOpen = panel.classList.contains('open');
+    panel.classList.toggle('open', !isOpen);
+    openBreakdownId = isOpen ? null : id;
+}
+
+function setView(view) {
+    currentView = view;
+    document.getElementById('btn-list').classList.toggle('active', view === 'list');
+    document.getElementById('btn-opt').classList.toggle('active', view === 'optical');
+    render(cachedData);
+}
+
+function toggleUserFilter() {
+    showUserOnly = !showUserOnly;
+    document.getElementById('btn-filter').classList.toggle('active', showUserOnly);
+    render(cachedData);
+}
+
+function render(data) {
+    const list = document.getElementById('list');
+    list.innerHTML = '';
+    
+    // Remove padding bottom on list container if in optical mode to let table stick nicely
+    list.style.paddingBottom = currentView === 'optical' ? '0px' : '30px';
+    list.style.paddingTop = currentView === 'optical' ? '0px' : '6px';
+    
+    if (!data || data.length === 0) { renderError(); return; }
+
+    // First process ALL data to calculate global points and accurate ranks
+    data.forEach(item => {
+        const match = radioData.find(r => r.id === item.id);
+        item._currRadio = match ? match.currentWeeklyPlays : (item.weeklyRadioPlays || 0);
+        if (!item.chartPoints) item.chartPoints = calcPoints(item, item._currRadio);
+    });
+    
+    data.sort((a, b) => (b.chartPoints || 0) - (a.chartPoints || 0));
+    data.forEach((item, i) => { item.rank = i + 1; });
+
+    // Filter to only user songs if the filter is active
+    let displayData = data;
+    if (showUserOnly) {
+        displayData = data.filter(item => item.isUser);
+    }
+    
+    // Check if filtering resulted in empty lists
+    if (displayData.length === 0) {
+        if (showUserOnly) {
+             renderError("None of your songs are currently charting in the Hot 100.", "No User Songs on Chart");
+        } else {
+             renderError();
+        }
+        return;
+    }
+
+    if (currentView === 'list') renderListView(displayData, list);
+    else renderOpticalView(displayData, list);
+}
+
+function renderListView(data, listContainer) {
+    const upArrow   = `<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"></line><polyline points="5 12 12 5 19 12"></polyline></svg>`;
+    const downArrow = `<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>`;
+    const sameArrow = `<svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>`;
+    const starIcon  = `<svg class="icon-btn" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>`;
+    const plusIcon  = `<svg class="icon-btn plus" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>`;
+    const icoStreams = `<svg class="bd-icon" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
+    const icoSales  = `<svg class="bd-icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`;
+    const icoRadio  = `<svg class="bd-icon" viewBox="0 0 24 24"><path d="M4.9 19.1C1 15.2 1 8.8 4.9 4.9"/><path d="M7.8 16.2c-2.3-2.3-2.3-6.1 0-8.5"/><circle cx="12" cy="12" r="2"/><path d="M16.2 7.8c2.3 2.3 2.3 6.1 0 8.5"/><path d="M19.1 4.9C23 8.8 23 15.2 19.1 19.1"/></svg>`;
+    const icoPoints = `<svg class="bd-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`;
+    const icoTrend  = `<svg class="bd-icon" viewBox="0 0 24 24"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>`;
+
+    data.forEach((item, idx) => {
+        const uid = `${idx}_${(item.id||item.title||'').replace(/[^a-z0-9]/gi,'').slice(0,12)}`;
+        const pts = item.chartPoints || 0;
+        const lastPts = item.lastWeekPoints || 0;
+        let trendHTML;
+        
+        if (lastPts <= 0) { trendHTML = `<span class="trend-same">—</span>`; } 
+        else {
+            const trendPercent = Math.round(((pts - lastPts) / lastPts) * 100);
+            if (trendPercent > 0) trendHTML = `<span class="trend-up">▲${trendPercent}%</span>`;
+            else if (trendPercent < 0) trendHTML = `<span class="trend-down">▼${Math.abs(trendPercent)}%</span>`;
+            else trendHTML = `<span class="trend-same">0%</span>`;
+        }
+
+        const lwDisplay = item.lastPos || '-';
+        let moveHtml = '';
+        if (!item.lastPos || item.lastPos === 0) {
+            moveHtml = `<span class="move-indicator new">${item.weeks === 1 ? 'NEW' : 'RE'}</span>`;
+        } else {
+            const mv = item.lastPos - item.rank;
+            if      (mv > 0) moveHtml = `<span class="move-indicator up">${upArrow} ${mv}</span>`;
+            else if (mv < 0) moveHtml = `<span class="move-indicator down">${downArrow} ${Math.abs(mv)}</span>`;
+            else             moveHtml = `<span class="move-indicator">${sameArrow}</span>`;
+        }
+
+        const wrapper = document.createElement('div');
+        const row = document.createElement('div');
+        row.className = `row ${item.isUser ? 'is-user' : ''}`;
+        row.onclick = () => toggleBreakdown(uid);
+        row.innerHTML = `
+            <div class="rank-col">
+                <span class="rank-num">${item.rank}</span>
+                ${moveHtml}
+            </div>
+            <img src="${item.art}" class="art-img" onerror="this.src='https://placehold.co/100'">
+            <div class="text-info">
+                <div class="song-title">${item.title}</div>
+                <div class="artist-name">${item.artist}</div>
+                <div class="stats-line">
+                    LW <span class="stat-val">${lwDisplay}</span>
+                    PEAK <span class="stat-val">${item.peak || item.rank}</span>
+                    WKS <span class="stat-val">${item.weeks}</span>
+                    PTS <span class="stat-val">${fmt(pts)}</span>
+                </div>
+            </div>
+            <div class="action-col">${starIcon}${plusIcon}</div>
+        `;
+
+        const panel = document.createElement('div');
+        panel.className = 'breakdown-panel';
+        panel.id = 'bd-' + uid;
+        panel.innerHTML = `
+            <div class="bd-item">${icoStreams}<div class="bd-label">Streams</div><div class="bd-val">${fmt(item.weeklyStreams || item.streams || 0)}</div></div>
+            <div class="bd-item">${icoSales}<div class="bd-label">Sales</div><div class="bd-val">${fmt(item.weeklySalesUnits || 0)}</div></div>
+            <div class="bd-item">${icoRadio}<div class="bd-label">Radio</div><div class="bd-val">${fmt(item._currRadio)}</div></div>
+            <div class="bd-item">${icoPoints}<div class="bd-label">Points</div><div class="bd-val">${fmt(pts)}</div></div>
+            <div class="bd-item">${icoTrend}<div class="bd-label">Trend</div><div class="bd-val">${trendHTML}</div></div>
+        `;
+        wrapper.appendChild(row);
+        wrapper.appendChild(panel);
+        listContainer.appendChild(wrapper);
+    });
+}
+
+function renderOpticalView(data, listContainer) {
+    let html = `
+    <div class="table-container">
+        <table class="opt-table">
+            <thead>
+                <tr>
+                    <th>Rnk</th>
+                    <th>+/-</th>
+                    <th style="text-align:left;">Song</th>
+                    <th>Pts</th>
+                    <th>%</th>
+                    <th>Pk</th>
+                    <th>Wk</th>
+                    <th class="bg-sales">Sls</th>
+                    <th class="bg-sales">%</th>
+                    <th class="bg-streams">Str</th>
+                    <th class="bg-streams">%</th>
+                    <th class="bg-airplay">Air</th>
+                    <th class="bg-airplay">%</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    data.forEach((item) => {
+        const pts = item.chartPoints || 0;
+        const lastPts = item.lastWeekPoints || 0;
+        
+        let moveText = '';
+        let rowClass = 'row-same';
+        let moveClass = 'same';
+        
+        if (!item.lastPos || item.lastPos === 0) {
+            moveText = 'NEW';
+            rowClass = 'row-new';
+            moveClass = 'new';
+        } else {
+            const mv = item.lastPos - item.rank;
+            if (mv > 0) { moveText = `+${mv}`; rowClass = 'row-up'; moveClass = 'up'; }
+            else if (mv < 0) { moveText = mv; rowClass = 'row-down'; moveClass = 'down'; }
+            else { moveText = '='; rowClass = 'row-same'; moveClass = 'same'; }
+        }
+
+        let trendPercentHTML = `<span class="trend-badge same">--</span>`;
+        if (lastPts > 0) {
+            const trendVal = Math.round(((pts - lastPts) / lastPts) * 100);
+            if (trendVal > 0) trendPercentHTML = `<span class="trend-badge up">${trendVal}%</span>`;
+            else if (trendVal < 0) trendPercentHTML = `<span class="trend-badge down">${trendVal}%</span>`;
+            else trendPercentHTML = `<span class="trend-badge same">0%</span>`;
+        }
+
+        const streams = item.weeklyStreams || item.streams || 0;
+        const sales = item.weeklySalesUnits || 0;
+        const radio = item._currRadio || 0;
+
+        const rawSales = sales * 100;
+        const rawStreams = streams;
+        const rawRadio = radio / 3.5;
+        const totalRaw = rawSales + rawStreams + rawRadio;
+
+        let salesPct = 0, streamsPct = 0, radioPct = 0;
+        if (totalRaw > 0) {
+            salesPct = Math.round((rawSales / totalRaw) * 100);
+            streamsPct = Math.round((rawStreams / totalRaw) * 100);
+            radioPct = Math.round((rawRadio / totalRaw) * 100);
+        }
+
+        html += `
+            <tr class="${rowClass} ${item.isUser ? 'is-user' : ''}">
+                <td class="opt-rank">${item.rank}</td>
+                <td class="opt-move ${moveClass}">${moveText}</td>
+                <td>
+                    <div class="col-song">
+                        <img src="${item.art}" onerror="this.src='https://placehold.co/100'">
+                        <div class="song-meta-opt">
+                            <span class="song-title-opt">${item.title}</span>
+                            <span class="song-artist-opt">${item.artist}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="opt-val">${pts}</td>
+                <td>${trendPercentHTML}</td>
+                <td class="opt-val">${item.peak || item.rank}</td>
+                <td class="opt-val">${item.weeks}</td>
+                
+                <td class="bg-sales opt-val">${fmtOpt(sales)}</td>
+                <td class="bg-sales" style="color:var(--gray-text);font-size:7px;">${salesPct}%</td>
+                
+                <td class="bg-streams opt-val">${fmtOpt(streams)}</td>
+                <td class="bg-streams" style="color:var(--gray-text);font-size:7px;">${streamsPct}%</td>
+                
+                <td class="bg-airplay opt-val">${fmtOpt(radio)}</td>
+                <td class="bg-airplay" style="color:var(--gray-text);font-size:7px;">${radioPct}%</td>
+            </tr>
+        `;
+    });
+
+    html += `</tbody></table></div>`;
+    listContainer.innerHTML = html;
+}
+
+function init() {
+    showLoading("Loading Chart...");
+    applySeason();
+    document.getElementById('date').innerText = getReadableDate();
+    
+    radioData = JSON.parse(localStorage.getItem('radioSongs') || '[]');
+    cachedData = getLocal(STORAGE_KEY);
+    
+    render(cachedData);
+    hideLoading();
+}
+
+init();
+</script>
+</body>
+</html>
+
+

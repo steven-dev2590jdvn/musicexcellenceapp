@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>SoundCloud Profile</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;font-weight:800;background:#111;color:#fff;overflow-x:hidden;padding-bottom:80px}.screen{display:none}.screen.active{display:block}.header{position:relative;height:300px;background:linear-gradient(45deg,#ff5500,#ff7700);overflow:hidden}.header img{width:100%;height:100%;object-fit:cover;opacity:.8}.overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,transparent 40%,#111)}.back{position:absolute;top:20px;left:20px;background:rgba(0,0,0,.7);width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);font-size:18px;transition:.3s}.back:hover{background:rgba(0,0,0,.9);transform:scale(1.1)}.artist-info{position:absolute;bottom:30px;left:30px;right:30px}.artist-name{font-size:clamp(36px,6vw,72px);font-weight:900;margin-bottom:8px;text-shadow:0 4px 20px rgba(0,0,0,.8)}.followers{font-size:14px;color:#ccc}.controls{padding:30px;display:flex;align-items:center;gap:16px;background:linear-gradient(180deg,#111,#1a1a1a)}.play-btn{background:#ff5500;border:none;width:48px;height:48px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;transition:.3s}.play-btn:hover{transform:scale(1.05)}.follow-btn{background:#ff5500;color:#fff;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;font-size:13px;transition:.3s}.follow-btn:hover{background:#ff6600;transform:scale(1.05)}.more-btn{background:transparent;border:1px solid #666;color:#fff;width:30px;height:30px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.3s}.more-btn:hover{border-color:#ff5500}.tabs{display:flex;gap:24px;padding:0 30px;border-bottom:1px solid #333;margin-bottom:24px}.tab{color:#ccc;font-size:13px;padding:12px 0;cursor:pointer;border-bottom:3px solid transparent;transition:.2s}.tab.active{color:#fff;border-bottom-color:#ff5500}.tab:hover{color:#fff}.content{padding:0 30px 30px}.section-title{font-size:20px;margin-bottom:20px;color:#fff;display:flex;justify-content:space-between;align-items:center}.see-all-btn,.show-more-btn,.show-less-btn{background:transparent;border:none;color:#ccc;font-size:13px;cursor:pointer;transition:.3s;padding:6px 12px;border-radius:16px}.see-all-btn:hover,.show-more-btn:hover,.show-less-btn:hover{color:#fff;background:rgba(255,255,255,.1)}.song-list{list-style:none}.song-item{display:flex;align-items:center;padding:8px 12px;border-radius:4px;margin-bottom:3px;cursor:pointer;transition:.3s}.song-item:hover{background:#222}.song-rank{width:20px;color:#ccc;text-align:center;margin-right:12px}.song-cover{width:36px;height:36px;border-radius:3px;margin-right:12px}.song-info{flex:1}.song-title{font-size:15px;margin-bottom:2px}.song-streams{color:#ccc;font-size:13px}.releases{margin-top:36px}.albums-container{overflow-x:auto;padding:20px 0;scrollbar-width:none;-ms-overflow-style:none}.albums-container::-webkit-scrollbar{display:none}.album-grid{display:flex;gap:20px;width:max-content}.release-item{background:#222;padding:0;border-radius:12px;cursor:pointer;transition:.3s;width:200px;height:270px;position:relative;overflow:hidden;flex-shrink:0}.release-item:hover{transform:translateY(-4px) scale(1.02)}.album-cover{width:100%;height:200px;object-fit:cover}.album-info{position:absolute;bottom:0;left:0;right:0;padding:12px;background:linear-gradient(transparent,rgba(0,0,0,.9))}.album-title{font-size:14px;margin-bottom:3px;color:#fff}.album-meta{color:#ccc;font-size:11px;margin-bottom:4px}.album-streams{color:#ff5500;font-size:12px}.discography-btn{background:#ff5500;color:#fff;border:none;padding:10px 20px;border-radius:20px;cursor:pointer;font-size:13px;margin-top:20px;transition:.3s}.discography-btn:hover{background:#ff6600;transform:scale(1.05)}.bio{margin-top:36px;background:#222;padding:24px;border-radius:8px}.bio-title{font-size:20px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}.bio-text{line-height:1.6;color:#ccc;font-size:14px}.edit-btn{background:transparent;border:1px solid #666;color:#ccc;padding:6px 14px;border-radius:16px;font-size:11px;cursor:pointer;transition:.3s}.edit-btn:hover{border-color:#fff;color:#fff}.full-header{background:#1a1a1a;padding:20px 30px;border-bottom:1px solid #333;position:sticky;top:0;z-index:100}.full-title{font-size:28px;margin-bottom:8px}.full-subtitle{color:#ccc;font-size:14px}.album-full-header{background:linear-gradient(180deg,#333,#1a1a1a);padding:40px 30px;text-align:center}.album-full-cover{width:200px;height:200px;border-radius:8px;margin:0 auto 20px;background:#333;display:flex;align-items:center;justify-content:center;color:#666;font-size:48px}.album-full-title{font-size:32px;margin-bottom:8px}.album-full-meta{color:#ccc;font-size:16px;margin-bottom:20px}.album-stats{display:flex;justify-content:center;gap:40px;margin-top:20px}.stat-item{text-align:center}.stat-value{font-size:18px;color:#ff5500;margin-bottom:4px}.stat-label{color:#ccc;font-size:12px}.track-list{list-style:none;padding:0 30px}.track-item{display:flex;align-items:center;padding:12px 0;border-bottom:1px solid #333}.track-num{width:30px;color:#ccc;text-align:center;font-size:14px}.track-info{flex:1;padding-left:12px}.track-name{margin-bottom:3px;font-size:16px}.track-streams{color:#ccc;font-size:14px}.disco-filters{display:flex;gap:20px;padding:0 30px;margin-bottom:30px}.filter-btn{background:transparent;border:1px solid #666;color:#ccc;padding:8px 16px;border-radius:20px;cursor:pointer;transition:.3s;font-size:13px}.filter-btn.active{background:#ff5500;color:#fff;border-color:#ff5500}.filter-btn:hover{border-color:#fff;color:#fff}.disco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:20px;padding:0 30px}.disco-item{background:#222;border-radius:8px;overflow:hidden;cursor:pointer;transition:.3s}.disco-item:hover{transform:translateY(-2px);background:#333}.disco-cover{width:100%;height:160px;object-fit:cover;background:#333;display:flex;align-items:center;justify-content:center;color:#666;font-size:24px}.disco-info{padding:12px}.disco-title{font-size:14px;margin-bottom:4px}.disco-meta{color:#ccc;font-size:12px}.artists-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;padding:0 30px}.artist-card{background:#222;border-radius:12px;padding:16px;cursor:pointer;transition:.3s;border:1px solid transparent}.artist-card:hover{border-color:#ff5500;transform:translateY(-2px)}.artist-avatar{width:80px;height:80px;border-radius:50%;background:#ff5500;display:flex;align-items:center;justify-content:center;font-size:32px;margin:0 auto 12px;color:#fff}.artist-card-name{font-size:16px;text-align:center;margin-bottom:4px}.artist-card-followers{color:#ccc;font-size:13px;text-align:center}@media(max-width:768px){.header{height:250px}.artist-info{left:20px;right:20px;bottom:20px}.artist-name{font-size:clamp(28px,5vw,40px)}.controls{padding:20px;gap:12px}.tabs{padding:0 20px}.content{padding:0 20px 20px}.full-header{padding:20px}.album-full-header{padding:30px 20px}.album-full-cover{width:160px;height:160px}.track-list{padding:0 20px}.disco-filters{padding:0 20px}.disco-grid{padding:0 20px;grid-template-columns:repeat(auto-fill,minmax(140px,1fr))}.artists-grid{padding:0 20px;grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}}</style></head><body>
+
+<!-- Main Profile Screen -->
+<div class="screen active" id="main-screen">
+<div class="header"><div id="artist-bg" style="width:100%;height:100%;background:linear-gradient(45deg,#ff5500,#ff7700);display:flex;align-items:center;justify-content:center;font-size:48px;opacity:.8">🎵</div><div class="overlay"></div><div class="back" onclick="goBack()">←</div><div class="artist-info"><h1 class="artist-name" id="artist-name">Artist Name</h1><p class="followers" id="followers">0 followers</p></div></div><div class="controls"><button class="play-btn">▶</button><button class="follow-btn">Following</button><button class="more-btn">⋯</button></div><div class="tabs"><div class="tab active" data-tab="music">Tracks</div><div class="tab" data-tab="artists">Artists</div></div><div class="content"><div id="music-content"><div class="section-title">Popular<button class="show-more-btn" id="show-more-songs" onclick="showMoreSongs()">Show more</button><button class="show-less-btn" id="show-less-songs" onclick="showLessSongs()" style="display:none">Show less</button></div><ul class="song-list" id="song-list"></ul><div class="releases"><h2 class="section-title">Albums</h2><div class="albums-container"><div class="album-grid" id="album-grid"></div></div><button class="discography-btn" onclick="showDiscography()">See discography</button></div><div class="bio"><div class="bio-title">About<button class="edit-btn" onclick="editBio()">Edit</button></div><div class="bio-text" id="bio-text">Share your story with fans...</div></div></div><div id="artists-content" style="display:none"><div class="section-title">Discover Artists</div><div class="artists-grid" id="artists-grid"></div></div></div>
+</div>
+
+<!-- Album Full Screen -->
+<div class="screen" id="album-screen">
+<div class="full-header"><div class="back" onclick="backToMain()">←</div></div><div class="album-full-header"><div class="album-full-cover" id="album-full-cover">♪</div><h1 class="album-full-title" id="album-full-title">Album Title</h1><div class="album-full-meta"><span id="album-artist">Artist Name</span> • <span id="album-year">2024</span> • <span id="album-type">Album</span></div><div class="album-stats"><div class="stat-item"><div class="stat-value" id="album-tracks">0</div><div class="stat-label">tracks</div></div><div class="stat-item"><div class="stat-value" id="album-total-streams">0</div><div class="stat-label">total streams</div></div></div></div><ul class="track-list" id="album-track-list"></ul>
+</div>
+
+<!-- Discography Full Screen -->
+<div class="screen" id="disco-screen">
+<div class="full-header"><div class="back" onclick="backToMain()">←</div><h1 class="full-title">Discography</h1></div><div class="disco-filters"><button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="albums">Albums</button><button class="filter-btn" data-filter="eps">EPs</button><button class="filter-btn" data-filter="singles">Singles</button></div><div class="disco-grid" id="disco-grid"></div>
+</div>
+
+<!-- Other Artist Profile Screen -->
+<div class="screen" id="artist-profile-screen">
+<div class="header"><div id="other-artist-bg"></div><div class="overlay"></div><div class="back" onclick="backToMain()">←</div><div class="artist-info"><h1 class="artist-name" id="other-artist-name">Artist Name</h1><p class="followers" id="other-followers">0 followers</p></div></div><div class="controls"><button class="play-btn">▶</button><button class="follow-btn">Follow</button><button class="more-btn">⋯</button></div><div class="tabs"><div class="tab active">Tracks</div></div><div class="content"><div class="section-title">Popular</div><ul class="song-list" id="other-song-list"></ul><div class="releases"><h2 class="section-title">Albums</h2><div class="albums-container"><div class="album-grid" id="other-album-grid"></div></div></div><div class="bio"><div class="bio-title">About</div><div class="bio-text" id="other-bio-text">Check out this amazing artist!</div></div></div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+
+let showingAllSongs=false,currentFilter='all',currentArtist='';
+
+const sampleArtists=[
+{name:'homie45_rapper',avatar:'🎤',bio:'Underground rapper from the streets',songs:[{name:'Street Dreams',streams:85000},{name:'Hustle Hard',streams:120000},{name:'City Nights',streams:95000},{name:'Real Talk',streams:140000},{name:'Never Give Up',streams:75000}],albums:[{name:'Street Chronicles',year:2023,songs:['Street Dreams','Hustle Hard','City Nights']}]},
+{name:'melodic_sarah',avatar:'🎹',bio:'Piano-driven melodies with soulful vocals',songs:[{name:'Moonlight Serenade',streams:200000},{name:'Echoes',streams:155000},{name:'Dreamscape',streams:180000},{name:'Whispers',streams:225000}],albums:[{name:'Midnight Sessions',year:2024,songs:['Moonlight Serenade','Echoes','Dreamscape']}]},
+{name:'bass_drop_alex',avatar:'🔊',bio:'Electronic music producer specializing in heavy bass',songs:[{name:'Thunder Bass',streams:320000},{name:'Digital Storm',streams:280000},{name:'Neon Nights',streams:350000},{name:'Cyber Pulse',streams:290000}],albums:[{name:'Bass Revolution',year:2023,songs:['Thunder Bass','Digital Storm','Neon Nights']}]},
+{name:'indie_vibes_joe',avatar:'🎸',bio:'Indie rock with alternative influences',songs:[{name:'Coffee Shop',streams:165000},{name:'Sunday Morning',streams:195000},{name:'Lost in Time',streams:135000},{name:'City Lights',streams:210000}],albums:[{name:'Weekend Thoughts',year:2024,songs:['Coffee Shop','Sunday Morning','Lost in Time']}]},
+{name:'pop_queen_mia',avatar:'✨',bio:'Pop music with catchy hooks and dance beats',songs:[{name:'Dance All Night',streams:450000},{name:'Summer Love',streams:380000},{name:'Starlight',streams:420000},{name:'Golden Hour',streams:395000}],albums:[{name:'Pop Paradise',year:2023,songs:['Dance All Night','Summer Love','Starlight']}]}
+];
+
+function init(){
+if(!localStorage.getItem('artistDetails'))localStorage.setItem('artistDetails',JSON.stringify({name:'Artist Name'}));
+if(!localStorage.getItem('releasedSongs'))localStorage.setItem('releasedSongs',JSON.stringify([]));
+if(!localStorage.getItem('releasedAlbums'))localStorage.setItem('releasedAlbums',JSON.stringify([]));
+if(!localStorage.getItem('artistBio'))localStorage.setItem('artistBio','Share your story with fans...');
+}
+
+function showScreen(screenId){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+$(screenId).classList.add('active');
+}
+
+function backToMain(){showScreen('main-screen')}
+function goBack(){window.location.href='music.html'}
+
+function formatNumber(n){return n.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',')}
+function formatLargeNumber(n){
+if(n>=1e9)return(n/1e9).toFixed(1).replace(/\.0$/,'')+'B';
+if(n>=1e6)return(n/1e6).toFixed(1).replace(/\.0$/,'')+'M';
+if(n>=1e3)return(n/1e3).toFixed(1).replace(/\.0$/,'')+'K';
+return formatNumber(n);
+}
+
+function calculateFollowers(){
+const songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+if(songs.length===0)return 0;
+let totalStreams=0;
+songs.forEach(song=>{totalStreams+=Math.floor((song.streams||0)*0.05)});
+return Math.floor(totalStreams*0.04);
+}
+
+function loadArtist(){
+const details=JSON.parse(localStorage.getItem('artistDetails')||'{}'),followers=calculateFollowers();
+$('artist-name').textContent=details.name||'Artist Name';
+$('followers').textContent=formatLargeNumber(followers)+' followers';
+const photo=localStorage.getItem('artistPhoto');
+if(photo)$('artist-bg').innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover">`;
+}
+
+function loadSongs(){
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    const collabs = JSON.parse(localStorage.getItem('acceptedCollaborations') || '[]');
+    
+    const list = $('song-list');
+    list.innerHTML = '';
+    
+    // Merge arrays
+    const allSongs = [...songs, ...collabs];
+    
+    // Sort by streams
+    const sortedSongs = allSongs.sort((a,b)=>(b.streams||0)-(a.streams||0));
+    const songsToShow = showingAllSongs ? Math.min(sortedSongs.length,10) : Math.min(sortedSongs.length,5);
+    
+    sortedSongs.slice(0,songsToShow).forEach((song,i)=>{
+        const li = document.createElement('li');
+        li.className = 'song-item';
+        
+        // Calculate SoundCloud specific streams (5% of real streams)
+        const scStreams = formatNumber(Math.floor((song.streams||0)*0.05));
+        
+        // Handle Title Display
+        const titleHtml = song.npcArtist ? 
+            `${song.songName} <span style="color:#ff5500; font-size:11px;">(feat. ${song.npcArtist})</span>` : 
+            (song.songName || song.name || 'Untitled');
+
+        li.innerHTML = `
+            <div class="song-rank">${i+1}</div>
+            <div style="width:36px;height:36px;background:#333;border-radius:3px;margin-right:12px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px">
+                ${song.coverArt ? `<img src="${song.coverArt}" style="width:100%;height:100%;border-radius:3px;object-fit:cover;">` : '♪'}
+            </div>
+            <div class="song-info">
+                <div class="song-title">${titleHtml}</div>
+                <div class="song-streams">${scStreams}</div>
+            </div>`;
+            
+        list.appendChild(li);
+    });
+    
+    updateSongButtons(sortedSongs.length);
+}
+
+function updateSongButtons(totalSongs){
+const showMore=$('show-more-songs'),showLess=$('show-less-songs');
+if(showingAllSongs||totalSongs<=5){
+showMore.style.display='none';
+}else{
+showMore.style.display='inline-block';
+}
+showLess.style.display=showingAllSongs?'inline-block':'none';
+}
+
+function showMoreSongs(){
+showingAllSongs=true;
+loadSongs();
+}
+
+function showLessSongs(){
+showingAllSongs=false;
+loadSongs();
+}
+
+function loadAlbums(){
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),albumGrid=$('album-grid');
+albumGrid.innerHTML='';
+albums.forEach((album,i)=>{
+const totalStreams=album.songs?album.songs.reduce((sum,song)=>{
+const releasedSong=JSON.parse(localStorage.getItem('releasedSongs')||'[]').find(s=>(s.songName||s.name)===(song.songName||song.name||song));
+return sum+(releasedSong?Math.floor((releasedSong.streams||0)*0.05):0);
+},0):0;
+const div=document.createElement('div');
+div.className='release-item';
+div.onclick=()=>showAlbum(i);
+div.innerHTML=`<div style="width:100%;height:200px;background:#333;display:flex;align-items:center;justify-content:center;color:#666;font-size:48px">${album.coverArt?`<img src="${album.coverArt}" style="width:100%;height:100%;object-fit:cover">`:'♪'}</div><div class="album-info"><div class="album-title">${album.name||album.albumName||'Untitled Album'}</div><div class="album-meta">Album • ${album.releaseYear||new Date().getFullYear()}</div><div class="album-streams">${formatLargeNumber(totalStreams)} streams</div></div>`;
+albumGrid.appendChild(div);
+});
+}
+
+function showAlbum(index){
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),album=albums[index],songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]'),artistDetails=JSON.parse(localStorage.getItem('artistDetails')||'{}');
+$('album-full-title').textContent=album.name||album.albumName||'Untitled Album';
+$('album-artist').textContent=artistDetails.name||'Artist Name';
+$('album-year').textContent=album.releaseYear||new Date().getFullYear();
+$('album-type').textContent='Album';
+if(album.coverArt)$('album-full-cover').innerHTML=`<img src="${album.coverArt}" style="width:100%;height:100%;border-radius:8px">`;
+const trackList=$('album-track-list');
+trackList.innerHTML='';
+let totalStreams=0,trackCount=0;
+if(album.songs){
+album.songs.forEach((track,i)=>{
+const releasedSong=songs.find(s=>(s.songName||s.name)===(track.songName||track.name||track));
+// ADD THIS LINE HERE:
+const streams=releasedSong?Math.floor((releasedSong.streams||0)*0.05):0;
+totalStreams+=streams;
+trackCount++;
+const li=document.createElement('li');
+li.className='track-item';
+li.innerHTML=`<div class="track-num">${i+1}</div><div class="track-info"><div class="track-name">${track.songName||track.name||track||'Untitled'}</div><div class="track-streams">${formatNumber(streams)}</div></div>`;
+trackList.appendChild(li);
+});
+}
+$('album-tracks').textContent=trackCount;
+$('album-total-streams').textContent=formatLargeNumber(totalStreams);
+showScreen('album-screen');
+}
+
+function loadArtists(){
+const grid=$('artists-grid');
+grid.innerHTML='';
+sampleArtists.forEach(artist=>{
+const totalStreams=artist.songs.reduce((sum,song)=>sum+song.streams,0);
+const soundcloudStreams=Math.floor(totalStreams*0.05);
+const followers=Math.floor(totalStreams*0.04);
+const div=document.createElement('div');
+div.className='artist-card';
+div.onclick=()=>showOtherArtist(artist);
+div.innerHTML=`<div class="artist-avatar">${artist.avatar}</div><div class="artist-card-name">${artist.name}</div><div class="artist-card-followers">${formatLargeNumber(followers)} followers</div>`;
+grid.appendChild(div);
+});
+}
+
+function showOtherArtist(artist){
+currentArtist=artist;
+const totalStreams=artist.songs.reduce((sum,song)=>sum+song.streams,0);
+const followers=Math.floor(totalStreams*0.04);
+$('other-artist-name').textContent=artist.name;
+$('other-followers').textContent=formatLargeNumber(followers)+' followers';
+$('other-artist-bg').innerHTML=`<div style="width:100%;height:100%;background:linear-gradient(45deg,#ff5500,#ff7700);display:flex;align-items:center;justify-content:center;font-size:48px;opacity:.8">${artist.avatar}</div>`;
+$('other-bio-text').textContent=artist.bio;
+
+const songList=$('other-song-list');
+songList.innerHTML='';
+artist.songs.forEach((song,i)=>{
+const soundcloudStreams=Math.floor(song.streams*0.05);
+const li=document.createElement('li');
+li.className='song-item';
+li.innerHTML=`<div class="song-rank">${i+1}</div><div style="width:36px;height:36px;background:#333;border-radius:3px;margin-right:12px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px">♪</div><div class="song-info"><div class="song-title">${song.name}</div><div class="song-streams">${formatNumber(soundcloudStreams)}</div></div>`;
+songList.appendChild(li);
+});
+
+const albumGrid=$('other-album-grid');
+albumGrid.innerHTML='';
+if(artist.albums){
+artist.albums.forEach(album=>{
+const albumStreams=album.songs.reduce((sum,songName)=>{
+const song=artist.songs.find(s=>s.name===songName);
+return sum+(song?Math.floor(song.streams*0.05):0);
+},0);
+const div=document.createElement('div');
+div.className='release-item';
+div.innerHTML=`<div style="width:100%;height:200px;background:#333;display:flex;align-items:center;justify-content:center;color:#666;font-size:48px">♪</div><div class="album-info"><div class="album-title">${album.name}</div><div class="album-meta">Album • ${album.year}</div><div class="album-streams">${formatLargeNumber(albumStreams)} streams</div></div>`;
+albumGrid.appendChild(div);
+});
+}
+
+showScreen('artist-profile-screen');
+}
+
+function getItemType(item){
+if(item.songs){
+const trackCount=item.songs.length;
+if(trackCount>=8)return 'albums';
+if(trackCount>=2&&trackCount<=7)return 'eps';
+}
+return 'singles';
+}
+
+function showDiscography(){
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+const singleSongs=songs.filter(s=>!albums.some(a=>a.songs&&a.songs.some(as=>(as.songName||as.name||as)===(s.songName||s.name))));
+const allReleases=[...albums,...singleSongs];
+loadDiscoGrid(allReleases);
+showScreen('disco-screen');
+}
+
+function loadDiscoGrid(releases){
+const grid=$('disco-grid');
+grid.innerHTML='';
+const filtered=currentFilter==='all'?releases:releases.filter(r=>getItemType(r)===currentFilter);
+filtered.forEach(release=>{
+const isAlbum=!!release.songs,type=getItemType(release);
+const div=document.createElement('div');
+div.className='disco-item';
+if(isAlbum){
+const albumIndex=JSON.parse(localStorage.getItem('releasedAlbums')||'[]').indexOf(release);
+div.onclick=()=>showAlbum(albumIndex);
+}
+div.innerHTML=`<div class="disco-cover">${release.coverArt?`<img src="${release.coverArt}" style="width:100%;height:100%;object-fit:cover">`:'♪'}</div><div class="disco-info"><div class="disco-title">${release.name||release.albumName||release.songName||'Untitled'}</div><div class="disco-meta">${type==='albums'?'Album':type==='eps'?'EP':'Single'} • ${release.releaseYear||new Date().getFullYear()}</div></div>`;
+grid.appendChild(div);
+});
+}
+
+function loadBio(){$('bio-text').textContent=localStorage.getItem('artistBio')||'Share your story with fans...';}
+
+function editBio(){
+const current=$('bio-text').textContent,newText=prompt('Edit your bio:',current);
+if(null!==newText){$('bio-text').textContent=newText;localStorage.setItem('artistBio',newText);}
+}
+
+document.querySelectorAll('.tab').forEach(tab=>{
+tab.addEventListener('click',()=>{
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+tab.classList.add('active');
+const tabType=tab.dataset.tab;
+if(tabType==='music'){
+$('music-content').style.display='block';
+$('artists-content').style.display='none';
+}else if(tabType==='artists'){
+$('music-content').style.display='none';
+$('artists-content').style.display='block';
+}
+});
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+btn.addEventListener('click',()=>{
+document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+currentFilter=btn.dataset.filter;
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+const songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+const singleSongs=songs.filter(s=>!albums.some(a=>a.songs&&a.songs.some(as=>(as.songName||as.name||as)===(s.songName||s.name))));
+const allReleases=[...albums,...singleSongs];
+loadDiscoGrid(allReleases);
+});
+});
+
+// Initialize the page
+init();
+loadArtist();
+loadSongs();
+loadAlbums();
+loadArtists();
+loadBio();
+</script>
+
+</body></html>

@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Your Chart History</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --primary: #111827;
+        --accent: #2563eb;
+        --bg: #f8f9fa;
+        --text: #1f2937;
+        --card-bg: #ffffff;
+        --border: #e5e7eb;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: var(--bg); font-family: 'Inter', sans-serif; color: var(--text); }
+    
+    .header { 
+        background: var(--primary); 
+        padding: 15px 20px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        box-shadow: 0 4px 6px rgba(0,0,0,.1); 
+    }
+    .logo { 
+        color: #fff; 
+        font-size: 24px; 
+        font-weight: 900; 
+        letter-spacing: -1px; 
+    }
+    .back-btn { 
+        background: rgba(255,255,255,0.2); 
+        color: white; 
+        padding: 8px 16px; 
+        border-radius: 8px; 
+        text-decoration: none; 
+        font-weight: 700; 
+        font-size: 14px;
+    }
+    
+    .main-title { 
+        text-align: center; 
+        padding: 40px 20px; 
+        background: var(--card-bg); 
+        border-bottom: 4px solid var(--accent); 
+    }
+    .page-title { 
+        font-size: 36px; 
+        font-weight: 900; 
+        color: var(--text); 
+        letter-spacing: -1px; 
+    }
+    .page-subtitle { 
+        font-size: 14px; 
+        color: #6b7280; 
+        margin-top: 8px; 
+    }
+    
+    .container { 
+        max-width: 900px; 
+        margin: 0 auto; 
+        padding: 20px; 
+    }
+    
+    .song-card {
+        background: var(--card-bg);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        border: 1px solid var(--border);
+    }
+    
+    .song-header {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid var(--border);
+    }
+    
+    .song-art {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        object-fit: cover;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    
+    .song-info {
+        flex: 1;
+    }
+    
+    .song-title {
+        font-size: 20px;
+        font-weight: 900;
+        color: var(--text);
+        margin-bottom: 4px;
+    }
+    
+    .song-artist {
+        font-size: 14px;
+        color: #6b7280;
+        font-weight: 600;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .stat-box {
+        text-align: center;
+        padding: 15px;
+        background: var(--bg);
+        border-radius: 8px;
+    }
+    
+    .stat-value {
+        font-size: 28px;
+        font-weight: 900;
+        color: var(--accent);
+        display: block;
+    }
+
+    .stat-value.off-chart {
+        color: #dc2626;
+    }
+
+    .stat-value.on-chart {
+        color: #16a34a;
+    }
+    
+    .stat-label {
+        font-size: 11px;
+        font-weight: 700;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-top: 4px;
+    }
+    
+    .chart-history {
+        background: var(--bg);
+        border-radius: 8px;
+        padding: 15px;
+    }
+    
+    .history-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .position-line {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border);
+    }
+    
+    .position-line:last-child {
+        border-bottom: none;
+    }
+    
+    .week-num {
+        font-size: 12px;
+        font-weight: 700;
+        color: #6b7280;
+        min-width: 60px;
+    }
+    
+    .position-badge {
+        font-size: 16px;
+        font-weight: 900;
+        padding: 4px 12px;
+        border-radius: 6px;
+        min-width: 50px;
+        text-align: center;
+    }
+    
+    .pos-top10 {
+        background: #dcfce7;
+        color: #166534;
+    }
+    
+    .pos-top40 {
+        background: #dbeafe;
+        color: #1e40af;
+    }
+    
+    .pos-other {
+        background: #f3f4f6;
+        color: #374151;
+    }
+    
+    .movement {
+        font-size: 12px;
+        font-weight: 700;
+        margin-left: auto;
+    }
+    
+    .movement.up { color: #16a34a; }
+    .movement.down { color: #dc2626; }
+    .movement.new { color: #2563eb; }
+    .movement.same { color: #9ca3af; }
+    
+    .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6b7280;
+    }
+    
+    .empty-icon {
+        font-size: 64px;
+        margin-bottom: 15px;
+    }
+    
+    .empty-title {
+        font-size: 20px;
+        font-weight: 800;
+        margin-bottom: 8px;
+    }
+    
+    .chart-visual {
+        height: 200px;
+        margin: 15px 0;
+        position: relative;
+        background: linear-gradient(to bottom, #dcfce7 0%, #dbeafe 40%, #f3f4f6 100%);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    
+    .chart-point {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background: var(--accent);
+        border: 3px solid white;
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        z-index: 10;
+    }
+    
+    .chart-labels {
+        display: flex;
+        justify-content: space-between;
+        font-size: 11px;
+        color: #6b7280;
+        font-weight: 700;
+        margin-top: 8px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        margin-left: 10px;
+    }
+
+    .status-charting {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status-dropped {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="logo">📊 Your Chart History</div>
+    <a href="mc.html" class="back-btn">← Back to Hot 100</a>
+</div>
+
+<div class="main-title">
+    <div class="page-title">Your Songs on the Charts</div>
+    <div class="page-subtitle">Track your journey to the top</div>
+</div>
+
+<div class="container" id="container">
+    <!-- Content injected here -->
+</div>
+
+<script>
+    function getLocal(key) { 
+        try { 
+            return JSON.parse(localStorage.getItem(key)) || []; 
+        } catch(e) { 
+            return []; 
+        } 
+    }
+    
+    function getMap(key) { 
+        try { 
+            return JSON.parse(localStorage.getItem(key)) || {}; 
+        } catch(e) { 
+            return {}; 
+        } 
+    }
+
+    function renderHistory() {
+        const container = document.getElementById('container');
+        const releasedSongs = getLocal('releasedSongs');
+        const historyMap = getMap('master_song_history');
+        const currentChart = getLocal('chart_songs_final');
+        
+        if (!releasedSongs || releasedSongs.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🎵</div>
+                    <div class="empty-title">No Songs Released Yet</div>
+                    <p>Release some songs and they'll appear here when they chart!</p>
+                </div>
+            `;
+            return;
+        }
+
+        let html = '';
+        let songsWithHistory = 0;
+        
+        releasedSongs.forEach(song => {
+            const songName = song.songName || song.name || 'Unknown Song';
+            const coverArt = song.coverArt || 'https://placehold.co/100/2563eb/ffffff?text=YOU';
+            
+            // Try multiple ID formats
+            const possibleIds = [
+                song.id,
+                `user_${songName.replace(/[^a-z0-9]/gi,'')}`,
+                `user_${songName.toLowerCase().replace(/[^a-z0-9]/gi,'')}`
+            ];
+            
+            let history = null;
+            let matchedId = null;
+            
+            // Try to find matching history
+            for (let id of possibleIds) {
+                if (id && historyMap[id]) {
+                    history = historyMap[id];
+                    matchedId = id;
+                    break;
+                }
+            }
+            
+            // Check if song is currently on chart - THIS IS THE KEY FIX
+            const onChartNow = currentChart.find(c => {
+                if (!c.isUser) return false;
+                
+                // Match by title
+                const cTitle = (c.title || '').toLowerCase().replace(/[^a-z0-9]/gi,'');
+                const sTitle = songName.toLowerCase().replace(/[^a-z0-9]/gi,'');
+                
+                return cTitle === sTitle;
+            });
+            
+            if (!history && !onChartNow) {
+                return; // Skip songs with no history
+            }
+            
+            songsWithHistory++;
+            
+            // Get current position from CURRENT CHART, not history
+            const currentRank = onChartNow ? onChartNow.rank : null;
+            const isCharting = currentRank !== null && currentRank <= 100;
+            
+            // Get peak and weeks from history (or current chart if new)
+            const peak = history ? (history.peak || 101) : (onChartNow ? onChartNow.peak : 101);
+            const weeks = history ? (history.weeks || 0) : (onChartNow ? onChartNow.weeks : 0);
+            const ranks = history ? (history.ranks || []) : (onChartNow ? [onChartNow.rank] : []);
+            
+            // Calculate chart visualization
+            const chartPoints = ranks.slice(-10); // Last 10 weeks max
+            
+            html += `
+                <div class="song-card">
+                    <div class="song-header">
+                        <img src="${coverArt}" class="song-art" onerror="this.src='https://placehold.co/100/2563eb/ffffff?text=YOU'">
+                        <div class="song-info">
+                            <div class="song-title">
+                                ${songName}
+                                ${isCharting ? '<span class="status-badge status-charting">📈 CHARTING</span>' : '<span class="status-badge status-dropped">📉 DROPPED</span>'}
+                            </div>
+                            <div class="song-artist">YOU</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-box">
+                            <span class="stat-value">${peak <= 100 ? '#' + peak : '-'}</span>
+                            <span class="stat-label">Peak Position</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value ${isCharting ? 'on-chart' : 'off-chart'}">
+                                ${isCharting ? '#' + currentRank : 'Off Chart'}
+                            </span>
+                            <span class="stat-label">Current</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="stat-value">${weeks}</span>
+                            <span class="stat-label">Weeks on Chart</span>
+                        </div>
+                    </div>
+                    
+                    ${chartPoints.length > 1 ? `
+                    <div class="chart-visual">
+                        <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;" viewBox="0 0 100 100" preserveAspectRatio="none">
+                            <polyline
+                                fill="none"
+                                stroke="#2563eb"
+                                stroke-width="2"
+                                vector-effect="non-scaling-stroke"
+                                points="${chartPoints.map((pos, i) => {
+                                    const x = (i / (chartPoints.length - 1)) * 100;
+                                    const y = pos;
+                                    return `${x},${y}`;
+                                }).join(' ')}"
+                            />
+                        </svg>
+                        ${chartPoints.map((pos, i) => {
+                            const x = (i / (chartPoints.length - 1)) * 100;
+                            const y = pos;
+                            return `<div class="chart-point" style="left: ${x}%; top: ${y}%;"></div>`;
+                        }).join('')}
+                    </div>
+                    <div class="chart-labels">
+                        <span>${chartPoints.length} weeks ago</span>
+                        <span>Latest</span>
+                    </div>
+                    ` : ''}
+                    
+                    ${ranks.length > 0 ? `
+                    <div class="chart-history">
+                        <div class="history-title">📈 Week by Week</div>
+                        ${ranks.slice().reverse().slice(0, 20).map((pos, i) => {
+                            const weekNum = ranks.length - i;
+                            const prevPos = i < ranks.length - 1 ? ranks[ranks.length - i - 2] : null;
+                            
+                            let movement = '';
+                            if (prevPos === null || prevPos === 0) {
+                                movement = '<span class="movement new">NEW</span>';
+                            } else if (pos < prevPos) {
+                                movement = `<span class="movement up">▲ ${prevPos - pos}</span>`;
+                            } else if (pos > prevPos) {
+                                movement = `<span class="movement down">▼ ${pos - prevPos}</span>`;
+                            } else {
+                                movement = '<span class="movement same">-</span>';
+                            }
+                            
+                            const posClass = pos <= 10 ? 'pos-top10' : pos <= 40 ? 'pos-top40' : 'pos-other';
+                            
+                            return `
+                                <div class="position-line">
+                                    <span class="week-num">Week ${weekNum}</span>
+                                    <span class="position-badge ${posClass}">#${pos}</span>
+                                    ${movement}
+                                </div>
+                            `;
+                        }).join('')}
+                        ${ranks.length > 20 ? `<div style="text-align: center; padding: 10px; color: #9ca3af; font-size: 12px;">+ ${ranks.length - 20} more weeks</div>` : ''}
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        });
+        
+        if (songsWithHistory === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📊</div>
+                    <div class="empty-title">No Chart History Yet</div>
+                    <p>Your songs haven't charted yet. Keep building your fanbase!</p>
+                </div>
+            `;
+        } else {
+            container.innerHTML = html;
+        }
+    }
+
+    renderHistory();
+</script>
+
+</body>
+</html>

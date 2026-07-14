@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vibetok</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        :root{--primary:#FE2C55;--accent:#25F4EE;--bg:#000;--surface:#161616;--text-main:#fff;--text-dim:#888;--border:rgba(255,255,255,.1)}
+        *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
+        body{background:var(--bg);color:var(--text-main);font-family:'Inter',sans-serif;overflow:hidden;height:100vh;width:100vw;overscroll-behavior:none}
+        .hidden{display:none!important}
+        .fade-in{animation:fadeIn .3s ease forwards}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        /* LOADER */
+        .app-loader{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center}
+        .spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.1);border-left-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite}
+
+        /* TOP NAV */
+        .top-nav{position:absolute;top:0;left:0;right:0;height:60px;z-index:50;background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);display:flex;justify-content:center;align-items:center;gap:20px}
+        .nav-tab{font-size:16px;font-weight:600;color:rgba(255,255,255,.6);cursor:pointer;position:relative;transition:.3s}
+        .nav-tab.active{color:#fff;font-weight:800}
+        .nav-tab.active::after{content:'';position:absolute;bottom:-4px;left:50%;transform:translateX(-50%);width:20px;height:3px;background:#fff;border-radius:2px}
+
+        /* FEED */
+        .feed-container{height:100vh;width:100vw;overflow-y:scroll;scroll-snap-type:y mandatory;scrollbar-width:none}
+        .feed-container::-webkit-scrollbar{display:none}
+        .video-page{height:100vh;width:100%;scroll-snap-align:start;position:relative;background:#111;overflow:hidden}
+        .video-media{width:100%;height:100%;object-fit:cover;display:block}
+        .feed-ui{position:absolute;inset:0;pointer-events:none;background:linear-gradient(to top,rgba(0,0,0,.9) 0%,rgba(0,0,0,0) 40%);display:flex;flex-direction:column;justify-content:flex-end;padding:0 15px 70px 15px}
+        .sidebar-actions{position:absolute;right:10px;bottom:90px;display:flex;flex-direction:column;align-items:center;gap:20px;pointer-events:auto}
+        .action-btn{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+        .icon-blur{width:45px;height:45px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;transition:transform .2s}
+        .icon-blur:active{transform:scale(.9)}
+        .action-text{font-size:12px;font-weight:600;text-shadow:0 1px 2px black}
+        .video-details{width:75%;margin-bottom:10px;pointer-events:auto}
+        .user-handle{font-weight:700;font-size:17px;margin-bottom:6px}
+        .caption{font-size:14px;line-height:1.4;margin-bottom:10px;color:#eee}
+        .audio-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.15);padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;backdrop-filter:blur(5px)}
+        .audio-icon-spin{animation:spin 3s linear infinite}
+        .brand-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(254,44,85,.2);border:1px solid rgba(254,44,85,.4);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;color:#FE2C55;margin-top:6px}
+
+        /* PROFILE */
+        .profile-page{padding-top:60px;height:100vh;background:var(--bg);overflow-y:auto;padding-bottom:80px}
+        .profile-header{display:flex;flex-direction:column;align-items:center;padding:20px}
+        .p-avatar{width:90px;height:90px;border-radius:50%;background:#222;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.1);margin-bottom:15px}
+        .p-name{font-size:18px;font-weight:700;margin-bottom:5px}
+        .p-bio{color:var(--text-dim);font-size:13px;text-align:center;max-width:280px;margin-bottom:20px}
+        .p-stats-row{display:flex;gap:35px;margin-bottom:25px}
+        .stat{text-align:center}
+        .stat-n{font-weight:700;font-size:18px;display:block}
+        .stat-l{color:var(--text-dim);font-size:12px}
+        .p-btn-row{display:flex;gap:10px;margin-bottom:20px}
+        .p-btn{padding:8px 24px;border-radius:4px;font-size:14px;font-weight:600;border:1px solid var(--border);background:transparent;color:#fff;cursor:pointer}
+        .tabs{display:flex;border-bottom:1px solid var(--border)}
+        .tab{flex:1;padding:12px;display:flex;justify-content:center;cursor:pointer;color:var(--text-dim)}
+        .tab.active{color:#fff;border-bottom:2px solid #fff}
+        .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px}
+        .grid-item{aspect-ratio:3/4;background:#1a1a1a;position:relative;overflow:hidden;cursor:pointer}
+        .grid-item img{width:100%;height:100%;object-fit:cover}
+        .grid-count{position:absolute;bottom:4px;left:4px;font-size:11px;font-weight:700;display:flex;align-items:center;gap:3px;text-shadow:0 1px 2px black}
+        .music-list{padding:0}
+        .music-row{display:flex;align-items:center;padding:15px 20px;border-bottom:1px solid rgba(255,255,255,.05)}
+        .music-row-cover{width:45px;height:45px;border-radius:4px;background:#333;margin-right:15px;background-size:cover;background-position:center;display:flex;align-items:center;justify-content:center}
+        .music-row-info{flex:1}
+        .music-row-title{font-weight:600;font-size:15px;margin-bottom:4px}
+        .music-row-stats{color:var(--text-dim);font-size:12px}
+        .music-row-btn{border:1px solid var(--border);background:transparent;color:#fff;padding:6px 12px;border-radius:4px;font-size:12px;font-weight:600;cursor:pointer}
+
+        /* VIEWER */
+        .viewer-overlay{position:fixed;inset:0;background:#000;z-index:4000;display:flex;flex-direction:column}
+        .viewer-header{position:absolute;top:20px;left:20px;z-index:4010}
+        .btn-back{background:rgba(255,255,255,.2);color:#fff;border:none;width:40px;height:40px;border-radius:50%;backdrop-filter:blur(5px);display:flex;align-items:center;justify-content:center;cursor:pointer}
+
+        /* STUDIO */
+        .studio-overlay{position:fixed;inset:0;background:#000;z-index:2000;display:flex;flex-direction:column;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1)}
+        .studio-overlay.open{transform:translateY(0)}
+        .studio-header{padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
+        .studio-preview-area{flex:1;background:#111;margin:0 10px;border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;border:1px solid #333}
+        .upload-trigger{text-align:center;color:var(--text-dim)}
+        .studio-controls{padding:20px;background:#000;overflow-y:auto;max-height:48vh}
+        .control-group{margin-bottom:20px}
+        .control-label{font-size:12px;color:var(--text-dim);margin-bottom:8px;display:block;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+        .input-modern{width:100%;background:#1a1a1a;border:none;padding:14px;border-radius:8px;color:#fff;font-family:inherit;font-size:14px}
+        .sound-scroller{display:flex;gap:10px;overflow-x:auto;padding-bottom:10px;scrollbar-width:none}
+        .sound-scroller::-webkit-scrollbar{display:none}
+        .sound-chip{background:#1a1a1a;padding:8px 16px;border-radius:20px;white-space:nowrap;font-size:13px;border:1px solid transparent;cursor:pointer;transition:.2s}
+        .sound-chip.selected{background:rgba(254,44,85,.2);border-color:var(--primary);color:var(--primary)}
+        .brand-chip.selected{background:rgba(37,244,238,.15);border-color:var(--accent);color:var(--accent)}
+        .btn-post{width:100%;background:var(--primary);color:#fff;border:none;padding:16px;border-radius:8px;font-weight:700;font-size:16px;margin-top:10px;display:flex;justify-content:center;align-items:center;gap:10px;cursor:pointer}
+        .btn-post:disabled{opacity:.6;cursor:not-allowed}
+
+        /* BOTTOM NAV */
+        .bottom-nav{position:fixed;bottom:0;width:100%;height:55px;background:#000;border-top:1px solid var(--border);display:flex;justify-content:space-around;align-items:center;z-index:100}
+        .nav-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--text-dim);font-size:10px;background:none;border:none;cursor:pointer;width:60px}
+        .nav-item.active{color:#fff}
+        .nav-create-btn{width:45px;height:30px;position:relative;display:flex;align-items:center;justify-content:center;cursor:pointer}
+        .nav-create-btn::before{content:'';position:absolute;left:-3px;width:100%;height:100%;background:var(--accent);border-radius:8px}
+        .nav-create-btn::after{content:'';position:absolute;right:-3px;width:100%;height:100%;background:var(--primary);border-radius:8px}
+        .nav-create-inner{position:relative;z-index:2;background:#fff;width:100%;height:100%;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#000}
+    /* Hide ONLY the Following stat */
+.p-stats-row .stat:first-child {
+    display: none !important;
+}
+.sound-result-row{display:flex;align-items:center;gap:12px;padding:12px 10px;border-radius:8px;cursor:pointer;transition:background .15s}
+.sound-result-row:active{background:rgba(255,255,255,.08)}</style>
+</head>
+<body>
+
+<div id="app-loader" class="app-loader"><div class="spinner"></div></div>
+
+<div id="page-home" class="page-content">
+    <div class="top-nav">
+        <a href="music.html" style="position:absolute;left:14px;width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.15);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;text-decoration:none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </a>
+        <div class="nav-tab">Following</div>
+        <div class="nav-tab active">For You</div>
+    </div>
+    <div class="feed-container" id="feed-container"></div>
+</div>
+
+<div id="page-profile" class="page-content hidden">
+    <div class="profile-page">
+        <div class="profile-header">
+            <div class="p-avatar" id="p-avatar"></div>
+            <div class="p-name">@<span id="p-username">...</span></div>
+            <div class="p-bio" id="p-bio">...</div>
+            <div class="p-stats-row">
+                <div class="stat"><span class="stat-n" id="s-following"></span><span class="stat-l">Following</span></div>
+                <div class="stat"><span class="stat-n" id="s-followers">0</span><span class="stat-l">Followers</span></div>
+                <div class="stat"><span class="stat-n" id="s-likes">0</span><span class="stat-l">Likes</span></div>
+            </div>
+            <div class="p-btn-row">
+                <button class="p-btn" onclick="openEditProfile()">Edit Profile</button>
+                <button class="p-btn">Share Profile</button>
+            </div>
+        </div>
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('videos')">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM9 10v4l4-2-4-2z"/></svg>
+            </div>
+            <div class="tab" onclick="switchTab('music')">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+            </div>
+        </div>
+        <div id="profile-grid" class="grid"></div>
+        <div id="profile-music-list" class="music-list hidden"></div>
+    </div>
+</div>
+
+<div id="view-modal" class="viewer-overlay hidden">
+    <div class="viewer-header">
+        <button class="btn-back" onclick="closeViewer()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7"/></svg>
+        </button>
+    </div>
+    <div id="view-content" style="width:100%;height:100%"></div>
+</div>
+
+<div id="studio-overlay" class="studio-overlay">
+    <div class="studio-header">
+        <button style="background:none;border:none;color:#fff;font-size:16px;cursor:pointer" onclick="closeStudio()">Cancel</button>
+        <span style="font-weight:700">Studio</span>
+        <div style="width:40px"></div>
+    </div>
+    <div class="studio-preview-area" style="pointer-events:none;position:relative">
+        <input type="file" id="studio-upload" hidden accept="image/*,image/gif">
+        <div id="upload-placeholder" class="upload-trigger" style="pointer-events:auto;position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2" onclick="document.getElementById('studio-upload').click()">
+            <svg width="40" height="40" fill="none" stroke="#444" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom:10px"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div>Select Image / GIF</div>
+        </div>
+        <div id="media-preview-container" class="hidden" style="width:100%;height:100%;pointer-events:none"></div>
+    </div>
+    <div class="studio-controls">
+        <div class="control-group">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                <label class="control-label" style="margin-bottom:0">Select Sound</label>
+                <button onclick="openSoundExplore()" style="background:rgba(254,44,85,.15);border:1px solid rgba(254,44,85,.4);color:#FE2C55;padding:4px 14px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer">Explore ›</button>
+            </div>
+            <div class="sound-scroller" id="sound-scroller">
+                <div class="sound-chip selected" onclick="selectSound(this,'Original Sound')">Original Sound</div>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label">Caption</label>
+            <input type="text" id="studio-caption" class="input-modern" placeholder="Add a caption... #vibe">
+        </div>
+        <div class="control-group" id="brand-tag-group" style="display:none">
+            <label class="control-label">Tag Brand</label>
+            <div class="sound-scroller" id="brand-chip-scroller"></div>
+        </div>
+        <button id="btn-publish" class="btn-post" onclick="publishPost()"><span>Post</span></button>
+    </div>
+</div>
+
+<div id="edit-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:3000;display:none;align-items:center;justify-content:center">
+    <div style="background:#1a1a1a;width:85%;padding:25px;border-radius:12px;border:1px solid #333">
+        <h3 style="margin-bottom:15px;color:#fff">Edit Profile</h3>
+        <input id="edit-name" class="input-modern" style="margin-bottom:10px" placeholder="Username">
+        <input id="edit-bio" class="input-modern" style="margin-bottom:20px" placeholder="Bio">
+        <div style="display:flex;gap:10px">
+            <button onclick="saveProfile()" style="flex:1;background:#fff;border:none;padding:12px;border-radius:6px;font-weight:700;color:#000;cursor:pointer">Save</button>
+            <button onclick="document.getElementById('edit-modal').style.display='none'" style="flex:1;background:transparent;border:1px solid #444;color:#fff;padding:12px;border-radius:6px;cursor:pointer">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="sound-explore-modal" style="position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:3500;display:none;flex-direction:column">
+    <div style="padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #222">
+        <span style="font-weight:700;font-size:16px">Explore Sounds</span>
+        <button onclick="closeSoundExplore()" style="background:none;border:none;color:#888;font-size:24px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div style="padding:12px 15px">
+        <div style="display:flex;gap:10px">
+            <input id="sound-search-input" class="input-modern" placeholder="Search songs, artists..." style="flex:1" onkeydown="if(event.key==='Enter')searchSounds()">
+            <button onclick="searchSounds()" style="background:var(--primary);border:none;color:#fff;padding:0 18px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer">Go</button>
+        </div>
+    </div>
+    <div id="sound-results" style="flex:1;overflow-y:auto;padding:0 5px 20px"></div>
+</div>
+
+<div class="bottom-nav">
+    <button class="nav-item active" onclick="navTo('home')">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Home</span>
+    </button>
+    <div class="nav-create-btn" onclick="openStudio()">
+        <div class="nav-create-inner">
+            <svg width="22" height="22" fill="#000" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+        </div>
+    </div>
+    <button class="nav-item" onclick="navTo('profile')">
+        <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+        <span>Me</span>
+    </button>
+</div>
+
+<!-- PROMO PAGE -->
+<div id="promo-page" style="display:none;position:fixed;inset:0;background:#000;z-index:5000;flex-direction:column;overflow-y:auto">
+    <div style="padding:16px 20px;display:flex;align-items:center;gap:14px;border-bottom:1px solid #1a1a1a">
+        <button onclick="closePromoPage()" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:36px;height:36px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center">‹</button>
+        <span style="font-weight:800;font-size:17px">Sound Promotion</span>
+    </div>
+    <div style="padding:20px">
+        <!-- Song card -->
+        <div style="display:flex;align-items:center;gap:14px;background:#111;border-radius:14px;padding:14px;margin-bottom:24px">
+            <div id="promo-cover" style="width:56px;height:56px;border-radius:8px;background:#222;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center;flex-shrink:0">
+                <svg width="20" height="20" fill="#555" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+            </div>
+            <div>
+                <div id="promo-title" style="font-weight:700;font-size:16px;margin-bottom:4px"></div>
+                <div style="color:#555;font-size:12px">Select a promotion tier below</div>
+            </div>
+        </div>
+
+        <!-- Active boost indicator -->
+        <div id="promo-active-banner" style="display:none;background:rgba(37,244,238,.1);border:1px solid rgba(37,244,238,.3);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:#25F4EE;font-weight:600"></div>
+
+        <!-- Tiers -->
+        <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px" id="promo-tiers"></div>
+
+        <!-- Balance -->
+        <div style="text-align:center;color:#444;font-size:13px">Your balance: <span id="promo-balance" style="color:#fff;font-weight:700"></span></div>
+    </div>
+</div>
+
+<!-- SPIN OVERLAY -->
+<div id="promo-spin-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:6000;flex-direction:column;align-items:center;justify-content:center">
+    <div id="spin-ring" style="width:120px;height:120px;border:6px solid #222;border-top-color:#FE2C55;border-radius:50%;animation:spin .6s linear infinite;margin-bottom:30px"></div>
+    <div id="spin-label" style="font-size:16px;color:#666;font-weight:600">Processing promotion…</div>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div id="promo-result-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.97);z-index:6000;flex-direction:column;align-items:center;justify-content:center;padding:40px;text-align:center">
+    <div id="result-emoji" style="font-size:72px;margin-bottom:20px"></div>
+    <div id="result-title" style="font-size:26px;font-weight:800;margin-bottom:10px"></div>
+    <div id="result-desc" style="color:#888;font-size:15px;line-height:1.6;margin-bottom:36px"></div>
+    <button onclick="closePromoResult()" style="background:#FE2C55;border:none;color:#fff;padding:14px 40px;border-radius:10px;font-weight:700;font-size:16px;cursor:pointer">Done</button>
+</div>
+
+<script>
+    const coverDB = (function() {
+    const DB_NAME = 'MusicVideoDB';
+    const STORE = 'coverArts';
+    function open() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = e => reject(e.target.error);
+        });
+    }
+    return {
+        load(key) {
+            return open().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE, 'readonly');
+                const req = tx.objectStore(STORE).get(key);
+                req.onsuccess = e => resolve(e.target.result || null);
+                req.onerror = e => reject(e.target.error);
+            }));
+        }
+    };
+})();
+
+const photoDB = (function() {
+    const DB_NAME = 'MusicGameDB';
+    const STORE = 'photos';
+    const KEY = 'artistPhoto';
+    function open() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = e => reject(e.target.error);
+        });
+    }
+    return {
+        load() {
+            return open().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE, 'readonly');
+                const req = tx.objectStore(STORE).get(KEY);
+                req.onsuccess = e => resolve(e.target.result || null);
+                req.onerror = e => reject(e.target.error);
+            }));
+        }
+    };
+})();
+
+const vibetokDB = (function() {
+    const DB_NAME = 'VibetokDB';
+    function open() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 2);
+            req.onupgradeneeded = e => {
+                const db = e.target.result;
+                if (!db.objectStoreNames.contains('posts')) {
+                    db.createObjectStore('posts', { keyPath: 'id' });
+                }
+            };
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = e => reject(e.target.error);
+        });
+    }
+    return {
+        getAll() {
+    return open().then(db => new Promise((res, rej) => {
+        const tx = db.transaction('posts', 'readonly');
+        const req = tx.objectStore('posts').getAll();
+        req.onsuccess = e => res((e.target.result || []).sort((a, b) => b.id - a.id));
+        req.onerror = e => rej(e.target.error);
+    }));
+},
+        put(post) {
+    return open().then(db => new Promise((res, rej) => {
+        const tx = db.transaction('posts', 'readwrite');
+        const req = tx.objectStore('posts').put(post);
+        req.onsuccess = () => res();
+        req.onerror = e => rej(e.target.error);
+    }));
+},
+        putAll(posts) {
+    return open().then(db => new Promise((res, rej) => {
+        const tx = db.transaction('posts', 'readwrite');
+        const store = tx.objectStore('posts');
+        store.clear();
+        posts.forEach(p => store.put(p));
+        tx.oncomplete = () => res();
+        tx.onerror = e => rej(e.target.error);
+    }));
+}
+    };
+})();
+
+/* ────────────────────────────────
+   Compress image
+──────────────────────────────── */
+function compressImage(file) {
+    return new Promise(resolve => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            const img = new Image();
+            img.onload = () => {
+                const MAX = 800;
+                let w = img.width, h = img.height;
+                if (w > MAX || h > MAX) {
+                    if (w > h) { h = Math.round(h * MAX / w); w = MAX; }
+                    else { w = Math.round(w * MAX / h); h = MAX; }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                resolve(canvas.toDataURL('image/jpeg', 0.75));
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+}
+
+/* ────────────────────────────────
+   State
+──────────────────────────────── */
+let uploadFile = null;
+let currentSound = 'Original Sound';
+let currentSoundTrackId = null;
+let selectedBrand = null;
+const data = { user: { name: 'user', bio: '', avatar: '', followers: 0, following: 0, likes: 0 }, posts: [], songs: [] };
+
+async function saveData() {
+    try {
+        await vibetokDB.putAll(data.posts);
+        return true;
+    } catch (e) {
+        console.error(e);
+        return false;
+    }
+}
+
+/* ────────────────────────────────
+   Init
+──────────────────────────────── */
+async function init() {
+    try {
+        // Load artist data
+        const a = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+        const popularity = parseFloat(localStorage.getItem('popularity')) || 25;
+        data.user.name = (a.name || 'user').toLowerCase().replace(/\s+/g, '');
+        data.user.bio = localStorage.getItem('vibetokBio') || a.bio || '';
+        const savedVibetokData = JSON.parse(localStorage.getItem('vibetokData') || '{}');
+        data.user.followers = savedVibetokData.user?.followers || Math.floor(popularity * 30000);
+        data.user.following = Math.floor(Math.random() * 500 + 200);
+        data.user.likes = 0;
+
+        const photo = await photoDB.load().catch(() => null);
+        if (photo) data.user.avatar = photo;
+
+        // Load posts from IndexedDB
+        data.posts = await vibetokDB.getAll().catch(() => []);
+        data.user.likes = data.posts.reduce((sum, p) => sum + (p.likes || 0), 0);
+
+        // Load released songs
+        const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+        data.songs = songs.map(s => ({ title: s.songName || s.name || 'Unknown', uses: Math.floor(Math.random() * 10000), cover: null }));
+        if (data.songs.length > 0) {
+            const covers = await Promise.all(data.songs.map(s => coverDB.load(s.title).catch(() => null)));
+            data.songs.forEach((s, i) => { if (covers[i]) s.cover = covers[i]; });
+        }
+
+        // Process any scheduled posts due today
+        // AFTER:
+        // Process any scheduled posts due today
+        await processScheduledPosts().catch(() => {});
+
+        // Grow views/likes based on weeks elapsed
+        const lastGrowWeek = parseInt(localStorage.getItem('vibetokLastGrowWeek') || '0');
+        const currentGameWeek = parseInt(localStorage.getItem('gameWeek') || '0');
+        const lastMusicSyncWeek = parseInt(localStorage.getItem('vibetokMusicSyncWeek') || '0');
+        if (currentGameWeek > lastGrowWeek && currentGameWeek > lastMusicSyncWeek) {
+            await growPosts().catch(() => {});
+            localStorage.setItem('vibetokLastGrowWeek', currentGameWeek.toString());
+        }
+
+    } catch (e) {
+        console.error('Init error:', e.name, e.message);
+    } finally {
+        renderApp();
+        document.getElementById('app-loader').style.display = 'none';
+    }
+}
+
+/* ────────────────────────────────
+   Scheduled Posts Auto-Publish
+──────────────────────────────── */
+async function processScheduledPosts() {
+    const scheduled = JSON.parse(localStorage.getItem('scheduledPosts') || '[]');
+    if (!scheduled.length) return;
+
+    const currentDate = new Date(localStorage.getItem('currentDate') || new Date());
+    currentDate.setHours(23, 59, 59, 999);
+
+    let updated = false;
+    for (const sp of scheduled) {
+        if (sp.platform === 'vibetok' && !sp.published && new Date(sp.scheduledDate) <= currentDate) {
+            const newPost = {
+                id: Date.now() + Math.floor(Math.random() * 9999),
+                url: sp.imageData || '',
+                type: 'image',
+                caption: sp.caption,
+                sound: 'Original Sound',
+                brandTag: sp.brandTag || null,
+                likes: Math.floor(Math.random() * 800 + 50),
+                comments: Math.floor(Math.random() * 80 + 5),
+                liked: false,
+                views: Math.floor(Math.random() * 5000 + 500),
+                date: sp.scheduledDate,
+                scheduled: true
+            };
+            if (sp.imageData) {
+                await vibetokDB.put(newPost);
+                data.posts.unshift(newPost);
+            }
+            sp.published = true;
+            updated = true;
+        }
+    }
+    if (updated) {
+        localStorage.setItem('scheduledPosts', JSON.stringify(scheduled));
+    }
+}
+
+/* ────────────────────────────────
+   Brand Tag (Studio)
+──────────────────────────────── */
+function loadBrandChips() {
+    const brands = JSON.parse(localStorage.getItem('activeBrandDeals') || '[]');
+    const scroller = document.getElementById('brand-chip-scroller');
+    const group = document.getElementById('brand-tag-group');
+
+    if (!brands.length) { group.style.display = 'none'; return; }
+    group.style.display = 'block';
+
+    scroller.innerHTML = `<div class="sound-chip brand-chip selected" onclick="selectBrand(this, null)">No Brand</div>`;
+    brands.forEach(b => {
+        const chip = document.createElement('div');
+        chip.className = 'sound-chip brand-chip';
+        chip.textContent = b.name;
+        chip.onclick = () => selectBrand(chip, b.name);
+        scroller.appendChild(chip);
+    });
+    selectedBrand = null;
+}
+
+function selectBrand(el, name) {
+    document.querySelectorAll('#brand-chip-scroller .brand-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedBrand = name;
+}
+
+/* ────────────────────────────────
+   Render
+──────────────────────────────── */
+function renderApp() {
+    renderFeed();
+    renderProfile();
+    renderSoundChips();
+}
+
+function createPostHTML(post) {
+    const brandHTML = post.brandTag
+        ? `<div class="brand-tag">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+            ${post.brandTag}
+          </div>`
+        : '';
+    return `
+        <div class="video-page">
+            ${post.url ? `<img src="${post.url}" class="video-media">` : `<div class="video-media" style="background:#1a1a1a;display:flex;align-items:center;justify-content:center"><svg width="60" height="60" fill="none" stroke="#333" stroke-width="1" viewBox="0 0 24 24"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg></div>`}
+            <div class="feed-ui">
+                <div class="video-details">
+                    <div class="user-handle">@${data.user.name}</div>
+                    <div class="caption">${post.caption}</div>
+                    ${brandHTML}
+                    <div class="audio-tag" style="margin-top:8px">
+                        <svg class="audio-icon-spin" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/></svg>
+                        ${post.sound || 'Original Sound'}
+                    </div>
+                </div>
+                <div class="sidebar-actions">
+                    <div class="p-avatar" style="width:45px;height:45px;margin:0;border-width:1px;background-image:url('${data.user.avatar}');background-size:cover;background-position:center"></div>
+                    <div class="action-btn" onclick="toggleLike(${post.id})" id="like-btn-${post.id}">
+                        <div class="icon-blur" id="like-icon-${post.id}" style="${post.liked ? 'background:rgba(254,44,85,0.4)' : ''}">
+                            <svg width="24" height="24" fill="${post.liked ? '#FE2C55' : 'white'}" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </div>
+                        <span class="action-text" id="like-count-${post.id}">${formatNum(post.likes)}</span>
+                    </div>
+                    <div class="action-btn" onclick="toggleComment(${post.id})" id="comment-btn-${post.id}">
+                        <div class="icon-blur">
+                            <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
+                        </div>
+                        <span class="action-text" id="comment-count-${post.id}">${formatNum(post.comments || 0)}</span>
+                    </div>
+                </div>
+            </div>
+        </div>`;
+}
+
+function renderFeed() {
+    const container = document.getElementById('feed-container');
+    container.innerHTML = '';
+    if (!data.posts.length) {
+        container.innerHTML = `
+            <div style="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--text-dim)">
+                <svg width="60" height="60" stroke="currentColor" stroke-width="1" fill="none" viewBox="0 0 24 24" style="margin-bottom:15px"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <h3>Feed Empty</h3>
+                <p>Post a pic or gif to start!</p>
+            </div>`;
+        return;
+    }
+    data.posts.forEach(post => container.innerHTML += createPostHTML(post));
+}
+
+function renderProfile() {
+    document.getElementById('p-username').innerText = data.user.name;
+    document.getElementById('p-bio').innerText = data.user.bio;
+    document.getElementById('s-followers').innerText = formatNum(data.user.followers);
+    document.getElementById('s-likes').innerText = formatNum(data.user.likes);
+    document.getElementById('s-following').innerText = formatNum(data.user.following);
+    if (data.user.avatar) {
+        document.getElementById('p-avatar').style.backgroundImage = `url(${data.user.avatar})`;
+    }
+
+    const grid = document.getElementById('profile-grid');
+    grid.innerHTML = '';
+    [...data.posts].reverse().forEach(post => {
+        const item = document.createElement('div');
+        item.className = 'grid-item';
+        item.innerHTML = post.url
+            ? `<img src="${post.url}"><div class="grid-count"><svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>${formatNum(post.views || 0)}</div>`
+            : `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#222"><svg width="24" height="24" fill="none" stroke="#555" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14"/></svg></div>`;
+        item.onclick = () => openPost(post);
+        grid.appendChild(item);
+    });
+
+    const musicList = document.getElementById('profile-music-list');
+    musicList.innerHTML = '';
+    if (!data.songs.length) {
+        musicList.innerHTML = '<div style="padding:30px;text-align:center;color:#666">No released music yet</div>';
+    } else {
+        data.songs.forEach(song => {
+            const row = document.createElement('div');
+            row.className = 'music-row';
+            let iconHtml = `<svg width="20" height="20" fill="#999" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>`;
+            let style = '';
+            if (song.cover) { style = `background-image:url('${song.cover}');`; iconHtml = ''; }
+            row.innerHTML = `
+                <div class="music-row-cover" style="${style}">${iconHtml}</div>
+                <div class="music-row-info">
+                    <div class="music-row-title">${song.title}</div>
+                    <div class="music-row-stats">${formatNum(song.uses)} videos</div>
+                </div>
+                <button class="music-row-btn" onclick="openPromoPage('${song.title.replace(/'/g,"\\'")}','${style ? song.cover : ''}')">🚀 Promote</button>`;
+            musicList.appendChild(row);
+        });
+    }
+}
+
+function renderSoundChips() {
+    const scroller = document.getElementById('sound-scroller');
+    while (scroller.children.length > 1) scroller.removeChild(scroller.lastChild);
+    data.songs.forEach(song => {
+        const chip = document.createElement('div');
+        chip.className = 'sound-chip';
+        chip.innerText = song.title;
+        chip.onclick = () => selectSound(chip, song.title);
+        scroller.appendChild(chip);
+    });
+}
+
+/* ────────────────────────────────
+   Post Viewer
+──────────────────────────────── */
+let viewerAudio = null;
+
+function openPost(post) {
+    const modal = document.getElementById('view-modal');
+    document.getElementById('view-content').innerHTML = createPostHTML(post);
+    modal.classList.remove('hidden');
+    if (post.soundTrackId) playTrackById(post.soundTrackId);
+}
+function closeViewer() {
+    if (viewerAudio) { viewerAudio.pause(); viewerAudio = null; }
+    document.getElementById('view-modal').classList.add('hidden');
+    document.getElementById('view-content').innerHTML = '';
+}
+
+async function playTrackById(trackId) {
+    try {
+        const res = await fetch(`https://itunes.apple.com/lookup?id=${trackId}`);
+        const json = await res.json();
+        const track = json.results?.[0];
+        if (track?.previewUrl) {
+            if (viewerAudio) viewerAudio.pause();
+            viewerAudio = new Audio(track.previewUrl);
+            viewerAudio.volume = 0.6;
+            viewerAudio.play().catch(() => {});
+        }
+    } catch(e) { console.warn('Sound fetch failed', e); }
+}
+
+/* ────────────────────────────────
+   Navigation
+──────────────────────────────── */
+function navTo(pageId) {
+    document.querySelectorAll('.page-content').forEach(p => p.classList.add('hidden'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (pageId === 'home') {
+        document.getElementById('page-home').classList.remove('hidden');
+        document.querySelectorAll('.nav-item')[0].classList.add('active');
+    } else if (pageId === 'profile') {
+        document.getElementById('page-profile').classList.remove('hidden');
+        document.querySelectorAll('.nav-item')[1].classList.add('active');
+        renderProfile();
+    }
+}
+
+function switchTab(tab) {
+    const tabs = document.querySelectorAll('.tab');
+    if (tab === 'videos') {
+        tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+        document.getElementById('profile-grid').classList.remove('hidden');
+        document.getElementById('profile-music-list').classList.add('hidden');
+    } else {
+        tabs[1].classList.add('active'); tabs[0].classList.remove('active');
+        document.getElementById('profile-grid').classList.add('hidden');
+        document.getElementById('profile-music-list').classList.remove('hidden');
+    }
+}
+
+/* ────────────────────────────────
+   Studio
+──────────────────────────────── */
+function openStudio() {
+    loadBrandChips();
+    document.getElementById('studio-overlay').classList.add('open');
+}
+function closeStudio() {
+    document.getElementById('studio-overlay').classList.remove('open');
+    resetStudio();
+}
+
+document.getElementById('studio-upload').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    uploadFile = file;
+    const previewContainer = document.getElementById('media-preview-container');
+    previewContainer.innerHTML = '';
+    document.getElementById('upload-placeholder').classList.add('hidden');
+    previewContainer.classList.remove('hidden');
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.style.cssText = 'width:100%;height:100%;object-fit:contain';
+    previewContainer.appendChild(img);
+});
+
+function selectSound(el, name) {
+    document.querySelectorAll('.sound-chip').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    currentSound = name;
+}
+
+/* ────────────────────────────────
+   Publish
+──────────────────────────────── */
+async function publishPost() {
+    if (!uploadFile) return alert("Please select an image or GIF first");
+
+    const btn = document.getElementById('btn-publish');
+    btn.innerHTML = `<div class="spinner" style="width:20px;height:20px;border-width:2px"></div><span>Publishing...</span>`;
+    btn.disabled = true;
+
+    try {
+        btn.innerHTML = `<div class="spinner" style="width:20px;height:20px;border-width:2px"></div><span>Processing...</span>`;
+        const dataUrl = await compressImage(uploadFile);
+
+        const newPost = {
+            id: Date.now(),
+            url: dataUrl,
+            type: 'image',
+            caption: document.getElementById('studio-caption').value || "vibes",
+            sound: currentSound,
+            soundTrackId: currentSoundTrackId || null,
+            brandTag: selectedBrand || null,
+            likes: 0,
+            comments: 0,
+            liked: false,
+            views: 0,
+            // REPLACE:
+            date: localStorage.getItem('currentDate') || new Date().toISOString()
+        };
+
+        data.posts.unshift(newPost);
+        if (await saveData()) {
+            uploadFile = null;
+            closeStudio();
+            renderFeed();
+            renderProfile();
+            alert("Posted!");
+        }
+    } catch (error) {
+        console.error(error);
+        alert("Upload Failed: " + error.message);
+    } finally {
+        btn.innerHTML = '<span>Post</span>';
+        btn.disabled = false;
+    }
+}
+
+function resetStudio() {
+    uploadFile = null;
+    selectedBrand = null;
+    currentSound = 'Original Sound';
+    currentSoundTrackId = null;
+    document.getElementById('upload-placeholder').classList.remove('hidden');
+    document.getElementById('media-preview-container').classList.add('hidden');
+    document.getElementById('media-preview-container').innerHTML = '';
+    document.getElementById('studio-caption').value = '';
+    document.querySelectorAll('.sound-chip').forEach(c => c.classList.remove('selected'));
+    document.querySelectorAll('.sound-chip')[0]?.classList.add('selected');
+}
+
+/* ────────────────────────────────
+   Profile Edit
+──────────────────────────────── */
+function openEditProfile() {
+    document.getElementById('edit-name').value = data.user.name;
+    document.getElementById('edit-bio').value = data.user.bio;
+    document.getElementById('edit-modal').style.display = 'flex';
+}
+
+function saveProfile() {
+    data.user.name = document.getElementById('edit-name').value || "User";
+    data.user.bio = document.getElementById('edit-bio').value || "";
+    localStorage.setItem('vibetokBio', data.user.bio);
+    renderProfile();
+    document.getElementById('edit-modal').style.display = 'none';
+}
+
+/* ────────────────────────────────
+   Engagements
+──────────────────────────────── */
+async function toggleLike(postId) {
+    const post = data.posts.find(p => p.id === postId);
+    if (!post) return;
+
+    post.liked = !post.liked;
+    post.likes = post.liked ? post.likes + 1 : Math.max(0, post.likes - 1);
+
+    document.querySelectorAll(`[id="like-count-${postId}"]`).forEach(el => el.textContent = formatNum(post.likes));
+    document.querySelectorAll(`[id="like-icon-${postId}"]`).forEach(el => {
+        el.style.background = post.liked ? 'rgba(254,44,85,0.4)' : '';
+        el.querySelector('svg').setAttribute('fill', post.liked ? '#FE2C55' : 'white');
+    });
+
+    data.user.likes = data.posts.reduce((sum, p) => sum + (p.likes || 0), 0);
+    document.getElementById('s-likes').innerText = formatNum(data.user.likes);
+    try { await vibetokDB.put(post); } catch(e) { console.warn('Like save failed', e); }
+}
+
+async function toggleComment(postId) {
+    const post = data.posts.find(p => p.id === postId);
+    if (!post) return;
+    post.comments = (post.comments || 0) + 1;
+    document.querySelectorAll(`#comment-count-${postId}`).forEach(el => el.textContent = formatNum(post.comments));
+    await vibetokDB.put(post);
+}
+
+function formatNum(n) {
+    if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+    if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+    return String(n);
+}
+
+/* ────────────────────────────────
+   Sound Explore
+──────────────────────────────── */
+let previewAudio = null;
+
+function openSoundExplore() {
+    document.getElementById('sound-explore-modal').style.display = 'flex';
+    setTimeout(() => document.getElementById('sound-search-input').focus(), 100);
+}
+
+function closeSoundExplore() {
+    document.getElementById('sound-explore-modal').style.display = 'none';
+    document.getElementById('sound-results').innerHTML = '';
+    document.getElementById('sound-search-input').value = '';
+    if (previewAudio) { previewAudio.pause(); previewAudio = null; }
+}
+
+async function searchSounds() {
+    const query = document.getElementById('sound-search-input').value.trim();
+    if (!query) return;
+    const resultsEl = document.getElementById('sound-results');
+    resultsEl.innerHTML = '<div style="padding:30px;text-align:center;color:#555">Searching...</div>';
+    try {
+        const res = await fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(query)}&media=music&limit=25&entity=song`);
+        const json = await res.json();
+        renderSoundResults(json.results || []);
+    } catch(e) {
+        resultsEl.innerHTML = '<div style="padding:30px;text-align:center;color:#555">Search failed. Try again.</div>';
+    }
+}
+
+function renderSoundResults(tracks) {
+    const resultsEl = document.getElementById('sound-results');
+    if (!tracks.length) {
+        resultsEl.innerHTML = '<div style="padding:30px;text-align:center;color:#555">No results</div>';
+        return;
+    }
+    resultsEl.innerHTML = tracks.map(t => {
+        const safeName = (t.trackName || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        const safeArtist = (t.artistName || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        const safePreview = (t.previewUrl || '').replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        return `<div class="sound-result-row" onclick="selectExploreTrack(${t.trackId},'${safeName} - ${safeArtist}')">
+            <img src="${t.artworkUrl60}" width="45" height="45" style="border-radius:6px;object-fit:cover;flex-shrink:0" onerror="this.style.cssText='width:45px;height:45px;border-radius:6px;background:#333;flex-shrink:0'">
+            <div style="flex:1;min-width:0">
+                <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.trackName}</div>
+                <div style="color:#777;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${t.artistName}</div>
+            </div>
+            ${t.previewUrl ? `<button onclick="event.stopPropagation();togglePreview('${safePreview}',this)" style="background:rgba(255,255,255,.1);border:none;color:#fff;width:32px;height:32px;border-radius:50%;cursor:pointer;flex-shrink:0;font-size:13px">▶</button>` : ''}
+        </div>`;
+    }).join('');
+}
+
+function togglePreview(url, btn) {
+    if (previewAudio && !previewAudio.paused) {
+        previewAudio.pause();
+        document.querySelectorAll('#sound-results button').forEach(b => b.textContent = '▶');
+        previewAudio = null;
+        return;
+    }
+    if (previewAudio) previewAudio.pause();
+    previewAudio = new Audio(url);
+    previewAudio.volume = 0.7;
+    previewAudio.play().catch(() => {});
+    previewAudio.onended = () => { btn.textContent = '▶'; previewAudio = null; };
+    document.querySelectorAll('#sound-results button').forEach(b => b.textContent = '▶');
+    btn.textContent = '■';
+}
+
+function selectExploreTrack(trackId, name) {
+    if (previewAudio) { previewAudio.pause(); previewAudio = null; }
+    currentSound = name;
+    currentSoundTrackId = trackId;
+    const scroller = document.getElementById('sound-scroller');
+    const old = scroller.querySelector('.itunes-chip');
+    if (old) old.remove();
+    const chip = document.createElement('div');
+    chip.className = 'sound-chip selected itunes-chip';
+    chip.textContent = name.length > 28 ? name.slice(0,25) + '…' : name;
+    chip.onclick = () => {
+        scroller.querySelectorAll('.sound-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        currentSound = name;
+        currentSoundTrackId = trackId;
+    };
+    scroller.querySelectorAll('.sound-chip').forEach(c => c.classList.remove('selected'));
+    scroller.appendChild(chip);
+    closeSoundExplore();
+}
+
+// AFTER — add growPosts() above it:
+async function growPosts() {
+    if (!data.posts.length) return;
+    const popularity = parseFloat(localStorage.getItem('popularity')) || 25;
+    const currentDate = new Date(localStorage.getItem('currentDate') || new Date());
+    let changed = false;
+
+    // Max views any single post can ever reach (tied to popularity)
+    const viewCap = Math.floor(popularity * popularity * 400);
+
+    data.posts.forEach(post => {
+        if (!post.baseViews) {
+            const p = popularity / 100;
+            post.baseViews       = Math.floor(p * p * 800000 + p * Math.random() * 400000 + 5000);
+            post.baseLikes       = Math.floor(post.baseViews * (0.03 + Math.random() * 0.05));
+            post.baseComments    = Math.floor(post.baseLikes  * (0.04 + Math.random() * 0.04));
+            post.peakWeek        = 2 + Math.floor(Math.random() * 2); // peaks at week 2 or 3
+            post.growthRate      = 0.5 + Math.random() * 0.5;         // rise speed
+            post.decayRate       = 0.10 + Math.random() * 0.10;       // 10–20%/week decay
+            changed = true;
+        }
+
+        const postDate   = new Date(post.date || currentDate);
+        const weeksSince = Math.max(1, Math.floor((currentDate - postDate) / (7 * 24 * 60 * 60 * 1000)));
+        const peakWeek   = post.peakWeek || 2;
+
+        let factor;
+        if (weeksSince <= peakWeek) {
+            // Rising phase
+            factor = Math.pow(1 + (post.growthRate || 0.6), weeksSince - 1);
+        } else {
+            // Peak then decay
+            const peakFactor = Math.pow(1 + (post.growthRate || 0.6), peakWeek - 1);
+            const weeksPastPeak = weeksSince - peakWeek;
+            factor = peakFactor * Math.pow(1 - (post.decayRate || 0.15), weeksPastPeak);
+        }
+        factor = Math.max(factor, 0.01); // never go below 1% of base
+
+        const rawViews    = Math.floor(post.baseViews * factor);
+        const cappedViews = Math.min(rawViews, viewCap);
+        const grownViews    = cappedViews;
+        const grownLikes    = Math.min(Math.floor(grownViews * (0.03 + Math.random() * 0.05)), Math.floor(viewCap * 0.08));
+        const grownComments = Math.floor(grownLikes * (0.04 + Math.random() * 0.04));
+
+        const userLikeBonus = post.liked ? 1 : 0;
+        post.views    = grownViews;
+        post.likes    = grownLikes + userLikeBonus;
+        post.comments = grownComments;
+        changed = true;
+    });
+
+    if (changed) {
+        await vibetokDB.putAll(data.posts).catch(() => {});
+        data.user.likes = data.posts.reduce((sum, p) => sum + (p.likes || 0), 0);
+    }
+}
+
+/* ────────────────────────────────
+   Sound Promotion
+──────────────────────────────── */
+const PROMO_TIERS = [
+    { name: 'Spark',  cost: 50000,    chance: 0.40, peak: 1.2, label: '🔥', desc: 'Small push, decent odds' },
+    { name: 'Push',   cost: 250000,   chance: 0.55, peak: 1.4, label: '📢', desc: 'Noticeable boost in algo' },
+    { name: 'Surge',  cost: 1000000,  chance: 0.65, peak: 1.6, label: '⚡', desc: 'Surge in all platforms' },
+    { name: 'Viral',  cost: 5000000,  chance: 0.75, peak: 1.8, label: '🚀', desc: 'Cross-platform viral push' },
+    { name: 'Legend', cost: 15000000, chance: 0.85, peak: 2.0, label: '👑', desc: 'Industry-level campaign' },
+];
+const PROMO_DECAY_WEEKS = 10; // multiplier decays back to 1.0 over 10 weeks
+
+let promoCurrentSong = '';
+
+function openPromoPage(title, cover) {
+    promoCurrentSong = title;
+    document.getElementById('promo-title').textContent = title;
+    const coverEl = document.getElementById('promo-cover');
+    if (cover) {
+        coverEl.style.backgroundImage = `url('${cover}')`;
+        coverEl.innerHTML = '';
+    } else {
+        coverEl.style.backgroundImage = '';
+        coverEl.innerHTML = '<svg width="20" height="20" fill="#555" viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>';
+    }
+
+    // Balance
+    const money = parseFloat(localStorage.getItem('money') || '0');
+    document.getElementById('promo-balance').textContent = formatMoney(money);
+
+    // Check if this song was ever promoted
+    const everPromoted = JSON.parse(localStorage.getItem('vibetokPromotedSongs') || '[]');
+    const alreadyPromoted = everPromoted.includes(title);
+
+    // Active boost banner
+    const boosts = JSON.parse(localStorage.getItem('vibetokPromoBoosts') || '[]');
+    const active = boosts.find(b => b.songName === title);
+    const banner = document.getElementById('promo-active-banner');
+    if (alreadyPromoted) {
+        banner.style.display = 'block';
+        banner.style.background = 'rgba(255,255,255,.05)';
+        banner.style.borderColor = 'rgba(255,255,255,.1)';
+        banner.style.color = '#555';
+        banner.textContent = active
+            ? `Boost active: ×${active.currentMultiplier.toFixed(2)} — ${active.weeksLeft} weeks remaining`
+            : '✅ This song has already been promoted. One campaign per song.';
+    } else {
+        banner.style.display = 'none';
+    }
+
+    // Render tiers
+    const tiersEl = document.getElementById('promo-tiers');
+    tiersEl.innerHTML = '';
+
+    if (alreadyPromoted) {
+        tiersEl.innerHTML = '<div style="text-align:center;padding:40px 20px;color:#333;font-size:14px">No further promotions available for this song.</div>';
+        return;
+    }
+
+    PROMO_TIERS.forEach((tier, i) => {
+        const canAfford = money >= tier.cost;
+        tiersEl.innerHTML += `
+        <div style="background:#111;border:1px solid ${canAfford ? '#2a2a2a' : '#1a1a1a'};border-radius:14px;padding:16px;opacity:${canAfford ? 1 : 0.45}">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+                <div>
+                    <span style="font-size:18px">${tier.label}</span>
+                    <span style="font-weight:800;font-size:16px;margin-left:8px">${tier.name}</span>
+                </div>
+                <div style="text-align:right">
+                    <div style="font-weight:700;color:#FE2C55;font-size:15px">${formatMoney(tier.cost)}</div>
+                    <div style="color:#444;font-size:11px">${Math.round(tier.chance * 100)}% success</div>
+                </div>
+            </div>
+            <div style="color:#555;font-size:12px;margin-bottom:12px">${tier.desc} · Peak ×${tier.peak} · decays over ${PROMO_DECAY_WEEKS} wks</div>
+            <button onclick="startPromo(${i})" ${canAfford ? '' : 'disabled'} style="width:100%;background:${canAfford ? 'var(--primary)' : '#222'};border:none;color:#fff;padding:11px;border-radius:8px;font-weight:700;font-size:14px;cursor:${canAfford ? 'pointer' : 'not-allowed'}">
+                ${canAfford ? 'Promote Now' : 'Not enough funds'}
+            </button>
+        </div>`;
+    });
+
+    document.getElementById('promo-page').style.display = 'flex';
+}
+
+function closePromoPage() {
+    document.getElementById('promo-page').style.display = 'none';
+    document.getElementById('promo-spin-overlay').style.display = 'none';
+    document.getElementById('promo-result-overlay').style.display = 'none';
+}
+
+function formatMoney(n) {
+    if (n >= 1e9) return '$' + (n / 1e9).toFixed(1) + 'B';
+    if (n >= 1e6) return '$' + (n / 1e6).toFixed(1) + 'M';
+    if (n >= 1e3) return '$' + (n / 1e3).toFixed(0) + 'K';
+    return '$' + Math.floor(n);
+}
+
+function startPromo(tierIndex) {
+    const tier = PROMO_TIERS[tierIndex];
+    const money = parseFloat(localStorage.getItem('money') || '0');
+    if (money < tier.cost) return;
+
+    // Deduct money
+    localStorage.setItem('money', (money - tier.cost).toString());
+
+    // Mark as permanently promoted (one-time only)
+    const everPromoted = JSON.parse(localStorage.getItem('vibetokPromotedSongs') || '[]');
+    if (!everPromoted.includes(promoCurrentSong)) everPromoted.push(promoCurrentSong);
+    localStorage.setItem('vibetokPromotedSongs', JSON.stringify(everPromoted));
+
+    closePromoPage();
+
+    // Show spin
+    const spinOverlay = document.getElementById('promo-spin-overlay');
+    spinOverlay.style.display = 'flex';
+
+    setTimeout(() => {
+        spinOverlay.style.display = 'none';
+        const success = Math.random() < tier.chance;
+
+        if (success) {
+            // Save boost to localStorage
+            const boosts = JSON.parse(localStorage.getItem('vibetokPromoBoosts') || '[]');
+            const existing = boosts.findIndex(b => b.songName === promoCurrentSong);
+            const decayPerWeek = (tier.peak - 1.0) / PROMO_DECAY_WEEKS;
+            const newBoost = {
+                songName: promoCurrentSong,
+                currentMultiplier: tier.peak,
+                peakMultiplier: tier.peak,
+                decayPerWeek,
+                weeksLeft: PROMO_DECAY_WEEKS
+            };
+            if (existing >= 0) boosts[existing] = newBoost;
+            else boosts.push(newBoost);
+            localStorage.setItem('vibetokPromoBoosts', JSON.stringify(boosts));
+        }
+
+        // Show result
+        const resultOverlay = document.getElementById('promo-result-overlay');
+        document.getElementById('result-emoji').textContent = success ? '🎉' : '💸';
+        document.getElementById('result-title').textContent = success ? 'Campaign Successful!' : 'Campaign Failed';
+        document.getElementById('result-desc').textContent = success
+            ? `${promoCurrentSong} gets a ×${tier.peak} stream boost that decays over ${PROMO_DECAY_WEEKS} weeks. Check your weekly streams!`
+            : `The ${tier.name} campaign didn't land this time. ${formatMoney(tier.cost)} spent. Try again or go bigger.`;
+        resultOverlay.style.display = 'flex';
+    }, 2200);
+}
+
+function closePromoResult() {
+    document.getElementById('promo-result-overlay').style.display = 'none';
+}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>

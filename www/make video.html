@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MV Creation Studio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:Inter,sans-serif;background:linear-gradient(135deg,#0f0f23 0%,#1a1a2e 50%,#16213e 100%);min-height:100vh;color:#fff;overflow-x:hidden}.container{max-width:420px;margin:0 auto;padding:20px;position:relative}.header{text-align:center;margin-bottom:30px;position:relative}.header::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:120px;height:6px;background:linear-gradient(90deg,#ff3366,#6366f1,#06b6d4,#10b981);border-radius:3px;animation:glow 2s infinite alternate}@keyframes glow{0%{box-shadow:0 0 20px rgba(255,51,102,.5)}100%{box-shadow:0 0 30px rgba(16,185,129,.7)}}h1{font-size:2.5em;font-weight:900;margin-top:20px;background:linear-gradient(45deg,#fff,#e2e8f0,#94a3b8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.03em}.video-type-selector{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;margin:30px 0;padding:0 5px}.type-btn{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:20px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .4s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(20px);position:relative;overflow:hidden}.type-btn.active{background:rgba(99,102,241,.2);border-color:#6366f1;transform:translateY(-4px);box-shadow:0 15px 40px rgba(99,102,241,.3)}.type-icon{font-size:1.8em;margin-bottom:10px;display:block;color:#94a3b8;transition:color .3s}.type-btn.active .type-icon{color:#6366f1}.type-label{font-size:.85em;font-weight:600;opacity:.9;text-transform:uppercase;letter-spacing:.5px}.form-group{margin:25px 0;position:relative}.form-group label{display:block;margin-bottom:10px;font-weight:600;font-size:.9em;opacity:.9;text-transform:uppercase;letter-spacing:.5px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:16px 20px;background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;color:#fff;font-size:.95em;transition:all .3s;backdrop-filter:blur(20px);font-weight:400}.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:0;border-color:#6366f1;background:rgba(15,23,42,.9);box-shadow:0 0 0 6px rgba(99,102,241,.1)}.form-group input::placeholder,.form-group textarea::placeholder{color:rgba(148,163,184,.6)}.form-group select option{background:#1e293b;color:#fff}.song-selector{margin:25px 0;position:relative}.song-toggle{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;padding:16px 20px;cursor:pointer;transition:all .3s;backdrop-filter:blur(20px);display:flex;justify-content:space-between;align-items:center}.song-toggle:hover{background:rgba(51,65,85,.3)}.song-toggle.active{border-color:#6366f1;background:rgba(99,102,241,.1)}.song-search{margin:15px 0;position:relative}.song-search input{padding-left:45px}.song-search .fa-search{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:#94a3b8;z-index:1}.song-panel{max-height:0;overflow:hidden;transition:max-height .3s}.song-panel.open{max-height:300px;overflow-y:auto}.song-item{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;padding:16px 20px;margin:10px 0;cursor:pointer;transition:all .3s;backdrop-filter:blur(20px)}.song-item:hover{background:rgba(51,65,85,.3);transform:translateX(6px)}.song-item.selected{background:rgba(99,102,241,.2);border-color:#6366f1;box-shadow:0 4px 20px rgba(99,102,241,.2)}.song-name{font-weight:700;font-size:.95em;margin-bottom:4px}.song-streams{font-size:.8em;opacity:.7;color:#94a3b8}.crew-section{margin:25px 0}.crew-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:15px 0}.crew-select{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;padding:16px;backdrop-filter:blur(20px)}.crew-select label{font-size:.8em;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;display:block;opacity:.8}.crew-select select{background:0 0;border:0;color:#fff;width:100%;font-size:.9em;font-weight:500}.distributor-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0}.distributor-card{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;backdrop-filter:blur(20px)}.distributor-card.selected{background:rgba(99,102,241,.2);border-color:#6366f1;transform:scale(1.05);box-shadow:0 8px 30px rgba(99,102,241,.3)}.distributor-logo{width:60px;height:30px;margin:0 auto 10px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7em;letter-spacing:1px}.mevo-logo{background:linear-gradient(45deg,#f00,#c00);color:#fff}.mv1-logo{background:linear-gradient(45deg,#ffd700,#ffb700);color:#000}.distributor-name{font-weight:700;font-size:.9em;margin-bottom:6px}.distributor-fee{font-size:.8em;opacity:.8;color:#10b981}.cost-display{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;padding:20px;margin:20px 0;text-align:center;backdrop-filter:blur(20px)}.cost-amount{font-size:1.5em;font-weight:800;color:#10b981;margin-bottom:8px}.cost-label{font-size:.9em;opacity:.8}.file-input{position:relative;overflow:hidden;display:inline-block;width:100%}.file-input input[type=file]{position:absolute;left:-9999px}.file-input-label{background:rgba(15,23,42,.8);border:2px dashed rgba(51,65,85,.6);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all .3s;display:block}.file-input-label:hover{border-color:#6366f1;background:rgba(99,102,241,.1)}.file-preview{border-radius:12px;display:block;width:100%;}.video-list{margin:25px 0}.video-item{background:rgba(15,23,42,.8);border:2px solid rgba(51,65,85,.6);border-radius:16px;padding:20px;margin:10px 0;display:flex;align-items:center;gap:15px}.video-cover{width:100%;height:100%;border-radius:12px;object-fit:cover;background:rgba(51,65,85,.3)}.video-info{flex:1}.video-title{font-weight:700;font-size:1em;margin-bottom:5px}.video-meta{font-size:.8em;opacity:.7;color:#94a3b8}.video-actions{display:flex;gap:10px}.btn{padding:18px;border:0;border-radius:16px;font-weight:700;font-size:.95em;cursor:pointer;transition:all .4s;text-transform:uppercase;letter-spacing:1px}.btn-primary{background:linear-gradient(45deg,#ff3366,#e11d48);color:#fff;box-shadow:0 8px 25px rgba(255,51,102,.4)}.btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(255,51,102,.6)}.btn-primary:disabled{background:#666;cursor:not-allowed;transform:none;box-shadow:none}.btn-secondary{background:rgba(15,23,42,.8);color:#fff;border:2px solid rgba(51,65,85,.6);backdrop-filter:blur(20px)}.btn-secondary:hover{background:rgba(51,65,85,.3);transform:translateY(-2px);border-color:#6366f1}.btn-small{padding:8px 16px;font-size:.8em}.success-popup{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(.8);background:rgba(15,23,42,.95);backdrop-filter:blur(30px);border-radius:24px;padding:40px;text-align:center;z-index:1000;opacity:0;transition:all .5s;border:2px solid rgba(16,185,129,.3)}.success-popup.show{opacity:1;transform:translate(-50%,-50%) scale(1)}.success-icon{font-size:4.5em;margin-bottom:20px;color:#10b981}.success-title{font-size:1.5em;font-weight:800;margin-bottom:12px;background:linear-gradient(45deg,#10b981,#06b6d4);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.success-text{opacity:.8;font-size:.9em;font-weight:500}.back-btn{position:fixed;top:25px;left:25px;background:rgba(15,23,42,.9);border:2px solid rgba(51,65,85,.6);border-radius:50%;width:55px;height:55px;display:flex;align-items:center;justify-content:center;color:#fff;text-decoration:none;font-size:1.3em;transition:all .3s;backdrop-filter:blur(20px);z-index:100}.back-btn:hover{background:rgba(99,102,241,.2);border-color:#6366f1;transform:translateY(-3px)}
+
+/* WATERMARK STYLES */
+.video-cover-container { position: relative; width: 80px; height: 80px; flex-shrink: 0; }
+.watermark { position: absolute; z-index: 10; opacity: 0.95; pointer-events: none; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); }
+.mevo-watermark { bottom: 5px; right: 6px; font-family: 'Arial Black', sans-serif; font-size: 13px; color: #fff; letter-spacing: -0.5px; text-transform: lowercase; }
+.mevo-watermark::before { content: 'vevo'; }
+.mv1-watermark { top: 4px; right: 5px; font-family: Impact, sans-serif; font-size: 14px; color: #fff; letter-spacing: 1px; }
+.mv1-watermark::before { content: 'MTV'; }
+
+@media (max-width:480px){.container{padding:15px}.video-type-selector{grid-template-columns:1fr;gap:12px}.distributor-grid,.crew-grid{grid-template-columns:1fr}h1{font-size:2.2em}}
+</style>
+</head>
+<body>
+<a href="javascript:history.back()" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+<div class="container">
+<div class="header"><h1>MV Creation Studio</h1></div>
+<div class="video-type-selector">
+<div class="type-btn active" data-type="music-video">
+<span class="type-icon"><i class="fas fa-film"></i></span>
+<span class="type-label">Music Video</span>
+</div>
+<div class="type-btn" data-type="vlog">
+<span class="type-icon"><i class="fas fa-video"></i></span>
+<span class="type-label">Vlog</span>
+</div>
+<div class="type-btn" data-type="lyric-video">
+<span class="type-icon"><i class="fas fa-music"></i></span>
+<span class="type-label">Lyric Video</span>
+</div>
+</div>
+<div class="form-group">
+<label><i class="fas fa-heading"></i> Video Title</label>
+<input type="text" id="video-title" placeholder="Enter video title...">
+</div>
+<div class="song-selector" id="song-selector">
+<label><i class="fas fa-music"></i> Select Song</label>
+<div class="song-toggle" id="song-toggle">
+<span id="selected-song-text">Choose a song...</span>
+<i class="fas fa-chevron-down" id="toggle-arrow"></i>
+</div>
+<div class="song-panel" id="song-panel">
+<div class="song-search">
+<i class="fas fa-search"></i>
+<input type="text" id="song-search" placeholder="Search songs...">
+</div>
+<div id="song-list"></div>
+</div>
+</div>
+<div class="form-group">
+<label><i class="fas fa-image"></i> Video Cover Art</label>
+<div class="file-input">
+<input type="file" id="cover-art" accept="image/*">
+<label for="cover-art" class="file-input-label" id="file-input-label">
+<i class="fas fa-upload"></i><br>
+Upload Cover Art
+</label>
+<div id="cover-preview-container" style="display:none; position:relative; max-width:100px; margin:10px auto;">
+    <img id="cover-preview" class="file-preview">
+    <div id="preview-watermark" class="watermark mevo-watermark"></div>
+</div>
+</div>
+</div>
+<div class="form-group" id="desc-group">
+<label><i class="fas fa-align-left"></i> Description</label>
+<textarea id="description" rows="3" placeholder="Describe your video concept..."></textarea>
+</div>
+<div class="crew-section">
+<label><i class="fas fa-users"></i> Production Crew</label>
+<div class="crew-grid">
+<div class="crew-select">
+<label>Director</label>
+<select id="director">
+<option value="">Select Director</option>
+<option value="Marcus Chen" data-cost="45000">Marcus Chen - $45K</option>
+<option value="Sofia Rodriguez" data-cost="65000">Sofia Rodriguez - $65K</option>
+<option value="James Thompson" data-cost="85000">James Thompson - $85K</option>
+<option value="Ava Kim" data-cost="110000">Ava Kim - $110K</option>
+<option value="Tyler Brooks" data-cost="150000">Tyler Brooks - $150K</option>
+<option value="David Fincher" data-cost="300000">David Fincher - $300K</option>
+<option value="Spike Jonze" data-cost="250000">Spike Jonze - $250K</option>
+<option value="Michel Gondry" data-cost="200000">Michel Gondry - $200K</option>
+</select>
+</div>
+<div class="crew-select">
+<label>Choreographer</label>
+<select id="choreographer">
+<option value="" data-cost="0">None</option>
+<option value="Jenna Martinez" data-cost="15000">Jenna Martinez - $15K</option>
+<option value="Alex Johnson" data-cost="25000">Alex Johnson - $25K</option>
+<option value="Maya Patel" data-cost="35000">Maya Patel - $35K</option>
+<option value="Carlos Rivera" data-cost="50000">Carlos Rivera - $50K</option>
+<option value="Fatima Al-Rashid" data-cost="65000">Fatima Al-Rashid - $65K</option>
+<option value="JaQuel Knight" data-cost="100000">JaQuel Knight - $100K</option>
+</select>
+</div>
+<div class="crew-select">
+<label>Makeup Artist</label>
+<select id="makeup">
+<option value="" data-cost="0">None</option>
+<option value="Emma Thompson" data-cost="8000">Emma Thompson - $8K</option>
+<option value="Rico Santana" data-cost="12000">Rico Santana - $12K</option>
+<option value="Zoe Chen" data-cost="18000">Zoe Chen - $18K</option>
+<option value="Pat McGrath" data-cost="35000">Pat McGrath - $35K</option>
+<option value="Isamaya Ffrench" data-cost="45000">Isamaya Ffrench - $45K</option>
+</select>
+</div>
+<div class="crew-select">
+<label>Location</label>
+<select id="location">
+<option value="" data-cost="0">Studio</option>
+<option value="Los Angeles Studio" data-cost="10000">LA Studio - $10K</option>
+<option value="New York Rooftop" data-cost="20000">NYC Rooftop - $20K</option>
+<option value="Miami Beach" data-cost="25000">Miami Beach - $25K</option>
+<option value="London Streets" data-cost="30000">London Streets - $30K</option>
+<option value="Tokyo Neon District" data-cost="40000">Tokyo Neon - $40K</option>
+<option value="Dubai Desert" data-cost="50000">Dubai Desert - $50K</option>
+<option value="Iceland Glacier" data-cost="75000">Iceland - $75K</option>
+</select>
+</div>
+</div>
+</div>
+<div class="cost-display">
+<div class="cost-amount" id="total-cost">$0</div>
+<div class="cost-label">Total Production Cost</div>
+</div>
+<div class="form-group">
+<label><i class="fas fa-broadcast-tower"></i> Distributor</label>
+<div class="distributor-grid">
+<div class="distributor-card" data-distributor="MV-1">
+<div class="distributor-logo mv1-logo">MTV</div>
+<div class="distributor-name">MV-1</div>
+<div class="distributor-fee">15% Fee</div>
+</div>
+<div class="distributor-card selected" data-distributor="MEVO">
+<div class="distributor-logo mevo-logo">VEVO</div>
+<div class="distributor-name">MEVO</div>
+<div class="distributor-fee">10% Fee</div>
+</div>
+</div>
+</div>
+<div class="form-group">
+<button class="btn btn-primary" id="create-btn" style="width:100%" onclick="createVideo()"><i class="fas fa-video"></i> Create Video</button>
+</div>
+<div class="video-list">
+<label><i class="fas fa-list"></i> Your Videos</label>
+<div id="video-list"></div>
+</div>
+</div>
+<div class="success-popup" id="success-popup">
+<div class="success-icon"><i class="fas fa-check-circle"></i></div>
+<div class="success-title">Video Created!</div>
+<div class="success-text">Your video has been successfully created.</div>
+</div>
+<script>
+// --- INDEXEDDB HELPER ---
+const dbPromise = new Promise((resolve, reject) => {
+    const req = indexedDB.open('MusicExcellenceDB', 1);
+    req.onupgradeneeded = (e) => e.target.result.createObjectStore('images');
+    req.onsuccess = (e) => resolve(e.target.result);
+    req.onerror = (e) => reject(e.target.error);
+});
+async function saveImageToDB(key, data) {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').put(data, key);
+    return new Promise(r => tx.oncomplete = r);
+}
+async function getImageFromDB(key) {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readonly');
+    const req = tx.objectStore('images').get(key);
+    return new Promise(r => req.onsuccess = () => r(req.result));
+}
+async function clearImageDB() {
+    const db = await dbPromise;
+    const tx = db.transaction('images', 'readwrite');
+    tx.objectStore('images').clear();
+    return new Promise(r => tx.oncomplete = r);
+}
+// ------------------------
+
+    let currentVideoType='music-video',selectedSong=null,selectedDistributor='MEVO',coverArtData=null,allSongs=[];
+
+function toggleSongSelector(){
+    const s=document.getElementById('song-selector');
+    const descGroup = document.getElementById('desc-group');
+    if(currentVideoType==='music-video'||currentVideoType==='lyric-video'){
+        s.style.display='block';
+        loadSongs();
+        if(selectedSong){
+            document.getElementById('video-title').value = selectedSong + (currentVideoType === 'music-video' ? ' [Official Music Video]' : ' [Official Lyric Video]');
+            descGroup.style.display = 'none';
+        }
+    }else{
+        s.style.display='none';
+        selectedSong=null;
+        document.getElementById('selected-song-text').textContent='Choose a song...';
+        document.querySelectorAll('.song-item').forEach(i=>i.classList.remove('selected'));
+        document.getElementById('video-title').value = '';
+        descGroup.style.display = 'block';
+    }
+}
+
+document.querySelectorAll('.type-btn').forEach(btn=>{btn.addEventListener('click',()=>{document.querySelectorAll('.type-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');currentVideoType=btn.dataset.type;toggleSongSelector()})});
+document.getElementById('song-toggle').addEventListener('click',()=>{const panel=document.getElementById('song-panel'),arrow=document.getElementById('toggle-arrow'),toggle=document.getElementById('song-toggle');panel.classList.toggle('open');arrow.style.transform=panel.classList.contains('open')?'rotate(180deg)':'rotate(0deg)';toggle.classList.toggle('active')});
+document.getElementById('song-search').addEventListener('input',e=>{const query=e.target.value.toLowerCase();const filtered=allSongs.filter(song=>song.songName.toLowerCase().includes(query));displaySongs(filtered)});
+function loadSongs(){const songs=JSON.parse(localStorage.getItem('releasedSongs'))||[];allSongs=songs.sort((a,b)=>new Date(b.releaseDate||0)-new Date(a.releaseDate||0));displaySongs(allSongs)}
+function displaySongs(songs){const songList=document.getElementById('song-list');if(songs.length===0){songList.innerHTML='<div style="text-align:center;opacity:0.6;padding:20px;">No songs available</div>';return}songList.innerHTML=songs.map(song=>`<div class="song-item" onclick="selectSong('${song.songName}')"><div class="song-name">${song.songName}</div><div class="song-streams">${(song.streams||0).toLocaleString()} streams</div></div>`).join('')}
+
+function selectSong(songName){
+    selectedSong=songName;
+    document.getElementById('selected-song-text').textContent=songName;
+    document.querySelectorAll('.song-item').forEach(item=>item.classList.remove('selected'));
+    event.target.closest('.song-item').classList.add('selected');
+    document.getElementById('song-panel').classList.remove('open');
+    document.getElementById('toggle-arrow').style.transform='rotate(0deg)';
+    document.getElementById('song-toggle').classList.remove('active');
+    
+    if(currentVideoType === 'music-video'){
+        document.getElementById('video-title').value = songName + ' [Official Music Video]';
+        document.getElementById('desc-group').style.display = 'none';
+    } else if (currentVideoType === 'lyric-video') {
+        document.getElementById('video-title').value = songName + ' [Official Lyric Video]';
+        document.getElementById('desc-group').style.display = 'none';
+    }
+}
+
+document.getElementById('cover-art').addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(file){
+        const reader = new FileReader();
+        reader.onload = function(event){
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 400; // Shrinks image down
+                const scaleSize = MAX_WIDTH / img.width;
+                canvas.width = MAX_WIDTH;
+                canvas.height = img.height * scaleSize;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                
+                // Compress to WebP at 60% quality (keeps file sizes tiny, ~20-50kb)
+                coverArtData = canvas.toDataURL('image/webp', 0.6);
+
+                const preview = document.getElementById('cover-preview');
+                const container = document.getElementById('cover-preview-container');
+                preview.src = coverArtData;
+                container.style.display = 'block';
+                document.getElementById('file-input-label').style.display = 'none';
+            }
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+
+document.querySelectorAll('.distributor-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+        document.querySelectorAll('.distributor-card').forEach(c=>c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedDistributor=card.dataset.distributor;
+        const wm = document.getElementById('preview-watermark');
+        if(wm){
+            wm.className = 'watermark ' + (selectedDistributor === 'MEVO' ? 'mevo-watermark' : 'mv1-watermark');
+        }
+    })
+});
+
+function updateTotalCost(){const director=document.getElementById('director');const choreographer=document.getElementById('choreographer');const makeup=document.getElementById('makeup');const location=document.getElementById('location');let total=0;if(director.value)total+=parseInt(director.options[director.selectedIndex].dataset.cost||0);if(choreographer.value)total+=parseInt(choreographer.options[choreographer.selectedIndex].dataset.cost||0);if(makeup.value)total+=parseInt(makeup.options[makeup.selectedIndex].dataset.cost||0);if(location.value)total+=parseInt(location.options[location.selectedIndex].dataset.cost||0);document.getElementById('total-cost').textContent='$'+total.toLocaleString();const currentMoney=parseFloat(localStorage.getItem('money'))||10000;const createBtn=document.getElementById('create-btn');createBtn.disabled=currentMoney<total;return total}
+document.querySelectorAll('#director,#choreographer,#makeup,#location').forEach(select=>{select.addEventListener('change',updateTotalCost)});
+
+function createVideo(){
+    const title = document.getElementById('video-title').value.trim();
+    const description = document.getElementById('description').value.trim();
+    const director = document.getElementById('director').value;
+    const choreographer = document.getElementById('choreographer').value || 'None';
+    const makeup = document.getElementById('makeup').value || 'None';
+    const location = document.getElementById('location').value || 'Studio';
+    
+    const totalCost = updateTotalCost();
+
+    // VALIDATION
+    if(!title){
+        alert('Please enter a video title');
+        return;
+    }
+
+    if((currentVideoType==='music-video'||currentVideoType==='lyric-video') && !selectedSong){
+        alert('Please select a song for this video type');
+        return;
+    }
+
+    if(!director){
+        alert('Please select a director');
+        return;
+    }
+
+    const currentMoney = parseFloat(localStorage.getItem('money')) || 10000;
+    if(currentMoney < totalCost){
+        alert('Not enough money for this production!');
+        return;
+    }
+
+    // 💰 Deduct money
+    localStorage.setItem('money', (currentMoney - totalCost).toString());
+
+    // 🖼️ SAVE IMAGE TO INDEXEDDB
+    const imageKey = coverArtData ? 'img_' + Date.now() : null;
+    if (imageKey) {
+        saveImageToDB(imageKey, coverArtData);
+    }
+
+    // 🎬 CREATE VIDEO OBJECT
+    const createdVideo = {
+        id: Date.now(),
+        title: title,
+        type: currentVideoType,
+        songName: selectedSong,
+        description: description,
+        director: director,
+        choreographer: choreographer,
+        makeup: makeup,
+        location: location,
+        budget: totalCost,
+        distributor: selectedDistributor,
+        views: 0,
+        published: false,
+        createdDate: localStorage.getItem('currentDate') || new Date().toISOString(),
+        publishedDate: null,
+
+        // ✅ FIXED
+        coverArt: imageKey,
+
+        lastProcessedStreams: 0,
+        lastProcessedSubs: 0
+    };
+
+    // 💾 SAVE VIDEO
+    let videos = JSON.parse(localStorage.getItem('musicVideos')) || [];
+    videos.push(createdVideo);
+    localStorage.setItem('musicVideos', JSON.stringify(videos));
+
+    // ✅ SUCCESS POPUP
+    const popup = document.getElementById('success-popup');
+    popup.classList.add('show');
+    setTimeout(() => {
+        popup.classList.remove('show');
+    }, 3000);
+
+    // 🔄 RESET + RELOAD
+    resetForm();
+    loadVideos();
+}
+async function loadVideos(){
+    const videos = JSON.parse(localStorage.getItem('musicVideos')) || [];
+    const videoList = document.getElementById('video-list');
+
+    if(videos.length === 0){
+        videoList.innerHTML = '<div style="text-align:center;opacity:0.6;padding:20px;">No videos created yet</div>';
+        return;
+    }
+
+    // 🧱 Render videos first
+    videoList.innerHTML = videos.map(video => `
+    <div class="video-item">
+        <div class="video-cover-container">
+            <img 
+                data-src="${video.coverArt || ''}" 
+                src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjMzMzNzU1Ii8+CjxwYXRoIGQ9Ik0zNSAzMEw0NSA0MEwzNSA1MFYzMFoiIGZpbGw9IiM5NGEzYjgiLz4KPC9zdmc+" 
+                alt="Video Cover" 
+                class="video-cover db-img"
+            >
+            <div class="watermark ${video.distributor === 'MEVO' ? 'mevo-watermark' : 'mv1-watermark'}"></div>
+        </div>
+        <div class="video-info">
+            <div class="video-title">${video.title}</div>
+            <div class="video-meta">
+                ${video.type.replace('-',' ').toUpperCase()} • 
+                ${video.views.toLocaleString()} views
+                ${video.songName ? ' • ' + video.songName : ''}
+            </div>
+        </div>
+        <div class="video-actions">
+            ${
+                !video.published
+                ? `<button class="btn btn-primary btn-small" onclick="publishVideo(${video.id})">
+                        <i class="fas fa-upload"></i> Publish
+                   </button>`
+                : `<span style="color:#10b981;font-size:0.8em;font-weight:600;">PUBLISHED</span>`
+            }
+        </div>
+    </div>
+    `).join('');
+
+    // 🖼️ LOAD IMAGES (YOUR VERSION ✅)
+    document.querySelectorAll('.db-img').forEach(async (img) => {
+        const key = img.getAttribute('data-src');
+
+        if (key && key.startsWith('img_')) {
+            const data = await getImageFromDB(key);
+            if (data) img.src = data;
+        } 
+        else if (key && key.startsWith('data:image')) {
+            img.src = key; // fallback for old saves
+        }
+    });
+}
+
+function publishVideo(videoId){let videos=JSON.parse(localStorage.getItem('musicVideos'))||[];const video=videos.find(v=>v.id===videoId);if(video){video.published=true;video.publishedDate = localStorage.getItem('currentDate') || new Date().toISOString();if(!video.lastProcessedSubs)video.lastProcessedSubs=parseInt(localStorage.getItem('subscriberCount'))||1000;localStorage.setItem('musicVideos',JSON.stringify(videos));if(!localStorage.getItem('subscriberCount')){localStorage.setItem('subscriberCount','1000')}alert('Video published successfully!');loadVideos()}}
+
+function resetForm(){
+    document.getElementById('video-title').value='';
+    document.getElementById('description').value='';
+    document.getElementById('director').value='';
+    document.getElementById('choreographer').value='';
+    document.getElementById('makeup').value='';
+    document.getElementById('location').value='';
+    document.getElementById('cover-art').value='';
+    document.getElementById('cover-preview-container').style.display='none';
+    document.getElementById('file-input-label').style.display='block';
+    document.getElementById('selected-song-text').textContent='Choose a song...';
+    document.getElementById('desc-group').style.display='block';
+    selectedSong=null;
+    coverArtData=null;
+    document.querySelectorAll('.song-item').forEach(item=>item.classList.remove('selected'));
+    updateTotalCost();
+}
+
+function updateVideoViews(){let videos=JSON.parse(localStorage.getItem('musicVideos'))||[];const songs=JSON.parse(localStorage.getItem('releasedSongs'))||[];const currentSubs=parseInt(localStorage.getItem('subscriberCount'))||1000;let updated=false;videos.forEach(video=>{if(!video.published)return;const pubDate=new Date(video.publishedDate);const daysSince=Math.floor((Date.now()-pubDate.getTime())/(1000*60*60*24));if(video.type==='music-video'&&video.songName){const song=songs.find(s=>s.songName===video.songName);if(song&&song.weeklyStreams){const lastProcessed=video.lastProcessedStreams||0;const newStreams=song.weeklyStreams-lastProcessed;if(newStreams>0){const newViews=Math.floor(newStreams/5);video.views=(video.views||0)+newViews;video.lastProcessedStreams=song.weeklyStreams;updated=true}}}else if(video.type==='lyric-video'&&video.songName){const song=songs.find(s=>s.songName===video.songName);if(song&&song.weeklyStreams){const lastProcessed=video.lastProcessedStreams||0;const newStreams=song.weeklyStreams-lastProcessed;if(newStreams>0){const newViews=Math.floor(newStreams/11.5);video.views=(video.views||0)+newViews;video.lastProcessedStreams=song.weeklyStreams;updated=true}}}else if(video.type==='vlog'&&daysSince>=1){const lastProcessed=video.lastProcessedSubs||0;if(currentSubs>lastProcessed){const baseViews=Math.floor(currentSubs*0.15);const randomFactor=0.8+Math.random()*0.4;const newViews=Math.floor(baseViews*randomFactor);video.views=(video.views||0)+newViews;video.lastProcessedSubs=currentSubs;updated=true}}});if(updated){localStorage.setItem('musicVideos',JSON.stringify(videos))}}
+document.addEventListener('DOMContentLoaded',()=>{toggleSongSelector();updateVideoViews();loadVideos();updateTotalCost();setInterval(updateVideoViews,30000)});
+</script>
+</body>
+</html>

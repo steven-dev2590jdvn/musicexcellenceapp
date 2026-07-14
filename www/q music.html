@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>Q Music - Premium Artist Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --q-cyan: #00E1D9; /* Vibrant Cyan */
+        --q-cyan-dark: #00a19b;
+        --q-dark: #05070A; /* Deep Space Black */
+        --q-card: rgba(25, 28, 33, 0.6); /* Translucent Card */
+        --q-text-sec: #8A939E; /* Secondary Text */
+        --q-border: rgba(255, 255, 255, 0.08);
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        background: var(--q-dark);
+        color: #fff;
+        overflow-x: hidden;
+        padding-bottom: 90px;
+    }
+
+    /* --- UTILITIES & LAYOUT --- */
+    .screen { 
+        display: none; 
+        min-height: 100vh; 
+        width: 100%; 
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+    .screen.active { display: block; }
+    button { cursor: pointer; border: none; outline: none; font-family: inherit; }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* --- HERO HEADER --- */
+    .header {
+        position: relative;
+        height: 380px;
+        background: radial-gradient(circle at top, #1a2530 0%, var(--q-dark) 100%);
+        overflow: hidden;
+    }
+    .header-bg {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        background: #111;
+        overflow: hidden;
+    }
+    .header-bg img { 
+        width: 100%; height: 100%; object-fit: cover; 
+        opacity: 0.5; filter: blur(2px) contrast(1.1);
+        transition: transform 0.5s ease;
+    }
+    .header-overlay {
+        position: absolute; bottom: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, transparent 20%, var(--q-dark) 100%);
+    }
+
+    .artist-info {
+        position: absolute;
+        bottom: 25px;
+        left: 20px;
+        right: 20px;
+        z-index: 10;
+    }
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: var(--q-cyan);
+        margin-bottom: 10px;
+        font-weight: 800;
+        background: rgba(0, 225, 217, 0.1);
+        padding: 4px 10px;
+        border-radius: 12px;
+        backdrop-filter: blur(5px);
+    }
+    .artist-name {
+        font-size: clamp(36px, 8vw, 64px);
+        font-weight: 900;
+        margin-bottom: 8px;
+        line-height: 1.05;
+        letter-spacing: -1px;
+        text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+    }
+    .followers-count {
+        font-size: 14px;
+        color: #e0e0e0;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* --- CONTROLS --- */
+    .controls {
+        padding: 0 20px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        position: relative;
+        z-index: 15;
+    }
+    .play-btn {
+        background: linear-gradient(135deg, var(--q-cyan), #00b4cc);
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #000;
+        font-size: 22px;
+        box-shadow: 0 8px 25px rgba(0, 225, 217, 0.4);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .play-btn:hover { transform: scale(1.05); }
+    .play-btn:active { transform: scale(0.95); }
+    
+    .follow-btn {
+        background: rgba(255,255,255,0.08);
+        color: #fff;
+        padding: 12px 28px;
+        border-radius: 30px;
+        font-size: 14px;
+        font-weight: 700;
+        border: 1px solid var(--q-border);
+        backdrop-filter: blur(15px);
+        transition: all 0.2s ease;
+    }
+    .follow-btn:active { background: rgba(255,255,255,0.15); transform: scale(0.98); }
+
+    /* --- TABS --- */
+    .tabs {
+        display: flex;
+        gap: 35px;
+        padding: 0 20px;
+        margin-bottom: 25px;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .tab {
+        padding: 16px 0;
+        font-size: 15px;
+        color: var(--q-text-sec);
+        font-weight: 700;
+        position: relative;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+    .tab:hover { color: #fff; }
+    .tab.active { color: var(--q-cyan); }
+    .tab.active::after {
+        content: '';
+        position: absolute; bottom: -1px; left: 0; width: 100%; height: 3px;
+        background: var(--q-cyan);
+        border-radius: 3px 3px 0 0;
+        box-shadow: 0 -2px 10px rgba(0, 225, 217, 0.5);
+    }
+
+    /* --- CONTENT & LISTS --- */
+    .content { padding: 0 20px; }
+    
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 18px;
+        margin-top: 30px;
+    }
+    .section-title { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .see-all { color: var(--q-cyan); font-size: 13px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; }
+
+    .song-list { list-style: none; }
+    .song-item {
+        display: flex;
+        align-items: center;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        background: var(--q-card);
+        border: 1px solid var(--q-border);
+        border-radius: 12px;
+        transition: all 0.2s ease;
+        backdrop-filter: blur(10px);
+    }
+    .song-item:hover { background: rgba(255,255,255,0.05); border-color: rgba(0, 225, 217, 0.3); transform: translateX(4px); }
+    
+    .song-rank {
+        width: 28px;
+        font-size: 15px;
+        color: var(--q-cyan);
+        font-weight: 800;
+    }
+    .song-art {
+        width: 52px; height: 52px;
+        border-radius: 6px;
+        background: #222;
+        margin: 0 16px 0 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+    .song-art img { width: 100%; height: 100%; object-fit: cover; }
+    .song-details { flex: 1; min-width: 0; }
+    .song-title { font-size: 16px; font-weight: 700; margin-bottom: 4px; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .song-meta { font-size: 13px; color: var(--q-text-sec); display: flex; align-items: center; gap: 6px; }
+    
+    .explicit-tag { 
+        background: rgba(255,255,255,0.1);
+        color: #fff; 
+        font-size: 9px; 
+        font-weight: 800;
+        padding: 2px 5px; 
+        border-radius: 4px;
+    }
+
+    /* --- ALBUMS SCROLLER --- */
+    .scroller {
+        display: flex;
+        gap: 16px;
+        overflow-x: auto;
+        padding-bottom: 20px;
+        scrollbar-width: none;
+    }
+    .scroller::-webkit-scrollbar { display: none; }
+    
+    .album-card {
+        width: 160px;
+        flex-shrink: 0;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .album-card:hover { transform: translateY(-4px); }
+    .album-art {
+        width: 160px; height: 160px;
+        border-radius: 12px;
+        background: #222;
+        margin-bottom: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        overflow: hidden;
+        border: 1px solid var(--q-border);
+    }
+    .album-art img { width: 100%; height: 100%; object-fit: cover; }
+    .album-title { font-size: 15px; font-weight: 800; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .album-year { font-size: 13px; color: var(--q-text-sec); font-weight: 500; }
+
+    /* --- MERCH STORE --- */
+    .merch-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 16px;
+        margin-top: 20px;
+    }
+    .amzn-merch-card {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--q-border);
+        border-radius: 12px;
+        overflow: hidden;
+        padding: 12px;
+        transition: transform 0.2s;
+    }
+    .amzn-merch-card:hover { transform: translateY(-3px); border-color: rgba(0, 225, 217, 0.3); }
+    .merch-img {
+        width: 100%; height: 130px;
+        background: linear-gradient(135deg, #222, #111);
+        border-radius: 8px;
+        margin-bottom: 12px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 40px;
+        box-shadow: inset 0 0 20px rgba(0,0,0,0.5);
+    }
+    .prime-badge {
+        color: var(--q-cyan); font-weight: 900; font-style: italic; font-size: 12px;
+    }
+
+    /* --- ALBUM FULL SCREEN (Q Music Style) --- */
+    .full-hero {
+        padding: 80px 20px 20px;
+        background: linear-gradient(to bottom, #1a2530, var(--q-dark));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        border-bottom: 1px solid var(--q-border);
+    }
+    .full-cover {
+        width: 200px; height: 200px;
+        box-shadow: 0 10px 40px rgba(0, 225, 217, 0.15);
+        border-radius: 12px;
+        margin-bottom: 20px;
+        background: #222;
+        overflow: hidden;
+        border: 1px solid var(--q-border);
+    }
+    .full-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .full-title { font-size: 26px; font-weight: 900; margin-bottom: 8px; letter-spacing: -0.5px; }
+    .full-artist { color: var(--q-cyan); font-weight: 700; font-size: 16px; }
+    .full-year { color: var(--q-text-sec); font-size: 13px; margin-top: 6px; font-weight: 600; }
+
+    /* --- SEARCH UI --- */
+    .search-container {
+        padding: 50px 20px 20px;
+    }
+    .search-title {
+        font-size: 32px; font-weight: 900; margin-bottom: 24px; letter-spacing: -1px;
+    }
+    .search-box {
+        position: relative;
+        margin-bottom: 30px;
+    }
+    .search-input {
+        width: 100%;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 18px 20px 18px 50px;
+        border-radius: 16px;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 600;
+        outline: none;
+        transition: all 0.2s;
+        backdrop-filter: blur(10px);
+    }
+    .search-input:focus {
+        background: rgba(255,255,255,0.1);
+        border-color: var(--q-cyan);
+        box-shadow: 0 0 20px rgba(0, 225, 217, 0.15);
+    }
+    .search-icon {
+        position: absolute;
+        left: 18px; top: 50%; transform: translateY(-50%);
+        fill: var(--q-text-sec);
+        width: 20px; height: 20px;
+    }
+    
+    .artist-result {
+        display: flex; align-items: center; padding: 12px 16px;
+        background: var(--q-card); border: 1px solid var(--q-border);
+        border-radius: 12px; margin-bottom: 10px; cursor: pointer;
+        transition: all 0.2s;
+    }
+    .artist-result:hover { background: rgba(255,255,255,0.08); border-color: var(--q-cyan); }
+    .artist-result-img {
+        width: 60px; height: 60px; border-radius: 50%; background: #333;
+        margin-right: 16px; object-fit: cover; border: 2px solid #222;
+    }
+    .artist-result-name { font-size: 18px; font-weight: 800; margin-bottom: 4px; color: #fff; }
+    .artist-result-streams { font-size: 13px; color: var(--q-cyan); font-weight: 600; }
+
+    /* --- NAVIGATION BAR --- */
+    .nav-bar {
+        position: fixed; bottom: 0; left: 0; width: 100%;
+        height: 75px;
+        background: rgba(5, 7, 10, 0.85);
+        backdrop-filter: blur(20px);
+        border-top: 1px solid rgba(255,255,255,0.05);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        z-index: 100;
+        padding-bottom: 15px;
+    }
+    .nav-item {
+        display: flex; flex-direction: column; align-items: center; gap: 6px;
+        color: var(--q-text-sec); font-size: 11px; font-weight: 700;
+        cursor: pointer; transition: color 0.2s;
+    }
+    .nav-item:hover { color: #fff; }
+    .nav-item.active { color: var(--q-cyan); }
+    .nav-icon { width: 26px; height: 26px; fill: currentColor; }
+
+    .q-back-btn {
+        position: absolute; top: 16px; left: 16px; z-index: 20;
+        width: 36px; height: 36px;
+        background: rgba(0,0,0,0.45);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; backdrop-filter: blur(10px);
+        transition: background 0.2s;
+    }
+    .q-back-btn:hover { background: rgba(0,0,0,0.65); }
+    .stats-bar {
+        display: flex; gap: 15px; margin-top: 8px; font-size: 12px;
+        color: rgba(255,255,255,0.7); font-weight: 600;
+    }
+</style>
+</head>
+<body>
+
+<div class="screen active" id="profile-screen">
+    <button class="q-back-btn" onclick="goBack()">
+    <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+    </svg>
+</button>
+    <div class="header">
+        <div class="header-bg" id="header-bg"></div>
+        <div class="header-overlay"></div>
+        
+        <div class="artist-info">
+            <div class="verified-badge">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                Verified Artist
+            </div>
+            <h1 class="artist-name" id="artist-name">Artist Name</h1>
+            <div class="followers-count">
+                <span id="follower-count">0</span> Followers
+            </div>
+            <div class="stats-bar">
+                <span>Monthly Streams: <span id="monthly-streams-display">0</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="play-btn">▶</button>
+        <button class="follow-btn" id="follow-btn" onclick="toggleFollow()">Follow</button>
+        <div style="flex:1"></div>
+        <button style="background:transparent; color:#fff; font-size:24px; font-weight:900; letter-spacing:2px;">⋯</button>
+    </div>
+
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('music')" id="tab-music">Music</div>
+        <div class="tab" onclick="switchTab('merch')" id="tab-merch">Merch</div>
+    </div>
+
+    <div class="content">
+        <div id="music-view">
+            <div class="section-header">
+                <div class="section-title">Popular Songs</div>
+                <div class="see-all">SEE ALL</div>
+            </div>
+            <ul class="song-list" id="song-list"></ul>
+
+            <div class="section-header" id="albums-header-container">
+                <div class="section-title">Albums</div>
+                <div class="see-all">SEE ALL</div>
+            </div>
+            <div class="scroller" id="album-scroller"></div>
+            
+            <div style="height: 40px;"></div>
+        </div>
+
+        <div id="merch-view" style="display:none">
+            <div class="merch-grid" id="merch-grid"></div>
+        </div>
+    </div>
+</div>
+
+<div class="screen" id="album-screen">
+    <button class="q-back-btn" onclick="closeAlbum()">
+        <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+            <path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/>
+        </svg>
+    </button>
+    <div class="full-hero">
+        <div class="full-cover" id="album-full-cover"></div>
+        <h1 class="full-title" id="album-full-title">Album Name</h1>
+        <p class="full-artist" id="album-full-artist">Artist</p>
+        <p class="full-year" id="album-full-year">2024</p>
+    </div>
+    <div class="content" style="margin-top: 20px;">
+        <div style="padding: 10px 0; border-bottom:1px solid rgba(255,255,255,0.05); margin-bottom:10px; display:flex; justify-content:space-between; font-size:12px; color:var(--q-text-sec); font-weight: 700;">
+            <span>TRACK TITLE</span>
+            <span>STREAMS</span>
+        </div>
+        <ul class="song-list" id="album-track-list"></ul>
+    </div>
+    <div style="height: 90px;"></div>
+</div>
+
+<div class="screen" id="search-screen">
+    <div class="search-container">
+        <h2 class="search-title">Search</h2>
+        <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" class="search-input" id="search-input" placeholder="Artists, songs, or podcasts" oninput="handleSearch()">
+        </div>
+        <div id="search-results">
+            <div style="color:var(--q-text-sec); font-size:14px; text-align:center; margin-top:40px;">
+                Type an artist's name to see their profile and chart hits.
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="nav-bar">
+    <div class="nav-item active" id="nav-home" onclick="navToMyProfile()">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M12 3L4 9v12h5v-7h6v7h5V9z"/></svg>
+        My Profile
+    </div>
+    <div class="nav-item" id="nav-search" onclick="navToSearch()">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        Search
+    </div>
+</div>
+
+<script>
+    function goBack() {
+    window.history.back();
+    navToMyProfile(); 
+}
+const photoDB = (function() {
+    const DB_NAME = 'MusicGameDB', STORE = 'photos', KEY = 'artistPhoto';
+    function open() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = e => reject(e.target.error);
+        });
+    }
+    return {
+        load() {
+            return open().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE, 'readonly');
+                const req = tx.objectStore(STORE).get(KEY);
+                req.onsuccess = e => resolve(e.target.result || null);
+                req.onerror = e => reject(e.target.error);
+            }));
+        }
+    };
+})();
+
+const $ = id => document.getElementById(id);
+const STREAM_DIVISOR = 10; 
+
+let playerArtistName = "Artist Name";
+let currentViewArtist = "";
+let isFollowingNPC = false;
+
+function init() {
+    const details = JSON.parse(localStorage.getItem('artistDetails') || '{"name":"Artist Name"}');
+    playerArtistName = details.name;
+    loadProfile(playerArtistName, true);
+}
+
+// --- PROFILE LOADER ---
+function loadProfile(artistName, isPlayer) {
+    currentViewArtist = artistName;
+    $('artist-name').textContent = artistName;
+    
+    if(isPlayer) {
+        photoDB.load().then(dataUrl => {
+            const photo = dataUrl || localStorage.getItem('artistPhoto');
+            if(photo) {
+                $('header-bg').innerHTML = `<img src="${photo}">`;
+            } else {
+                $('header-bg').innerHTML = `<div style="width:100%; height:100%; background:linear-gradient(135deg, #00E1D9, #05070A);"></div>`;
+            }
+        }).catch(() => {
+            const photo = localStorage.getItem('artistPhoto');
+            $('header-bg').innerHTML = photo
+                ? `<img src="${photo}">`
+                : `<div style="width:100%; height:100%; background:linear-gradient(135deg, #00E1D9, #05070A);"></div>`;
+        });
+        
+        $('tab-merch').style.display = 'block';
+        $('albums-header-container').style.display = 'flex';
+        $('follow-btn').style.display = 'none'; 
+        
+        updatePlayerFollowerLogic();
+        renderPlayerSongs();
+        renderPlayerAlbums();
+        renderPlayerMerch();
+        switchTab('music');
+    } else {
+        $('tab-merch').style.display = 'none'; 
+        $('follow-btn').style.display = 'block';
+        $('follow-btn').textContent = isFollowingNPC ? 'Following' : 'Follow';
+        $('follow-btn').style.background = isFollowingNPC ? 'rgba(0, 225, 217, 0.2)' : 'rgba(255,255,255,0.08)';
+        $('follow-btn').style.borderColor = isFollowingNPC ? 'var(--q-cyan)' : 'var(--q-border)';
+
+        const chartSongs = JSON.parse(localStorage.getItem('chart_songs_final') || '[]');
+        const npcSongs = chartSongs.filter(s => s.artist === artistName).sort((a,b) => b.streams - a.streams);
+        
+        const chartAlbums = JSON.parse(localStorage.getItem('chart_albums_final') || '[]');
+        const npcAlbums = chartAlbums.filter(a => a.artist === artistName).sort((a,b) => b.units - a.units);
+
+        let totalStreams = npcSongs.reduce((acc, s) => acc + (s.weeklyStreams || s.streams || 0), 0) * 4; 
+        let totalAmznStreams = Math.floor(totalStreams / 10);
+        
+        $('follower-count').textContent = Math.floor((totalAmznStreams / 200) + 15000).toLocaleString();
+        $('monthly-streams-display').textContent = Math.floor(totalAmznStreams * 0.08).toLocaleString();
+
+        if(npcSongs.length > 0 && npcSongs[0].art) {
+            $('header-bg').innerHTML = `<img src="${npcSongs[0].art}">`;
+        } else {
+            $('header-bg').innerHTML = `<div style="width:100%; height:100%; background:linear-gradient(135deg, #333, #111);"></div>`;
+        }
+
+        renderNPCSongs(npcSongs);
+        renderNPCAlbums(npcAlbums);
+        switchTab('music');
+    }
+}
+
+// --- PLAYER RENDER FUNCTIONS ---
+function getQFormatted(num) {
+    return Math.floor(num / STREAM_DIVISOR).toLocaleString();
+}
+
+function updatePlayerFollowerLogic() {
+    const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+    let totalRealStreams = songs.reduce((acc, song) => acc + (song.streams || 0), 0);
+    let totalAmazonStreams = Math.floor(totalRealStreams / STREAM_DIVISOR);
+    
+    $('monthly-streams-display').textContent = (Math.floor(totalAmazonStreams * 0.08)).toLocaleString();
+
+    let storedFollowers = parseInt(localStorage.getItem('amazonFollowers') || '0');
+    let calculatedFollowers = Math.floor(totalAmazonStreams / 200);
+
+    if (calculatedFollowers > storedFollowers) {
+        storedFollowers = calculatedFollowers;
+        localStorage.setItem('amazonFollowers', storedFollowers.toString());
+    }
+
+    $('follower-count').textContent = storedFollowers.toLocaleString();
+}
+
+function renderPlayerSongs() {
+    const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+    const collabs = JSON.parse(localStorage.getItem('acceptedCollaborations') || '[]');
+    const list = $('song-list');
+    list.innerHTML = '';
+
+    const allSongs = [...songs, ...collabs].sort((a,b) => (b.streams||0) - (a.streams||0)).slice(0, 5);
+
+    allSongs.forEach((song, i) => {
+        const amznStreams = getQFormatted(song.streams || 0);
+        const art = song.coverArt ? `<img src="${song.coverArt}">` : '♪';
+        const titleDisplay = song.npcArtist ? 
+            `${song.songName} <span style="color:var(--q-text-sec); font-size:12px;">ft. ${song.npcArtist}</span>` : 
+            (song.songName || song.name);
+
+        list.innerHTML += `
+            <li class="song-item">
+                <div class="song-rank">${i+1}</div>
+                <div class="song-art">${art}</div>
+                <div class="song-details">
+                    <div class="song-title">${titleDisplay}</div>
+                    <div class="song-meta">
+                        <span class="explicit-tag">E</span>
+                        <span>${amznStreams} plays</span>
+                    </div>
+                </div>
+                <div style="color:var(--q-cyan); font-size:24px; font-weight:300;">+</div>
+            </li>
+        `;
+    });
+}
+
+function renderPlayerAlbums() {
+    const albums = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+    const scroller = $('album-scroller');
+    scroller.innerHTML = '';
+
+    if(albums.length === 0) {
+        $('albums-header-container').style.display = 'none';
+        return;
+    }
+    $('albums-header-container').style.display = 'flex';
+
+    albums.forEach((album, i) => {
+        const art = album.coverArt ? `<img src="${album.coverArt}">` : '';
+        const year = new Date(album.releaseDate || Date.now()).getFullYear();
+        scroller.innerHTML += `
+            <div class="album-card" onclick="openAlbum(${i}, true)">
+                <div class="album-art">${art}</div>
+                <div class="album-title">${album.name || album.albumName}</div>
+                <div class="album-year">${year} • Album</div>
+            </div>
+        `;
+    });
+}
+
+function renderPlayerMerch() {
+    const inventory = JSON.parse(localStorage.getItem('merchInventory') || '[]');
+    const grid = $('merch-grid');
+    grid.innerHTML = '';
+
+    if(inventory.length === 0) {
+        grid.innerHTML = '<div style="grid-column:span 2; text-align:center; color:var(--q-text-sec); padding:40px;">No official merchandise available.</div>';
+        return;
+    }
+
+    inventory.forEach(item => {
+        grid.innerHTML += `
+            <div class="amzn-merch-card">
+                <div class="merch-img">${item.type === 'vinyl' ? '⚫' : '💿'}</div>
+                <div style="font-size:14px; font-weight:800; margin-bottom:6px; line-height:1.3; color:#fff;">
+                    ${item.releaseName} <br><span style="color:var(--q-text-sec); font-size:12px;">[${item.type.toUpperCase()}]</span>
+                </div>
+                <div style="font-size:12px; color:var(--q-cyan); margin-bottom:12px; font-weight:600;">
+                    ${item.stock > 0 ? 'In Stock' : 'Currently Unavailable'}
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span style="font-weight:900; font-size:16px;">$${item.sellingPrice}</span>
+                    <span class="prime-badge">prime</span>
+                </div>
+            </div>
+        `;
+    });
+}
+
+// --- NPC RENDER FUNCTIONS ---
+function renderNPCSongs(songs) {
+    const list = $('song-list');
+    list.innerHTML = '';
+
+    if(songs.length === 0) {
+        list.innerHTML = `<div style="text-align:center; color:var(--q-text-sec); padding:20px;">No top tracks available.</div>`;
+        return;
+    }
+
+    songs.slice(0, 5).forEach((song, i) => {
+        let fakeLifetimeStreams = Math.floor((song.streams || 0) * (4 + Math.random() * 2));
+        const amznStreams = getQFormatted(fakeLifetimeStreams);
+        const art = song.art ? `<img src="${song.art}">` : '♪';
+        
+        list.innerHTML += `
+            <li class="song-item">
+                <div class="song-rank">${i+1}</div>
+                <div class="song-art">${art}</div>
+                <div class="song-details">
+                    <div class="song-title">${song.title}</div>
+                    <div class="song-meta">
+                        <span class="explicit-tag">E</span>
+                        <span>${amznStreams} plays</span>
+                    </div>
+                </div>
+                <div style="color:var(--q-cyan); font-size:24px; font-weight:300;">+</div>
+            </li>
+        `;
+    });
+}
+
+function renderNPCAlbums(albums) {
+    const scroller = $('album-scroller');
+    scroller.innerHTML = '';
+
+    if(albums.length === 0) {
+        $('albums-header-container').style.display = 'none';
+        return;
+    }
+    $('albums-header-container').style.display = 'flex';
+
+    albums.slice(0, 5).forEach((album, i) => {
+        const art = album.art ? `<img src="${album.art}">` : '';
+        scroller.innerHTML += `
+            <div class="album-card" onclick="openAlbum(${i}, false)">
+                <div class="album-art">${art}</div>
+                <div class="album-title">${album.title}</div>
+                <div class="album-year">Album</div>
+            </div>
+        `;
+    });
+}
+
+// --- ALBUM UI LOGIC ---
+function openAlbum(index, isPlayer) {
+    let album, artistName, songs;
+    
+    // Set up data source based on whether it's a player or an NPC
+    if (isPlayer) {
+        const albums = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+        album = albums[index];
+        artistName = playerArtistName;
+        songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+        
+        $('album-full-title').textContent = album.name || album.albumName;
+        $('album-full-artist').textContent = artistName;
+        $('album-full-cover').innerHTML = album.coverArt ? `<img src="${album.coverArt}">` : '';
+        $('album-full-year').textContent = new Date(album.releaseDate || Date.now()).getFullYear();
+    } else {
+        const chartAlbums = JSON.parse(localStorage.getItem('chart_albums_final') || '[]');
+        const npcAlbums = chartAlbums.filter(a => a.artist === currentViewArtist).sort((a,b) => b.units - a.units);
+        album = npcAlbums[index];
+        artistName = currentViewArtist;
+        songs = JSON.parse(localStorage.getItem('chart_songs_final') || '[]');
+        
+        $('album-full-title').textContent = album.title;
+        $('album-full-artist').textContent = artistName;
+        $('album-full-cover').innerHTML = album.art ? `<img src="${album.art}">` : '';
+        $('album-full-year').textContent = 'Album';
+    }
+
+    const list = $('album-track-list');
+    list.innerHTML = '';
+
+    // Render Tracklist
+    if(isPlayer && album.songs) {
+        album.songs.forEach((track, i) => {
+            const trackName = track.songName || track.name || track;
+            const releasedVersion = songs.find(s => (s.songName || s.name) === trackName);
+            const realStreams = releasedVersion ? (releasedVersion.streams || 0) : 0;
+            
+            list.innerHTML += `
+                <li class="song-item" style="background:transparent; border-color:transparent; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); border-radius:0;">
+                    <div class="song-rank" style="font-size:13px; opacity:0.6; width:24px;">${i+1}</div>
+                    <div class="song-details">
+                        <div class="song-title" style="font-size:15px; font-weight:600;">${trackName}</div>
+                    </div>
+                    <div style="font-size:13px; color:var(--q-text-sec); font-weight:600;">${getQFormatted(realStreams)}</div>
+                </li>
+            `;
+        });
+    } else if (!isPlayer) {
+        // Fallback for NPCs: fetch their top charting songs to simulate an album list
+        const artistSongs = songs.filter(s => s.artist === currentViewArtist).sort((a,b) => b.streams - a.streams).slice(0, 7);
+        if (artistSongs.length > 0) {
+            artistSongs.forEach((track, i) => {
+                let fakeLifetimeStreams = Math.floor((track.streams || 0) * (4 + Math.random() * 2));
+                list.innerHTML += `
+                    <li class="song-item" style="background:transparent; border-color:transparent; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.05); border-radius:0;">
+                        <div class="song-rank" style="font-size:13px; opacity:0.6; width:24px;">${i+1}</div>
+                        <div class="song-details">
+                            <div class="song-title" style="font-size:15px; font-weight:600;">${track.title}</div>
+                        </div>
+                        <div style="font-size:13px; color:var(--q-text-sec); font-weight:600;">${getQFormatted(fakeLifetimeStreams)}</div>
+                    </li>
+                `;
+            });
+        } else {
+             list.innerHTML = `<div style="text-align:center; color:var(--q-text-sec); padding:20px;">Tracklist unavailable.</div>`;
+        }
+    } else {
+         list.innerHTML = `<div style="text-align:center; color:var(--q-text-sec); padding:20px;">Tracklist empty.</div>`;
+    }
+
+    // Switch Screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $('album-screen').classList.add('active');
+}
+
+function closeAlbum() {
+    $('album-screen').classList.remove('active');
+    $('profile-screen').classList.add('active');
+}
+
+// --- SEARCH LOGIC ---
+function handleSearch() {
+    const query = $('search-input').value.toLowerCase().trim();
+    const resultsContainer = $('search-results');
+    
+    if(query.length < 2) {
+        resultsContainer.innerHTML = '<div style="color:var(--q-text-sec); font-size:14px; text-align:center; margin-top:40px;">Type an artist\'s name to see their profile and chart hits.</div>';
+        return;
+    }
+
+    const chartSongs = JSON.parse(localStorage.getItem('chart_songs_final') || '[]');
+    
+    const artistMap = {};
+    chartSongs.forEach(s => {
+        if(s.isUser) return; 
+        const aName = s.artist || 'Unknown';
+        if(!artistMap[aName]) {
+            artistMap[aName] = { name: aName, streams: 0, photo: s.art };
+        }
+        artistMap[aName].streams += (s.weeklyStreams || s.streams || 0);
+    });
+
+    const results = Object.values(artistMap).filter(a => a.name.toLowerCase().includes(query));
+    results.sort((a,b) => b.streams - a.streams);
+
+    resultsContainer.innerHTML = '';
+
+    if(results.length === 0) {
+        resultsContainer.innerHTML = '<div style="color:var(--q-text-sec); font-size:14px; text-align:center; margin-top:40px;">No artists found on the charts.</div>';
+        return;
+    }
+
+    results.slice(0, 8).forEach(artist => {
+        const photo = artist.photo ? `<img src="${artist.photo}" class="artist-result-img">` : `<div class="artist-result-img"></div>`;
+        const div = document.createElement('div');
+        div.className = 'artist-result';
+        div.onclick = () => {
+            navToProfile(artist.name, false);
+        };
+        div.innerHTML = `
+            ${photo}
+            <div>
+                <div class="artist-result-name">${artist.name}</div>
+                <div class="artist-result-streams">Artist</div>
+            </div>
+        `;
+        resultsContainer.appendChild(div);
+    });
+}
+
+// --- NAVIGATION & UI HANDLERS ---
+function switchTab(tab) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    $(`tab-${tab}`).classList.add('active');
+
+    if(tab === 'music') {
+        $('music-view').style.display = 'block';
+        $('merch-view').style.display = 'none';
+    } else {
+        $('music-view').style.display = 'none';
+        $('merch-view').style.display = 'block';
+    }
+}
+
+function navToSearch() {
+    $('profile-screen').classList.remove('active');
+    $('album-screen').classList.remove('active');
+    $('search-screen').classList.add('active');
+    $('nav-home').classList.remove('active');
+    $('nav-search').classList.add('active');
+    $('search-input').focus();
+}
+
+function navToMyProfile() {
+    navToProfile(playerArtistName, true);
+    $('nav-home').classList.add('active');
+    $('nav-search').classList.remove('active');
+}
+
+function navToProfile(artistName, isPlayer) {
+    $('search-screen').classList.remove('active');
+    $('album-screen').classList.remove('active');
+    $('profile-screen').classList.add('active');
+    loadProfile(artistName, isPlayer);
+}
+
+function toggleFollow() {
+    isFollowingNPC = !isFollowingNPC;
+    const btn = $('follow-btn');
+    if(isFollowingNPC) {
+        btn.textContent = 'Following';
+        btn.style.background = 'rgba(0, 225, 217, 0.2)';
+        btn.style.borderColor = 'var(--q-cyan)';
+        btn.style.color = '#fff';
+    } else {
+        btn.textContent = 'Follow';
+        btn.style.background = 'rgba(255,255,255,0.08)';
+        btn.style.borderColor = 'var(--q-border)';
+    }
+}
+
+window.addEventListener('storage', (e) => {
+    if(e.key === 'releasedSongs' || e.key === 'releasedAlbums') {
+        if(currentViewArtist === playerArtistName) {
+            loadProfile(playerArtistName, true);
+        }
+    }
+});
+
+// Boot
+init();
+
+</script>
+</body>
+</html>

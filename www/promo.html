@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaigns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+    --bg:    #0c0b0a;
+    --s1:    #161513;
+    --s2:    #1d1b19;
+    --ln:    rgba(255,255,255,0.07);
+    --ln2:   rgba(255,255,255,0.04);
+    --tx:    #cec7bc;
+    --tx2:   #ede8e1;
+    --dim:   #6a6259;
+    --gold:  #b07d3a;
+    --ok:    #3d8c5c;
+    --bad:   #8c3d3d;
+    --ser:   'DM Serif Display', Georgia, serif;
+    --mono:  'DM Mono', monospace;
+    --sans:  'Syne', system-ui, sans-serif;
+}
+
+html, body { background: var(--bg); color: var(--tx); font-family: var(--sans); min-height: 100vh; }
+
+.page { max-width: 480px; margin: 0 auto; padding: 0 16px 100px; }
+
+/* topbar */
+.top {
+    position: sticky; top: 0; z-index: 50;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 0 14px;
+    background: rgba(12,11,10,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--ln);
+    margin: 0 -16px; padding-left: 16px; padding-right: 16px;
+}
+
+.back {
+    display: flex; align-items: center; gap: 5px;
+    background: none; border: none; cursor: pointer;
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    color: var(--dim); letter-spacing: 0.05em; transition: color .18s;
+}
+.back:hover { color: var(--tx); }
+.back svg { width: 14px; height: 14px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+.bal {
+    font-family: var(--mono); font-size: 13px; font-weight: 500;
+    color: var(--gold); letter-spacing: 0.02em;
+}
+
+/* heading */
+.heading {
+    padding: 28px 0 24px;
+    border-bottom: 1px solid var(--ln);
+}
+
+.heading h1 {
+    font-family: var(--ser); font-size: 36px; font-weight: 400;
+    color: var(--tx2); letter-spacing: -0.01em; line-height: 1.08;
+}
+
+.heading h1 em { font-style: italic; color: var(--gold); }
+
+/* controls */
+.controls { padding: 20px 0; border-bottom: 1px solid var(--ln); display: flex; flex-direction: column; gap: 14px; }
+
+.lbl {
+    display: block;
+    font-family: var(--mono); font-size: 10px; font-weight: 500;
+    letter-spacing: 0.16em; text-transform: uppercase; color: var(--dim);
+    margin-bottom: 7px;
+}
+
+.sel-w { position: relative; }
+.sel-w::after {
+    content: ''; position: absolute; right: 13px; top: 50%;
+    transform: translateY(-50%);
+    width: 7px; height: 4px; background: var(--dim);
+    clip-path: polygon(0 0,100% 0,50% 100%); pointer-events: none;
+}
+
+select {
+    width: 100%; padding: 11px 36px 11px 12px;
+    background: var(--s1); color: var(--tx);
+    border: 1px solid var(--ln); border-radius: 6px;
+    font-family: var(--sans); font-size: 14px; font-weight: 600;
+    appearance: none; outline: none; cursor: pointer;
+    transition: border-color .16s;
+}
+select:focus { border-color: rgba(176,125,58,0.35); }
+select option { background: #1a1917; }
+
+.note {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 10px 11px;
+    background: rgba(140,61,61,0.06);
+    border-left: 2px solid rgba(140,61,61,0.3);
+    border-radius: 0 4px 4px 0;
+}
+.note svg { width: 12px; height: 12px; fill: var(--bad); flex-shrink: 0; margin-top: 1px; }
+.note span { font-family: var(--mono); font-size: 10px; color: rgba(140,61,61,0.75); line-height: 1.55; }
+
+#no-songs { display: none; font-family: var(--mono); font-size: 11px; color: var(--dim); line-height: 1.5; }
+
+/* label banner */
+#label-banner {
+    display: none; align-items: center; gap: 8px;
+    margin: 16px 0 0;
+    padding: 10px 12px;
+    background: rgba(61,140,92,0.08);
+    border: 1px solid rgba(61,140,92,0.2);
+    border-radius: 5px;
+    font-family: var(--mono); font-size: 11px; color: #5aab78; letter-spacing: 0.03em;
+}
+#label-banner svg { width: 13px; height: 13px; fill: #5aab78; flex-shrink: 0; }
+
+/* cards */
+.cards { padding-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.card {
+    background: var(--s1);
+    border: 1px solid var(--ln);
+    border-radius: 10px;
+    padding: 18px 16px 16px;
+    animation: up .4s ease both;
+    transition: border-color .2s;
+}
+.card:nth-child(1){ animation-delay:.04s }
+.card:nth-child(2){ animation-delay:.10s }
+.card:nth-child(3){ animation-delay:.16s }
+.card:nth-child(4){ animation-delay:.22s }
+
+@keyframes up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+.card:hover { border-color: rgba(176,125,58,0.2); }
+
+.card-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.card-name { font-family: var(--ser); font-size: 20px; font-weight: 400; color: var(--tx2); }
+
+.tier {
+    font-family: var(--mono); font-size: 9px; font-weight: 500;
+    letter-spacing: 0.13em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 3px;
+}
+.t-basic  { color: #52976b; background: rgba(82,151,107,0.1);  border: 1px solid rgba(82,151,107,0.25); }
+.t-pro    { color: #5285b5; background: rgba(82,133,181,0.1);  border: 1px solid rgba(82,133,181,0.25); }
+.t-elite  { color: #8a65b5; background: rgba(138,101,181,0.1); border: 1px solid rgba(138,101,181,0.25); }
+.t-legend { color: var(--gold); background: rgba(176,125,58,0.1); border: 1px solid rgba(176,125,58,0.28); }
+
+.card-desc { font-size: 13px; font-weight: 600; color: var(--dim); line-height: 1.45; margin-bottom: 14px; }
+
+.card-foot {
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding-top: 12px; border-top: 1px solid var(--ln2);
+}
+
+.price-old { font-family: var(--mono); font-size: 11px; color: var(--dim); text-decoration: line-through; margin-bottom: 2px; }
+
+.price-disc {
+    font-family: var(--mono); font-size: 9px; font-weight: 500; color: #5aab78;
+    background: rgba(61,140,92,0.1); border: 1px solid rgba(61,140,92,0.2);
+    padding: 1px 6px; border-radius: 3px; letter-spacing: 0.07em;
+    display: inline-block; margin-bottom: 3px;
+}
+
+.price-main { font-family: var(--mono); font-size: 20px; font-weight: 500; color: var(--tx2); letter-spacing: -0.02em; line-height: 1; }
+.price-per  { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--dim); margin-top: 3px; }
+
+.mult {
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+}
+.mult-val { font-family: var(--mono); font-size: 18px; font-weight: 500; color: var(--tx2); letter-spacing: -0.02em; }
+.mult-lbl { font-family: var(--mono); font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--dim); }
+
+.sign-btn {
+    width: 100%; margin-top: 12px; padding: 12px;
+    background: none; border: 1px solid var(--ln); border-radius: 5px;
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim);
+    cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 7px;
+    transition: all .18s;
+}
+.sign-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+.sign-btn:hover:not(:disabled) { background: rgba(176,125,58,0.08); border-color: rgba(176,125,58,0.3); color: var(--gold); }
+.sign-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+/* gate */
+#gate {
+    display: none;
+    margin-top: 32px; padding: 36px 20px;
+    background: var(--s1); border: 1px solid var(--ln); border-radius: 10px;
+    text-align: center;
+}
+
+.gate-icon {
+    width: 46px; height: 46px; border-radius: 50%; margin: 0 auto 16px;
+    background: rgba(140,61,61,0.07); border: 1px solid rgba(140,61,61,0.18);
+    display: flex; align-items: center; justify-content: center;
+}
+.gate-icon svg { width: 20px; height: 20px; stroke: var(--bad); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+.gate-title { font-family: var(--ser); font-size: 24px; color: var(--tx2); margin-bottom: 10px; }
+
+.gate-stars { display: flex; justify-content: center; gap: 4px; margin-bottom: 12px; }
+.gate-stars svg { width: 16px; height: 16px; }
+
+.gate-desc { font-size: 13px; font-weight: 600; color: var(--dim); line-height: 1.6; max-width: 260px; margin: 0 auto 20px; }
+
+.gate-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 18px; background: none;
+    border: 1px solid var(--ln); border-radius: 4px;
+    font-family: var(--sans); font-size: 12px; font-weight: 700;
+    letter-spacing: 0.07em; text-transform: uppercase;
+    color: var(--dim); cursor: pointer; transition: all .16s;
+}
+.gate-btn:hover { border-color: rgba(255,255,255,0.15); color: var(--tx); }
+.gate-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* toast */
+#toasts {
+    position: fixed; top: 0; left: 50%; transform: translateX(-50%);
+    width: min(420px, 90vw); z-index: 9999;
+    display: flex; flex-direction: column; gap: 6px;
+    padding-top: 12px; pointer-events: none;
+}
+.toast {
+    font-family: var(--mono); font-size: 12px;
+    padding: 12px 15px; border-radius: 7px;
+    background: #141210; border: 1px solid var(--ln);
+    display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 10px 32px rgba(0,0,0,0.6);
+    animation: tin .28s cubic-bezier(.34,1.5,.64,1) both;
+    line-height: 1.4;
+}
+.toast svg { width: 13px; height: 13px; flex-shrink: 0; }
+.toast.ok  { border-color: rgba(61,140,92,0.3); color: #5aab78; }
+.toast.ok  svg { fill: #5aab78; }
+.toast.err { border-color: rgba(140,61,61,0.3); color: #b56060; }
+.toast.err svg { fill: #b56060; }
+.toast.inf { border-color: rgba(176,125,58,0.25); color: var(--gold); }
+.toast.inf svg { fill: var(--gold); }
+@keyframes tin { from{opacity:0;transform:translateY(-8px) scale(.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+
+/* modal */
+#modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(12px); display: none;
+    align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
+}
+#modal-bg.on { display: flex; }
+
+.modal {
+    background: #111010; border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px; padding: 26px 22px;
+    max-width: 380px; width: 100%;
+    animation: min .25s cubic-bezier(.34,1.2,.64,1) both;
+}
+@keyframes min { from{opacity:0;transform:scale(.91)} to{opacity:1;transform:scale(1)} }
+
+.modal-sub  { font-family: var(--mono); font-size: 9px; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+.modal-head { font-family: var(--ser); font-size: 22px; color: var(--tx2); margin-bottom: 18px; line-height: 1.1; }
+
+.dtable { background: var(--s2); border: 1px solid var(--ln); border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
+.drow { display: flex; align-items: center; justify-content: space-between; padding: 9px 13px; border-bottom: 1px solid var(--ln2); }
+.drow:last-child { border-bottom: none; }
+.dk { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.dv { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--tx); }
+.dv.hi { color: var(--gold); }
+
+.modal-warn {
+    display: flex; align-items: flex-start; gap: 8px;
+    padding: 10px 12px;
+    background: rgba(140,61,61,0.06); border: 1px solid rgba(140,61,61,0.16);
+    border-radius: 5px; margin-bottom: 20px;
+    font-family: var(--mono); font-size: 10px; color: rgba(140,61,61,0.7); line-height: 1.5;
+}
+.modal-warn svg { width: 11px; height: 11px; fill: rgba(140,61,61,0.6); flex-shrink: 0; margin-top: 1px; }
+
+.modal-acts { display: flex; gap: 8px; }
+.m-cancel {
+    flex: 1; padding: 11px; background: none;
+    border: 1px solid var(--ln); border-radius: 5px;
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.04em; color: var(--dim); cursor: pointer; transition: all .15s;
+}
+.m-cancel:hover { border-color: rgba(255,255,255,0.14); color: var(--tx); }
+.m-sign {
+    flex: 2; padding: 11px; background: var(--gold); border: none; border-radius: 5px;
+    font-family: var(--sans); font-size: 13px; font-weight: 700;
+    letter-spacing: 0.06em; text-transform: uppercase;
+    color: #0c0b0a; cursor: pointer; transition: filter .15s;
+}
+.m-sign:hover { filter: brightness(1.1); }
+</style>
+</head>
+<body>
+
+<div id="toasts"></div>
+
+<div id="modal-bg">
+    <div class="modal">
+        <div class="modal-sub">Contract Review</div>
+        <div class="modal-head" id="m-head">Sign Contract</div>
+        <div class="dtable" id="m-table"></div>
+        <div class="modal-warn">
+            <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+            Each song may only run one promo campaign. This cannot be undone.
+        </div>
+        <div class="modal-acts">
+            <button class="m-cancel" id="m-cancel">Cancel</button>
+            <button class="m-sign"   id="m-confirm">Sign</button>
+        </div>
+    </div>
+</div>
+
+<div class="page">
+    <div class="top">
+        <button class="back" onclick="window.location.href='music.html'">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+            Back
+        </button>
+        <div class="bal" id="bal">$0</div>
+    </div>
+
+    <div class="heading">
+        <h1>Marketing<br><em>Campaigns</em></h1>
+    </div>
+
+    <!-- Gate -->
+    <div id="gate">
+        <div class="gate-icon">
+            <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <div class="gate-title">Manager Required</div>
+        <div class="gate-stars" id="gate-stars"></div>
+        <div class="gate-desc">Promo campaigns require a 3-star manager or above.</div>
+        <button class="gate-btn" onclick="window.location.href='managers.html'">
+            <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Managers
+        </button>
+    </div>
+
+    <!-- Main -->
+    <div id="main" style="display:none">
+        <div class="controls">
+            <div>
+                <span class="lbl">Song</span>
+                <div class="sel-w"><select id="song-sel"><option value="">Choose a song...</option></select></div>
+                <div id="no-songs">No eligible songs — all have used their promo slot.</div>
+            </div>
+            <div>
+                <span class="lbl">Duration</span>
+                <div class="sel-w">
+                    <select id="dur-sel">
+                        <option value="4">1 Month — 4 Weeks</option>
+                        <option value="12">3 Months — 12 Weeks</option>
+                        <option value="24">6 Months — 24 Weeks</option>
+                    </select>
+                </div>
+            </div>
+            <div class="note">
+                <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+                <span>Each song can only run one campaign for its entire lifetime.</span>
+            </div>
+        </div>
+
+        <div id="label-banner">
+            <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            <span id="banner-txt"></span>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-name">Vibetok Ads</div>
+                    <div class="tier t-basic">Basic</div>
+                </div>
+                <div class="card-desc">Sponsored posts across social feeds.</div>
+                <div class="card-foot">
+                    <div id="p-social"></div>
+                    <div class="mult"><div class="mult-val">1.2×</div><div class="mult-lbl">Streams</div></div>
+                </div>
+                <button class="sign-btn" onclick="buy('Vibetok Ads','social',150000,1.2)">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Sign Contract
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-name">Radio Blast</div>
+                    <div class="tier t-pro">Pro</div>
+                </div>
+                <div class="card-desc">Rotation on local and national FM stations.</div>
+                <div class="card-foot">
+                    <div id="p-radio"></div>
+                    <div class="mult"><div class="mult-val">1.5×</div><div class="mult-lbl">Streams</div></div>
+                </div>
+                <button class="sign-btn" onclick="buy('Radio Blast','radio',450000,1.5)">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Sign Contract
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-name">Playlist King</div>
+                    <div class="tier t-elite">Elite</div>
+                </div>
+                <div class="card-desc">Major playlist placement on all DSPs.</div>
+                <div class="card-foot">
+                    <div id="p-stream"></div>
+                    <div class="mult"><div class="mult-val">2.0×</div><div class="mult-lbl">Streams</div></div>
+                </div>
+                <button class="sign-btn" onclick="buy('Playlist King','stream',800000,2.0)">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Sign Contract
+                </button>
+            </div>
+
+            <div class="card">
+                <div class="card-head">
+                    <div class="card-name">World Tour Promo</div>
+                    <div class="tier t-legend">Legend</div>
+                </div>
+                <div class="card-desc">Global billboards across Tokyo, New York, Paris.</div>
+                <div class="card-foot">
+                    <div id="p-global"></div>
+                    <div class="mult"><div class="mult-val">2.5×</div><div class="mult-lbl">Streams</div></div>
+                </div>
+                <button class="sign-btn" onclick="buy('World Tour Promo','global',1500000,2.5)">
+                    <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Sign Contract
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const MANAGERS = [{id:1,rating:2},{id:2,rating:3},{id:3,rating:4},{id:4,rating:5}];
+const LABELS   = { sony:{pct:40,label:'Vortex Records'}, universal:{pct:80,label:'Global Music Group'}, indie:{pct:80,label:'Basement Tapes'} };
+const BASE     = { social:150000, radio:450000, stream:800000, global:1500000 };
+let money = 0, disc = 1, _cb = null;
+
+/* toast */
+const IC = {
+    ok:  `<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>`,
+    err: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="9" y1="9" x2="15" y2="15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`,
+    inf: `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`
+};
+
+function toast(msg, type='inf', ms=3600) {
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = IC[type] + `<span>${msg}</span>`;
+    document.getElementById('toasts').appendChild(t);
+    setTimeout(() => t.remove(), ms);
+}
+
+/* modal */
+function openModal(title, rows, cb) {
+    document.getElementById('m-head').textContent = title;
+    document.getElementById('m-table').innerHTML = rows.map(([k,v,hi]) =>
+        `<div class="drow"><span class="dk">${k}</span><span class="dv${hi?' hi':''}">${v}</span></div>`
+    ).join('');
+    _cb = cb;
+    document.getElementById('modal-bg').classList.add('on');
+}
+function closeModal() { document.getElementById('modal-bg').classList.remove('on'); _cb = null; }
+document.getElementById('m-confirm').onclick = () => { const f = _cb; closeModal(); if (f) f(); };
+document.getElementById('m-cancel').onclick  = closeModal;
+document.getElementById('modal-bg').onclick  = e => { if (e.target.id === 'modal-bg') closeModal(); };
+
+/* helpers */
+function fmt(n) {
+    if (n >= 1e9) return '$'+(n/1e9).toFixed(1)+'B';
+    if (n >= 1e6) return '$'+(n/1e6).toFixed(1)+'M';
+    if (n >= 1e3) return '$'+(n/1e3).toFixed(1)+'K';
+    return '$'+n.toLocaleString();
+}
+function eff(b) { return Math.round(b * disc); }
+
+function stars(el, lit, tot=5) {
+    el.innerHTML = '';
+    for (let i=1;i<=tot;i++) {
+        const s = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        s.setAttribute('viewBox','0 0 24 24'); s.setAttribute('width','16'); s.setAttribute('height','16');
+        const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+        p.setAttribute('d','M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z');
+        p.setAttribute('fill', i<=lit ? '#b07d3a' : 'rgba(176,125,58,0.14)');
+        s.appendChild(p); el.appendChild(s);
+    }
+}
+
+function price(id, base) {
+    const el = document.getElementById(id), f = eff(base);
+    if (disc < 1) {
+        const pct = Math.round((1-disc)*100);
+        el.innerHTML = `<div class="price-old">${fmt(base)} /mo</div><div class="price-disc">-${pct}% label</div><div class="price-main">${fmt(f)}</div><div class="price-per">Per month</div>`;
+    } else {
+        el.innerHTML = `<div class="price-main">${fmt(f)}</div><div class="price-per">Per month</div>`;
+    }
+}
+
+/* load */
+function load() {
+    money = parseFloat(localStorage.getItem('money')) || 0;
+    document.getElementById('bal').textContent = fmt(money);
+
+    const contract = JSON.parse(localStorage.getItem('managerContract') || 'null');
+    let rating = 0;
+    if (contract && contract.managerId && contract.weeksLeft > 0) {
+        const m = MANAGERS.find(x => x.id === contract.managerId);
+        if (m) rating = m.rating;
+    }
+
+    if (rating < 3) {
+        document.getElementById('gate').style.display = 'block';
+        document.getElementById('main').style.display = 'none';
+        stars(document.getElementById('gate-stars'), rating);
+        return;
+    }
+
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+
+    const deal = JSON.parse(localStorage.getItem('recordDeal') || 'null');
+    const banner = document.getElementById('label-banner');
+    disc = 1;
+    if (deal && deal.id && LABELS[deal.id]) {
+        const info = LABELS[deal.id];
+        disc = 1 - info.pct / 100;
+        banner.style.display = 'flex';
+        document.getElementById('banner-txt').textContent = `${info.label} deal — ${info.pct}% off all campaigns`;
+    } else {
+        banner.style.display = 'none';
+    }
+
+    price('p-social', BASE.social);
+    price('p-radio',  BASE.radio);
+    price('p-stream', BASE.stream);
+    price('p-global', BASE.global);
+
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+    const sel = document.getElementById('song-sel');
+    sel.innerHTML = '<option value="">Choose a song...</option>';
+    let count = 0;
+    songs.forEach((s,i) => {
+        if (s.usedPromoIds && s.usedPromoIds.length) return;
+        const o = document.createElement('option');
+        o.value = i; o.textContent = s.songName || s.name;
+        sel.appendChild(o); count++;
+    });
+
+    const btns = document.querySelectorAll('.sign-btn');
+    if (count === 0) {
+        sel.disabled = true;
+        document.getElementById('no-songs').style.display = 'block';
+        btns.forEach(b => b.disabled = true);
+    } else {
+        sel.disabled = false;
+        document.getElementById('no-songs').style.display = 'none';
+        btns.forEach(b => b.disabled = false);
+    }
+}
+
+/* buy */
+function buy(name, id, baseMonthly, mult) {
+    const idx = document.getElementById('song-sel').value;
+    if (!idx) { toast('Select a song first.', 'err'); return; }
+    const dur    = parseInt(document.getElementById('dur-sel').value);
+    const weekly = eff(baseMonthly) / 4;
+    const durLbl = dur===4 ? '1 Month' : dur===12 ? '3 Months' : '6 Months';
+    if (money < weekly) { toast('Not enough funds.', 'err'); return; }
+
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+    const sname = songs[idx].songName || songs[idx].name;
+
+    openModal(name, [
+        ['Song',    sname],
+        ['Weekly',  fmt(weekly), true],
+        ['Duration',durLbl],
+        ['Boost',   `${mult}x`,  true]
+    ], () => {
+        const fresh = JSON.parse(localStorage.getItem('releasedSongs')) || [];
+        const fs = fresh[idx];
+        if (!fs.activePromos) fs.activePromos = [];
+        if (!fs.usedPromoIds) fs.usedPromoIds = [];
+        fs.activePromos.push({ name, id, multiplier: mult, weeklyCost: weekly, weeksLeft: dur });
+        fs.usedPromoIds.push(id);
+        localStorage.setItem('releasedSongs', JSON.stringify(fresh));
+        toast(`Contract signed. "${sname}" is now being promoted.`, 'ok', 4000);
+        load();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', load);
+</script>
+</body>
+</html>

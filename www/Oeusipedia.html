@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Eusipedia - The Free Encyclopedia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Cinzel:wght@400;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #030304;
+            --bg-glass: rgba(20, 20, 25, 0.7);
+            --bg-card: #0a0a0a;
+            --text-main: #f0f0f0;
+            --text-muted: #8899a6;
+            --accent: #60a5fa;
+            --accent-gradient: linear-gradient(135deg, #3b82f6, #2563eb);
+            --gold: #ffd700;
+            --gold-gradient: linear-gradient(135deg, #fcd34d, #d97706);
+            --border: rgba(255, 255, 255, 0.08);
+            --shadow: 0 10px 40px -10px rgba(0,0,0,0.7);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            background-image: 
+                radial-gradient(circle at 10% 10%, rgba(59, 130, 246, 0.05), transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(139, 92, 246, 0.05), transparent 40%);
+            color: var(--text-main);
+            line-height: 1.7;
+            font-size: 16px;
+            overflow-x: hidden;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .animate-load { animation: fadeIn 0.6s ease-out forwards; opacity: 0; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+
+        /* --- HEADER --- */
+        .wiki-header {
+            background: rgba(5, 5, 5, 0.85);
+            border-bottom: 1px solid var(--border);
+            height: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .wiki-logo {
+            font-family: 'Cinzel', serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- LAYOUT --- */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: row;
+            gap: 50px;
+            align-items: flex-start;
+        }
+
+        /* --- MAIN CONTENT --- */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .article-title {
+            font-family: 'Libre Baskerville', serif;
+            font-size: clamp(36px, 5vw, 56px);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 10px;
+            color: #fff;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .article-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .article-text {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 25px;
+            line-height: 1.8;
+            text-align: justify;
+        }
+
+        h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            margin-top: 50px;
+            margin-bottom: 25px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            letter-spacing: -0.5px;
+        }
+        
+        h2::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: var(--accent);
+            margin-right: 12px;
+            border-radius: 2px;
+            box-shadow: 0 0 10px var(--accent);
+        }
+
+        p { margin-bottom: 20px; }
+        b { color: #fff; font-weight: 700; }
+        
+        .wiki-link { 
+            color: var(--accent); 
+            text-decoration: none; 
+            font-weight: 500;
+            position: relative;
+        }
+        .wiki-link::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px;
+            background: var(--accent); opacity: 0.3; transition: 0.2s;
+        }
+        .wiki-link:hover::after { opacity: 1; height: 2px; }
+
+        /* --- INFOBOX (SIDEBAR) --- */
+        .infobox {
+            width: 340px;
+            flex-shrink: 0;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .infobox-header {
+            background: linear-gradient(180deg, #1a1a1a, #0a0a0a);
+            padding: 20px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 22px;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            font-family: 'Cinzel', serif;
+        }
+
+        .infobox-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #050505;
+            position: relative;
+            border-bottom: 1px solid var(--border);
+        }
+        .infobox-image img { 
+            width: 100%; height: 100%; object-fit: cover; 
+            transition: transform 0.5s;
+        }
+        .infobox:hover .infobox-image img { transform: scale(1.03); }
+
+        .infobox-data { padding: 20px; }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            padding: 12px 0;
+            font-size: 14px;
+        }
+        .info-row:last-child { border-bottom: none; }
+        
+        .info-label { font-weight: 600; color: var(--text-muted); }
+        .info-value { color: #fff; text-align: right; font-weight: 500; max-width: 60%; line-height: 1.4; }
+
+        /* --- TABLES --- */
+        .table-wrapper {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow-x: auto;
+            margin-bottom: 30px;
+            background: var(--bg-card);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .wiki-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .wiki-table th, .wiki-table td {
+            text-align: left;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .wiki-table th {
+            background: rgba(255,255,255,0.03);
+            color: #fff;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 1px;
+        }
+        
+        .wiki-table tr:last-child td { border-bottom: none; }
+        .wiki-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+        /* --- DISCOGRAPHY GRID --- */
+        .disco-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .disco-item {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+        .disco-item::before {
+            content:''; position:absolute; top:0; left:0; width:100%; height:100%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.03));
+            opacity: 0; transition: 0.3s;
+        }
+        .disco-item:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255,255,255,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        .disco-item:hover::before { opacity: 1; }
+
+        .disco-art {
+            width: 100%;
+            aspect-ratio: 1;
+            background: #151515;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .disco-art img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .disco-title { 
+            font-size: 13px; font-weight: 700; color: #fff; 
+            margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        }
+        .disco-year { font-size: 11px; color: var(--text-muted); }
+
+        /* --- AWARDS --- */
+        .award-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .won { 
+            background: var(--gold-gradient); 
+            color: #000; 
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+        }
+        .nom { 
+            background: rgba(255,255,255,0.08); 
+            color: #ccc; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        /* --- ALBUM OVERLAY --- */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            display: none;
+            align-items: center; justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        .overlay.active { display: flex; }
+
+        .overlay-card {
+            background: #111;
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 100%; max-width: 500px;
+            max-height: 85vh;
+            border-radius: 16px;
+            overflow: hidden;
+            display: flex; flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.7);
+            animation: zoomIn 0.3s ease;
+        }
+
+        .ov-header {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+        .ov-bg {
+            width: 100%; height: 100%; object-fit: cover;
+            filter: blur(20px) brightness(0.4);
+            transform: scale(1.1);
+        }
+        .ov-content {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; padding: 20px; gap: 20px;
+            background: linear-gradient(0deg, #111, transparent);
+        }
+        .ov-cover {
+            width: 120px; height: 120px;
+            border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+            background: #222; overflow: hidden; flex-shrink: 0;
+        }
+        .ov-cover img { width: 100%; height: 100%; object-fit: cover; }
+        
+        .ov-info h2 {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 22px; margin: 0 0 5px 0; border: none; padding: 0;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            display: block; /* Override flex display from h2 global */
+        }
+        .ov-info p { margin: 0; color: #ccc; font-size: 13px; }
+
+        .ov-body {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .track-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 14px; color: #ddd;
+        }
+        .track-row:last-child { border-bottom: none; }
+        .track-idx { color: #666; width: 24px; font-size: 12px; }
+        
+        .close-btn {
+            position: absolute; top: 15px; right: 15px;
+            background: rgba(0,0,0,0.5); color: #fff;
+            width: 32px; height: 32px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 10; border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* --- RESPONSIVE DESIGN --- */
+        @media (max-width: 900px) {
+            .container {
+                flex-direction: column; 
+                padding: 20px;
+                gap: 30px;
+            }
+
+            .infobox {
+                order: -1; 
+                width: 100%; 
+                max-width: 450px;
+                margin: 0 auto;
+            }
+
+            .article-title { font-size: 42px; text-align: center; }
+            .article-subtitle { text-align: center; }
+            .main-content { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="wiki-header">
+        <div class="wiki-logo">EUSIPEDIA</div>
+    </header>
+
+    <div class="container">
+        
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <h1 class="article-title animate-load" id="wiki-title">Artist Name</h1>
+            <div class="article-subtitle animate-load delay-1">The Free Encyclopedia Article</div>
+            
+            <div class="article-text animate-load delay-1" id="wiki-intro">
+                <!-- Generated JS Content -->
+            </div>
+
+            <h2 class="animate-load delay-2" id="bio">Biography</h2>
+            <p class="article-text animate-load delay-2" id="bio-content">
+                <!-- Generated JS Content -->
+            </p>
+
+            <h2 class="animate-load delay-3" id="career">Career Summary</h2>
+            <div class="table-wrapper animate-load delay-3">
+                <table class="wiki-table">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stats-table">
+                        <!-- Generated JS Content -->
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="animate-load delay-3" id="discography">Discography</h2>
+            <div class="disco-grid animate-load delay-3" id="disco-display">
+                <!-- Generated JS Content -->
+            </div>
+
+            <h2 class="animate-load delay-3" id="awards">Awards & Recognition</h2>
+            <div class="table-wrapper animate-load delay-3">
+                <table class="wiki-table">
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Category</th>
+                            <th>Work</th>
+                            <th style="text-align:right">Result</th>
+                        </tr>
+                    </thead>
+                    <tbody id="awards-table-body">
+                        <!-- Generated JS Content -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- INFOBOX (Sidebar) -->
+        <aside class="infobox animate-load">
+            <div class="infobox-header" id="infobox-name">Artist Name</div>
+            <div class="infobox-image" id="infobox-img"></div>
+            <div class="infobox-data">
+                <div class="info-row">
+                    <div class="info-label">Born</div>
+                    <div class="info-value" id="info-born">Unknown</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Origin</div>
+                    <div class="info-value">Global</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Genre</div>
+                    <div class="info-value" id="info-genre">Music</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Occupation</div>
+                    <div class="info-value">Singer, Songwriter</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Years active</div>
+                    <div class="info-value" id="info-years">2024–present</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Label</div>
+                    <div class="info-value">Independent</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Net worth</div>
+                    <div class="info-value" id="info-worth" style="color:var(--gold); font-weight:700;">$0</div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- ALBUM VIEW OVERLAY -->
+    <div class="overlay" id="album-overlay" onclick="closeOverlay(event)">
+        <div class="overlay-card">
+            <div class="ov-header">
+                <img id="ov-bg" class="ov-bg" src="" alt="">
+                <div class="close-btn" onclick="closeOverlay(event)">×</div>
+                <div class="ov-content">
+                    <div class="ov-cover" id="ov-cover"></div>
+                    <div class="ov-info">
+                        <h2 id="ov-title">Album Title</h2>
+                        <p id="ov-meta">2024 • Album</p>
+                    </div>
+                </div>
+            </div>
+            <div class="ov-body" id="ov-tracks">
+                <!-- Tracks go here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let albumsData = [];
+        let songsData = [];
+
+        document.addEventListener('DOMContentLoaded', loadWikiData);
+
+        function formatMoney(amount) {
+            if (amount >= 1000000000) return '$' + (amount / 1000000000).toFixed(1) + 'B';
+            if (amount >= 1000000) return '$' + (amount / 1000000).toFixed(1) + 'M';
+            return '$' + Math.floor(amount).toLocaleString();
+        }
+
+        function calculateTotalSales(songs, albums) {
+            let total = 0;
+            songs.forEach(s => {
+                const raw = parseInt(s.streams) || 0;
+                total += Math.floor(raw / 150); 
+            });
+            total += albums.length * 5000; 
+            return total;
+        }
+    const photoDB = (function() {
+    const DB_NAME = 'MusicGameDB', STORE = 'photos', KEY = 'artistPhoto';
+    function open() {
+        return new Promise((res, rej) => {
+            const r = indexedDB.open(DB_NAME, 1);
+            r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            r.onsuccess = e => res(e.target.result);
+            r.onerror = e => rej(e.target.error);
+        });
+    }
+    return {
+        load() {
+            return open().then(db => new Promise((res, rej) => {
+                const tx = db.transaction(STORE, 'readonly');
+                const r = tx.objectStore(STORE).get(KEY);
+                r.onsuccess = e => res(e.target.result || null);
+                r.onerror = e => rej(e.target.error);
+            }));
+        }
+    };
+})();
+
+      async  function loadWikiData() {
+            // 1. Retrieve Data
+            const artist = JSON.parse(localStorage.getItem('artistDetails') || '{"name":"Unknown","genre":"Pop","startYear":2024}');
+            songsData = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+            albumsData = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+            const money = parseFloat(localStorage.getItem('money') || '0');
+            const history = JSON.parse(localStorage.getItem('awardHistory') || '[]');
+            const noms = JSON.parse(localStorage.getItem('yearlyNominations') || '{}');
+            let photo = await photoDB.load().catch(() => null);
+    if (!photo) photo = localStorage.getItem('artistPhoto'); // legacy fallback
+            const currentDate = new Date(localStorage.getItem('currentDate') || new Date());
+            const startYear = parseInt(artist.startYear) || 2024;
+
+            // 2. Fill Info
+            document.getElementById('wiki-title').innerText = artist.name;
+            document.getElementById('infobox-name').innerText = artist.name;
+            document.getElementById('info-genre').innerText = artist.genre;
+            
+            // Age Calculation
+            const birthYear = startYear - 18; 
+            const age = currentDate.getFullYear() - birthYear;
+            document.getElementById('info-born').innerText = `${birthYear} (age ${age})`;
+            document.getElementById('info-years').innerText = `${startYear}–present`;
+            document.getElementById('info-worth').innerText = formatMoney(money);
+            
+            if (photo) {
+                document.getElementById('infobox-img').innerHTML = `<img src="${photo}" alt="${artist.name}">`;
+            } else {
+                 document.getElementById('infobox-img').innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#333;font-size:50px;">?</div>`;
+            }
+
+            // 3. Generate Text
+            const intro = `<b>${artist.name}</b> is a musical artist, songwriter, and producer known for their innovative work in the <b>${artist.genre}</b> genre. They began their professional career in ${startYear} and have since become a prominent figure in the music industry, celebrated for their distinct sound and artistic versatility.`;
+            document.getElementById('wiki-intro').innerHTML = intro;
+
+            let bio = `<p>${artist.name} launched their career in ${startYear}. Their early work quickly garnered attention on digital platforms, leading to a rapidly growing fanbase.</p>`;
+            
+            if (albumsData.length > 0) {
+                bio += `<p>Their discography includes ${albumsData.length} studio albums, starting with their debut effort <i>${albumsData[0].name || albumsData[0].albumName}</i>, which showcased their musical evolution.</p>`;
+            }
+            
+            if (songsData.length > 0) {
+                const topSong = [...songsData].sort((a,b) => (b.streams||0) - (a.streams||0))[0];
+                const topName = topSong.songName || topSong.name;
+                bio += `<p>They achieved significant commercial success with the hit single "<b>${topName}</b>", which has garnered over ${parseInt(topSong.streams).toLocaleString()} streams worldwide. This track is often cited as their breakthrough moment.</p>`;
+            }
+
+            if (history.length > 0) {
+                bio += `<p>${artist.name} has received critical acclaim, winning <b>${history.length}</b> major awards during their career.</p>`;
+            }
+
+            document.getElementById('bio-content').innerHTML = bio;
+
+            // 4. Career Stats
+            const totalStreams = songsData.reduce((sum, s) => sum + (s.streams || 0), 0);
+            let totalNomsCount = 0;
+            Object.values(noms).forEach(yearCat => {
+                Object.values(yearCat).forEach(list => {
+                    if(list.some(n => n.isUser)) totalNomsCount++;
+                });
+            });
+
+            const stats = [
+                { label: "Total Songs", val: songsData.length },
+                { label: "Studio Albums", val: albumsData.length },
+                { label: "Est. Sales (Units)", val: calculateTotalSales(songsData, albumsData).toLocaleString() },
+                { label: "Career Streams", val: totalStreams.toLocaleString() },
+                { label: "Nominations", val: totalNomsCount },
+                { label: "Awards Won", val: history.length }
+            ];
+
+            const statsBody = document.getElementById('stats-table');
+            stats.forEach(s => {
+                statsBody.innerHTML += `<tr><td>${s.label}</td><td style="font-weight:700; color:#fff;">${s.val}</td></tr>`;
+            });
+
+            // 5. Discography Grid with Click Event
+            const discoDiv = document.getElementById('disco-display');
+            if (albumsData.length === 0) {
+                discoDiv.innerHTML = '<div style="grid-column:1/-1; text-align:center; color:var(--text-muted); font-size:14px; font-style:italic;">No albums released yet.</div>';
+            } else {
+                albumsData.forEach((alb, idx) => {
+                    const art = alb.coverArt ? `<img src="${alb.coverArt}">` : '💿';
+                    const year = alb.releaseYear || (alb.releaseDate ? alb.releaseDate.substring(0,4) : 'Unknown');
+                    const div = document.createElement('div');
+                    div.className = 'disco-item';
+                    div.innerHTML = `
+                        <div class="disco-art">${art}</div>
+                        <div class="disco-title">${alb.name || alb.albumName}</div>
+                        <div class="disco-year">${year}</div>
+                    `;
+                    // Add Click Event
+                    div.onclick = () => openAlbum(idx);
+                    discoDiv.appendChild(div);
+                });
+            }
+
+            // 6. Awards List
+            const awardsBody = document.getElementById('awards-table-body');
+            const tableRows = [];
+            
+            const catMap = {
+                'recordYear': 'Record of the Year', 'albumYear': 'Album of the Year',
+                'songYear': 'Song of the Year', 'newArtist': 'Best New Artist',
+                'popVocal': 'Pop Vocal Album', 'rapPerf': 'Rap Performance',
+                'melodicRap': 'Melodic Rap Perf.', 'rnbSong': 'R&B Song'
+            };
+
+            Object.keys(noms).forEach(year => {
+                const categories = noms[year];
+                Object.keys(categories).forEach(catId => {
+                    const nominees = categories[catId];
+                    const userNom = nominees.find(n => n.isUser);
+                    if (userNom) {
+                        const won = history.some(h => h.year == year && h.entry === userNom.name);
+                        tableRows.push({
+                            year: year,
+                            cat: catMap[catId] || catId,
+                            work: userNom.name,
+                            won: won
+                        });
+                    }
+                });
+            });
+
+            tableRows.sort((a,b) => b.year - a.year);
+
+            if (tableRows.length === 0) {
+                awardsBody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted); padding:20px;">No awards data available.</td></tr>';
+            } else {
+                tableRows.forEach(r => {
+                    const resultHtml = r.won 
+                        ? '<span class="award-badge won">★ WON</span>' 
+                        : '<span class="award-badge nom">Nominated</span>';
+                    
+                    awardsBody.innerHTML += `
+                        <tr>
+                            <td style="color:var(--text-muted)">${r.year}</td>
+                            <td>${r.cat}</td>
+                            <td style="color:#e0e0e0"><i>${r.work}</i></td>
+                            <td style="text-align:right">${resultHtml}</td>
+                        </tr>
+                    `;
+                });
+            }
+        }
+
+        // --- ALBUM MODAL LOGIC ---
+        function openAlbum(index) {
+            const album = albumsData[index];
+            if (!album) return;
+
+            document.getElementById('ov-title').innerText = album.name || album.albumName;
+            const year = album.releaseYear || (album.releaseDate ? album.releaseDate.substring(0,4) : 'Unknown');
+            document.getElementById('ov-meta').innerText = `${year} • Studio Album`;
+            
+            const bg = document.getElementById('ov-bg');
+            const cover = document.getElementById('ov-cover');
+            
+            if (album.coverArt) {
+                bg.src = album.coverArt;
+                cover.innerHTML = `<img src="${album.coverArt}">`;
+            } else {
+                bg.src = "";
+                bg.style.background = "#333";
+                cover.innerHTML = `<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:30px;">💿</div>`;
+            }
+
+            const tracksDiv = document.getElementById('ov-tracks');
+            tracksDiv.innerHTML = '';
+
+            if (album.songs && Array.isArray(album.songs)) {
+                album.songs.forEach((track, i) => {
+                    const trackName = typeof track === 'string' ? track : (track.name || track.songName);
+                    const row = document.createElement('div');
+                    row.className = 'track-row';
+                    row.innerHTML = `
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span class="track-idx">${i+1}</span>
+                            <span>${trackName}</span>
+                        </div>
+                        <span style="font-size:11px; color:#666;">${year}</span>
+                    `;
+                    tracksDiv.appendChild(row);
+                });
+            } else {
+                tracksDiv.innerHTML = '<div style="text-align:center; padding:20px; color:#666;">Tracklist unavailable.</div>';
+            }
+
+            document.getElementById('album-overlay').classList.add('active');
+        }
+
+        function closeOverlay(e) {
+            if (e.target.id === 'album-overlay' || e.target.classList.contains('close-btn')) {
+                document.getElementById('album-overlay').classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
+
+

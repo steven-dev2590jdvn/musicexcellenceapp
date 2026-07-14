@@ -1,0 +1,1639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Record Label HQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg:#050505; --card:#111; --border:#1e1e1e; --border2:#2a2a2a;
+    --text:#fff; --muted:#666; --muted2:#999;
+    --green:#1DB954; --red:#EF4444; --gold:#D4AF37; --blue:#3B82F6; --purple:#8B5CF6;
+    --paper:#f0f0eb; --ink:#1a1a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+    font-family:'Inter',sans-serif;
+    font-weight:700;
+    background:var(--bg);
+    color:var(--text);
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+    min-height:100vh;
+    overflow-x:hidden;
+}
+.page{display:none;}
+.page.active{display:block;}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;background:rgba(5,5,5,0.96);backdrop-filter:blur(10px);position:sticky;top:0;z-index:60;border-bottom:1px solid var(--border);}
+.top-bar-title{font-size:18px;font-weight:900;letter-spacing:-0.5px;}
+.top-back{background:none;border:none;color:var(--text);cursor:pointer;padding:4px;display:flex;align-items:center;}
+.top-back svg{width:22px;height:22px;fill:currentColor;}
+
+.bot-nav{display:flex;justify-content:space-around;align-items:center;position:fixed;bottom:0;left:0;width:100%;height:75px;background:#080808;border-top:1px solid #1e1e1e;padding-bottom:env(safe-area-inset-bottom);z-index:9999;}
+.bnav-btn{flex:1;background:none;border:none;color:#9ca3af;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;}
+.bnav-btn.active{color:#1db954;}
+.bnav-btn svg{width:24px;height:24px;fill:currentColor;}
+
+.container{max-width:600px;margin:0 auto;padding:20px;}
+.section-head{font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px;}
+.card-lbl{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;display:flex;justify-content:space-between;align-items:center;}
+.meter-bg{height:5px;background:#1a1a1a;border-radius:10px;overflow:hidden;margin-top:5px;}
+.meter-fill{height:100%;border-radius:10px;transition:width 0.5s;}
+.btn{background:var(--text);color:#000;border:none;padding:14px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:900;font-size:14px;cursor:pointer;width:100%;margin-bottom:10px;letter-spacing:0.3px;transition:opacity 0.2s;}
+.btn:hover{opacity:0.85;}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);padding:12px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:800;font-size:13px;cursor:pointer;width:100%;margin-bottom:10px;transition:border-color 0.2s;}
+.btn-ghost:hover{border-color:#555;}
+.btn-red{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25);padding:12px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:800;font-size:13px;cursor:pointer;width:100%;}
+.btn-gold{background:linear-gradient(135deg,#D4AF37,#F5CC47);color:#000;border:none;padding:14px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:900;font-size:14px;cursor:pointer;width:100%;margin-bottom:10px;}
+.btn-sm{background:#1e1e1e;color:var(--text);border:none;padding:8px 14px;border-radius:8px;font-family:'Inter',sans-serif;font-weight:800;font-size:11px;cursor:pointer;transition:background 0.2s;}
+.btn-sm:hover{background:#2a2a2a;}
+.btn-locked{background:rgba(255,255,255,0.03);color:#444;border:1px dashed #2a2a2a;padding:13px;border-radius:10px;font-family:'Inter',sans-serif;font-weight:800;font-size:13px;cursor:not-allowed;width:100%;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;}
+.pill-gold{background:linear-gradient(135deg,#D4AF37,#F5CC47);color:#000;font-size:9px;font-weight:900;padding:3px 8px;border-radius:20px;letter-spacing:0.5px;}
+.form-lbl{font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;display:block;}
+.form-inp{width:100%;background:#080808;border:1px solid var(--border2);color:var(--text);padding:14px;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px;outline:none;transition:border-color 0.2s;}
+.form-inp:focus{border-color:#444;}
+select.form-inp option{background:#111;}
+
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:200;display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;overflow-y:auto;}
+.overlay.open{display:flex;animation:fadeUp 0.25s ease-out;}
+.overlay-box{background:#0d0d0d;border:1px solid #222;border-radius:20px;width:100%;max-width:480px;padding:28px;max-height:88vh;overflow-y:auto;}
+.overlay-title{font-size:22px;font-weight:900;letter-spacing:-0.5px;margin-bottom:6px;}
+.overlay-sub{font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:24px;}
+.step-dots{display:flex;gap:6px;margin-bottom:20px;}
+.step-dot{width:6px;height:6px;border-radius:50%;background:#2a2a2a;}
+.step-dot.on{background:var(--text);}
+.choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.choice{background:#080808;border:1px solid var(--border2);border-radius:12px;padding:16px;cursor:pointer;text-align:center;transition:all 0.2s;}
+.choice:hover{border-color:#444;}
+.choice.sel{border-color:var(--text);background:#161616;}
+.choice-icon{display:flex;justify-content:center;margin-bottom:8px;}
+.choice-icon svg{width:28px;height:28px;fill:currentColor;}
+.choice-title{font-size:13px;font-weight:800;}
+.choice-sub{font-size:11px;font-weight:600;color:var(--muted2);margin-top:3px;}
+.color-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;}
+.cswatch{width:34px;height:34px;border-radius:50%;cursor:pointer;border:2px solid transparent;transition:all 0.2s;}
+.cswatch.sel{border-color:#fff;transform:scale(1.2);}
+.art-cover{border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.art-cover-text{font-size:10px;font-weight:900;color:rgba(0,0,0,0.5);text-transform:uppercase;letter-spacing:1px;text-align:center;padding:4px;}
+
+.offer-card{background:linear-gradient(145deg,#161616,#0d0d0d);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:18px;cursor:pointer;position:relative;transition:transform 0.2s,border-color 0.2s;}
+.offer-card:hover{transform:translateY(-3px);border-color:#333;}
+.tier-badge{position:absolute;top:18px;right:18px;padding:4px 10px;border-radius:20px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:1px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);}
+.offer-amount{font-size:28px;font-weight:900;letter-spacing:-1px;margin-bottom:4px;}
+.offer-sub{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.perk-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.perk-tag{font-size:10px;font-weight:800;background:#1e1e1e;color:#bbb;padding:5px 10px;border-radius:6px;}
+
+/* ── ARTIST ROW — expanded with stats ── */
+.artist-row{padding:16px 0;border-bottom:1px solid #111;cursor:pointer;}
+.artist-row:last-child{border-bottom:none;}
+.a-avatar{width:46px;height:46px;border-radius:10px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:rgba(0,0,0,0.6);}
+.a-name{font-size:15px;font-weight:900;}
+.a-meta{font-size:11px;font-weight:600;color:var(--muted2);margin-top:2px;}
+.deal-chip{font-size:9px;font-weight:900;padding:4px 9px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0;}
+.chip-std{background:rgba(59,130,246,0.15);color:#3B82F6;}
+.chip-ctrl{background:rgba(239,68,68,0.12);color:#EF4444;}
+.stat-box{background:#0a0a0a;border-radius:8px;padding:8px;}
+.stat-lbl{font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;}
+.stat-val{font-size:15px;font-weight:900;margin-top:2px;}
+
+.side-panel{position:fixed;bottom:72px;left:0;right:0;z-index:150;background:#0a0a0a;border-top:1px solid #1e1e1e;border-radius:18px 18px 0 0;max-height:82vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);}
+.side-panel.open{transform:translateY(0);}
+.panel-handle{width:36px;height:4px;background:#2a2a2a;border-radius:2px;margin:12px auto 16px;}
+.panel-scrim{display:none;position:fixed;top:0;left:0;width:100%;height:100%;z-index:140;background:rgba(0,0,0,0.6);}
+.panel-scrim.show{display:block;}
+
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.act-card{background:#111;border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all 0.2s;text-align:center;}
+.act-card:hover{border-color:#333;}
+.act-card svg{width:22px;height:22px;fill:currentColor;margin-bottom:6px;}
+.act-title{font-size:12px;font-weight:900;}
+.act-sub{font-size:10px;font-weight:600;color:var(--muted2);margin-top:2px;}
+
+.net-btn{background:#0d0d0d;border:1px solid var(--border);border-radius:10px;padding:12px 14px;cursor:pointer;width:100%;display:flex;align-items:center;gap:10px;margin-bottom:10px;transition:border-color 0.2s;font-family:'Inter',sans-serif;}
+.net-btn:hover{border-color:#333;}
+.net-btn svg{width:18px;height:18px;fill:currentColor;flex-shrink:0;}
+.net-lbl{font-size:12px;font-weight:800;text-align:left;flex:1;}
+.net-val{font-size:11px;font-weight:600;color:var(--muted2);}
+.net-detail{background:#080808;border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px;display:none;}
+.net-detail.open{display:block;animation:fadeUp 0.2s;}
+.net-row{display:flex;align-items:center;margin-bottom:10px;font-size:12px;}
+.net-row:last-child{margin-bottom:0;}
+.net-track{height:3px;background:#1a1a1a;border-radius:2px;flex:1;margin:0 10px;}
+.net-prog{height:100%;border-radius:2px;}
+
+.scout-card{background:#111;border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.int-badge{font-size:9px;font-weight:900;padding:3px 8px;border-radius:20px;}
+.int-hi{background:rgba(29,185,84,0.15);color:#1DB954;}
+.int-med{background:rgba(245,158,11,0.15);color:#F59E0B;}
+.int-lo{background:rgba(239,68,68,0.12);color:#EF4444;}
+
+.label-hdr{text-align:center;padding:28px 20px 20px;position:relative;}
+.label-hdr-logo{width:82px;height:82px;margin:0 auto 12px;display:block;}
+.label-hdr-name{font-size:26px;font-weight:900;letter-spacing:-0.8px;}
+.label-hdr-type{font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:2px;margin-top:4px;}
+.rep-pill{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.05);border:1px solid #2a2a2a;border-radius:20px;padding:4px 12px;font-size:11px;font-weight:800;margin-top:10px;}
+.fin-row{display:flex;justify-content:space-between;margin-bottom:9px;font-size:13px;font-weight:700;}
+.fin-total{margin-top:12px;padding-top:12px;border-top:1px solid #1e1e1e;font-size:15px;font-weight:900;display:flex;justify-content:space-between;}
+
+.tog-row{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--border);}
+.tog-row:last-child{border-bottom:none;}
+.tog-name{font-size:15px;font-weight:800;}
+.tog-desc{font-size:11px;font-weight:600;color:var(--muted2);margin-top:3px;}
+.tog-sw{width:46px;height:26px;background:#1e1e1e;border-radius:13px;cursor:pointer;position:relative;transition:background 0.3s;flex-shrink:0;}
+.tog-sw.on{background:var(--green);}
+.tog-thumb{width:20px;height:20px;background:#fff;border-radius:50%;position:absolute;top:3px;left:3px;transition:transform 0.3s;box-shadow:0 2px 5px rgba(0,0,0,0.4);}
+.tog-sw.on .tog-thumb{transform:translateX(20px);}
+
+.contract-ov{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.92);backdrop-filter:blur(8px);z-index:300;display:none;align-items:center;justify-content:center;padding:10px;}
+.contract-ov.open{display:flex;animation:fadeUp 0.3s ease-out;}
+.paper-doc{background:var(--paper);color:var(--ink);width:100%;max-width:480px;height:86vh;overflow-y:auto;padding:36px;box-shadow:0 10px 40px rgba(0,0,0,0.5);font-family:'Inter',sans-serif;}
+.doc-logo{width:56px;height:56px;margin:0 auto 14px;display:block;}
+.doc-title{text-align:center;font-size:18px;font-weight:900;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px;border-bottom:2px solid #000;padding-bottom:16px;}
+.doc-body{font-size:13px;line-height:1.65;margin-bottom:22px;}
+.doc-table{width:100%;border-collapse:collapse;margin-bottom:22px;font-size:12px;}
+.doc-table td{padding:9px 0;border-bottom:1px solid #ccc;}
+.doc-table td:last-child{text-align:right;font-weight:900;}
+.sign-btn{background:#000;color:#fff;width:100%;padding:15px;border:none;font-family:'Inter',sans-serif;font-weight:900;font-size:14px;cursor:pointer;margin-top:18px;letter-spacing:1px;}
+.sign-btn:hover{background:#333;}
+.neg-section{margin:18px 0;border:1px solid #ccc;border-radius:8px;overflow:hidden;}
+.neg-header{background:#e8e8e3;padding:9px 14px;font-size:9px;font-weight:900;text-transform:uppercase;letter-spacing:2px;color:#555;}
+.neg-option{display:flex;align-items:center;gap:12px;padding:11px 14px;cursor:pointer;border-bottom:1px solid #e0e0d8;transition:background 0.15s;}
+.neg-option:last-child{border-bottom:none;}
+.neg-option.sel{background:#f0f0ea;}
+.neg-radio{width:15px;height:15px;border-radius:50%;border:2px solid #999;flex-shrink:0;position:relative;}
+.neg-option.sel .neg-radio{border-color:#000;background:#000;}
+.neg-option.sel .neg-radio::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:5px;height:5px;border-radius:50%;background:#fff;}
+.neg-opt-title{font-size:11px;font-weight:900;color:#1a1a1a;}
+.neg-opt-sub{font-size:10px;font-weight:600;color:#777;margin-top:1px;}
+.neg-badge{font-size:9px;font-weight:900;padding:2px 6px;border-radius:4px;margin-left:auto;flex-shrink:0;}
+.neg-badge-up{background:#dcfce7;color:#166534;}
+.neg-badge-down{background:#fee2e2;color:#991b1b;}
+.neg-badge-gold{background:#fef9c3;color:#713f12;}
+
+#musify-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:#000;z-index:500;display:none;flex-direction:column;overflow-y:auto;}
+#musify-screen.open{display:flex;}
+.mf-header{position:relative;height:280px;overflow:hidden;flex-shrink:0;}
+.mf-header-bg{position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.85;}
+.mf-header-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(180deg,transparent 30%,#000 100%);}
+.mf-back{position:absolute;top:20px;left:20px;background:rgba(0,0,0,0.7);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);z-index:10;}
+.mf-back svg{width:16px;height:16px;fill:#fff;}
+.mf-artist-info{position:absolute;bottom:20px;left:20px;right:20px;}
+.mf-name{font-size:clamp(28px,6vw,52px);font-weight:900;letter-spacing:-1px;text-shadow:0 4px 20px rgba(0,0,0,0.8);}
+.mf-listeners{font-size:12px;font-weight:600;color:#b3b3b3;margin-top:4px;}
+.mf-controls{padding:16px 20px;display:flex;align-items:center;gap:12px;background:linear-gradient(180deg,#000,#121212);}
+.mf-play-btn{background:var(--green);border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.mf-play-btn svg{width:18px;height:18px;fill:#000;margin-left:2px;}
+.mf-follow-btn{background:transparent;color:#fff;border:1px solid rgba(255,255,255,0.4);padding:8px 18px;border-radius:20px;cursor:pointer;font-family:'Inter',sans-serif;font-size:12px;font-weight:800;transition:0.2s;}
+.mf-follow-btn:hover{background:rgba(255,255,255,0.1);}
+.mf-tabs{display:flex;gap:20px;padding:0 20px;border-bottom:1px solid #282828;background:#121212;}
+.mf-tab{color:#b3b3b3;font-size:13px;font-weight:700;padding:10px 0;cursor:pointer;border-bottom:3px solid transparent;transition:0.2s;}
+.mf-tab.active{color:#fff;border-bottom-color:var(--green);}
+.mf-content{padding:0 20px 100px;background:#121212;flex:1;}
+.mf-sec-title{font-size:18px;font-weight:800;color:#fff;margin:24px 0 14px;display:flex;justify-content:space-between;align-items:center;}
+.mf-song-list{list-style:none;}
+.mf-song-item{display:flex;align-items:center;padding:8px 0;border-radius:4px;cursor:pointer;transition:0.2s;margin-bottom:2px;}
+.mf-song-item:hover{background:#1a1a1a;}
+.mf-rank{width:22px;color:#b3b3b3;text-align:center;margin-right:12px;font-size:13px;font-weight:700;}
+.mf-song-info{flex:1;overflow:hidden;}
+.mf-song-title{font-size:14px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mf-song-streams{color:#b3b3b3;font-size:12px;font-weight:600;}
+.mf-album-scroll{overflow-x:auto;padding:4px 0;scrollbar-width:none;-ms-overflow-style:none;}
+.mf-album-scroll::-webkit-scrollbar{display:none;}
+.mf-album-row{display:flex;gap:14px;width:max-content;}
+.mf-album-card{background:#181818;border-radius:8px;cursor:pointer;transition:0.2s;width:130px;overflow:hidden;}
+.mf-album-card:hover{background:#222;transform:translateY(-3px);}
+.mf-album-cover{width:130px;height:130px;display:flex;align-items:center;justify-content:center;}
+.mf-album-info{padding:10px;}
+.mf-album-title{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mf-album-meta{color:#b3b3b3;font-size:11px;font-weight:600;margin-top:2px;}
+.mf-no-content{text-align:center;padding:40px 20px;color:#444;font-size:14px;font-weight:700;}
+
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:#181818;border:1px solid #333;color:#fff;padding:12px 20px;border-radius:12px;font-size:13px;font-weight:800;z-index:9999;white-space:nowrap;max-width:90vw;text-align:center;pointer-events:none;animation:fadeUp 0.25s ease;}
+.toast.green{border-color:var(--green);color:var(--green);}
+.toast.red{border-color:var(--red);color:var(--red);}
+.toast.gold{border-color:var(--gold);color:var(--gold);}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+</style>
+</head>
+<body>
+
+<!-- PAGE: HOME -->
+<div class="page active" id="pg-home">
+    <div class="top-bar">
+        <a href="music.html" class="top-back">
+            <svg viewBox="0 0 24 24"><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+        </a>
+        <div class="top-bar-title">HQ</div>
+        <div style="width:30px"></div>
+    </div>
+    <div id="home-view" class="container"></div>
+</div>
+
+<!-- PAGE: YOUR LABEL -->
+<div class="page" id="pg-yourlabel">
+    <div class="top-bar">
+        <div style="width:30px"></div>
+        <div class="top-bar-title" id="yourlabel-title">Your Label</div>
+        <div style="width:30px"></div>
+    </div>
+    <div id="yourlabel-view"></div>
+</div>
+
+<!-- PAGE: HISTORY -->
+<div class="page" id="pg-history">
+    <div class="top-bar">
+        <div style="width:30px"></div>
+        <div class="top-bar-title">Contract History</div>
+        <div style="width:30px"></div>
+    </div>
+    <div id="history-view" class="container"></div>
+</div>
+
+<!-- PAGE: SETTINGS -->
+<div class="page" id="pg-settings">
+    <div class="top-bar">
+        <div style="width:30px"></div>
+        <div class="top-bar-title">Settings</div>
+        <div style="width:30px"></div>
+    </div>
+    <div class="container">
+        <div class="card" style="margin-bottom:14px;">
+            <div class="card-lbl">Notifications</div>
+            <div class="tog-row">
+                <div><div class="tog-name">Music Notifications</div><div class="tog-desc">Streams, collabs, offers from music.html</div></div>
+                <div class="tog-sw on" id="tog-music" onclick="toggleNotif('music')"><div class="tog-thumb"></div></div>
+            </div>
+            <div class="tog-row">
+                <div><div class="tog-name">Label Alerts</div><div class="tog-desc">Satisfaction, sabotage, contract breaches</div></div>
+                <div class="tog-sw on" id="tog-label" onclick="toggleNotif('label')"><div class="tog-thumb"></div></div>
+            </div>
+            <div class="tog-row">
+                <div><div class="tog-name">Record Deal Popup</div><div class="tog-desc">Don't show contract alerts while advancing weeks</div></div>
+                <div class="tog-sw on" id="tog-dealalert" onclick="toggleNotif('dealalert')"><div class="tog-thumb"></div></div>
+            </div>
+            <div class="tog-row">
+                <div><div class="tog-name">Artist Relationship</div><div class="tog-desc">When loyalty drops critically</div></div>
+                <div class="tog-sw on" id="tog-artist" onclick="toggleNotif('artist')"><div class="tog-thumb"></div></div>
+            </div>
+            <div class="tog-row">
+                <div><div class="tog-name">Budget Requests</div><div class="tog-desc">When signed artists request approval</div></div>
+                <div class="tog-sw on" id="tog-budget" onclick="toggleNotif('budget')"><div class="tog-thumb"></div></div>
+            </div>
+        </div>
+        <div class="card" style="margin-bottom:14px;">
+            <div class="card-lbl">Premium</div>
+            <div style="font-size:13px;font-weight:600;color:var(--muted2);margin-bottom:14px;">Unlock Sub-Labels and advanced features with Premium.</div>
+            <button class="btn-gold" onclick="toast('Coming soon — Premium unlocks next update.','gold')">
+                <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:currentColor;margin-right:6px;vertical-align:middle;"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                Upgrade to Premium
+            </button>
+        </div>
+        <div class="card">
+            <div class="card-lbl">Data</div>
+            <button class="btn-red" onclick="resetAll()">Reset All Label Data</button>
+        </div>
+    </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bot-nav">
+    <button id="bn-home" class="bnav-btn active" onclick="showPage('home')">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Home</span>
+    </button>
+    <button id="bn-yourlabel" class="bnav-btn" onclick="showPage('yourlabel')">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+        <span>Label</span>
+    </button>
+    <button id="bn-history" class="bnav-btn" onclick="showPage('history')">
+        <svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg>
+        <span>History</span>
+    </button>
+    <button id="bn-settings" class="bnav-btn" onclick="showPage('settings')">
+        <svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94L14.4 2.81c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        <span>Settings</span>
+    </button>
+</nav>
+
+<!-- CONTRACT PAPER MODAL -->
+<div class="contract-ov" id="contract-modal">
+    <div class="paper-doc">
+        <svg id="doc-logo" class="doc-logo" viewBox="0 0 100 100"></svg>
+        <div class="doc-title" id="doc-label-name">LABEL NAME</div>
+        <div style="text-align:center;margin-bottom:14px;font-size:10px;color:#666;text-transform:uppercase;letter-spacing:2px;">Exclusive Recording Agreement</div>
+        <div style="text-align:center;margin-bottom:16px;">
+            <span id="deal-type-text" style="display:inline-block;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;"></span>
+        </div>
+        <div class="doc-body">This agreement is entered into between the Artist and the Label. The Label agrees to provide funding, distribution, and marketing services.<br><br><strong>Term:</strong> The Artist agrees to deliver the required albums within the specified timeframe.</div>
+        <table class="doc-table">
+            <tr><td>Advance Payment</td><td id="doc-advance">$0</td></tr>
+            <tr><td>Royalty (Artist)</td><td id="doc-royalty">0%</td></tr>
+            <tr><td>Duration</td><td id="doc-duration">0 Years</td></tr>
+            <tr><td>Albums Owed</td><td id="doc-albums">0 LPs</td></tr>
+            <tr><td>Territory</td><td id="doc-tier">Worldwide</td></tr>
+            <tr id="doc-tour-row" style="display:none;"><td>Tour Revenue Cut</td><td id="doc-tour-cut" style="color:#EF4444;">20%</td></tr>
+        </table>
+        <div id="masters-section">
+            <div class="neg-section">
+                <div class="neg-header">Negotiate — Masters Rights</div>
+                <div class="neg-option sel" id="neg-keep" onclick="selMasters(true)">
+                    <div class="neg-radio"></div>
+                    <div><div class="neg-opt-title">Keep My Masters</div><div class="neg-opt-sub">Standard advance · You own your recordings</div></div>
+                    <span class="neg-badge neg-badge-up">Recommended</span>
+                </div>
+                <div class="neg-option" id="neg-sign" onclick="selMasters(false)">
+                    <div class="neg-radio"></div>
+                    <div><div class="neg-opt-title">Sign Away Masters</div><div class="neg-opt-sub">+35% advance · −1 album · Label owns recordings forever</div></div>
+                    <span class="neg-badge neg-badge-down">Risk</span>
+                </div>
+            </div>
+            <div id="masters-warning" style="display:none;font-size:11px;color:#991b1b;background:#fee2e2;border:1px solid #fca5a5;padding:9px 12px;border-radius:6px;margin-bottom:14px;">
+                ⚠ You will no longer earn royalties on these recordings after leaving the label. Buyback is expensive and depends on album success.
+            </div>
+        </div>
+        <div class="doc-body" style="font-size:11px;color:#555;border:1px solid #ccc;padding:10px;background:rgba(0,0,0,0.02);">
+            <strong>PERFORMANCE CLAUSE:</strong> The Label may reduce marketing spend if the Artist fails to maintain profitability or goes 24 weeks without a release.
+        </div>
+        <div id="tour-clause-box" style="display:none;font-size:11px;color:#991b1b;background:#fee2e2;border:1px solid #fca5a5;padding:10px;margin-top:10px;">
+            <strong>360 CLAUSE:</strong> The Label receives 20% of all tour revenue for the duration of this agreement. Masters are also retained by the Label.
+        </div>
+        <div style="margin-top:28px;border-top:2px solid #000;padding-top:10px;display:flex;justify-content:space-between;font-size:9px;text-transform:uppercase;font-weight:800;letter-spacing:1px;">
+            <div>The Label<br><span style="font-size:14px;text-transform:none;font-weight:400;letter-spacing:0;">Authorized</span></div>
+            <div style="text-align:right;">The Artist<br><span style="font-size:14px;text-transform:none;font-weight:400;letter-spacing:0;">Accept &amp; Sign</span></div>
+        </div>
+        <button class="sign-btn" id="confirm-sign-btn">SIGN CONTRACT</button>
+        <div style="text-align:center;margin-top:12px;"><a onclick="closeContract()" style="color:#888;font-size:11px;font-weight:700;cursor:pointer;text-decoration:underline;">Decline Offer</a></div>
+    </div>
+</div>
+
+<!-- CREATE LABEL OVERLAY -->
+<div class="overlay" id="ol-create">
+    <div class="overlay-box">
+        <div id="cl-s1">
+            <div class="step-dots"><div class="step-dot on"></div><div class="step-dot"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+            <div class="overlay-title">Name Your Label</div>
+            <div class="overlay-sub">The official name of your record imprint.</div>
+            <label class="form-lbl">Label Name</label>
+            <input class="form-inp" id="cl-name" placeholder="e.g. Midnight Regime, Solo Empire…">
+            <button class="btn" onclick="cls1next()">Continue</button>
+            <button class="btn-ghost" onclick="closeCreateLabel()">Cancel</button>
+        </div>
+        <div id="cl-s2" style="display:none">
+            <div class="step-dots"><div class="step-dot on"></div><div class="step-dot on"></div><div class="step-dot"></div><div class="step-dot"></div></div>
+            <div class="overlay-title">Structure</div>
+            <div class="overlay-sub" id="cl-s2-sub">Choose how your label is structured.</div>
+            <div class="choice-grid">
+                <div class="choice sel" id="ch-ind" onclick="selType('ind')">
+                    <div class="choice-icon"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+                    <div class="choice-title">Independent</div>
+                    <div class="choice-sub">Full ownership</div>
+                </div>
+                <div class="choice" id="ch-bck" onclick="selType('bck')">
+                    <div class="choice-icon"><svg viewBox="0 0 24 24"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg></div>
+                    <div class="choice-title">Backed</div>
+                    <div class="choice-sub" id="bck-sub">Requires active label deal</div>
+                </div>
+            </div>
+            <div id="backed-info" style="display:none;background:#080808;border:1px solid var(--border2);border-radius:10px;padding:14px;margin-bottom:14px;font-size:12px;font-weight:700;color:var(--muted2);">
+                Your parent label will be pre-filled from your active deal.
+            </div>
+            <button class="btn" onclick="cls2next()">Continue</button>
+            <button class="btn-ghost" onclick="clback(1)">Back</button>
+        </div>
+        <div id="cl-s3" style="display:none">
+            <div class="step-dots"><div class="step-dot on"></div><div class="step-dot on"></div><div class="step-dot on"></div><div class="step-dot"></div></div>
+            <div class="overlay-title">Brand Color</div>
+            <div class="overlay-sub">Pick your label's signature color.</div>
+            <div class="color-row" id="color-row"></div>
+            <div style="display:flex;justify-content:center;margin:16px 0;">
+                <svg id="logo-prev" width="90" height="90" viewBox="0 0 100 100"></svg>
+            </div>
+            <button class="btn" onclick="cls3next()">Continue</button>
+            <button class="btn-ghost" onclick="clback(2)">Back</button>
+        </div>
+        <div id="cl-s4" style="display:none">
+            <div class="step-dots"><div class="step-dot on"></div><div class="step-dot on"></div><div class="step-dot on"></div><div class="step-dot on"></div></div>
+            <div class="overlay-title">Launch Label</div>
+            <div class="overlay-sub">Set your starting investment. Money is taken from your bank.</div>
+            <div style="display:flex;justify-content:center;margin-bottom:16px;">
+                <svg id="logo-final" width="90" height="90" viewBox="0 0 100 100"></svg>
+            </div>
+            <div style="text-align:center;margin-bottom:22px;">
+                <div style="font-size:22px;font-weight:900;" id="cl-confirm-name">—</div>
+                <div style="font-size:12px;font-weight:700;color:var(--muted2);margin-top:4px;" id="cl-confirm-type">—</div>
+            </div>
+            <label class="form-lbl">Starting Investment ($)</label>
+            <input class="form-inp" id="cl-investment" type="number" placeholder="Minimum $1,000,000" value="1000000" min="1000000">
+            <div id="cl-bank-info" style="font-size:11px;font-weight:700;color:var(--muted2);margin-bottom:16px;"></div>
+            <button class="btn" onclick="launchLabel()">Launch Label</button>
+            <button class="btn-ghost" onclick="clback(3)">Back</button>
+        </div>
+    </div>
+</div>
+
+<!-- SIGN ARTIST OVERLAY -->
+<div class="overlay" id="ol-sign">
+    <div class="overlay-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+            <div class="overlay-title" style="margin-bottom:0;font-size:20px;">Sign Artist</div>
+            <button onclick="closeSignOverlay()" style="background:none;border:none;color:var(--muted2);cursor:pointer;"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+        <div id="sign-artist-preview" style="display:flex;align-items:center;gap:12px;padding:12px;background:#080808;border-radius:10px;margin-bottom:18px;"></div>
+        <div id="sign-cost-info" style="background:rgba(29,185,84,0.08);border:1px solid rgba(29,185,84,0.2);border-radius:10px;padding:12px;margin-bottom:16px;font-size:12px;font-weight:700;"></div>
+        <div class="card-lbl">Deal Type</div>
+        <div class="choice-grid" style="margin-bottom:14px;">
+            <div class="choice sel" id="dt-std" onclick="selDeal('std')" style="border-color:var(--blue);">
+                <div class="choice-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg></div>
+                <div class="choice-title">Standard</div>
+                <div class="choice-sub">Artist releases freely</div>
+            </div>
+            <div class="choice" id="dt-ctrl" onclick="selDeal('ctrl')">
+                <div class="choice-icon"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg></div>
+                <div class="choice-title">Controlled</div>
+                <div class="choice-sub">You set schedule</div>
+            </div>
+        </div>
+        <label class="form-lbl">Albums in Contract</label>
+        <input class="form-inp" id="sa-albums" type="number" value="3">
+        <label class="form-lbl">Contract Years</label>
+        <input class="form-inp" id="sa-years" type="number" value="5">
+        <label class="form-lbl">Annual Budget Cap ($)</label>
+        <input class="form-inp" id="sa-budget" type="number" value="2000000">
+        <div id="ctrl-fields" style="display:none;">
+            <label class="form-lbl">Release Schedule</label>
+            <select class="form-inp" id="sa-schedule">
+                <option value="quarterly">Every Quarter</option>
+                <option value="biannual">Every 6 Months</option>
+                <option value="annual">Annually</option>
+            </select>
+        </div>
+        <button class="btn" onclick="confirmSign()">Sign Artist</button>
+        <button class="btn-ghost" onclick="closeSignOverlay()">Cancel</button>
+    </div>
+</div>
+
+<!-- SCOUT OVERLAY -->
+<div class="overlay" id="ol-scout">
+    <div class="overlay-box">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+            <div class="overlay-title" style="margin-bottom:0;font-size:20px;" id="scout-title">Scout Artists</div>
+            <button onclick="closeScout()" style="background:none;border:none;color:var(--muted2);cursor:pointer;"><svg viewBox="0 0 24 24" style="width:22px;height:22px;fill:currentColor;"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg></button>
+        </div>
+        <div id="scout-list"></div>
+    </div>
+</div>
+
+<!-- ARTIST SIDE PANEL -->
+<div class="panel-scrim" id="panel-scrim" onclick="closePanel()"></div>
+<div class="side-panel" id="side-panel">
+    <div class="panel-handle"></div>
+    <div id="panel-body" style="padding:0 20px 20px;"></div>
+</div>
+
+<!-- MUSIFY FULL SCREEN -->
+<div id="musify-screen">
+    <div class="mf-header">
+        <div class="mf-header-bg" id="mf-bg"></div>
+        <div class="mf-header-overlay"></div>
+        <button class="mf-back" onclick="closeMusify()">
+            <svg viewBox="0 0 24 24"><path d="M19 11H7.83l4.88-4.88c.39-.39.39-1.03 0-1.42-.39-.39-1.02-.39-1.41 0l-6.59 6.59c-.39.39-.39 1.02 0 1.41l6.59 6.59c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L7.83 13H19c.55 0 1-.45 1-1s-.45-1-1-1z"/></svg>
+        </button>
+        <div class="mf-artist-info">
+            <div class="mf-name" id="mf-name">—</div>
+            <div class="mf-listeners" id="mf-listeners">0 monthly listeners</div>
+        </div>
+    </div>
+    <div class="mf-controls">
+        <button class="mf-play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></button>
+        <button class="mf-follow-btn">Follow</button>
+    </div>
+    <div class="mf-tabs">
+        <div class="mf-tab active" onclick="mfTab('overview',this)">Overview</div>
+        <div class="mf-tab" onclick="mfTab('discography',this)">Discography</div>
+    </div>
+    <div class="mf-content" id="mf-content"></div>
+</div>
+
+<script>
+// ════════ DATA ════════
+const COLORS=['#EF4444','#F59E0B','#10B981','#3B82F6','#8B5CF6','#EC4899','#06B6D4','#D4AF37','#F97316','#84CC16','#14B8A6','#A855F7'];
+const FNAMES=['Ace','Nova','Blaze','Zane','Lyric','Cash','Reign','Storm','Jade','Volt','Creme','Amir','Skai','Lux','Cruz','Remy','Onyx','Sable','Nico','Mace','Ezra','Kai','Demi','Zuri','Riot','Silas','Sage','Atlas','Kyro','Vex'];
+const LNAMES=['Dior','Stone','Prime','Knox','Sade','Raye','Banks','Haze','Noire','Vex','Reed','Vale','Muse','Cross','Lane','Noir','Vance','Cole','Bliss','Roux','Wade','West','King','Ace','Star','Dre','Boom','Grey','Fox','Cain'];
+const SONGS=['Midnight Run','Golden Hour','Static','Neon Lights','Weight of the World','Pressure','Higher Ground','Fade Out','Mirror Mirror','On My Own','Levitate','4AM','Ghost Mode','Bulletproof','Superstar','Demons','Crown','Shadow Work','Paper Planes','Overdue','No Cap','Bad Habits','Euphoria','Afterthought','Parallel','Surface','Sirens','Dopamine','Ultralight','Frequencies','Interlude','Bounce','Drift','Tunnel Vision','Wavelength','Phantom','Blue Flame'];
+const ALBUMS=['Deja Vu','Midnight Opus','Solar Eclipse','The Quiet Storm','Ultraviolet','Phantom Season','Red Flag Era','Genesis','Frequency','Blood Type','Dark Matter','Afterlife','Neon Cathedral','Soul Plane','Apex','Mirrorworld','The Abyss','Starfall','Parallels','Lucid','Autonomy','Departure','First Light'];
+const GENRES=['Hip-Hop','R&B','Afrobeats','Pop','Drill','Trap','Alternative','Neo-Soul','Dancehall','Rap'];
+const LABEL_SVGS={
+    universal:`<path d="M50 5C25.1 5 5 25.1 5 50s20.1 45 45 45 45-20.1 45-45S74.9 5 50 5zm-4 80.7c-17.7-2.2-31.4-17.3-31.4-35.7 0-2.8.4-5.5 1-8l25.3 25.3v4.5c0 5 4 8.7 9.4 10.9-1.4 1.8-2.8 2.7-4.3 3zm31-11.4c-1.2-3.6-4.5-6.2-8.5-6.2H64v-13.5c0-2.5-2-4.5-4.5-4.5h-9v-9h9c2.5 0 4.5-2 4.5-4.5v-1.8c13.2 5.4 22.5 18.3 22.5 33.3 0 9.4-3.6 17.9-9.5 24.2z" fill="currentColor"/>`,
+    sony:`<path d="M50 5C25.1 5 5 25.1 5 50s20.1 45 45 45 45-20.1 45-45S74.9 5 50 5zm0 81c-19.9 0-36-16.1-36-36s16.1-36 36-36 36 16.1 36 36-16.1 36-36 36zm0-54c-14.9 0-27 12.1-27 27s12.1 27 27 27 27-12.1 27-27-12.1-27-27-27z" fill="currentColor"/>`,
+    indie:`<path d="M50 9.5L14.3 27.2v42.2c-2.7-1.5-5.7-2.5-9-2.5-10 0-18 8.1-18 18s8.1 18 18 18 18-8.1 18-18V27.2L50 14.5l26.7 12.7v42.2c-2.7-1.5-5.7-2.5-9-2.5-10 0-18 8.1-18 18s8.1 18 18 18 18-8.1 18-18V27.2L50 9.5z" fill="currentColor"/>`
+};
+const LABELS={
+    universal:{id:'universal',name:'Global Music Group',color:'#3B82F6',svg:LABEL_SVGS.universal},
+    sony:{id:'sony',name:'Vortex Records',color:'#EF4444',svg:LABEL_SVGS.sony},
+    indie:{id:'indie',name:'Basement Tapes',color:'#10B981',svg:LABEL_SVGS.indie}
+};
+
+let clState={name:'',type:'ind',color:COLORS[3]};
+let selDealType='std';
+let signTarget=null;
+let _scoutPool=[];
+let curMusifyArtist=null;
+let mfActiveTab='overview';
+
+// ════════ INIT ════════
+document.addEventListener('DOMContentLoaded',()=>{
+    loadToggles();
+    buildColorRow();
+    renderHome();
+    renderYourLabel();
+});
+
+// ════════ PAGE NAV ════════
+function showPage(p){
+    document.querySelectorAll('.page').forEach(pg=>pg.classList.remove('active'));
+    document.querySelectorAll('.bnav-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('pg-'+p).classList.add('active');
+    document.getElementById('bn-'+p).classList.add('active');
+    // Always re-read localStorage when switching to label page so data is fresh
+    if(p==='yourlabel') renderYourLabel();
+    if(p==='history') renderHistory();
+}
+
+// ════════ HOME ════════
+function renderHome(){
+    const deal=JSON.parse(localStorage.getItem('recordDeal')||'null');
+    const view=document.getElementById('home-view');
+    if(deal){
+        checkContractStatus(deal);
+        renderHQ(deal);
+    } else {
+        checkOffersGen();
+        const offers=JSON.parse(localStorage.getItem('labelOffers')||'[]');
+        let html='';
+        if(offers.length===0){
+            html=`<div style="text-align:center;padding:60px 20px;"><svg viewBox="0 0 24 24" style="width:48px;height:48px;fill:var(--muted);margin:0 auto 16px;display:block;"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4-8 5-8-5V6l8 5 8-5v2z"/></svg><div style="font-size:16px;font-weight:800;color:var(--muted);">No Offers Yet</div><div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:8px;">Grow your popularity to attract label interest.</div></div>`;
+        } else {
+            html=`<div class="section-head">Label Offers</div>`;
+            offers.forEach((o,i)=>{
+                const lbl=LABELS[o.id];
+                html+=`<div class="offer-card" onclick="openContract(${i})" style="border-top:3px solid ${lbl.color}">
+                    <div class="tier-badge" style="color:${lbl.color}">${o.tier}</div>
+                    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px;">
+                        <svg width="44" height="44" viewBox="0 0 100 100" style="color:${lbl.color};flex-shrink:0;">${lbl.svg}</svg>
+                        <div><div style="font-size:16px;font-weight:900;">${lbl.name}</div><div style="font-size:11px;font-weight:700;color:var(--muted)">${o.tier} Division</div></div>
+                    </div>
+                    <div class="offer-amount">$${o.advance.toLocaleString()}</div>
+                    <div class="offer-sub">Advance Payment</div>
+                    <div class="perk-row">${o.perks.map(p=>`<span class="perk-tag">${p}</span>`).join('')}</div>
+                </div>`;
+            });
+        }
+        view.innerHTML=html;
+    }
+}
+
+// ════════ YOUR LABEL ════════
+function renderYourLabel(){
+    const myLabel=JSON.parse(localStorage.getItem('myLabel')||'null');
+    const view=document.getElementById('yourlabel-view');
+    if(!myLabel||!myLabel.signedArtists){
+        view.innerHTML=`<div class="container" style="padding-top:40px;">
+            <div style="text-align:center;margin-bottom:32px;">
+                <svg viewBox="0 0 24 24" style="width:56px;height:56px;fill:var(--muted);margin:0 auto 16px;display:block;"><path d="M12 7V3H2v18h20V7H12zM6 19H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4v-2h2v2zm0-4H4V5h2v2zm4 12H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8v-2h2v2zm0-4H8V5h2v2zm10 12h-8v-2h2v-2h-2v-2h2v-2h-2V9h8v10zm-2-8h-2v2h2v-2zm0 4h-2v2h2v-2z"/></svg>
+                <div style="font-size:24px;font-weight:900;letter-spacing:-0.5px;margin-bottom:8px;">Build Your Label</div>
+                <div style="font-size:13px;font-weight:600;color:var(--muted2);max-width:280px;margin:0 auto;">Sign artists, control budgets, and grow your rep in the industry.</div>
+            </div>
+            <button class="btn" onclick="openCreateLabel()">Create My Label</button>
+        </div>`;
+        return;
+    }
+    renderLabelDashboard(myLabel);
+}
+
+function renderLabelDashboard(label){
+    const view=document.getElementById('yourlabel-view');
+    document.getElementById('yourlabel-title').textContent=label.name;
+    const artists=label.signedArtists||[];
+    const repColor=label.reputation>65?'#1DB954':label.reputation>35?'#F59E0B':'#EF4444';
+    const repLabel=label.reputation>75?'Legendary':label.reputation>55?'Respected':label.reputation>35?'Known':label.reputation>15?'Underground':'Unknown';
+    const totalEarnings=artists.reduce((s,a)=>s+(a.earnings||0),0);
+    const totalStreams=artists.reduce((s,a)=>s+(a.streams||0),0);
+    const totalSpent=artists.reduce((s,a)=>s+(a.budgetSpent||0),0);
+    const labelCut=Math.floor(totalEarnings*0.5);
+    const netProfit=labelCut-totalSpent;
+    const profitColor=netProfit>=0?'#1DB954':'#EF4444';
+    const fundPct=Math.min(100,(label.investmentFund/(label.maxFund||label.investmentFund||1))*100);
+    const logoSvg=genSVG(label.name,label.color);
+
+    // ── Artist rows with full stats ──
+    let artistRows='';
+    if(artists.length===0){
+        artistRows=`<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px;font-weight:700;">No signed artists yet. Scout or wait for interested artists.</div>`;
+    } else {
+        artists.forEach((a,i)=>{
+            const rc=a.relationship>60?'#1DB954':a.relationship>30?'#F59E0B':'#EF4444';
+            const songCount=(a.releasedSongs||[]).length;
+            const albumCount=(a.releasedAlbums||[]).length;
+            const streams=a.streams||0;
+            const monthly=a.monthlyListeners||0;
+            const earned=a.earnings||0;
+            const myCut=Math.floor(earned*0.5);
+            artistRows+=`<div class="artist-row" onclick="openPanel(${i})">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+                    <div class="a-avatar" style="background:${a.color}">${a.initials}</div>
+                    <div style="flex:1;min-width:0;">
+                        <div class="a-name">${a.name}</div>
+                        <div class="a-meta">${a.genre} · ${a.popularity}% popularity</div>
+                    </div>
+                    <div class="deal-chip ${a.dealType==='std'?'chip-std':'chip-ctrl'}">${a.dealType==='std'?'Standard':'Controlled'}</div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px;">
+                    <div class="stat-box">
+                        <div class="stat-lbl">Songs</div>
+                        <div class="stat-val">${songCount}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">Albums</div>
+                        <div class="stat-val">${albumCount}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">Monthly</div>
+                        <div class="stat-val">${fmtMoney(monthly)}</div>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px;">
+                    <div class="stat-box">
+                        <div class="stat-lbl">Total Streams</div>
+                        <div class="stat-val" style="color:#3B82F6;">${fmtMoney(streams)}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-lbl">Your Cut (50%)</div>
+                        <div class="stat-val" style="color:#1DB954;">$${fmtMoney(myCut)}</div>
+                    </div>
+                </div>
+                <div class="meter-bg"><div class="meter-fill" style="width:${a.relationship}%;background:${rc}"></div></div>
+                <div style="font-size:10px;font-weight:700;color:${rc};margin-top:4px;">Relationship ${Math.floor(a.relationship)}%</div>
+            </div>`;
+        });
+    }
+
+    view.innerHTML=`
+        <div class="label-hdr" style="background:linear-gradient(180deg,rgba(${hexRGB(label.color)},0.18),var(--bg));border-bottom:1px solid var(--border);">
+            <svg class="label-hdr-logo" viewBox="0 0 100 100">${logoSvg}</svg>
+            <div class="label-hdr-name">${label.name}</div>
+            <div class="label-hdr-type">${label.type==='ind'?'Independent':'Backed by '+label.parentLabel}</div>
+            <div class="rep-pill" style="color:${repColor};">
+                <svg viewBox="0 0 24 24" style="width:12px;height:12px;fill:currentColor;"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+                ${repLabel} · ${Math.floor(label.reputation)}% Rep
+            </div>
+        </div>
+        <div class="container" style="padding-top:16px;">
+
+            <div class="card">
+                <div class="card-lbl">Label Metrics</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                    <div>
+                        <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">REPUTATION</div>
+                        <div style="font-size:24px;font-weight:900;color:${repColor}">${Math.floor(label.reputation)}%</div>
+                        <div class="meter-bg"><div class="meter-fill" style="width:${label.reputation}%;background:${repColor}"></div></div>
+                    </div>
+                    <div>
+                        <div style="font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">HYPE</div>
+                        <div style="font-size:24px;font-weight:900;color:#8B5CF6">${Math.floor(label.hype)}%</div>
+                        <div class="meter-bg"><div class="meter-fill" style="width:${label.hype}%;background:#8B5CF6"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-lbl">
+                    <span>Investment Fund</span>
+                    <span style="color:${label.investmentFund<500000?'#EF4444':'var(--muted)'}">$${fmtMoney(label.investmentFund)}</span>
+                </div>
+                <div class="meter-bg" style="height:7px;margin-bottom:12px;">
+                    <div class="meter-fill" style="width:${fundPct}%;background:${fundPct>50?'#1DB954':fundPct>20?'#F59E0B':'#EF4444'}"></div>
+                </div>
+                <div class="fin-row"><span>Total Roster Streams</span><span style="color:#3B82F6;">${fmtMoney(totalStreams)}</span></div>
+                <div class="fin-row"><span>Total Artist Earnings</span><span>$${fmtMoney(totalEarnings)}</span></div>
+                <div class="fin-row"><span>Your 50% Label Cut</span><span style="color:#1DB954;">$${fmtMoney(labelCut)}</span></div>
+                <div class="fin-row"><span>Total Budget Spent</span><span style="color:var(--red);">-$${fmtMoney(totalSpent)}</span></div>
+                <div class="fin-total"><span>Net Profit</span><span style="color:${profitColor};">$${fmtMoney(netProfit)}</span></div>
+            </div>
+
+            <div class="card">
+                <div class="card-lbl">Add Investment from Bank</div>
+                <div style="font-size:11px;font-weight:700;color:var(--muted2);margin-bottom:12px;">Your bank: <span style="color:#1DB954;font-weight:900;">$${parseFloat(localStorage.getItem('money')||0).toLocaleString()}</span></div>
+                <div style="display:flex;gap:8px;margin-bottom:10px;">
+                    <input type="number" id="add-invest-amt" class="form-inp" style="margin-bottom:0;" placeholder="Amount ($)" min="10000">
+                    <button class="btn-sm" onclick="addInvestmentFromBank()" style="flex-shrink:0;padding:0 18px;font-size:13px;">Invest</button>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-sm" onclick="document.getElementById('add-invest-amt').value=100000">$100K</button>
+                    <button class="btn-sm" onclick="document.getElementById('add-invest-amt').value=500000">$500K</button>
+                    <button class="btn-sm" onclick="document.getElementById('add-invest-amt').value=1000000">$1M</button>
+                    <button class="btn-sm" onclick="document.getElementById('add-invest-amt').value=5000000">$5M</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-lbl">
+                    <span>Signed Artists (${artists.length})</span>
+                    <button class="btn-sm" onclick="openScout('scout')">Scout</button>
+                </div>
+                ${artistRows}
+                <button class="btn-ghost" style="margin-top:12px;" onclick="openScout('interested')">Interested Artists</button>
+            </div>
+
+            <div class="card">
+                <div class="card-lbl">Sub-Labels <span class="pill-gold">PREMIUM</span></div>
+                <div style="font-size:12px;font-weight:700;color:var(--muted2);margin-bottom:14px;">Create up to 2 sub-labels under your imprint.</div>
+                <div class="btn-locked">Sub-Label Slot 1 <span class="pill-gold">UNLOCK</span></div>
+                <div class="btn-locked">Sub-Label Slot 2 <span class="pill-gold">UNLOCK</span></div>
+                <button class="btn-gold" onclick="toast('Upgrade to Premium to unlock Sub-Labels.','gold')">Upgrade to Premium</button>
+            </div>
+        </div>
+    `;
+}
+
+// ════════ SVG / UTILS ════════
+function genSVG(name,color){
+    const words=name.trim().split(' ');
+    const initials=(words.length>1?(words[0][0]+words[words.length-1][0]):name.substring(0,2)).toUpperCase();
+    const r=hexRGB(color);
+    return `<defs><radialGradient id="rg${initials}" cx="50%" cy="40%" r="60%"><stop offset="0%" stop-color="rgba(${r},0.3)"/><stop offset="100%" stop-color="rgba(${r},0.07)"/></radialGradient></defs>
+    <rect width="100" height="100" rx="22" fill="url(#rg${initials})" stroke="${color}" stroke-width="2.5"/>
+    <text x="50" y="64" text-anchor="middle" font-family="Inter,sans-serif" font-weight="900" font-size="34" fill="${color}">${initials}</text>
+    <line x1="18" y1="74" x2="82" y2="74" stroke="${color}" stroke-width="1.5" stroke-opacity="0.4"/>
+    <circle cx="50" cy="84" r="3" fill="${color}" fill-opacity="0.5"/>`;
+}
+function hexRGB(hex){
+    const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
+    return `${r},${g},${b}`;
+}
+function fmtMoney(n){if(n>=1000000)return (n/1000000).toFixed(1)+'M';if(n>=1000)return (n/1000).toFixed(0)+'K';return n.toLocaleString();}
+function shuffle(arr){return arr.sort(()=>Math.random()-0.5);}
+function weeksSince(isoStr){
+    if(!isoStr)return 0;
+    const gameDate=localStorage.getItem('currentDate');
+    const now=gameDate?new Date(gameDate):new Date();
+    return Math.max(0,Math.floor((now-new Date(isoStr))/(1000*60*60*24*7)));
+}
+
+// ════════ COLOR ROW ════════
+function buildColorRow(){
+    const row=document.getElementById('color-row');
+    if(!row)return;
+    row.innerHTML=COLORS.map((c,i)=>`<div class="cswatch ${i===3?'sel':''}" style="background:${c}" onclick="pickColor('${c}',this)"></div>`).join('');
+}
+function pickColor(c,el){
+    clState.color=c;
+    document.querySelectorAll('.cswatch').forEach(s=>s.classList.remove('sel'));
+    el.classList.add('sel');
+    document.getElementById('logo-prev').innerHTML=genSVG(clState.name||'MY',c);
+}
+
+// ════════ CREATE LABEL FLOW ════════
+function openCreateLabel(){
+    clState={name:'',type:'ind',color:COLORS[3]};
+    ['cl-s1','cl-s2','cl-s3','cl-s4'].forEach((id,i)=>document.getElementById(id).style.display=i===0?'block':'none');
+    const deal=JSON.parse(localStorage.getItem('recordDeal')||'null');
+    const bckCard=document.getElementById('ch-bck');
+    if(!deal){bckCard.style.opacity='0.35';bckCard.style.cursor='not-allowed';document.getElementById('bck-sub').textContent='Need active label deal';}
+    else{bckCard.style.opacity='1';bckCard.style.cursor='pointer';document.getElementById('bck-sub').textContent=`From ${LABELS[deal.id]?.name||'Your Label'}`;}
+    document.getElementById('ol-create').classList.add('open');
+}
+function closeCreateLabel(){document.getElementById('ol-create').classList.remove('open');}
+function cls1next(){
+    const n=document.getElementById('cl-name').value.trim();
+    if(!n){toast('Enter a label name.','red');return;}
+    clState.name=n;
+    document.getElementById('cl-s1').style.display='none';
+    document.getElementById('cl-s2').style.display='block';
+}
+function selType(t){
+    const deal=JSON.parse(localStorage.getItem('recordDeal')||'null');
+    if(t==='bck'&&!deal){toast('You must be signed to a label first.','red');return;}
+    clState.type=t;
+    ['ind','bck'].forEach(k=>{document.getElementById('ch-'+k).classList.toggle('sel',k===t);});
+    document.getElementById('backed-info').style.display=t==='bck'?'block':'none';
+}
+function cls2next(){
+    document.getElementById('cl-s2').style.display='none';
+    document.getElementById('cl-s3').style.display='block';
+    document.getElementById('logo-prev').innerHTML=genSVG(clState.name,clState.color);
+}
+function cls3next(){
+    document.getElementById('cl-s3').style.display='none';
+    document.getElementById('cl-s4').style.display='block';
+    document.getElementById('logo-final').innerHTML=genSVG(clState.name,clState.color);
+    document.getElementById('cl-confirm-name').textContent=clState.name;
+    const deal=JSON.parse(localStorage.getItem('recordDeal')||'null');
+    document.getElementById('cl-confirm-type').textContent=clState.type==='ind'?'Independent Label':'Backed by '+(LABELS[deal?.id]?.name||'Parent Label');
+    const bankBalance=parseFloat(localStorage.getItem('money')||0);
+    document.getElementById('cl-bank-info').innerHTML=`Bank balance: <span style="color:#1DB954;font-weight:900;">$${bankBalance.toLocaleString()}</span> · Min: $1,000,000`;
+}
+function clback(s){
+    document.getElementById('cl-s'+(s+1)).style.display='none';
+    document.getElementById('cl-s'+s).style.display='block';
+}
+function launchLabel(){
+    const deal=JSON.parse(localStorage.getItem('recordDeal')||'null');
+    const minFund=clState.type==='bck'?5000000:1000000;
+    const inputEl=document.getElementById('cl-investment');
+    const startFund=Math.max(minFund,parseInt(inputEl?inputEl.value:minFund)||minFund);
+    let bankBalance=parseFloat(localStorage.getItem('money')||0);
+    if(bankBalance<startFund){toast(`Not enough money. Need $${startFund.toLocaleString()}.`,'red');return;}
+    bankBalance-=startFund;
+    localStorage.setItem('money',bankBalance.toString());
+    const label={
+        name:clState.name,color:clState.color,type:clState.type,
+        parentLabel:clState.type==='bck'?(LABELS[deal?.id]?.name||''):'',
+        reputation:12,hype:8,
+        investmentFund:startFund,maxFund:startFund,
+        signedArtists:[],createdAt:localStorage.getItem('currentDate')||new Date().toISOString()
+    };
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    closeCreateLabel();
+    toast(`${label.name} is live! $${fmtMoney(startFund)} invested.`,'');
+    setTimeout(()=>renderYourLabel(),400);
+}
+
+// ════════ SCOUT / SIGN ════════
+function openScout(mode){
+    const label=JSON.parse(localStorage.getItem('myLabel')||'null');
+    const rep=label?label.reputation:0;
+    const fund=label?label.investmentFund:0;
+    document.getElementById('scout-title').textContent=mode==='scout'?'Scout Artists':'Interested Artists';
+    const pool=genArtistPool(mode,rep,label);
+    _scoutPool=pool;
+    const list=document.getElementById('scout-list');
+    if(pool.length===0){
+        list.innerHTML=`<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;font-weight:700;">No artists available right now. Grow your reputation.</div>`;
+    } else {
+        list.innerHTML=pool.map((a,i)=>{
+            const ic=a.interest==='High'?'int-hi':a.interest==='Medium'?'int-med':'int-lo';
+            const cost=artistCost(a.popularity);
+            const canAfford=fund>=cost;
+            return `<div class="scout-card">
+                <div class="a-avatar" style="background:${a.color};width:46px;height:46px;border-radius:10px;">${a.initials}</div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:15px;font-weight:900;">${a.name}</div>
+                    <div style="font-size:11px;font-weight:700;color:var(--muted2);margin-top:2px;">${a.genre} · ${a.popularity}% Pop</div>
+                    <div style="margin-top:5px;display:flex;align-items:center;gap:6px;">
+                        <span class="int-badge ${ic}">${a.interest} Interest</span>
+                        <span style="font-size:10px;font-weight:800;color:${canAfford?'#1DB954':'var(--red)'};">$${fmtMoney(cost)} signing</span>
+                    </div>
+                </div>
+                <button class="btn-sm" onclick="initSign(${i})" ${!canAfford?'disabled style="opacity:0.35;cursor:not-allowed;"':''}>Offer</button>
+            </div>`;
+        }).join('');
+    }
+    document.getElementById('ol-scout').classList.add('open');
+}
+function closeScout(){document.getElementById('ol-scout').classList.remove('open');}
+
+function genArtistPool(mode,rep,label){
+    const signed=(label?.signedArtists||[]).map(a=>a.name);
+    const pool=[];
+    const seed=Math.floor(Date.now()/(1000*60*60*6));
+    for(let i=0;i<8;i++){
+        const fn=FNAMES[(seed*3+i*7)%FNAMES.length];
+        const ln=LNAMES[(seed*5+i*11)%LNAMES.length];
+        const name=fn+' '+ln;
+        if(signed.includes(name))continue;
+        const pop=mode==='interested'?Math.min(rep+5,50)+(i*3%15):Math.max(5,rep-25+(i*8%45));
+        const interest=mode==='interested'?(pop<rep?'High':pop<rep+10?'Medium':'Low'):(rep>pop+20?'High':rep>pop?'Medium':'Low');
+        pool.push({name,initials:(fn[0]+ln[0]).toUpperCase(),color:COLORS[i%COLORS.length],genre:GENRES[(seed+i)%GENRES.length],popularity:Math.floor(Math.max(1,Math.min(100,pop))),interest});
+    }
+    return pool;
+}
+
+function artistCost(pop){return Math.floor(pop*15000);}
+
+function initSign(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const a=_scoutPool[idx];
+    const cost=artistCost(a.popularity);
+    if(label.investmentFund<cost){toast('Not enough investment fund.','red');return;}
+    signTarget=a;
+    closeScout();
+    selDealType='std';
+    document.getElementById('dt-std').classList.add('sel');document.getElementById('dt-std').style.borderColor=COLORS[3];
+    document.getElementById('dt-ctrl').classList.remove('sel');document.getElementById('dt-ctrl').style.borderColor='var(--border2)';
+    document.getElementById('ctrl-fields').style.display='none';
+    document.getElementById('sign-artist-preview').innerHTML=`
+        <div class="a-avatar" style="background:${a.color};width:48px;height:48px;border-radius:10px;">${a.initials}</div>
+        <div><div style="font-size:15px;font-weight:900;">${a.name}</div><div style="font-size:11px;font-weight:700;color:var(--muted2);">${a.genre} · ${a.popularity}% Popularity</div></div>`;
+    document.getElementById('sign-cost-info').innerHTML=`
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="color:var(--muted2);">Signing Cost</span><span style="font-size:15px;font-weight:900;color:var(--red);">-$${cost.toLocaleString()}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <span style="color:var(--muted2);">Available Fund</span><span style="font-size:13px;font-weight:800;color:#1DB954;">$${label.investmentFund.toLocaleString()}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px;">
+            <span style="color:var(--muted2);">Fund After Signing</span><span style="font-size:13px;font-weight:800;">$${(label.investmentFund-cost).toLocaleString()}</span>
+        </div>`;
+    document.getElementById('ol-sign').classList.add('open');
+}
+function closeSignOverlay(){document.getElementById('ol-sign').classList.remove('open');signTarget=null;}
+function selDeal(t){
+    selDealType=t;
+    ['std','ctrl'].forEach(k=>{
+        const el=document.getElementById('dt-'+k);
+        el.classList.toggle('sel',k===t);
+        el.style.borderColor=k===t?(k==='std'?COLORS[3]:COLORS[0]):'var(--border2)';
+    });
+    document.getElementById('ctrl-fields').style.display=t==='ctrl'?'block':'none';
+}
+function confirmSign(){
+    if(!signTarget)return;
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const cost=artistCost(signTarget.popularity);
+    if(label.investmentFund<cost){toast('Insufficient investment fund.','red');return;}
+    const albums=parseInt(document.getElementById('sa-albums').value)||3;
+    const years=parseInt(document.getElementById('sa-years').value)||5;
+    const budget=parseInt(document.getElementById('sa-budget').value)||2000000;
+    const schedule=document.getElementById('sa-schedule').value;
+    const artist={
+        id:Date.now().toString(),
+        name:signTarget.name,initials:signTarget.initials,
+        color:signTarget.color,genre:signTarget.genre,
+        popularity:signTarget.popularity,
+        dealType:selDealType,
+        relationship:70,
+        signedAt:localStorage.getItem('currentDate')||new Date().toISOString(),
+        songPool:shuffle([...SONGS]).slice(0,12),
+        albumPool:shuffle([...ALBUMS]).slice(0,5),
+        releasedSongs:[],
+        releasedAlbums:[],
+        streams:0,
+        earnings:0,
+        monthlyListeners:0,
+        gameWeeks:0,
+        annualBudgetCap:budget,
+        monthlyBudgetCap:Math.floor(budget/12),
+        budgetRequested:Math.floor(budget*0.3),
+        budgetApproved:Math.floor(budget*0.25),
+        budgetSpent:Math.floor(budget*0.15),
+        contractAlbums:albums,contractYears:years,
+        prisonerSchedule:schedule,
+        pressureCount:0,
+        signingCost:cost
+    };
+    label.investmentFund-=cost;
+    label.signedArtists.push(artist);
+    label.reputation=Math.min(100,label.reputation+2+(signTarget.popularity*0.08));
+    label.hype=Math.min(100,label.hype+4);
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    closeSignOverlay();
+    toast(`${artist.name} signed! Advance to next week in music.html to start earning.`,'');
+    setTimeout(()=>renderLabelDashboard(label),400);
+}
+
+// ════════ ARTIST PANEL ════════
+function openPanel(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const a=label.signedArtists[idx];
+    const rc=a.relationship>60?'#1DB954':a.relationship>30?'#F59E0B':'#EF4444';
+    const relLbl=a.relationship>75?'Loyal':a.relationship>50?'Stable':a.relationship>25?'Tense':'⚠ At Risk';
+    const songs=a.releasedSongs||[];
+    const albums=a.releasedAlbums||[];
+    const songCount=songs.length;
+    const albumCount=albums.length;
+    const streams=a.streams||0;
+    const monthly=a.monthlyListeners||0;
+    const earned=a.earnings||0;
+    const myCut=Math.floor(earned*0.5);
+    const reqPct=Math.min(100,(a.budgetRequested/a.annualBudgetCap)*100);
+    const appPct=Math.min(100,(a.budgetApproved/a.annualBudgetCap)*100);
+    const sptPct=Math.min(100,(a.budgetSpent/a.annualBudgetCap)*100);
+
+    document.getElementById('panel-body').innerHTML=`
+        <div style="display:flex;align-items:center;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--border);">
+            <div class="a-avatar" style="background:${a.color};width:58px;height:58px;border-radius:14px;font-size:22px;">${a.initials}</div>
+            <div>
+                <div style="font-size:20px;font-weight:900;">${a.name}</div>
+                <div style="font-size:12px;font-weight:700;color:var(--muted2);">${a.genre} · ${a.popularity}% pop</div>
+                <span class="deal-chip ${a.dealType==='std'?'chip-std':'chip-ctrl'}" style="margin-top:4px;display:inline-block;">${a.dealType==='std'?'Standard':'Controlled'} Deal</span>
+            </div>
+        </div>
+
+        <div style="margin-top:14px;">
+            <div class="card-lbl">Streaming</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+                <div class="stat-box"><div class="stat-lbl">Total Streams</div><div class="stat-val" style="color:#3B82F6;">${fmtMoney(streams)}</div></div>
+                <div class="stat-box"><div class="stat-lbl">Monthly Listeners</div><div class="stat-val">${fmtMoney(monthly)}</div></div>
+                <div class="stat-box"><div class="stat-lbl">Artist Earned</div><div class="stat-val">$${fmtMoney(earned)}</div></div>
+                <div class="stat-box"><div class="stat-lbl">Your Cut (50%)</div><div class="stat-val" style="color:#1DB954;">$${fmtMoney(myCut)}</div></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;">
+                <div class="stat-box"><div class="stat-lbl">Songs</div><div class="stat-val">${songCount}</div></div>
+                <div class="stat-box"><div class="stat-lbl">Albums</div><div class="stat-val">${albumCount}</div></div>
+                <div class="stat-box"><div class="stat-lbl">Weeks</div><div class="stat-val">${a.gameWeeks||0}</div></div>
+            </div>
+        </div>
+
+        <div style="margin-top:14px;">
+            <div class="card-lbl">Relationship</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <div style="font-size:22px;font-weight:900;color:${rc}">${Math.floor(a.relationship)}%</div>
+                <div style="font-size:12px;font-weight:800;color:${rc}">${relLbl}</div>
+            </div>
+            <div class="meter-bg" style="height:6px;"><div class="meter-fill" style="width:${a.relationship}%;background:${rc}"></div></div>
+            ${a.relationship<30?`<div style="font-size:11px;font-weight:700;color:var(--red);margin-top:8px;">Critical — gift or ease pressure.</div>`:''}
+        </div>
+
+        <div style="margin-top:18px;">
+            <div class="card-lbl">Actions</div>
+            <div class="act-grid">
+                <div class="act-card" onclick="pressureArtist(${idx})">
+                    <svg viewBox="0 0 24 24"><path d="M18 11v2h4v-2h-4zm-2 6.61c.96.71 2.21 1.65 3.2 2.39.4-.53.8-1.07 1.2-1.6-.99-.74-2.24-1.68-3.2-2.4-.4.54-.8 1.08-1.2 1.61zM20.4 5.6c-.4-.53-.8-1.07-1.2-1.6-.99.74-2.24 1.68-3.2 2.4.4.53.8 1.07 1.2 1.6.96-.72 2.21-1.65 3.2-2.4zM4 9c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v4h2v-4h1l5 3V6L8 9H4zm11.5 3c0-1.33-.58-2.53-1.5-3.35v6.69c.92-.81 1.5-2.01 1.5-3.34z"/></svg>
+                    <div class="act-title">Pressure</div>
+                    <div class="act-sub">Demand a release</div>
+                </div>
+                <div class="act-card" onclick="giftArtist(${idx})">
+                    <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.07-.44.18-.88.18-1.38C18 2.51 15.6.26 13.22.26c-1.29 0-2.45.5-3.31 1.36l-.91.91-.91-.91C7.23.76 6.07.26 4.78.26 2.4.26 0 2.51 0 4.62c0 .5.11.94.18 1.38H0c-1.1 0-2 .9-2 2v2c0 1.1.9 2 2 2h1v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-8h1c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM9.5 2.67c.49-.49 1.13-.77 1.82-.77 1.38 0 2.5.98 2.5 2.72 0 .44-.09.83-.25 1.38H9.01c-.16-.55-.51-3.33.49-3.33zM4.78 2.76c.69 0 1.33.28 1.82.77 1 1 .65 3.78.49 3.33H2.57c-.16-.55-.25-.94-.25-1.38C2.32 3.74 3.44 2.76 4.78 2.76zM0 8h24v2H0V8zM11 20H2v-8h9v8zm11 0h-9v-8h9v8z"/></svg>
+                    <div class="act-title">Gift Artist</div>
+                    <div class="act-sub">+15 relationship</div>
+                </div>
+                <div class="act-card" onclick="investArtist(${idx})">
+                    <svg viewBox="0 0 24 24"><path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/></svg>
+                    <div class="act-title">Invest</div>
+                    <div class="act-sub">+$500K to budget</div>
+                </div>
+                <div class="act-card" onclick="openMusify(${idx})">
+                    <svg viewBox="0 0 24 24"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                    <div class="act-title">Musify Page</div>
+                    <div class="act-sub">Artist profile</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:4px;">
+            <button class="net-btn" onclick="toggleNet('nb-${a.id}')">
+                <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+                <div class="net-lbl">Budget Network</div>
+                <div class="net-val">$${fmtMoney(a.budgetSpent)} spent</div>
+                <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--muted);flex-shrink:0;"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </button>
+            <div class="net-detail" id="nb-${a.id}">
+                <div class="net-row"><span style="width:80px;font-weight:800;color:var(--muted2);">Requested</span><div class="net-track"><div class="net-prog" style="width:${reqPct}%;background:#8B5CF6;height:3px;"></div></div><span style="width:70px;text-align:right;font-weight:800;">$${fmtMoney(a.budgetRequested)}</span></div>
+                <div class="net-row"><span style="width:80px;font-weight:800;color:var(--muted2);">Approved</span><div class="net-track"><div class="net-prog" style="width:${appPct}%;background:#F59E0B;height:3px;"></div></div><span style="width:70px;text-align:right;font-weight:800;">$${fmtMoney(a.budgetApproved)}</span></div>
+                <div class="net-row"><span style="width:80px;font-weight:800;color:var(--muted2);">Spent</span><div class="net-track"><div class="net-prog" style="width:${sptPct}%;background:#1DB954;height:3px;"></div></div><span style="width:70px;text-align:right;font-weight:800;">$${fmtMoney(a.budgetSpent)}</span></div>
+                <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;font-weight:800;">
+                    <span style="color:var(--muted2);">Annual Cap</span><span>$${fmtMoney(a.annualBudgetCap)}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:12px;font-weight:800;">
+                    <span style="color:var(--muted2);">Remaining</span><span style="color:${a.annualBudgetCap-a.budgetSpent>0?'#1DB954':'var(--red)'}">$${fmtMoney(Math.max(0,a.annualBudgetCap-a.budgetSpent))}</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top:6px;">
+            <div class="card-lbl">Contract</div>
+            <div class="fin-row"><span style="color:var(--muted2);">Albums Owed</span><span>${a.contractAlbums}</span></div>
+            <div class="fin-row"><span style="color:var(--muted2);">Albums Delivered</span><span>${albumCount} / ${a.contractAlbums}</span></div>
+            <div class="fin-row"><span style="color:var(--muted2);">Contract Years</span><span>${a.contractYears}</span></div>
+            ${a.dealType==='ctrl'?`<div class="fin-row"><span style="color:var(--muted2);">Schedule</span><span>${a.prisonerSchedule}</span></div>`:''}
+            <div class="meter-bg" style="margin-bottom:14px;"><div class="meter-fill" style="width:${Math.min(100,(albumCount/a.contractAlbums)*100)}%;background:${COLORS[3]}"></div></div>
+            <button class="btn-red" onclick="dropArtist(${idx})">Drop Artist</button>
+        </div>
+        <div style="height:16px;"></div>
+    `;
+    document.getElementById('side-panel').dataset.idx=idx;
+    document.getElementById('side-panel').classList.add('open');
+    document.getElementById('panel-scrim').classList.add('show');
+}
+function closePanel(){
+    document.getElementById('side-panel').classList.remove('open');
+    document.getElementById('panel-scrim').classList.remove('show');
+}
+function toggleNet(id){const el=document.getElementById(id);if(el)el.classList.toggle('open');}
+
+// ════════ ARTIST ACTIONS ════════
+function pressureArtist(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const a=label.signedArtists[idx];
+    a.pressureCount=(a.pressureCount||0)+1;
+    if(a.dealType==='std'){
+        a.relationship=Math.max(0,a.relationship-12);
+        if(Math.random()>0.45){a.streams=Math.floor(a.streams*1.05);toast(`${a.name} caved — stream boost!`,'');}
+        else toast(`${a.name} pushed back. Relationship -12`,'red');
+    } else {
+        a.relationship=Math.max(0,a.relationship-5);
+        toast(`Scheduled drop confirmed. Relationship -5`,'');
+    }
+    if(a.relationship<20&&a.pressureCount>3){
+        label.reputation=Math.max(0,label.reputation-5);
+        label.hype=Math.max(0,label.hype-3);
+        toast(`${a.name} is trashing ${label.name} publicly. Rep -5`,'red');
+    }
+    label.signedArtists[idx]=a;
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    setTimeout(()=>openPanel(idx),200);
+}
+function giftArtist(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    if(label.investmentFund<50000){toast('Not enough fund to gift.','red');return;}
+    const a=label.signedArtists[idx];
+    a.relationship=Math.min(100,a.relationship+15);
+    a.budgetSpent+=50000;
+    label.investmentFund-=50000;
+    label.signedArtists[idx]=a;
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    toast(`Gift sent to ${a.name}. Relationship +15`,'');
+    setTimeout(()=>openPanel(idx),200);
+}
+function investArtist(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const amount=500000;
+    if(label.investmentFund<amount){toast('Not enough investment fund.','red');return;}
+    const a=label.signedArtists[idx];
+    a.budgetApproved+=amount;
+    a.earnings=Math.floor(a.earnings*1.12);
+    a.popularity=Math.min(100,a.popularity+3);
+    a.streams=Math.floor(a.streams*1.1);
+    a.budgetSpent+=Math.floor(amount*0.8);
+    label.investmentFund-=amount;
+    label.reputation=Math.min(100,label.reputation+1);
+    label.signedArtists[idx]=a;
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    toast(`$500K invested in ${a.name}. Popularity +3%`,'');
+    setTimeout(()=>openPanel(idx),200);
+}
+function dropArtist(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const name=label.signedArtists[idx].name;
+    label.signedArtists.splice(idx,1);
+    label.reputation=Math.max(0,label.reputation-2);
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    closePanel();
+    toast(`${name} dropped.`,'red');
+    setTimeout(()=>renderLabelDashboard(label),300);
+}
+function addInvestmentFromBank(){
+    const amount=parseInt(document.getElementById('add-invest-amt').value);
+    if(!amount||amount<1){toast('Enter a valid amount.','red');return;}
+    let bankBalance=parseFloat(localStorage.getItem('money')||0);
+    if(bankBalance<amount){toast('Not enough money in your bank.','red');return;}
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    bankBalance-=amount;
+    label.investmentFund+=amount;
+    label.maxFund=Math.max(label.maxFund||0,label.investmentFund);
+    localStorage.setItem('money',bankBalance.toString());
+    localStorage.setItem('myLabel',JSON.stringify(label));
+    toast(`$${fmtMoney(amount)} added to ${label.name}'s fund.`,'');
+    setTimeout(()=>renderLabelDashboard(label),200);
+}
+
+// ════════ MUSIFY ════════
+function openMusify(idx){
+    const label=JSON.parse(localStorage.getItem('myLabel'));
+    const a=label.signedArtists[idx];
+    curMusifyArtist={a,idx};
+    const songs=a.releasedSongs||[];
+    const albums=a.releasedAlbums||[];
+    const monthly=a.monthlyListeners||0;
+    const bg=document.getElementById('mf-bg');
+    bg.style.background=`linear-gradient(135deg, ${a.color}cc, ${a.color}44)`;
+    bg.innerHTML='';
+    document.getElementById('mf-name').textContent=a.name;
+    document.getElementById('mf-listeners').textContent=monthly.toLocaleString()+' monthly listeners';
+    mfActiveTab='overview';
+    document.querySelectorAll('.mf-tab').forEach((t,i)=>t.classList.toggle('active',i===0));
+    mfRender(songs,albums,a);
+    document.getElementById('musify-screen').classList.add('open');
+    closePanel();
+}
+function closeMusify(){document.getElementById('musify-screen').classList.remove('open');}
+function mfTab(tab,el){
+    mfActiveTab=tab;
+    document.querySelectorAll('.mf-tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    if(curMusifyArtist){
+        const {a}=curMusifyArtist;
+        mfRender(a.releasedSongs||[],a.releasedAlbums||[],a);
+    }
+}
+function mfRender(songs,albums,a){
+    const content=document.getElementById('mf-content');
+    if(mfActiveTab==='overview'){
+        if(songs.length===0&&albums.length===0){
+            content.innerHTML=`<div class="mf-no-content"><svg viewBox="0 0 24 24" style="width:40px;height:40px;fill:#333;margin:0 auto 12px;display:block;"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg><div>No releases yet.</div><div style="font-size:12px;font-weight:600;color:#333;margin-top:8px;">Advance weeks in music.html for music to drop.</div></div>`;
+            return;
+        }
+        let html='';
+        if(songs.length>0){
+            html+=`<div class="mf-sec-title">Popular Tracks</div><ul class="mf-song-list">`;
+            songs.slice(0,5).forEach((songObj,i)=>{
+                const title=typeof songObj==='object'?songObj.title:songObj;
+                const songColor=COLORS[i*2%COLORS.length];
+                const baseStreams=a.streams>0?a.streams:Math.floor(a.popularity*5000*Math.max(1,songs.length*0.4));
+                const streams=Math.max(0,Math.floor(baseStreams*(0.5-i*0.08)));
+                html+=`<li class="mf-song-item">
+                    <span class="mf-rank">${i+1}</span>
+                    <div class="art-cover" style="width:36px;height:36px;background:${songColor};margin-right:12px;border-radius:3px;">
+                        <div class="art-cover-text" style="font-size:8px;">${title.split(' ').map(w=>w[0]).join('').slice(0,3)}</div>
+                    </div>
+                    <div class="mf-song-info">
+                        <div class="mf-song-title">${title}</div>
+                        <div class="mf-song-streams">${a.name}</div>
+                    </div>
+                    <span class="mf-song-streams" style="margin-right:8px;">${(streams/1000000).toFixed(1)}M</span>
+                </li>`;
+            });
+            html+=`</ul>`;
+        }
+        if(albums.length>0){
+            html+=`<div class="mf-sec-title">Albums</div><div class="mf-album-scroll"><div class="mf-album-row">`;
+            albums.forEach((albumObj,i)=>{
+                const title=typeof albumObj==='object'?albumObj.title:albumObj;
+                const albumColor=COLORS[(i*3)%COLORS.length];
+                html+=`<div class="mf-album-card">
+                    <div class="mf-album-cover" style="background:${albumColor};">
+                        <div style="font-size:13px;font-weight:900;color:rgba(0,0,0,0.5);text-align:center;padding:8px;">${title.split(' ').map(w=>w[0]).join('')}</div>
+                    </div>
+                    <div class="mf-album-info">
+                        <div class="mf-album-title">${title}</div>
+                        <div class="mf-album-meta">Album · ${a.name}</div>
+                    </div>
+                </div>`;
+            });
+            html+=`</div></div>`;
+        }
+        content.innerHTML=html||`<div class="mf-no-content">No releases yet.</div>`;
+    } else {
+        let html=`<div style="padding:16px 0;">`;
+        if(albums.length>0){
+            html+=`<div class="mf-sec-title" style="margin-top:0;">Albums</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px;">`;
+            albums.forEach((albumObj,i)=>{
+                const title=typeof albumObj==='object'?albumObj.title:albumObj;
+                const albumColor=COLORS[(i*3)%COLORS.length];
+                html+=`<div style="background:#181818;border-radius:8px;overflow:hidden;">
+                    <div style="width:100%;height:120px;background:${albumColor};display:flex;align-items:center;justify-content:center;">
+                        <div style="font-size:14px;font-weight:900;color:rgba(0,0,0,0.5);">${title.split(' ').map(w=>w[0]).join('')}</div>
+                    </div>
+                    <div style="padding:10px;"><div style="font-size:13px;font-weight:800;">${title}</div><div style="font-size:11px;font-weight:600;color:#b3b3b3;margin-top:2px;">Album</div></div>
+                </div>`;
+            });
+            html+=`</div>`;
+        }
+        if(songs.length>0){
+            html+=`<div class="mf-sec-title">Singles</div><ul class="mf-song-list">`;
+            songs.forEach((songObj,i)=>{
+                const title=typeof songObj==='object'?songObj.title:songObj;
+                const songColor=COLORS[(i*2)%COLORS.length];
+                html+=`<li class="mf-song-item">
+                    <span class="mf-rank">${i+1}</span>
+                    <div class="art-cover" style="width:40px;height:40px;background:${songColor};margin-right:12px;">
+                        <div class="art-cover-text">${title.slice(0,2)}</div>
+                    </div>
+                    <div class="mf-song-info"><div class="mf-song-title">${title}</div><div class="mf-song-streams">${a.name} · Single</div></div>
+                </li>`;
+            });
+            html+=`</ul>`;
+        }
+        if(songs.length===0&&albums.length===0) html+=`<div class="mf-no-content">No releases yet.</div>`;
+        html+=`</div>`;
+        content.innerHTML=html;
+    }
+}
+
+// ════════ YOUR DEAL (SIGNED AS ARTIST) ════════
+function checkOffersGen(){
+    let offers=JSON.parse(localStorage.getItem('labelOffers')||'[]');
+    const pop=parseFloat(localStorage.getItem('popularity')||0);
+    if(offers.length===0||(pop>15&&!offers.some(o=>o.id==='indie'))){
+        if(pop>=15&&!offers.some(o=>o.id==='indie'))offers.push(mkOffer('indie',pop));
+        if(pop>40&&!offers.some(o=>o.id==='sony'))offers.push(mkOffer('sony',pop));
+        if(pop>80&&!offers.some(o=>o.id==='universal'))offers.push(mkOffer('universal',pop));
+        localStorage.setItem('labelOffers',JSON.stringify(offers));
+    }
+}
+function mkOffer(id,pop){
+    const isMajor=id!=='indie';
+    const tier=pop>80?'Worldwide':pop>40?'Nationwide':'Local';
+    const base=isMajor?(tier==='Worldwide'?50003000+(pop-80)*2500000:1004000+(pop-40)*350000):20200+(pop-15)*10000;
+    const is360=isMajor&&Math.random()<(tier==='Worldwide'?0.5:0.3);
+    const advance=Math.floor(is360?base*1.6:base);
+    const tourCut=is360?20:0;
+    const perks=is360?['360 Deal','Max Advance','Full Rights']:isMajor?['High Budget','Radio Push']:['Creative Control','Reasonable Split'];
+    return{id,tier,advance,royalty:isMajor?70:35,years:isMajor?16:8,albums:isMajor?10:5,is360,tourCut,perks};
+}
+let activeOffer=null;
+let negotiation={dealType:'standard',keepMasters:true};
+
+function openContract(idx){
+    const offers=JSON.parse(localStorage.getItem('labelOffers'));
+    activeOffer=offers[idx];
+    const is360=activeOffer.is360;
+    negotiation={dealType:is360?'360':'standard',keepMasters:true};
+    const lbl=LABELS[activeOffer.id];
+    document.getElementById('doc-logo').innerHTML=lbl.svg;
+    document.getElementById('doc-logo').style.color=lbl.color;
+    document.getElementById('doc-label-name').textContent=lbl.name;
+    document.getElementById('doc-royalty').textContent=activeOffer.royalty+'%';
+    document.getElementById('doc-duration').textContent=activeOffer.years+' Years';
+    document.getElementById('doc-tier').textContent=activeOffer.tier;
+    document.getElementById('confirm-sign-btn').onclick=()=>signDeal(activeOffer);
+    const badge=document.getElementById('deal-type-text');
+    if(is360){
+        badge.textContent='360 Deal — Offered by Label';
+        badge.style.cssText='background:#fee2e2;color:#991b1b;display:inline-block;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;';
+        document.getElementById('masters-section').style.display='none';
+        document.getElementById('doc-tour-row').style.display='';
+        document.getElementById('tour-clause-box').style.display='block';
+    } else {
+        badge.textContent='Standard Deal — Offered by Label';
+        badge.style.cssText='background:#dcfce7;color:#166534;display:inline-block;padding:5px 14px;border-radius:20px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:1px;';
+        document.getElementById('masters-section').style.display='block';
+        document.getElementById('neg-keep').classList.add('sel');
+        document.getElementById('neg-sign').classList.remove('sel');
+        document.getElementById('masters-warning').style.display='none';
+        document.getElementById('doc-tour-row').style.display='none';
+        document.getElementById('tour-clause-box').style.display='none';
+    }
+    updateContractPreview();
+    document.getElementById('contract-modal').classList.add('open');
+}
+function closeContract(){document.getElementById('contract-modal').classList.remove('open');activeOffer=null;}
+
+function selNegType(type){
+    negotiation.dealType=type;
+    document.getElementById('neg-std').classList.toggle('sel',type==='standard');
+    document.getElementById('neg-360').classList.toggle('sel',type==='360');
+    const mastersEl=document.getElementById('masters-section');
+    mastersEl.style.display=type==='360'?'none':'block';
+    if(type==='360')negotiation.keepMasters=false;
+    updateContractPreview();
+}
+function selMasters(keep){
+    negotiation.keepMasters=keep;
+    document.getElementById('neg-keep').classList.toggle('sel',keep);
+    document.getElementById('neg-sign').classList.toggle('sel',!keep);
+    document.getElementById('masters-warning').style.display=keep?'none':'block';
+    updateContractPreview();
+}
+function updateContractPreview(){
+    if(!activeOffer)return;
+    const base=activeOffer.advance;
+    let adv=base,alb=activeOffer.albums;
+    const tourRow=document.getElementById('doc-tour-row');
+    if(negotiation.dealType==='360'){
+        adv=Math.floor(base*1.6);
+        tourRow.style.display='';
+        document.getElementById('doc-tour-cut').textContent='20% of tour revenue';
+    } else {
+        tourRow.style.display='none';
+        if(!negotiation.keepMasters){adv=Math.floor(base*1.35);alb=Math.max(1,alb-1);}
+    }
+    document.getElementById('doc-advance').textContent='$'+adv.toLocaleString();
+    document.getElementById('doc-albums').textContent=alb+' Albums';
+}
+
+function signDeal(offer){
+    if(!offer)return;
+    const lbl=LABELS[offer.id];
+    const baseBoost=offer.tier==='Worldwide'?2.5:offer.tier==='Nationwide'?1.8:1.2;
+    const is360=negotiation.dealType==='360';
+    const ownsMasters=!is360&&negotiation.keepMasters;
+    const finalAdvance=is360?Math.floor(offer.advance*1.6):(!ownsMasters?Math.floor(offer.advance*1.35):offer.advance);
+    const finalAlbums=(!ownsMasters&&!is360)?Math.max(1,offer.albums-1):offer.albums;
+    const deal={id:offer.id,name:lbl.name,signDate:localStorage.getItem('currentDate'),
+        terms:{advance:finalAdvance,royalty:offer.royalty,albumsObligated:finalAlbums,yearsDuration:offer.years,
+               control:offer.id==='indie'?'High':'Low',ownsMasters,is360,tourCut:is360?20:0},
+        financials:{lifetimeEarnings:0,totalSpent:finalAdvance},satisfaction:50,albumsDelivered:0,boost:baseBoost,baseBoost};
+    let money=parseFloat(localStorage.getItem('money')||0);money+=finalAdvance;
+    localStorage.setItem('money',money);
+    localStorage.setItem('recordDeal',JSON.stringify(deal));
+    localStorage.removeItem('labelOffers');
+    closeContract();renderHQ(deal);
+}
+function checkContractStatus(deal){
+    const cds=localStorage.getItem('currentDate');if(!cds)return deal;
+    const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+    const sd=new Date(deal.signDate);let cnt=0,lrd=sd;
+    albums.forEach(alb=>{const rd=new Date(alb.releaseDate);if(rd>sd){cnt++;if(rd>lrd)lrd=rd;}});
+    if(cnt!==deal.albumsDelivered){deal.albumsDelivered=cnt;deal.satisfaction=Math.min(100,deal.satisfaction+20);}
+    const cd=new Date(cds);
+    const yp=Math.floor((cd-sd)/(1000*60*60*24*365))+1;
+    const apa=deal.terms.albumsObligated/deal.terms.yearsDuration;
+    const isBehind=deal.albumsDelivered<Math.floor(yp*apa);
+    const ws=Math.floor((cd-lrd)/(1000*60*60*24*7));
+    if(isBehind&&ws>52)deal.satisfaction=Math.max(0,deal.satisfaction-10);
+    else if(ws>52)deal.satisfaction=Math.max(0,deal.satisfaction-3);
+    deal.boost=deal.satisfaction>=50?deal.baseBoost:deal.satisfaction>=30?deal.baseBoost*0.8:0.7;
+    localStorage.setItem('recordDeal',JSON.stringify(deal));return deal;
+}
+function renderHQ(deal){
+    const lbl=LABELS[deal.id];
+    const rev=deal.financials.lifetimeEarnings||0;
+    const labelShare=rev*((100-deal.terms.royalty)/100);
+    const labelProfit=labelShare-deal.financials.totalSpent;
+    const sc=deal.satisfaction>60?'#1DB954':deal.satisfaction>30?'#F59E0B':'#EF4444';
+    const sd=new Date(deal.signDate);const cd=new Date(localStorage.getItem('currentDate'));
+    const yp=Math.floor((cd-sd)/(1000*60*60*24*365))+1;
+    const apa=deal.terms.albumsObligated/deal.terms.yearsDuration;
+    let tl='';
+    for(let i=1;i<=deal.terms.yearsDuration;i++){
+        const iC=i===yp,isP=i<yp;
+        const albs=Math.floor(i*apa)-Math.floor((i-1)*apa);
+        const beh=iC&&deal.albumsDelivered<Math.floor(yp*apa);
+        tl+=`<div style="margin-bottom:18px;padding-left:20px;border-left:2px solid #1e1e1e;position:relative;">
+            <div style="position:absolute;left:-5px;top:0;width:8px;height:8px;border-radius:50%;background:${isP?'#2a2a2a':iC?'#fff':'#111'};${iC?'box-shadow:0 0 8px rgba(255,255,255,0.4)':''};"></div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);">YEAR ${i}</div>
+            <div style="font-size:13px;font-weight:800;color:${iC?'#fff':'#444'}">${isP?'Completed':iC?'Current Year':'Upcoming'}</div>
+            ${albs>0?`<div style="font-size:10px;font-weight:700;color:var(--muted);margin-top:2px;">${albs} album${albs>1?'s':''} expected</div>`:''}
+            ${beh?`<div style="font-size:10px;font-weight:800;color:#F59E0B;margin-top:2px;">Behind Schedule</div>`:''}
+        </div>`;
+    }
+    document.getElementById('home-view').innerHTML=`
+        <div style="text-align:center;padding:28px 20px 18px;background:linear-gradient(180deg,rgba(${hexRGB(lbl.color)},0.15),var(--bg));border-bottom:1px solid var(--border);">
+            <svg width="68" height="68" viewBox="0 0 100 100" style="color:${lbl.color};margin-bottom:10px;">${lbl.svg}</svg>
+            <div style="font-size:22px;font-weight:900;letter-spacing:-0.5px;">${lbl.name}</div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:2px;margin-top:4px;">Artist Portal</div>
+        </div>
+        <div class="container" style="padding-top:14px;">
+            <div class="card"><div class="card-lbl"><span>Label Satisfaction</span><span style="color:${sc}">${Math.floor(deal.satisfaction)}%</span></div>
+            <div class="meter-bg" style="height:7px;"><div class="meter-fill" style="width:${deal.satisfaction}%;background:${sc}"></div></div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);margin-top:10px;">${deal.satisfaction<30?'CRITICAL: Label is suppressing your reach.':'Maintain release schedule to keep satisfaction high.'}</div></div>
+            <div class="card"><div class="card-lbl">Deal Terms</div>
+            <div class="fin-row"><span>Contract Type</span><span style="color:${deal.terms.is360?'#EF4444':'#3B82F6'}">${deal.terms.is360?'360 Deal':'Standard'}</span></div>
+            <div class="fin-row"><span>Masters Ownership</span><span style="color:${deal.terms.ownsMasters?'#1DB954':'#EF4444'}">${deal.terms.ownsMasters?'✓ You Own':'✗ Label Owns'}</span></div>
+            <div class="fin-row"><span>Royalty Rate</span><span>${deal.terms.royalty}%</span></div>
+            ${deal.terms.is360?`<div class="fin-row"><span>Tour Revenue Cut</span><span style="color:#EF4444;">Label takes ${deal.terms.tourCut||20}%</span></div>`:''}
+            </div>
+            <div class="card"><div class="card-lbl">Financials</div>
+            <div class="fin-row"><span>Revenue Generated</span><span>$${rev.toLocaleString()}</span></div>
+            <div class="fin-row"><span>Label Investment</span><span style="color:var(--red)">-$${deal.financials.totalSpent.toLocaleString()}</span></div>
+            <div class="fin-total"><span>Net Profit</span><span style="color:${labelProfit>=0?'#1DB954':'var(--red)'}">$${labelProfit.toLocaleString()}</span></div></div>
+            <div class="card"><div class="card-lbl">Request Budget</div>
+            ${['Music Video|bud-vid|video','Recording|bud-rec|recording','Marketing|bud-alb|album'].map(r=>{const[lbl2,id,type]=r.split('|');return`<div style="font-size:11px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">${lbl2}</div><div style="display:flex;gap:8px;margin-bottom:12px;"><input type="number" id="${id}" class="form-inp" style="margin-bottom:0;" placeholder="Amount ($)"><button class="btn-sm" onclick="requestMoney('${type}')" style="flex-shrink:0;padding:0 16px;">Ask</button></div>`;}).join('')}</div>
+            <div class="card"><div class="card-lbl"><span>Contract Timeline</span><span>${deal.albumsDelivered} / ${deal.terms.albumsObligated} Albums</span></div>${tl}
+            <button class="btn-red" onclick="breachContract()">Breach Contract (Leave)</button>
+            <button class="btn-ghost" style="margin-top:8px;" onclick="requestLegalRelease()">Request Legal Release</button></div>
+        </div>`;
+}
+function requestMoney(type){
+    const id=type==='video'?'bud-vid':type==='recording'?'bud-rec':'bud-alb';
+    const amount=parseInt(document.getElementById(id).value);
+    if(!amount||amount<=0){toast('Enter a valid amount.','red');return;}
+    const deal=JSON.parse(localStorage.getItem('recordDeal'));
+    const rev=deal.financials.lifetimeEarnings||0;const spent=deal.financials.totalSpent||0;
+    const labelShare=rev*((100-deal.terms.royalty)/100);const profit=labelShare-spent;
+    const debtLimit=deal.terms.advance*-1.5;
+    if(deal.satisfaction<35){toast('Label execs unhappy. Raise satisfaction first.','red');return;}
+    if((profit-amount)<debtLimit){toast('Too high a financial liability. Generate revenue first.','red');return;}
+    deal.financials.totalSpent+=amount;deal.satisfaction=Math.min(100,deal.satisfaction+2);
+    let money=parseFloat(localStorage.getItem('money')||0);money+=amount;
+    localStorage.setItem('money',money);localStorage.setItem('recordDeal',JSON.stringify(deal));
+    toast(`$${amount.toLocaleString()} approved for ${type}!`,'');
+    renderHQ(deal);
+}
+function saveContractToHistory(deal,exitMethod){
+    const history=JSON.parse(localStorage.getItem('contractHistory')||'[]');
+    history.push({id:deal.id,name:deal.name,signDate:deal.signDate,endDate:localStorage.getItem('currentDate'),
+        exitMethod,terms:deal.terms,financials:deal.financials,albumsDelivered:deal.albumsDelivered});
+    localStorage.setItem('contractHistory',JSON.stringify(history));
+    if(!deal.terms.ownsMasters){
+        const sd=new Date(deal.signDate);
+        const songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+        songs.forEach(s=>{if(new Date(s.releaseDate)>=sd)s.mastersOwnedByLabel=true;});
+        localStorage.setItem('releasedSongs',JSON.stringify(songs));
+        const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+        albums.forEach(a=>{if(new Date(a.releaseDate)>=sd)a.mastersOwnedByLabel=true;});
+        localStorage.setItem('releasedAlbums',JSON.stringify(albums));
+    }
+}
+function breachContract(){
+    const deal=JSON.parse(localStorage.getItem('recordDeal'));
+    const penalty=deal.terms.advance*1.5;let money=parseFloat(localStorage.getItem('money')||0);money-=penalty;
+    localStorage.setItem('money',money);
+    saveContractToHistory(deal,'breach');
+    localStorage.removeItem('recordDeal');
+    toast(`Contract terminated. Sued for $${penalty.toLocaleString()}.`,'red');
+    setTimeout(()=>{checkOffersGen();renderHome();},700);
+}
+function requestLegalRelease(){
+    const deal=JSON.parse(localStorage.getItem('recordDeal'));
+    const albumsLeft=Math.max(0,deal.terms.albumsObligated-deal.albumsDelivered);
+    const penalty=Math.max(50000,Math.floor(deal.terms.advance*0.25*(albumsLeft/Math.max(1,deal.terms.albumsObligated))));
+    if(confirm(`Legal buyout: Pay $${penalty.toLocaleString()} to exit cleanly. Proceed?`)){
+        let money=parseFloat(localStorage.getItem('money')||0);
+        if(money<penalty){toast('Not enough money for the buyout.','red');return;}
+        money-=penalty;
+        localStorage.setItem('money',money.toString());
+        saveContractToHistory(deal,'legal');
+        localStorage.removeItem('recordDeal');
+        toast(`Legally released. Paid $${penalty.toLocaleString()}.`,'');
+        setTimeout(()=>{checkOffersGen();renderHome();},700);
+    }
+}
+
+// ════════ HISTORY ════════
+function renderHistory(){
+    const history=JSON.parse(localStorage.getItem('contractHistory')||'[]');
+    const view=document.getElementById('history-view');
+    if(!history||history.length===0){
+        view.innerHTML=`<div style="text-align:center;padding:60px 20px;"><svg viewBox="0 0 24 24" style="width:48px;height:48px;fill:var(--muted);margin:0 auto 16px;display:block;"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg><div style="font-size:16px;font-weight:800;color:var(--muted);">No Past Contracts</div><div style="font-size:13px;font-weight:600;color:var(--muted);margin-top:8px;">Your signed label history will appear here after leaving a deal.</div></div>`;
+        return;
+    }
+    let html=`<div class="section-head">Contract History</div>`;
+    [...history].reverse().forEach((c,ri)=>{
+        const histIdx=history.length-1-ri;
+        const lbl=LABELS[c.id]||{name:c.name,color:'#666',svg:''};
+        const exitLabel=c.exitMethod==='breach'?'Breached':'Legal Release';
+        const exitColor=c.exitMethod==='breach'?'var(--red)':'#1DB954';
+        const earnings=c.financials?.lifetimeEarnings||0;
+        const cost = Math.max(3000000, Math.floor(earnings * 5 + (c.albumsDelivered || 0) * 2000000));
+        html+=`<div class="card" style="border-top:3px solid ${lbl.color};">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                <svg width="40" height="40" viewBox="0 0 100 100" style="color:${lbl.color};flex-shrink:0;">${lbl.svg}</svg>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:16px;font-weight:900;">${c.name}</div>
+                    <div style="font-size:11px;font-weight:700;color:var(--muted2);">${(c.signDate||'').slice(0,10)} → ${(c.endDate||'').slice(0,10)}</div>
+                </div>
+                <span style="font-size:9px;font-weight:900;padding:4px 9px;border-radius:20px;background:rgba(0,0,0,0.2);color:${exitColor};border:1px solid ${exitColor};">${exitLabel}</span>
+            </div>
+            <div class="fin-row"><span style="color:var(--muted2);">Type</span><span style="color:${c.terms?.is360?'#EF4444':'#3B82F6'}">${c.terms?.is360?'360 Deal':'Standard'}</span></div>
+            <div class="fin-row"><span style="color:var(--muted2);">Advance</span><span>$${(c.terms?.advance||0).toLocaleString()}</span></div>
+            <div class="fin-row"><span style="color:var(--muted2);">Albums Delivered</span><span>${c.albumsDelivered||0} / ${c.terms?.albumsObligated||0}</span></div>
+            <div class="fin-row"><span style="color:var(--muted2);">Revenue Generated</span><span>$${(c.financials?.lifetimeEarnings||0).toLocaleString()}</span></div>
+            <div class="fin-row"><span style="color:var(--muted2);">Masters</span><span style="color:${c.terms?.ownsMasters?'#1DB954':'#EF4444'}">${c.terms?.ownsMasters?'✓ You Own':'✗ Label Owns'}</span></div>
+            ${!c.terms?.ownsMasters?`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);"><div style="font-size:11px;font-weight:700;color:var(--muted2);margin-bottom:8px;">Buyback cost: <span style="color:var(--gold);">$${cost.toLocaleString()}</span> (based on album success)</div><button class="btn-gold" onclick="buyBackMasters(${histIdx})">Buy Back Masters</button></div>`:'<div style="font-size:11px;font-weight:700;color:#1DB954;margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">✓ Masters reclaimed</div>'}
+        </div>`;
+    });
+    view.innerHTML=html;
+}
+function buyBackMasters(histIdx){
+    const history=JSON.parse(localStorage.getItem('contractHistory')||'[]');
+    const c=history[histIdx];
+    if(!c||c.terms?.ownsMasters){toast('Masters already yours.','');return;}
+    const earnings=c.financials?.lifetimeEarnings||0;
+    const cost=Math.max(500000,Math.floor(earnings*0.4+(c.albumsDelivered||0)*250000));
+    if(!confirm(`Buy back masters from ${c.name} for $${cost.toLocaleString()}?\n\nThis restores your royalties on all albums released under this deal.`))return;
+    let money=parseFloat(localStorage.getItem('money')||'0');
+    if(money<cost){toast('Not enough money for buyback.','red');return;}
+    money-=cost;
+    localStorage.setItem('money',money.toString());
+    const sd=new Date(c.signDate);const ed=new Date(c.endDate);
+    const songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    songs.forEach(s=>{const rd=new Date(s.releaseDate);if(rd>=sd&&rd<=ed)s.mastersOwnedByLabel=false;});
+    localStorage.setItem('releasedSongs',JSON.stringify(songs));
+    const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+    albums.forEach(a=>{const rd=new Date(a.releaseDate);if(rd>=sd&&rd<=ed)a.mastersOwnedByLabel=false;});
+    localStorage.setItem('releasedAlbums',JSON.stringify(albums));
+    c.terms.ownsMasters=true;
+    history[histIdx]=c;
+    localStorage.setItem('contractHistory',JSON.stringify(history));
+    toast(`Masters bought back for $${cost.toLocaleString()}!`,'');
+    renderHistory();
+}
+
+// ════════ SETTINGS ════════
+function loadToggles(){
+    const s=JSON.parse(localStorage.getItem('notifSettings')||'{"music":true,"label":true,"artist":true,"budget":true,"dealalert":true}');
+    ['music','label','artist','budget','dealalert'].forEach(k=>{
+        const el=document.getElementById('tog-'+k);
+        if(el)el.classList.toggle('on',s[k]!==false);
+    });
+}
+function toggleNotif(k){
+    const s=JSON.parse(localStorage.getItem('notifSettings')||'{"music":true,"label":true,"artist":true,"budget":true,"dealalert":true}');
+    s[k]=!(s[k]!==false);
+    localStorage.setItem('notifSettings',JSON.stringify(s));
+    const el=document.getElementById('tog-'+k);
+    if(el)el.classList.toggle('on',s[k]);
+    const label=k==='dealalert'?'Deal popup':k.charAt(0).toUpperCase()+k.slice(1);
+    toast(`${label} notifications ${s[k]?'enabled':'disabled'}.`,'');
+}
+function resetAll(){
+    if(confirm('Reset ALL label data?')){
+        ['myLabel','recordDeal','labelOffers'].forEach(k=>localStorage.removeItem(k));
+        toast('All data reset.','red');
+        setTimeout(()=>{renderHome();renderYourLabel();},400);
+    }
+}
+
+// ════════ TOAST ════════
+function toast(msg,type=''){
+    document.querySelectorAll('.toast').forEach(t=>t.remove());
+    const el=document.createElement('div');
+    el.className='toast '+type;el.textContent=msg;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3500);
+}
+
+// ════════ LIVE REFRESH — re-render label page when music.html advances a week ════════
+window.addEventListener('storage',(e)=>{
+    if(e.key==='myLabel'||e.key==='triggerLabelUpdate'){
+        renderYourLabel();
+        renderHome();
+    }
+});
+</script>
+</body>
+</html>

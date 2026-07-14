@@ -1,0 +1,344 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Artist 100 - Premium Chart</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Phosphor Icons for modern iconography -->
+<script src="https://unpkg.com/@phosphor-icons/web"></script>
+<style>
+    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; color: #0f172a; }
+    
+    /* Top Loading Bar */
+    .top-loading-bar { 
+        position: fixed; top: 0; left: 0; height: 3px; 
+        background: linear-gradient(90deg, #8b5cf6, #ec4899, #ef4444); 
+        z-index: 100; width: 0%; transition: width 0.1s linear; 
+    }
+
+    /* Glassmorphism Header */
+    .glass-header {
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    /* Hide scrollbar for clean look */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f1f5f9; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    /* Custom Animations */
+    @keyframes slideUpFade {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-list-item {
+        animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        opacity: 0;
+    }
+    
+    .rank-number { font-variant-numeric: tabular-nums; }
+    
+    /* Seasonal Themes overriding for light mode */
+    .seasonal-halloween { background: radial-gradient(circle at top, #fff7ed 0%, #f8fafc 40%); }
+    .seasonal-halloween .main-title-text { color: #ea580c; }
+    
+    .seasonal-christmas { background: radial-gradient(circle at top, #fff1f2 0%, #f8fafc 40%); }
+    .seasonal-christmas .main-title-text { color: #e11d48; }
+
+    /* Fallback shimmer for light mode */
+    .shimmer {
+        background: linear-gradient(90deg, #e2e8f0 25%, #f1f5f9 50%, #e2e8f0 75%);
+        background-size: 200% 100%;
+        animation: shimmerAnim 1.5s infinite;
+    }
+    @keyframes shimmerAnim {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+</style>
+</head>
+<body class="antialiased min-h-screen flex flex-col pb-12 transition-colors duration-1000">
+
+<div class="top-loading-bar" id="top-loading-bar"></div>
+
+<!-- Navigation -->
+<nav class="glass-header sticky top-0 z-50 px-4 py-4 flex justify-between items-center shadow-sm">
+    <div class="text-xl font-black tracking-tighter uppercase flex items-center gap-2 text-slate-900">
+        <i class="ph-fill ph-chart-bar text-pink-500"></i>
+        <span>Artist 100</span>
+    </div>
+    <div class="flex gap-2">
+        <a href="mc.html" class="text-xs font-bold px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200 text-slate-600">SONGS</a>
+        <a href="mmc.html" class="text-xs font-bold px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200 text-slate-600">ALBUMS</a>
+        <a href="music.html" class="text-xs font-bold px-4 py-2 rounded-full border border-slate-200 hover:bg-slate-100 hover:text-slate-900 transition-colors duration-200 text-slate-600">HUB</a>
+    </div>
+</nav>
+
+<!-- Header Section -->
+<header class="text-center pt-10 pb-6 px-4">
+    <h1 class="main-title-text text-4xl md:text-6xl font-black tracking-tight mb-2 text-slate-900">TOP ARTISTS</h1>
+    <p class="text-xs md:text-sm text-slate-500 font-bold uppercase tracking-widest" id="date">Updating Chart...</p>
+</header>
+
+<!-- Loading State -->
+<div id="loading-container" class="max-w-4xl mx-auto px-4 py-20 flex flex-col items-center justify-center text-slate-400">
+    <i class="ph-duotone ph-vinyl-record text-4xl animate-spin mb-4 text-slate-300"></i>
+    <p class="text-sm font-semibold tracking-wide animate-pulse" id="status-text">Aggregating global streams...</p>
+</div>
+
+<!-- Chart Container -->
+<main class="max-w-4xl mx-auto px-2 md:px-4 w-full hidden" id="list-container">
+    <!-- List will be injected here -->
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // 1. Setup Date & Theme
+    const storedDate = localStorage.getItem('currentDate');
+    const d = storedDate ? new Date(storedDate) : new Date();
+    document.getElementById('date').innerText = "WEEK OF " + d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+    
+    if (d.getMonth() === 9) document.body.classList.add('seasonal-halloween');
+    if (d.getMonth() === 11) document.body.classList.add('seasonal-christmas');
+
+    // 2. Start Loading Animation
+    startLoadingProcess();
+});
+
+function startLoadingProcess() {
+    let progress = 0;
+    const loadTimeMs = 3500; 
+    const intervalMs = 50; 
+    const increment = 100 / (loadTimeMs / intervalMs);
+    
+    const bar = document.getElementById('top-loading-bar');
+    const statusText = document.getElementById('status-text');
+    
+    const texts = [
+        "Aggregating global streams...",
+        "Cross-referencing billboard data...",
+        "Querying metadata APIs...",
+        "Finalizing Top 100..."
+    ];
+
+    const loadInterval = setInterval(() => {
+        progress += increment;
+        bar.style.width = progress + '%';
+
+        const textIndex = Math.floor((progress / 100) * texts.length);
+        if (texts[textIndex] && statusText) {
+            statusText.innerText = texts[textIndex];
+        }
+
+        if (progress >= 100) {
+            clearInterval(loadInterval);
+            bar.style.opacity = '0';
+            document.getElementById('loading-container').classList.add('hidden');
+            document.getElementById('list-container').classList.remove('hidden');
+            generateChartData(); 
+        }
+    }, intervalMs);
+}
+
+function generateChartData() {
+    const songChart = JSON.parse(localStorage.getItem('chart_songs_final') || '[]');
+    const albChart = JSON.parse(localStorage.getItem('chart_albums_final') || '[]');
+    const list = document.getElementById('list-container');
+
+    // MOCK DATA FOR PREVIEW IF LOCALSTORAGE IS EMPTY (For demonstration purposes)
+    let isMockData = false;
+    if (songChart.length === 0 && albChart.length === 0) {
+        songChart.push(
+            { artist: "The Weeknd", weeklyStreams: 150000000 },
+            { artist: "Taylor Swift", weeklyStreams: 140000000 },
+            { artist: "Drake", weeklyStreams: 120000000 },
+            { isUser: true, weeklyStreams: 110000000 }
+        );
+        isMockData = true;
+    }
+
+    const artistMap = {};
+
+    songChart.forEach(s => {
+        const key = s.isUser ? 'YOU' : s.artist;
+        if (!artistMap[key]) artistMap[key] = { name: key, points: 0, isUser: s.isUser };
+        artistMap[key].points += (s.weeklyStreams || 0) / 1500; 
+    });
+
+    albChart.forEach(a => {
+        const key = a.isUser ? 'YOU' : a.artist;
+        if (!artistMap[key]) artistMap[key] = { name: key, points: 0, isUser: a.isUser };
+        artistMap[key].points += (a.units || 0);
+    });
+
+    let artists = Object.values(artistMap);
+    artists.sort((a,b) => b.points - a.points);
+    
+    list.innerHTML = '';
+    
+    if (isMockData) {
+        const notice = document.createElement('div');
+        notice.className = "mb-6 p-4 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 text-sm text-center font-medium animate-list-item shadow-sm";
+        notice.innerHTML = "<i class='ph ph-info'></i> Displaying demo data. Advance a week in the hub to generate your real chart data.";
+        list.appendChild(notice);
+    }
+
+    artists.slice(0, 100).forEach((a, index) => {
+        const rank = index + 1;
+        const imgId = `img-${index}`;
+        const skeletonId = `skeleton-${index}`;
+        const isUser = a.isUser || a.name === 'YOU';
+        const displayName = isUser ? (JSON.parse(localStorage.getItem('artistDetails') || '{}').name || 'You') : a.name;
+        
+        const mockPeak = Math.max(1, rank - Math.floor(Math.random() * 5));
+        const mockWeeks = Math.floor(Math.random() * 400) + 10;
+        
+        // Trend Icon Logic
+        let trendIconHTML = '';
+        if (rank === 1) trendIconHTML = `<i class="ph-bold ph-minus text-slate-400"></i>`;
+        else if (Math.random() > 0.5) trendIconHTML = `<i class="ph-bold ph-arrow-up-right text-emerald-500"></i>`;
+        else trendIconHTML = `<i class="ph-bold ph-arrow-down-right text-rose-500"></i>`;
+
+        const div = document.createElement('div');
+        const animDelay = (index * 0.05) + 's';
+        
+        if (rank === 1) {
+            // HERO CARD FOR #1 ARTIST
+            div.className = `animate-list-item w-full bg-white border ${isUser ? 'border-purple-200 shadow-purple-100' : 'border-slate-200 shadow-slate-200/50'} shadow-xl rounded-2xl p-4 md:p-6 mb-6 flex flex-col md:flex-row items-center gap-6 relative overflow-hidden group hover:scale-[1.01] transition-transform duration-300`;
+            if (isUser) {
+                div.classList.add('bg-gradient-to-br', 'from-purple-50', 'to-white');
+            } else {
+                div.classList.add('bg-gradient-to-br', 'from-white', 'to-slate-50');
+            }
+            div.style.animationDelay = animDelay;
+            
+            div.innerHTML = `
+                <div class="absolute -right-10 -top-10 text-[150px] opacity-[0.03] pointer-events-none font-black text-slate-900 italic">1</div>
+                
+                <div class="relative w-32 h-32 md:w-48 md:h-48 rounded-xl overflow-hidden shadow-lg flex-shrink-0 border border-slate-100">
+                    <div class="shimmer absolute inset-0 z-10" id="${skeletonId}"></div>
+                    <img src="" id="${imgId}" class="w-full h-full object-cover opacity-0 transition-opacity duration-500 z-20 relative" alt="${displayName}">
+                    <div class="absolute -bottom-2 -right-2 bg-yellow-400 text-yellow-950 w-10 h-10 rounded-full flex items-center justify-center font-black text-xl border-4 border-white z-30 shadow-sm">1</div>
+                </div>
+                
+                <div class="flex-1 text-center md:text-left z-10 w-full">
+                    <div class="flex items-center justify-center md:justify-start gap-2 mb-1">
+                        <i class="ph-fill ph-crown text-yellow-500 text-xl drop-shadow-sm"></i>
+                        <span class="text-xs font-bold tracking-widest text-slate-500 uppercase">Number One</span>
+                    </div>
+                    <h2 class="text-3xl md:text-5xl font-black tracking-tight mb-2 ${isUser ? 'bg-gradient-to-r from-purple-600 to-pink-500 bg-clip-text text-transparent' : 'text-slate-900'}">${displayName}</h2>
+                    <p class="text-slate-500 font-medium mb-6">Top Artist 100 • Peak: 1 • Weeks: ${mockWeeks}</p>
+                    
+                    <div class="flex flex-wrap justify-center md:justify-start gap-3 md:gap-6">
+                        <div class="bg-slate-100/50 rounded-lg px-4 py-2 border border-slate-200">
+                            <p class="text-[10px] text-slate-500 font-bold uppercase mb-0.5">Total Points</p>
+                            <p class="font-black text-lg text-slate-800">${Math.round(a.points).toLocaleString()}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            // STANDARD LIST ITEM FOR #2-100
+            div.className = `animate-list-item group flex items-center bg-white hover:bg-slate-50 border ${isUser ? 'border-purple-200 bg-purple-50 hover:bg-purple-100' : 'border-slate-200'} rounded-xl p-3 mb-3 shadow-sm transition-all duration-300`;
+            div.style.animationDelay = animDelay;
+
+            div.innerHTML = `
+                <div class="flex items-center w-12 justify-center flex-shrink-0">
+                    <span class="rank-number text-lg md:text-xl font-bold text-slate-400 group-hover:text-slate-600 transition-colors">${rank}</span>
+                </div>
+                
+                <div class="flex flex-col items-center justify-center w-6 mr-2 flex-shrink-0">
+                    ${trendIconHTML}
+                </div>
+                
+                <div class="relative w-12 h-12 md:w-14 md:h-14 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-200">
+                    <div class="shimmer absolute inset-0 z-10" id="${skeletonId}"></div>
+                    <img src="" id="${imgId}" class="w-full h-full object-cover opacity-0 transition-opacity duration-300 z-20 relative" alt="${displayName}">
+                </div>
+                
+                <div class="ml-4 flex-1 min-w-0 pr-4">
+                    <h3 class="font-bold text-sm md:text-base truncate ${isUser ? 'text-purple-700' : 'text-slate-900'}">${displayName}</h3>
+                    <p class="text-xs text-slate-500 font-medium truncate mt-0.5">Peak: ${mockPeak} • Weeks: ${mockWeeks}</p>
+                </div>
+                
+                <div class="hidden md:block text-right mr-6">
+                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Points</p>
+                    <p class="font-bold text-sm text-slate-700">${Math.round(a.points).toLocaleString()}</p>
+                </div>
+                
+                <button class="w-8 h-8 rounded-full border border-slate-300 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:border-slate-400 hover:bg-slate-100 transition-all flex-shrink-0 group-hover:scale-110">
+                    <i class="ph-bold ph-plus"></i>
+                </button>
+            `;
+        }
+
+        list.appendChild(div);
+
+        // Image Loading Logic
+        const imgElement = document.getElementById(imgId);
+        const skeletonElement = document.getElementById(skeletonId);
+
+        const applyImage = (src) => {
+            imgElement.src = src;
+            imgElement.onload = () => {
+                if(skeletonElement) skeletonElement.style.display = 'none';
+                imgElement.classList.remove('opacity-0');
+            };
+            imgElement.onerror = () => {
+                // Changed fallback image parameters for light mode
+                imgElement.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=f1f5f9&color=0f172a&size=128`;
+                if(skeletonElement) skeletonElement.style.display = 'none';
+                imgElement.classList.remove('opacity-0');
+            };
+        };
+
+        if (isUser) {
+            const userPic = localStorage.getItem('artistPhoto') || localStorage.getItem('profilePic');
+            if (userPic && userPic !== 'cartoon') {
+                applyImage(userPic);
+            } else {
+                applyImage('https://ui-avatars.com/api/?name=YOU&background=a855f7&color=fff&size=256');
+            }
+        } else {
+            fetchArtwork(displayName, applyImage);
+        }
+    });
+}
+
+function fetchArtwork(artistName, callback) {
+    const url = `https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=musicArtist&limit=1`;
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            if (data.results && data.results.length > 0 && data.results[0].artistLinkUrl) {
+                 return fetch(`https://itunes.apple.com/search?term=${encodeURIComponent(artistName)}&entity=song&limit=1`);
+            } else {
+                throw new Error("No artist found initially");
+            }
+        })
+        .then(res => res.json())
+        .then(data => {
+             if (data.results && data.results.length > 0) {
+                let artworkUrl = data.results[0].artworkUrl100.replace('100x100bb', '400x400bb');
+                callback(artworkUrl);
+            } else {
+                 throw new Error("No artwork found");
+            }
+        })
+        .catch(err => {
+            callback(`https://ui-avatars.com/api/?name=${encodeURIComponent(artistName)}&background=f1f5f9&color=0f172a&size=128`);
+        });
+}
+</script>
+
+</body>
+</html>
+
+

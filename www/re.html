@@ -1,0 +1,826 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Manager - Elite Edition</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #D4AF37; /* Luxury Gold */
+            --primary-dark: #AA8C2C;
+            --secondary: #3B82F6;
+            --bg-base: #050507;
+            --bg-surface: #111116;
+            --bg-surface-elevated: #1A1A24;
+            --text-primary: #FFFFFF;
+            --text-secondary: #A1A1AA;
+            --success: #10B981;
+            --error: #EF4444;
+            --border-light: rgba(255, 255, 255, 0.08);
+            --border-glow: rgba(212, 175, 55, 0.3);
+            --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.8);
+            
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.03) 0%, transparent 25%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding-bottom: 100px;
+        }
+
+        /* --- Typography --- */
+        h1, h2, h3, .brand-font {
+            font-family: 'Playfair Display', serif;
+        }
+
+        /* --- Header & Nav --- */
+        .app-header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(5, 5, 7, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 20px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #FFF;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-title span {
+            color: var(--primary);
+        }
+
+        .balance-container {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .balance-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .balance-display {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 16px;
+            padding: 32px 32px 16px;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            padding: 12px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover { color: white; }
+        
+        .tab-btn.active { color: white; }
+        
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--primary);
+            box-shadow: 0 -2px 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* --- Filters --- */
+        .category-scroll {
+            display: flex;
+            gap: 12px;
+            padding: 16px 32px 32px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            justify-content: center;
+        }
+        .category-scroll::-webkit-scrollbar { display: none; }
+
+        .cat-chip {
+            white-space: nowrap;
+            padding: 8px 20px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 100px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .cat-chip:hover {
+            border-color: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .cat-chip.active {
+            background: white;
+            color: black;
+            border-color: white;
+            font-weight: 600;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- Grid Layout --- */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        /* --- Asset Card --- */
+        .asset-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--border-glow);
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(212, 175, 55, 0.1);
+        }
+
+        .card-visual {
+            height: 220px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+            background: var(--bg-surface-elevated);
+        }
+
+        .card-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+
+        .asset-card:hover .card-visual img {
+            transform: scale(1.08);
+        }
+
+        .card-visual::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 50%;
+            background: linear-gradient(to top, var(--bg-surface) 0%, transparent 100%);
+        }
+
+        .card-info {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .asset-type {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .asset-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .asset-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: auto;
+        }
+
+        .price-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .asset-price {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .btn-buy {
+            background: white;
+            color: black;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-buy:hover { 
+            background: var(--primary);
+            color: white;
+        }
+
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .badge-owned {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .badge-rented {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+        }
+
+        /* --- Empty State --- */
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-secondary);
+            grid-column: 1 / -1;
+        }
+        .empty-state h3 { font-size: 24px; color: white; margin: 16px 0 8px; }
+
+        /* --- Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+            padding: 20px;
+        }
+        
+        .modal-overlay.active { display: flex; opacity: 1; }
+
+        .modal-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            width: 100%;
+            max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .modal-overlay.active .modal-content { transform: translateY(0) scale(1); }
+
+        .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+        
+        .close-modal:hover { background: var(--error); }
+
+        .modal-hero {
+            height: 250px;
+            width: 100%;
+            position: relative;
+        }
+        
+        .modal-hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .modal-hero::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 100px;
+            background: linear-gradient(to top, var(--bg-surface) 0%, transparent 100%);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .modal-title { font-size: 28px; color: white; margin-bottom: 8px; }
+        .modal-desc { color: var(--text-secondary); font-size: 14px; margin-bottom: 24px; line-height: 1.6; }
+        
+        .purchase-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-surface-elevated);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-light);
+            transition: border-color 0.2s;
+        }
+        
+        .option-row:hover { border-color: rgba(255,255,255,0.2); }
+        
+        .option-details { flex-grow: 1; }
+        .option-title { font-weight: 600; color: white; font-size: 15px; margin-bottom: 4px; }
+        .option-sub { font-size: 12px; color: var(--text-secondary); }
+        
+        .option-action { text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px; }
+        .price-tag { font-weight: 700; color: var(--primary); font-size: 16px; }
+
+        .btn-rent {
+            background: transparent;
+            border: 1px solid var(--border-light);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-rent:hover { background: rgba(255,255,255,0.05); border-color: white; }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-surface-elevated);
+            padding: 16px 24px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 2000;
+            min-width: 300px;
+        }
+        
+        .notification.show { transform: translateX(-50%) translateY(0); }
+        
+        .notif-icon { font-size: 20px; }
+        .notif-content { flex-grow: 1; }
+        .notif-title { font-weight: 600; color: white; font-size: 14px; margin-bottom: 4px; }
+        .notif-desc { font-size: 12px; color: var(--text-secondary); }
+
+        .notification.error { border-left-color: var(--error); }
+        
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+            .app-header { padding: 16px 20px; }
+            .nav-tabs { padding: 20px 20px 10px; }
+            .category-scroll { padding: 10px 20px 20px; justify-content: flex-start; }
+            .container { padding: 0 20px; }
+            .modal-content { max-height: 90vh; overflow-y: auto; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="app-header">
+        <div class="app-title">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary)"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+            Music<span>Excellence</span>
+        </div>
+        <div class="balance-container">
+            <div class="balance-label">Net Worth</div>
+            <div class="balance-display" id="balance-display">$0</div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('marketplace')">Marketplace</button>
+        <button class="tab-btn" onclick="switchTab('portfolio')">My Portfolio</button>
+    </div>
+
+    <!-- Category Filters -->
+    <div class="category-scroll" id="category-filters">
+        <button class="cat-chip active" onclick="filterCategory('All')">All Collection</button>
+        <button class="cat-chip" onclick="filterCategory('Houses')">Estates</button>
+        <button class="cat-chip" onclick="filterCategory('Apartments')">Penthouses</button>
+        <button class="cat-chip" onclick="filterCategory('Cars')">Vehicles</button>
+        <button class="cat-chip" onclick="filterCategory('Jets & Airplanes')">Aviation</button>
+        <button class="cat-chip" onclick="filterCategory('Yachts')">Marine</button>
+        <button class="cat-chip" onclick="filterCategory('Jewelry')">Fine Jewelry</button>
+        <button class="cat-chip" onclick="filterCategory('Experiences')">Lifestyle</button>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="container">
+        <!-- Marketplace Grid -->
+        <div id="marketplace-view" class="asset-grid">
+            <!-- Items injected by JS -->
+        </div>
+
+        <!-- Portfolio Grid (Hidden by default) -->
+        <div id="portfolio-view" class="asset-grid" style="display: none;">
+            <!-- Owned items injected by JS -->
+        </div>
+    </div>
+
+    <!-- Purchase Modal -->
+    <div class="modal-overlay" id="purchase-modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeModal()">×</button>
+            
+            <div class="modal-hero">
+                <img id="modal-image" src="" alt="Asset Image" loading="lazy">
+            </div>
+            
+            <div class="modal-body">
+                <h2 class="modal-title brand-font" id="modal-item-name">Item Name</h2>
+                <p class="modal-desc" id="modal-item-desc">An exclusive asset curated for high-net-worth individuals, elevating your status and portfolio value.</p>
+                
+                <div class="purchase-options" id="modal-options">
+                    <!-- Options injected JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification -->
+    <div class="notification" id="toast">
+        <div class="notif-icon" id="toast-icon">✨</div>
+        <div class="notif-content">
+            <div class="notif-title" id="toast-title">Transaction Successful</div>
+            <div class="notif-desc" id="toast-desc">Asset has been added to your portfolio.</div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. ASSET DATABASE (With Real Image URLs from Pexels) ---
+        const assets = [
+            { id: 1, name: 'Modern Villa', category: 'Houses', price: 25000000, rent_w: 125000, rent_m: 450000, image: 'https://images.pexels.com/photos/1063920/pexels-photo-1063920.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 2, name: 'Penthouse Suite', category: 'Apartments', price: 7500000, rent_w: 40000, rent_m: 150000, image: 'https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 3, name: 'HyperCar X1', category: 'Cars', price: 3000000, rent_w: 20000, rent_m: 75000, image: 'https://images.pexels.com/photos/337909/pexels-photo-337909.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 4, name: 'Gulfstream G-VII', category: 'Jets & Airplanes', price: 65000000, rent_w: 500000, rent_m: 1800000, image: 'https://images.pexels.com/photos/3221215/pexels-photo-3221215.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 5, name: 'Diamond Watch', category: 'Jewelry', price: 500000, image: 'https://images.pexels.com/photos/277390/pexels-photo-277390.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 6, name: 'Malibu Mansion', category: 'Houses', price: 80000000, rent_w: 400000, rent_m: 1500000, image: 'https://images.pexels.com/photos/323780/pexels-photo-323780.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 7, name: 'Rolls Phantom', category: 'Cars', price: 450000, rent_w: 5000, rent_m: 15000, image: 'https://images.pexels.com/photos/376361/pexels-photo-376361.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 8, name: 'Private Helicopter', category: 'Jets & Airplanes', price: 5000000, rent_w: 35000, rent_m: 120000, image: 'https://images.pexels.com/photos/2800121/pexels-photo-2800121.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 9, name: 'Gold Chain', category: 'Jewelry', price: 75000, image: 'https://images.pexels.com/photos/1191531/pexels-photo-1191531.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 10, name: 'Sky Loft', category: 'Apartments', price: 2100000, rent_w: 15000, rent_m: 50000, image: 'https://images.pexels.com/photos/439227/pexels-photo-439227.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 11, name: 'Mega Yacht', category: 'Yachts', price: 150000000, rent_w: 1000000, rent_m: 3500000, image: 'https://images.pexels.com/photos/163236/luxury-yacht-boat-speed-water-163236.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 12, name: 'Speedboat', category: 'Yachts', price: 400000, rent_w: 3000, rent_m: 10000, image: 'https://images.pexels.com/photos/258159/pexels-photo-258159.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 13, name: 'Private Island', category: 'Experiences', price: 5000000, image: 'https://images.pexels.com/photos/1430677/pexels-photo-1430677.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 14, name: 'Space Trip', category: 'Experiences', price: 10000000, image: 'https://images.pexels.com/photos/2156/sky-earth-space-working.jpg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 15, name: 'Armored SUV', category: 'Cars', price: 750000, rent_w: 5000, rent_m: 18000, image: 'https://images.pexels.com/photos/119435/pexels-photo-119435.jpeg?auto=compress&cs=tinysrgb&w=800' },
+            { id: 16, name: 'Sapphire Ring', category: 'Jewelry', price: 120000, image: 'https://images.pexels.com/photos/265906/pexels-photo-265906.jpeg?auto=compress&cs=tinysrgb&w=800' }
+        ];
+
+        // --- 2. STATE MANAGEMENT ---
+        let currentTab = 'marketplace';
+        let currentFilter = 'All';
+        
+        // Mock setting some money for demo purposes if none exists
+        if (!localStorage.getItem('money')) {
+            localStorage.setItem('money', 150000000); // 150M starting balance
+        }
+
+        function getMoney() { return parseFloat(localStorage.getItem('money')) || 0; }
+        function setMoney(val) { localStorage.setItem('money', val); updateBalanceDisplay(); }
+        function getOwned() { return JSON.parse(localStorage.getItem('ownedItems')) || []; }
+        function getRented() { return JSON.parse(localStorage.getItem('rentedItems')) || []; }
+
+        function formatMoney(amount) {
+            if (amount >= 1e6) {
+                return `$${(amount/1e6).toFixed(1)}M`;
+            } else if (amount >= 1e3) {
+                return `$${(amount/1e3).toFixed(1)}K`;
+            }
+            return `$${amount.toLocaleString()}`;
+        }
+
+        function updateBalanceDisplay() {
+            document.getElementById('balance-display').innerText = formatMoney(getMoney());
+        }
+
+        // --- 3. RENDER LOGIC ---
+        function render() {
+            updateBalanceDisplay();
+            const ownedIds = getOwned();
+            const rentedList = getRented();
+            
+            // Render Marketplace
+            const marketContainer = document.getElementById('marketplace-view');
+            marketContainer.innerHTML = '';
+            
+            const filteredAssets = currentFilter === 'All' 
+                ? assets 
+                : assets.filter(a => a.category === currentFilter);
+
+            filteredAssets.forEach(item => {
+                const isOwned = ownedIds.includes(item.id);
+                const isRented = rentedList.some(r => r.id === item.id);
+                
+                const card = document.createElement('div');
+                card.className = 'asset-card';
+                card.innerHTML = `
+                    <div class="card-visual">
+                        <img src="${item.image}" alt="${item.name}" loading="lazy">
+                    </div>
+                    <div class="card-info">
+                        <div class="asset-type">${item.category}</div>
+                        <div class="asset-name">${item.name}</div>
+                        
+                        <div class="asset-price-row">
+                            <div class="price-col">
+                                ${(!isOwned && !isRented) ? `<span class="price-label">Valuation</span>` : ''}
+                                ${isOwned 
+                                    ? '<div class="status-badge badge-owned"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg> Owned</div>' 
+                                    : isRented 
+                                        ? '<div class="status-badge badge-rented"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg> Active Lease</div>'
+                                        : `<div class="asset-price">${formatMoney(item.price)}</div>`
+                                }
+                            </div>
+                            
+                            ${!isOwned 
+                                ? `<button class="btn-buy" onclick="openModal(${item.id})">View Details</button>` 
+                                : ''}
+                        </div>
+                    </div>
+                `;
+                marketContainer.appendChild(card);
+            });
+
+            // Render Portfolio
+            const portfolioContainer = document.getElementById('portfolio-view');
+            portfolioContainer.innerHTML = '';
+            
+            const myItems = assets.filter(a => ownedIds.includes(a.id) || rentedList.some(r => r.id === a.id));
+
+            if (myItems.length === 0) {
+                portfolioContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" style="opacity:0.3; margin-bottom: 16px;"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        <h3 class="brand-font">Portfolio Empty</h3>
+                        <p>Browse the marketplace to begin acquiring luxury assets.</p>
+                    </div>`;
+            } else {
+                myItems.forEach(item => {
+                    const isOwned = ownedIds.includes(item.id);
+                    const card = document.createElement('div');
+                    card.className = 'asset-card';
+                    card.innerHTML = `
+                        <div class="card-visual">
+                            <img src="${item.image}" alt="${item.name}" loading="lazy">
+                        </div>
+                        <div class="card-info">
+                            <div class="asset-type">${isOwned ? 'OWNED ASSET' : 'LEASED ASSET'}</div>
+                            <div class="asset-name">${item.name}</div>
+                            <div class="asset-price-row">
+                                <div class="price-col">
+                                    <span class="price-label">Current Value</span>
+                                    <div class="asset-price">${formatMoney(item.price)}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    portfolioContainer.appendChild(card);
+                });
+            }
+        }
+
+        // --- 4. INTERACTION LOGIC ---
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector(`[onclick="switchTab('${tab}')"]`).classList.add('active');
+            
+            document.getElementById('marketplace-view').style.display = tab === 'marketplace' ? 'grid' : 'none';
+            document.getElementById('portfolio-view').style.display = tab === 'portfolio' ? 'grid' : 'none';
+            document.getElementById('category-filters').style.display = tab === 'marketplace' ? 'flex' : 'none';
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            document.querySelectorAll('.cat-chip').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            render();
+        }
+
+        let selectedItem = null;
+        function openModal(id) {
+            selectedItem = assets.find(a => a.id === id);
+            if(!selectedItem) return;
+
+            document.getElementById('modal-item-name').innerText = selectedItem.name;
+            document.getElementById('modal-image').src = selectedItem.image;
+
+            const optionsContainer = document.getElementById('modal-options');
+            optionsContainer.innerHTML = '';
+
+            // Buy Option
+            optionsContainer.innerHTML += `
+                <div class="option-row">
+                    <div class="option-details">
+                        <div class="option-title">Full Acquisition</div>
+                        <div class="option-sub">Permanent ownership and title transfer</div>
+                    </div>
+                    <div class="option-action">
+                        <div class="price-tag">$${selectedItem.price.toLocaleString()}</div>
+                        <button class="btn-buy" onclick="buyItem(${selectedItem.id})">Purchase</button>
+                    </div>
+                </div>
+            `;
+
+            // Rent Options
+            if (selectedItem.rent_w) {
+                optionsContainer.innerHTML += `
+                    <div class="option-row">
+                        <div class="option-details">
+                            <div class="option-title">Short-Term Lease</div>
+                            <div class="option-sub">7-day exclusive access</div>
+                        </div>
+                        <div class="option-action">
+                            <div class="price-tag" style="color:white; font-size:14px;">$${selectedItem.rent_w.toLocaleString()} <span style="font-size:10px; color:#A1A1AA; font-weight:normal;">/wk</span></div>
+                            <button class="btn-rent" onclick="rentItem(${selectedItem.id}, 'w')">Lease Now</button>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('purchase-modal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('purchase-modal').classList.remove('active');
+        }
+
+        function showNotification(title, desc, type = 'success') {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-title').innerText = title;
+            document.getElementById('toast-desc').innerText = desc;
+            
+            if(type === 'error') {
+                toast.classList.add('error');
+                document.getElementById('toast-icon').innerText = '⚠️';
+            } else {
+                toast.classList.remove('error');
+                document.getElementById('toast-icon').innerText = '✨';
+            }
+
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 4000);
+        }
+
+        function buyItem(id) {
+            const item = assets.find(a => a.id === id);
+            const money = getMoney();
+            
+            if (money >= item.price) {
+                setMoney(money - item.price);
+                const owned = getOwned();
+                owned.push(id);
+                localStorage.setItem('ownedItems', JSON.stringify(owned));
+                
+                let rented = getRented();
+                rented = rented.filter(r => r.id !== id);
+                localStorage.setItem('rentedItems', JSON.stringify(rented));
+
+                closeModal();
+                showNotification("Acquisition Successful", `You are now the owner of ${item.name}.`, 'success');
+                render();
+            } else {
+                closeModal();
+                showNotification("Transaction Failed", "Insufficient funds for this acquisition.", 'error');
+            }
+        }
+
+        function rentItem(id, type) {
+            const item = assets.find(a => a.id === id);
+            const cost = type === 'w' ? item.rent_w : item.rent_m;
+            const money = getMoney();
+
+            if (money >= cost) {
+                setMoney(money - cost);
+                let rented = getRented();
+                rented = rented.filter(r => r.id !== id);
+                rented.push({ id: id, type: type, date: new Date().toISOString() });
+                localStorage.setItem('rentedItems', JSON.stringify(rented));
+
+                closeModal();
+                showNotification("Lease Approved", `You have secured access to ${item.name}.`, 'success');
+                render();
+            } else {
+                closeModal();
+                showNotification("Transaction Failed", "Insufficient funds for this lease.", 'error');
+            }
+        }
+
+        // --- Init ---
+        render();
+        window.addEventListener('storage', render); 
+
+        // Close modal on outside click
+        document.getElementById('purchase-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'purchase-modal') closeModal();
+        });
+
+    </script>
+</body>
+</html>
+

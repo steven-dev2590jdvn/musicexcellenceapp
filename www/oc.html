@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Global Excellence Hot 100</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}body{background:#0a0a0a;color:#fff;font-family:Poppins,sans-serif;padding-bottom:70px}.h{color:#FFD700;text-align:center;font-size:28px;margin:15px 0;text-shadow:0 2px 4px rgba(0,0,0,.5);font-weight:700}.d{color:#ddd;text-align:center;font-size:13px;margin-bottom:15px}.c{max-width:900px;margin:auto;padding:10px}.e{display:grid;grid-template-columns:40px 60px auto 80px 50px;gap:12px;align-items:center;background:#111;margin:8px 0;padding:12px;border-radius:10px;border-left:4px solid #222;transition:.3s;cursor:pointer}.e:hover{transform:translateX(3px);background:#151515;border-left-color:#FFD700;box-shadow:0 4px 12px rgba(0,0,0,.3)}.e.mine{background:#1a1a08;border-left-color:#FFD700}.e.new{animation:slideIn .5s ease-out}.p{font-size:18px;font-weight:700;text-align:center}.t{font-size:11px;text-align:center;margin-top:2px;color:#0f9}.a{width:60px;height:60px;border-radius:6px;object-fit:cover;box-shadow:0 3px 6px rgba(0,0,0,.5)}.i{display:flex;flex-direction:column;gap:3px}.n{font-size:14px;font-weight:600}.u{font-size:12px;color:#FFD700;font-weight:600}.s{font-size:12px;color:#bbb;display:flex;justify-content:space-between}.pts{text-align:right}.pts-val{font-size:16px;font-weight:700;color:#0bf}.pts-time{font-size:10px;color:#888}.trend{text-align:center;font-size:11px;font-weight:700}.trend.up{color:#0f9}.trend.down{color:#f33}.trend.same{color:#888}.trend.new{color:#FFD700}.stats{display:flex;justify-content:space-around;margin:12px 0;background:#111;border-radius:10px;padding:12px}.stat{text-align:center}.stat-val{font-size:16px;font-weight:700;color:#FFD700}.stat-lbl{font-size:11px;color:#aaa}.auth{background:#111;border-radius:12px;padding:20px;margin:20px 0;text-align:center}.auth input,.auth button,.sync{font-family:Poppins,sans-serif}.auth input{background:#222;border:1px solid #333;color:#fff;padding:10px;border-radius:6px;margin:5px;width:200px}.auth button{background:#FFD700;color:#111;border:none;padding:10px 20px;border-radius:6px;cursor:pointer;font-weight:600;margin:5px}.sync{background:#333;color:#FFD700;border:none;padding:8px 16px;border-radius:20px;cursor:pointer;font-weight:600;margin:10px 5px;font-size:12px}.sync:hover{background:#FFD700;color:#111}.timer{background:#1a1a1a;border-radius:8px;padding:10px;margin:10px 0;text-align:center;border:2px solid #333}.timer-title{color:#FFD700;font-size:12px;font-weight:600}.timer-val{font-size:20px;font-weight:700;color:#0bf;margin:5px 0}.status{padding:8px;border-radius:6px;margin:10px 0;text-align:center;font-size:12px}.error{background:#ff000020;color:#ff6666}.success{background:#00ff0020;color:#66ff66}.loading{background:#ffaa0020;color:#ffaa66}.live{position:fixed;top:10px;right:10px;background:#0f9;color:#111;padding:5px 10px;border-radius:15px;font-size:11px;font-weight:600;animation:pulse 2s infinite}.conn{position:fixed;top:10px;left:10px;padding:5px 10px;border-radius:15px;font-size:11px;font-weight:600}.online{background:#0f9;color:#111}.offline{background:#f90;color:#111}.enabled{background:#0f9;color:#111}.disabled{background:#f33;color:#fff}.auto-btn{position:fixed;top:50px;left:10px;padding:8px 12px;border-radius:20px;font-size:11px;font-weight:600;border:none;cursor:pointer;transition:.3s}.auto-btn:hover{transform:scale(1.05)}.notif{position:fixed;top:80px;right:10px;background:#FFD700;color:#111;padding:8px 12px;border-radius:8px;font-size:11px;font-weight:600;transform:translateX(100%);transition:transform .3s ease;z-index:1000}.notif.show{transform:translateX(0)}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.7}}@keyframes slideIn{from{opacity:0;transform:translateX(-20px)}to{opacity:1;transform:translateX(0)}}@media(max-width:600px){.e{grid-template-columns:35px 50px auto 70px 40px}.a{width:50px;height:50px}.n{font-size:13px}.auth input{width:150px}}
+</style>
+</head>
+<body>
+<div class="live">● LIVE</div>
+<div class="conn offline" id="conn-status">● CONNECTING</div>
+<button class="auto-btn disabled" id="auto-btn" onclick="toggleAuto()">🔄 AUTO: OFF</button>
+<div class="notif" id="notification"></div>
+
+<div class="c">
+<div class="h">🏆 Global Excellence Hot 100</div>
+<div class="d">Real-Time Competition • Auto-Updates • Last: <span id="last-update">Never</span></div>
+
+<div class="auth" id="auth-section">
+<h3 style="color:#FFD700;margin-bottom:15px">Join the Global Competition</h3>
+<div><input type="text" id="username" placeholder="Your Username" required></div>
+<div><button onclick="joinChart()">🎵 Enter Chart</button></div>
+<div id="auth-status" class="status"></div>
+</div>
+
+<div id="main-content" style="display:none">
+
+<div class="timer">
+<div class="timer-title">Daily Chart Reset (12 AM EST)</div>
+<div class="timer-val" id="countdown">--:--:--</div>
+</div>
+
+<div class="stats">
+<div class="stat"><div class="stat-val" id="total-songs">0</div><div class="stat-lbl">Total Songs</div></div>
+<div class="stat"><div class="stat-val" id="my-songs">0</div><div class="stat-lbl">My Songs</div></div>
+<div class="stat"><div class="stat-val" id="active-users">0</div><div class="stat-lbl">Active Artists</div></div>
+<div class="stat"><div class="stat-val" id="my-rank">--</div><div class="stat-lbl">My Best Rank</div></div>
+</div>
+
+<div id="chart-entries"></div>
+
+<div style="text-align:center;margin:20px 0;padding:15px;background:#111;border-radius:10px;font-size:12px;color:#888">
+<strong>🌐 Global Real-Time Chart</strong><br>
+• Auto-sync enabled: <span id="auto-status" style="color:#f33">OFF</span><br>
+• Daily reset at 12:00 AM EST<br>
+• Stats accumulate throughout 24 hours<br>
+• Only songs with points appear on chart<br>
+• Logged in as: <span id="current-user" style="color:#FFD700">--</span><br>
+• Position indicators: <span style="color:#0f9">↑ Up</span> | <span style="color:#f33">↓ Down</span> | <span style="color:#888">= Same</span> | <span style="color:#FFD700">★ New</span>
+</div>
+
+</div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, set, push, onValue, serverTimestamp, update, query, orderByChild, equalTo, get, remove } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+const config = {
+    apiKey: "AIzaSyCMxSZHaL_aRtuy7rlBid27Gv51TXUn7Xc",
+    authDomain: "excellence-100.firebaseapp.com",
+    databaseURL: "https://excellence-100-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "excellence-100",
+    storageBucket: "excellence-100.firebasestorage.app",
+    messagingSenderId: "920166489124",
+    appId: "1:920166489124:web:e3211ed79172ad32fe8cb1"
+};
+
+let user = null, uid = null, chart = [], db, app, autoEnabled = false;
+let lastResetTime = 0, autoInterval = null;
+let lastSyncData = null;
+let previousChart = []; // Store previous chart positions for comparison
+
+window.joinChart = joinChart;
+window.toggleAuto = toggleAuto;
+
+function init() {
+    try {
+        app = initializeApp(config);
+        db = getDatabase(app);
+        testConnection();
+        checkSavedUser();
+        setInterval(checkDailyReset, 60000);
+        
+        // Load previous chart from localStorage if exists
+        const savedChart = localStorage.getItem('excellence_previous_chart');
+        if (savedChart) {
+            try {
+                previousChart = JSON.parse(savedChart);
+            } catch (e) {
+                previousChart = [];
+            }
+        }
+    } catch (e) {
+        console.error('Init error:', e);
+        showStatus('Firebase failed: ' + e.message, 'error');
+    }
+}
+
+function testConnection() {
+    const testRef = ref(db, '.info/connected');
+    onValue(testRef, (snapshot) => {
+        const connected = snapshot.val();
+        const statusEl = document.getElementById('conn-status');
+        if (connected) {
+            statusEl.textContent = '● CONNECTED';
+            statusEl.className = 'conn online';
+        } else {
+            statusEl.textContent = '● RECONNECTING';
+            statusEl.className = 'conn offline';
+        }
+    });
+}
+
+function checkSavedUser() {
+    const savedUser = localStorage.getItem('excellence_user');
+    const savedUid = localStorage.getItem('excellence_uid');
+    const savedAuto = localStorage.getItem('excellence_auto') === 'true';
+    
+    if (savedUser && savedUid) {
+        user = savedUser;
+        uid = savedUid;
+        autoEnabled = savedAuto;
+        showUI();
+        setupListeners();
+        updateAutoButton();
+        if (autoEnabled) startAutoSync();
+        showStatus('Welcome back ' + user + '!', 'success');
+        updateTimer();
+    }
+}
+
+async function joinChart() {
+    const name = document.getElementById('username').value.trim();
+    if (!name) return showStatus('Enter username', 'error');
+    if (name.length < 2) return showStatus('Username too short', 'error');
+    
+    user = name;
+    uid = genId();
+    
+    localStorage.setItem('excellence_user', user);
+    localStorage.setItem('excellence_uid', uid);
+    
+    showUI();
+    showStatus('Connecting...', 'loading');
+    
+    try {
+        await set(ref(db, `users/${uid}`), {
+            username: name,
+            joinedAt: serverTimestamp(),
+            lastSeen: serverTimestamp(),
+            isOnline: true
+        });
+        
+        setupListeners();
+        showStatus('Connected! Enable auto-sync to compete!', 'success');
+        showNotif('Welcome! Enable auto-sync to start competing!');
+        updateTimer();
+    } catch (e) {
+        console.error('Join error:', e);
+        showStatus('Connection failed: ' + e.message, 'error');
+    }
+}
+
+function toggleAuto() {
+    autoEnabled = !autoEnabled;
+    localStorage.setItem('excellence_auto', autoEnabled);
+    updateAutoButton();
+    
+    if (autoEnabled) {
+        startAutoSync();
+        showNotif('Auto-sync ENABLED! Your songs will compete automatically!');
+    } else {
+        stopAutoSync();
+        showNotif('Auto-sync DISABLED');
+    }
+}
+
+function updateAutoButton() {
+    const btn = document.getElementById('auto-btn');
+    const status = document.getElementById('auto-status');
+    
+    if (autoEnabled) {
+        btn.textContent = '🔄 AUTO: ON';
+        btn.className = 'auto-btn enabled';
+        if (status) {
+            status.textContent = 'ON';
+            status.style.color = '#0f9';
+        }
+    } else {
+        btn.textContent = '🔄 AUTO: OFF';
+        btn.className = 'auto-btn disabled';
+        if (status) {
+            status.textContent = 'OFF';
+            status.style.color = '#f33';
+        }
+    }
+}
+
+function startAutoSync() {
+    if (autoInterval) clearInterval(autoInterval);
+    syncAndPush();
+    autoInterval = setInterval(syncAndPush, 45000);
+}
+
+function stopAutoSync() {
+    if (autoInterval) {
+        clearInterval(autoInterval);
+        autoInterval = null;
+    }
+}
+
+function getESTTime() {
+    return new Date(new Date().getTime() - (5 * 60 * 60 * 1000));
+}
+
+function getESTDay() {
+    return getESTTime().toISOString().split('T')[0];
+}
+
+function checkDailyReset() {
+    const now = Date.now();
+    const estTime = getESTTime();
+    const currentResetTime = new Date(estTime.getFullYear(), estTime.getMonth(), estTime.getDate()).getTime();
+    
+    if (currentResetTime > lastResetTime && now - lastResetTime > 23 * 60 * 60 * 1000) {
+        resetDailyChart();
+        lastResetTime = currentResetTime;
+        localStorage.setItem('lastResetTime', lastResetTime);
+    }
+}
+
+async function syncAndPush() {
+    if (!user || !autoEnabled) return;
+    
+    try {
+        const released = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+        const radio = JSON.parse(localStorage.getItem('submittedRadioSongs') || '[]');
+        
+        console.log('Syncing songs:', released.length);
+        
+        if (!released.length) {
+            console.log('No released songs found');
+            return;
+        }
+
+        const today = getESTDay();
+        
+        // Get existing songs to accumulate their daily stats
+        const existingQuery = query(ref(db, 'charts/current/entries'), orderByChild('userId'), equalTo(uid));
+        const existingSnapshot = await get(existingQuery);
+        const existingSongs = {};
+        
+        if (existingSnapshot.exists()) {
+            existingSnapshot.forEach((childSnapshot) => {
+                const song = childSnapshot.val();
+                const key = `${song.songName}_${song.userId}`;
+                existingSongs[key] = {
+                    id: childSnapshot.key,
+                    dailyStreams: song.dailyStreams || 0,
+                    dailyRadio: song.dailyRadio || 0,
+                    resetDay: song.resetDay
+                };
+            });
+        }
+
+        // Process songs with ADDITIVE accumulation
+        const songsToUpdate = new Map();
+        
+        released.forEach(song => {
+            const r = getRadio(song.songName, radio);
+            // Use totalStreams if available, fallback to weeklyStreams
+            const currentStreams = song.totalStreams || song.weeklyStreams || 0;
+            const currentRadio = r || 0;
+            
+            const key = `${song.songName}_${uid}`;
+            const existing = existingSongs[key];
+            
+            let dailyStreams, dailyRadio;
+            
+            // ADDITIVE LOGIC: If song exists and same reset day, ADD to existing totals
+            if (existing && existing.resetDay === today) {
+                // ADD current values to existing daily totals
+                dailyStreams = existing.dailyStreams + currentStreams;
+                dailyRadio = existing.dailyRadio + currentRadio;
+            } else {
+                // Fresh start for new day or new song
+                dailyStreams = currentStreams;
+                dailyRadio = currentRadio;
+            }
+            
+            const dailyPts = calcPts(dailyStreams, dailyRadio);
+            
+            console.log(`Song: ${song.songName}, Streams: ${currentStreams}, Radio: ${currentRadio}, Daily Total Streams: ${dailyStreams}, Daily Total Radio: ${dailyRadio}, Points: ${dailyPts}`);
+            
+            // Add all songs, even with 0 points, to show participation
+            const songData = {
+                songName: song.songName,
+                artist: song.artist || user,
+                username: user,
+                userId: uid,
+                albumArt: song.albumArt || song.coverArt || `https://picsum.photos/seed/${encodeURIComponent(song.songName)}/200`,
+                weeklyStreams: currentStreams,           // Current from localStorage
+                weeklyRadio: currentRadio,               // Current radio
+                dailyStreams: dailyStreams,              // ACCUMULATED daily total
+                dailyRadio: dailyRadio,                  // ACCUMULATED daily total
+                radioPlays: dailyRadio,
+                points: dailyPts,
+                timestamp: serverTimestamp(),
+                resetDay: today,
+                isNew: !existing || existing.resetDay !== today, // Mark as new if first time or new day
+                songId: `${uid}_${song.songName.replace(/[^a-zA-Z0-9]/g, '_')}`
+            };
+            
+            songsToUpdate.set(key, { songData, existingId: existing?.id });
+        });
+
+        // Update database with accumulated values
+        const updatePromises = [];
+        
+        // Remove existing entries first
+        if (existingSnapshot.exists()) {
+            existingSnapshot.forEach((childSnapshot) => {
+                updatePromises.push(remove(ref(db, `charts/current/entries/${childSnapshot.key}`)));
+            });
+        }
+        
+        if (updatePromises.length > 0) {
+            await Promise.all(updatePromises);
+            await new Promise(resolve => setTimeout(resolve, 500));
+        }
+        
+        // Add new accumulated entries
+        const addPromises = [];
+        songsToUpdate.forEach(({ songData }) => {
+            const newRef = push(ref(db, 'charts/current/entries'));
+            addPromises.push(set(newRef, songData));
+        });
+        
+        if (addPromises.length > 0) {
+            await Promise.all(addPromises);
+        }
+        
+        await update(ref(db, `users/${uid}`), {
+            lastSeen: serverTimestamp(),
+            isOnline: true
+        });
+        
+        console.log('Successfully synced', songsToUpdate.size, 'songs with accumulated totals');
+        
+    } catch (e) {
+        console.error('Auto sync error:', e);
+    }
+}
+
+async function resetDailyChart() {
+    try {
+        // Save current chart as previous before resetting
+        localStorage.setItem('excellence_previous_chart', JSON.stringify(chart));
+        
+        const chartSnapshot = await get(ref(db, 'charts/current/entries'));
+        if (!chartSnapshot.exists()) return;
+        
+        const deletePromises = [];
+        chartSnapshot.forEach((childSnapshot) => {
+            deletePromises.push(remove(ref(db, `charts/current/entries/${childSnapshot.key}`)));
+        });
+        
+        await Promise.all(deletePromises);
+        
+        showNotif('🌅 Daily chart reset (12 AM EST)! New competition day begins!');
+    } catch (e) {
+        console.error('Reset error:', e);
+    }
+}
+
+function setupListeners() {
+    const chartRef = ref(db, 'charts/current/entries');
+    onValue(chartRef, loadChart);
+    const usersRef = ref(db, 'users');
+    onValue(usersRef, updateUsers);
+    
+    lastResetTime = parseInt(localStorage.getItem('lastResetTime') || '0');
+}
+
+function calculatePositionChange(song, currentPosition) {
+    // Check if song is marked as new from database
+    if (song.isNew) {
+        return { type: 'new', display: '★', className: 'new' };
+    }
+    
+    // Find the song's previous position
+    const previousSong = previousChart.find(prev => 
+        prev.songName === song.songName && prev.username === song.username
+    );
+    
+    if (!previousSong) {
+        return { type: 'new', display: '★', className: 'new' };
+    }
+    
+    const prevPosition = previousSong.position;
+    const change = prevPosition - currentPosition;
+    
+    if (change > 0) {
+        return { type: 'up', display: `↑${change}`, className: 'up' };
+    } else if (change < 0) {
+        return { type: 'down', display: `↓${Math.abs(change)}`, className: 'down' };
+    } else {
+        return { type: 'same', display: '=', className: 'same' };
+    }
+}
+
+function loadChart(snapshot) {
+    // Store current chart as previous before updating
+    if (chart.length > 0) {
+        previousChart = [...chart];
+        localStorage.setItem('excellence_previous_chart', JSON.stringify(previousChart));
+    }
+    
+    chart = [];
+    
+    if (snapshot.exists()) {
+        const songMap = new Map();
+        
+        snapshot.forEach((childSnapshot) => {
+            const song = childSnapshot.val();
+            song.id = childSnapshot.key;
+            song.ismine = song.username === user;
+            
+            if (song.points > 0) {
+                const uniqueKey = `${song.userId}_${song.songName}`;
+                
+                if (songMap.has(uniqueKey)) {
+                    const existing = songMap.get(uniqueKey);
+                    if (song.timestamp > existing.timestamp) {
+                        songMap.set(uniqueKey, song);
+                    }
+                } else {
+                    songMap.set(uniqueKey, song);
+                }
+            }
+        });
+        
+        chart = Array.from(songMap.values());
+    }
+    
+    console.log('Loaded chart entries:', chart.length);
+    
+    chart.sort((a, b) => (b.points || 0) - (a.points || 0));
+    
+    chart.forEach((song, i) => {
+        song.position = i + 1;
+        // Calculate position change indicators
+        song.positionChange = calculatePositionChange(song, song.position);
+    });
+    
+    render();
+    updateStats();
+    document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
+}
+
+function updateUsers(snapshot) {
+    let online = 0;
+    if (snapshot.exists()) {
+        snapshot.forEach((childSnapshot) => {
+            if (childSnapshot.val().isOnline) online++;
+        });
+    }
+    document.getElementById('active-users').textContent = online;
+}
+
+function render() {
+    const container = document.getElementById('chart-entries');
+    container.innerHTML = '';
+    
+    if (chart.length === 0) {
+        container.innerHTML = `
+            <div style="text-align:center;padding:40px;color:#666;font-size:14px;">
+                <div style="font-size:48px;margin-bottom:20px;">🎵</div>
+                <div>No songs on the chart yet!</div>
+                <div style="font-size:12px;margin-top:10px;">Songs need streams and radio plays to earn points</div>
+            </div>
+        `;
+        return;
+    }
+    
+    chart.slice(0, 100).forEach(song => {
+        const entry = document.createElement('div');
+        entry.className = `e ${song.ismine ? 'mine' : ''}`;
+        
+        // Display the ACCUMULATED daily totals
+        const displayStreams = song.dailyStreams || 0;
+        const displayRadio = song.dailyRadio || 0;
+        
+        entry.innerHTML = `
+            <div>
+                <div class="p">#${song.position}</div>
+                <div class="t">LIVE</div>
+            </div>
+            <img class="a" src="${song.albumArt}" alt="${song.songName}" loading="lazy" onerror="this.src='https://picsum.photos/60/60'">
+            <div class="i">
+                <div class="u">@${song.username}</div>
+                <div class="n">${song.songName}</div>
+                <div class="s">
+                    <span>${displayStreams >= 1000000 ? (displayStreams / 1000000).toFixed(1) + 'M' : displayStreams >= 1000 ? (displayStreams / 1000).toFixed(1) + 'K' : displayStreams.toLocaleString()} streams</span>
+                    <span>${displayRadio.toLocaleString()} radio</span>
+                </div>
+            </div>
+            <div class="pts">
+                <div class="pts-val">${(song.points || 0).toLocaleString()}</div>
+                <div class="pts-time">pts</div>
+            </div>
+            <div class="trend ${song.positionChange.className}">
+                ${song.positionChange.display}
+            </div>
+        `;
+        container.appendChild(entry);
+    });
+}
+
+function updateStats() {
+    const total = chart.length;
+    const mine = chart.filter(s => s.ismine).length;
+    const rank = mine > 0 ? Math.min(...chart.filter(s => s.ismine).map(s => s.position)) : '--';
+    
+    document.getElementById('total-songs').textContent = total;
+    document.getElementById('my-songs').textContent = mine;
+    document.getElementById('my-rank').textContent = rank === '--' ? '--' : '#' + rank;
+}
+
+function updateTimer() {
+    const now = getESTTime();
+    const tomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const diff = tomorrow - now;
+    
+    const hours = Math.floor(diff / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+    
+    document.getElementById('countdown').textContent = 
+        `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+}
+
+function showUI() {
+    document.getElementById('auth-section').style.display = 'none';
+    document.getElementById('main-content').style.display = 'block';
+    document.getElementById('current-user').textContent = user;
+}
+
+function getRadio(name, radioDb) {
+    let total = 0;
+    if (!radioDb || !Array.isArray(radioDb)) return 0;
+    
+    radioDb.forEach(r => {
+        if (r && r.songName === name) {
+            total += r.totalAirplay || r.weeklyAirplay || r.airplay || 0;
+        }
+    });
+    return total;
+}
+
+function calcPts(streams, radio) {
+    const streamPoints = streams / 150;
+    const radioPoints = radio / 180;
+    const totalPoints = (streamPoints + radioPoints) / 1750;
+    
+    return totalPoints >= 1 ? Math.round(totalPoints) : 0;
+}
+
+function genId() {
+    return 'u_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
+}
+
+function showStatus(msg, type) {
+    const el = document.getElementById('auth-status');
+    if (!el) return;
+    
+    el.textContent = msg;
+    el.className = `status ${type}`;
+    
+    if (type === 'success' || type === 'error') {
+        setTimeout(() => {
+            el.textContent = '';
+            el.className = 'status';
+        }, 4000);
+    }
+}
+
+function showNotif(msg) {
+    const el = document.getElementById('notification');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+setInterval(updateTimer, 1000);
+
+window.addEventListener('beforeunload', () => {
+    if (uid) set(ref(db, `users/${uid}/isOnline`), false);
+    stopAutoSync();
+});
+
+init();
+</script>
+</body>
+</html>

@@ -1,0 +1,2205 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no"><title>Artist Profile</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Rubik+Mono+One&display=swap" rel="stylesheet"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Inter',sans-serif;font-weight:800;background:#000;color:#fff;overflow-x:hidden;padding-bottom:70px}.screen{display:none;min-height:100vh;background:#000;position:fixed;top:0;left:0;width:100%;height:100%;overflow-y:auto}.screen.active{display:block;position:relative}.header{position:relative;height:390px;background:linear-gradient(45deg,#667eea,#764ba2)}.header img{width:100%;height:100%;object-fit:cover;opacity:1}#artist-bg{position:absolute;top:0;left:0;width:100%;height:calc(100% + 84px) !important;overflow:hidden}.overlay{position:absolute;top:0;left:0;width:100%;height:calc(100% + 84px);background:linear-gradient(180deg,transparent 40%,#000)}.back{position:absolute;top:20px;left:20px;background:rgba(0,0,0,.7);width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);font-size:16px;transition:.3s;z-index:50}.back:hover{background:rgba(0,0,0,.9);transform:scale(1.1)}.artist-info{position:absolute;bottom:20px;left:20px;right:20px}.artist-name{font-size:clamp(32px,6vw,64px);font-weight:900;margin-bottom:4px;text-shadow:0 4px 20px rgba(0,0,0,.8)}.monthly-listeners{font-size:13px;color:#b3b3b3;font-weight:500}.controls{padding:20px;display:flex;align-items:center;gap:12px;background:transparent;position:relative;z-index:10}.shuffle-btn{background:#1ed760;border:none;width:44px;height:44px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;color:#000;transition:.3s}.shuffle-btn:hover{transform:scale(1.05)}.follow-btn{background:transparent;color:#fff;border:1px solid #fff;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:12px;font-weight:700;transition:.3s}.follow-btn:hover{background:#fff;color:#000}.more-btn{background:transparent;border:none;color:#b3b3b3;width:30px;height:30px;cursor:pointer;font-size:20px;margin-left:auto}.controls-artist-avatar{width:48px;height:48px;border-radius:50%;overflow:hidden;background:#333;flex-shrink:0;}.controls-artist-avatar img{width:100%;height:100%;object-fit:cover;}.tabs{display:flex;gap:24px;padding:0 20px;border-bottom:1px solid #282828;margin-bottom:20px}.tab{color:#b3b3b3;font-size:13px;padding:10px 0;cursor:pointer;border-bottom:3px solid transparent;transition:.2s}.tab.active{color:#fff;border-bottom-color:#1ed760}.tab:hover{color:#fff}.content{padding:0 20px 30px}.section-title{font-size:18px;margin-bottom:16px;color:#fff;display:flex;justify-content:space-between;align-items:center;font-weight:700}.see-all-btn,.show-more-btn,.show-less-btn{background:transparent;border:none;color:#b3b3b3;font-size:12px;cursor:pointer;transition:.3s;padding:4px 10px;border-radius:16px}.see-all-btn:hover,.show-more-btn:hover,.show-less-btn:hover{color:#fff;background:rgba(255,255,255,.1)}.song-list{list-style:none}.song-item{display:flex;align-items:center;padding:8px 0;border-radius:4px;margin-bottom:2px;cursor:pointer;transition:.3s}.song-item:hover{background:#1a1a1a}.song-rank{width:20px;color:#b3b3b3;text-align:center;margin-right:12px;font-size:13px;font-weight:500}.song-cover{width:36px;height:36px;border-radius:3px;margin-right:12px}.song-info{flex:1;overflow:hidden}.song-title{font-size:14px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.song-streams{color:#b3b3b3;font-size:12px;font-weight:500}.releases{margin-top:32px}.albums-container{overflow-x:auto;padding:10px 0;scrollbar-width:none;-ms-overflow-style:none}.albums-container::-webkit-scrollbar{display:none}.album-grid{display:flex;gap:16px;width:max-content}.release-item{background:#181818;padding:0;border-radius:8px;cursor:pointer;transition:.3s;width:140px;height:auto;position:relative;overflow:hidden;flex-shrink:0}.release-item:hover{transform:translateY(-4px);background:#222}.album-cover-container{width:140px;height:140px;background:#333;overflow:hidden}.album-info{padding:10px}.album-title{font-size:13px;margin-bottom:3px;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}.album-meta{color:#b3b3b3;font-size:11px;margin-bottom:4px}.album-streams{color:#b3b3b3;font-size:10px}.discography-btn{background:transparent;border:1px solid #535353;color:#fff;padding:8px 20px;border-radius:20px;cursor:pointer;font-size:12px;margin-top:16px;transition:.3s;width:100%}.discography-btn:hover{border-color:#fff;transform:scale(1.02)}.bio{margin-top:32px;background:#181818;padding:20px;border-radius:8px}.bio-title{font-size:18px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;font-weight:700}.bio-text{line-height:1.5;color:#b3b3b3;font-size:13px;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}.edit-btn{background:transparent;border:1px solid #535353;color:#b3b3b3;padding:4px 10px;border-radius:16px;font-size:10px;cursor:pointer;transition:.3s}.edit-btn:hover{border-color:#fff;color:#fff}.merch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:16px}.merch-item{background:#181818;padding:12px;border-radius:8px;cursor:pointer;transition:.3s;border:1px solid transparent}.merch-item:hover{background:#222}.merch-visual{width:100%;height:100px;border-radius:6px;margin-bottom:10px;position:relative;overflow:hidden}.merch-info h3{font-size:13px;margin-bottom:4px}.merch-type{color:#b3b3b3;font-size:11px;margin-bottom:6px}.merch-stats{display:flex;justify-content:space-between;align-items:center}.merch-price{font-size:14px;color:#fff;font-weight:600}.merch-stock{color:#b3b3b3;font-size:11px}.stock-low{color:#ff6b6b}.stock-out{color:#ff4757}.no-merch{text-align:center;color:#b3b3b3;font-size:14px;padding:40px 0}.full-header{background:#121212;padding:15px 20px;position:sticky;top:0;z-index:100;display:flex;align-items:center;gap:15px;margin-bottom:12px}.full-title{font-size:20px;font-weight:700}.full-subtitle{color:#b3b3b3;font-size:12px}.album-full-header{background:transparent;padding:30px 20px 20px;text-align:left;display:flex;align-items:flex-end;gap:20px}.album-full-cover{width:140px;height:140px;border-radius:4px;background:#333;display:flex;align-items:center;justify-content:center;color:#666;font-size:40px;flex-shrink:0;box-shadow:0 8px 24px rgba(0,0,0,.5)}.album-details-text{flex:1}.album-full-title{font-size:clamp(20px, 4vw, 36px);margin-bottom:8px;line-height:1.1;font-weight:800}.album-full-meta{color:#fff;font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px}.album-full-meta span{opacity:0.8}.track-list{list-style:none;padding:10px 20px 80px}.track-item{display:flex;align-items:center;padding:10px 0;border-radius:4px;color:#b3b3b3;transition:.2s}.track-item:hover{background:rgba(255,255,255,0.05);color:#fff}.track-num{width:24px;text-align:center;font-size:14px;margin-right:10px}.track-info{flex:1;display:flex;flex-direction:column}.track-name{font-size:15px;color:#fff;margin-bottom:2px}.track-artist{font-size:12px;color:#b3b3b3}.track-streams{font-size:13px;text-align:right;font-variant-numeric:tabular-nums}.album-footer-stats{margin-top:20px;padding-top:20px;border-top:1px solid #333;color:#b3b3b3;font-size:12px;display:flex;flex-direction:column;gap:5px}.disco-filters{display:flex;gap:10px;padding:0 20px;margin-bottom:20px;overflow-x:auto;scrollbar-width:none}.filter-btn{background:transparent;border:1px solid #535353;color:#fff;padding:6px 16px;border-radius:20px;cursor:pointer;transition:.3s;font-size:12px;white-space:nowrap}.filter-btn.active{background:#fff;color:#000;border-color:#fff}.disco-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:16px;padding:0 20px}.disco-item{background:#181818;border-radius:6px;overflow:hidden;cursor:pointer;transition:.3s}.disco-item:hover{background:#222}.disco-cover{width:100%;height:140px;object-fit:cover;background:#333;display:flex;align-items:center;justify-content:center;color:#666}.disco-info{padding:12px}.disco-title{font-size:13px;margin-bottom:4px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.disco-meta{color:#b3b3b3;font-size:11px}
+.disco-section{padding:0 20px;margin-bottom:32px}.disco-section-title{font-size:22px;font-weight:800;margin-bottom:16px}.disco-row{display:flex;align-items:center;gap:16px;padding:8px 0;cursor:pointer;border-radius:4px;transition:.2s}.disco-row:hover{background:#1a1a1a}.disco-row-cover{width:64px;height:64px;border-radius:6px;object-fit:cover;background:#333;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#666}.disco-row-info{flex:1;min-width:0}.disco-row-title{font-size:15px;font-weight:600;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.disco-row-meta{color:#b3b3b3;font-size:12px;margin-top:2px}@media(max-width:768px){.header{height:260px}.artist-info{left:20px;right:20px;bottom:20px}.controls{padding:15px 20px}}.merch-loading{text-align:center;padding:40px 0;color:#b3b3b3}.spinner{border:2px solid #333;border-top:2px solid #1ed760;border-radius:50%;width:24px;height:24px;animation:spin 1s linear infinite;margin:0 auto 12px}@keyframes spin{0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+/* Upcoming Releases Card (Home) */
+.upcoming-section { margin-bottom: 32px; padding-bottom: 0; }
+.upcoming-card { 
+    background: #181818;
+    border-radius: 8px; 
+    padding: 12px; 
+    display: flex; 
+    gap: 12px; 
+    align-items: center;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.upcoming-card:hover { background: #222; }
+.upcoming-art { 
+    width: 60px; height: 60px; 
+    border-radius: 4px; 
+    background: #333; 
+    flex-shrink: 0; 
+    overflow: hidden;
+}
+.upcoming-art img { width: 100%; height: 100%; object-fit: cover; }
+.upcoming-info h3 { font-size: 15px; margin-bottom: 4px; color: #fff; }
+.upcoming-meta { color: #b3b3b3; font-size: 12px; }
+.presave-btn-small {
+    margin-left: auto;
+    border: 1px solid #535353;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    background: transparent;
+    color: #fff;
+}
+
+/* UPCOMING FULL SCREEN (Midnights Style) */
+#upcoming-screen {
+    background: #101010;
+    z-index: 200;
+}
+.up-hero {
+    height: 60vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    overflow: hidden;
+}
+.up-bg {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0.6;
+    filter: blur(20px) brightness(0.7);
+    z-index: 0;
+}
+.up-bg img { width: 100%; height: 100%; object-fit: cover; }
+.up-content { position: relative; z-index: 2; padding: 20px; width: 100%; }
+.up-art-small {
+    width: 120px; height: 120px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin: 0 auto 20px;
+    display: none; /* Hidden to match video feel usually, or shown if needed */
+}
+.up-title { font-size: 32px; font-weight: 900; margin-bottom: 8px; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+.up-artist-row { display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 10px; }
+.up-avatar { width: 24px; height: 24px; border-radius: 50%; background: #333; overflow: hidden; }
+.up-artist-name { font-weight: 700; font-size: 14px; }
+.up-date { color: #ddd; font-size: 13px; margin-bottom: 25px; font-weight: 500; }
+.up-presave-btn {
+    background: #181818;
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff;
+    padding: 12px 30px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 30px;
+    backdrop-filter: blur(10px);
+}
+.up-timer-container {
+    margin-top: 20px;
+}
+.up-timer-label { text-transform: uppercase; font-size: 12px; font-weight: 700; margin-bottom: 10px; color: #ddd; }
+.up-timer-grid {
+    display: flex; justify-content: center; gap: 15px;
+}
+.up-time-box {
+    background: rgba(30,30,30,0.8);
+    backdrop-filter: blur(5px);
+    padding: 10px;
+    border-radius: 8px;
+    min-width: 65px;
+}
+.up-time-val { font-size: 20px; font-weight: 800; margin-bottom: 2px; }
+.up-time-lbl { font-size: 10px; color: #aaa; text-transform: uppercase; }
+
+.up-tracklist {
+    padding: 30px 20px;
+    background: #000;
+    min-height: 40vh;
+}
+.up-tracklist h3 { font-size: 16px; margin-bottom: 20px; }
+.up-track-item {
+    padding: 15px 0;
+    border-bottom: 1px solid #222;
+    color: #555;
+    font-size: 14px;
+    font-weight: 600;
+}
+.up-track-item.revealed { color: #fff; }
+
+/* Bottom Navigation */
+.bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 60px; background: rgba(0, 0, 0, 0.95); border-top: 1px solid #222; display: flex; justify-content: space-around; align-items: center; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
+.nav-btn { background: none; border: none; color: #666; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 60px; }
+.nav-btn.active { color: #fff; }
+.nav-btn svg { width: 22px; height: 22px; fill: currentColor; }
+
+/* Wrapped Styles */
+#wrapped-screen { background: #000; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; z-index: 900; padding-bottom: 0; }
+.wrapped-progress-container { position: absolute; top: 20px; left: 0; width: 100%; padding: 0 50px 0 20px; display: flex; gap: 8px; z-index: 910; }
+.progress-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; width: 0%; background: #fff; transition: width 0.1s linear; }
+.progress-fill.completed { width: 100%; }
+.wrapped-close-btn { position: absolute; top: -6px; right: 12px; background: rgba(0,0,0,0.5); color: #fff; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 24px; line-height: 28px; cursor: pointer; z-index: 920; transition: 0.2s; padding: 0; text-align: center; }
+.wrapped-close-btn:hover { background: rgba(0,0,0,0.8); transform: scale(1.1); }
+.wrapped-slides { height: 100%; width: 100%; position: relative; overflow: hidden; }
+.slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 40px; opacity: 0; transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out; transform: scale(0.95) translateY(20px); pointer-events: none; overflow: hidden; }
+.slide.active { opacity: 1; transform: scale(1) translateY(0); pointer-events: all; }
+.metallic-text { font-family: 'Rubik Mono One', sans-serif; background: linear-gradient(to bottom, #eee, #999, #fff, #555); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0px 2px 5px rgba(0,0,0,0.5); filter: drop-shadow(0px 2px 2px #000); letter-spacing: -2px; }
+.silver-text { background: linear-gradient(to bottom, #e0e0e0, #a0a0a0); -webkit-background-clip: text; background-clip: text; color: transparent; font-weight: 900; text-shadow: 0 2px 10px rgba(255,255,255,0.2); }
+.theater-marquee { border: 8px solid #111; padding: 30px 50px; border-radius: 20px; position: relative; background: #220000; box-shadow: 0 0 0 5px #440000, 0 10px 30px rgba(0,0,0,0.8); text-align: center; margin: 20px; display: none; }
+.marquee-lights { position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px; border: 4px dotted #ffcc00; border-radius: 25px; animation: marquee-flash 1s infinite alternate; pointer-events: none; }
+@keyframes marquee-flash { from { border-color: #ffcc00; filter: drop-shadow(0 0 5px #ff9900); } to { border-color: #ff9900; filter: drop-shadow(0 0 15px #ffcc00); } }
+.marquee-text { font-family: 'Rubik Mono One', sans-serif; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+.bg-shape { position: absolute; opacity: 0.3; mix-blend-mode: screen; animation: float 20s infinite linear; z-index: 1; }
+.bg-shape.zigzag { stroke-width: 8; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.bg-shape.zigzag1 { top: 15%; left: -10%; stroke: #FF0080; animation-duration: 25s; transform: rotate(30deg); }
+.bg-shape.zigzag2 { top: 80%; right: -5%; stroke: #1ed760; animation-duration: 30s; animation-delay: -5s; transform: rotate(-15deg); }
+.bg-shape.squiggle { stroke-width: 12; fill: none; stroke-linecap: round; }
+.bg-shape.squiggle1 { top: 50%; left: 80%; stroke: #00F0FF; animation-duration: 35s; animation-delay: -10s; }
+.bg-shape.squiggle2 { top: 10%; left: 60%; stroke: #FFD700; animation-duration: 28s; animation-delay: -2s; }
+.bg-shape.blob { filter: blur(40px); opacity: 0.5; }
+.bg-shape.blob1 { top: -20%; left: -20%; width: 50%; height: 50%; background: radial-gradient(circle, #7928CA, transparent 70%); animation-duration: 40s; }
+.bg-shape.blob2 { bottom: -30%; right: -20%; width: 60%; height: 60%; background: radial-gradient(circle, #FF4D4D, transparent 70%); animation-duration: 45s; animation-delay: -8s; }
+@keyframes float { 0% { transform: translate(0, 0) rotate(0deg) scale(1); } 33% { transform: translate(20px, -30px) rotate(5deg) scale(1.05); } 66% { transform: translate(-15px, 15px) rotate(-5deg) scale(0.95); } 100% { transform: translate(0, 0) rotate(0deg) scale(1); } }
+.slide-1 { background: radial-gradient(ellipse at 25% 40%, #9B35E8 0%, #2A0042 55%, #050008 100%); }
+.slide-2 { background: radial-gradient(ellipse at 75% 30%, #00D48C 0%, #003D30 55%, #000c08 100%); }
+.slide-3 { background: radial-gradient(ellipse at 50% 65%, #FF6E40 0%, #8F260C 55%, #130200 100%); }
+.slide-4 { background: radial-gradient(ellipse at 35% 25%, #5B8BFF 0%, #0A135E 55%, #000412 100%); }
+.slide-5 { background: radial-gradient(ellipse at 65% 75%, #00E676 0%, #0B3E10 55%, #000c02 100%); }
+#wrapped-canvas { position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1; }
+.wrapped-title { text-shadow: 0 0 60px rgba(255,255,255,0.3), 0 2px 10px rgba(0,0,0,0.5); }
+.slide.active .slide-content { animation: slideIn 0.65s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+@keyframes slideIn { from { opacity:0; transform:translateY(28px) scale(0.96); } to { opacity:1; transform:translateY(0) scale(1); } }
+.slide-content { text-align: center; max-width: 600px; z-index: 2; position: relative; }
+.wrapped-title { font-size: clamp(40px, 8vw, 80px); font-weight: 900; line-height: 1.1; margin-bottom: 20px; text-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+.wrapped-stat { font-size: clamp(60px, 12vw, 120px); font-weight: 900; margin: 20px 0; }
+.wrapped-subtitle { font-size: clamp(20px, 4vw, 32px); font-weight: 700; opacity: 0.9; }
+.continent-list { display: grid; grid-template-columns: 1fr; gap: 12px; margin-top: 30px; width: 100%; max-width: 400px; }
+.continent-item { background: rgba(0,0,0,0.3); padding: 12px 16px; border-radius: 10px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); transition: transform 0.3s ease; }
+.continent-item:hover { transform: scale(1.02); background: rgba(255,255,255,0.15); }
+.continent-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.continent-info h4 { font-size: 16px; font-weight: 700; margin-bottom: 0; }
+.continent-info p { font-size: 14px; font-weight: 500; opacity: 0.8; }
+.continent-bar-bg { height: 6px; background: rgba(255,255,255,0.2); border-radius: 3px; overflow: hidden; }
+.continent-bar-fill { height: 100%; background: #fff; border-radius: 3px; }
+#slide-3 .wrapped-title { font-size: clamp(32px, 6vw, 50px); margin-bottom: 25px; }
+.top-list { text-align: left; width: 100%; margin-top: 30px; }
+.top-item { display: flex; align-items: center; margin-bottom: 10px; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 8px; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.1); animation: slideInRight 0.5s ease forwards; opacity: 0; }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(50px); } to { opacity: 1; transform: translateX(0); } }
+.top-rank { font-size: 20px; font-weight: 900; margin-right: 12px; opacity: 0.8; width: 25px; text-align: center; }
+.top-cover { width: 48px; height: 48px; border-radius: 4px; margin-right: 12px; background: #333; display: flex; align-items: center; justify-content: center; font-size: 20px; overflow: hidden; }
+.top-cover img { width: 100%; height: 100%; object-fit: cover; }
+.top-info { flex: 1; overflow: hidden; }
+.top-info h4 { font-size: 15px; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-info p { font-size: 12px; opacity: 0.7; }
+.top-album-display { margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; text-align: left; animation: fadeInUp 0.8s ease forwards; opacity: 0; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+.top-album-art { width: 80px; height: 80px; border-radius: 6px; margin-right: 15px; background: #333; display: flex; align-items: center; justify-content: center; font-size: 32px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+.top-album-art img { width: 100%; height: 100%; object-fit: cover; }
+/* Add to your <style> section */
+.disc-header {
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    margin: 25px 0 10px 0;
+    padding-left: 5px;
+    letter-spacing: -0.5px;
+}
+    
+    /* ============================================
+   FIXED ALBUM SCREEN CSS - PROPER SCALING
+   ============================================ */
+
+/* ───── AFTER ───── */
+#album-screen {
+    background: linear-gradient(180deg, #4a5f7a 0px, #28344a 300px, #0d1420 500px, #000 900px, #000 100%);
+    background-color: #000;
+    transition: background 0.6s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    color: #fff;
+}
+
+#album-screen .full-header {
+    background: transparent !important;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    padding: 15px 20px;
+    width: 100%;
+}
+
+.back {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.12);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 0.5px solid rgba(255,255,255,0.35);
+    box-shadow:
+        0 4px 16px rgba(0,0,0,0.35),
+        inset 0 1px 1px rgba(255,255,255,0.5),
+        inset 0 -1px 1px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.back:hover {
+    background: rgba(255,255,255,0.22);
+    transform: scale(1.05);
+}
+
+.back:active {
+    transform: scale(0.94);
+    background: rgba(255,255,255,0.28);
+}
+
+/* ===== ARTWORK & TEXT (Left Aligned, Tighter) ===== */
+.album-full-header {
+    padding: 70px 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+}
+
+.album-full-cover {
+    width: 44vw; /* Shrunk to match reference proportions */
+    max-width: 200px;
+    height: 44vw;
+    max-height: 200px;
+    border-radius: 6px;
+    background: #282828;
+    margin-bottom: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+
+.album-full-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.album-details-text {
+    width: 100%;
+    text-align: left; /* Shifted to left for proper order */
+}
+
+.album-full-title {
+    font-size: clamp(18px, 5vw, 24px);
+    font-weight: 800;
+    margin-bottom: 8px;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.album-artist-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.album-artist-avatar {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #282828;
+    overflow: hidden;
+}
+
+.album-artist-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.artist-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: #fff;
+}
+
+.album-full-meta {
+    font-size: 13px;
+    color: #b3b3b3;
+    font-weight: 500;
+}
+
+/* ===== ALBUM CONTROLS ===== */
+.album-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6px 20px 8px;
+}
+
+.album-add-btn {
+    background: transparent;
+    border: none;
+    color: #b3b3b3;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+}
+
+.album-add-btn:hover {
+    color: #fff;
+}
+
+.album-play-btn {
+    background: #1ed760;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 2px;
+    font-size: 16px;
+    color: #000;
+    cursor: pointer;
+}
+
+/* ===== TRACK LIST (Compact & Ordered) ===== */
+.track-list {
+    padding: 0 20px 100px;
+    margin-top: -6px;
+    list-style: none;
+}
+
+.track-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    min-height: 48px;
+    margin-bottom: 4px;
+}
+
+.track-num {
+    width: 28px;
+    font-size: 14px;
+    color: #b3b3b3;
+    text-align: left; /* Aligned left for cleaner grid */
+    font-weight: 400;
+}
+
+.track-info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.track-name {
+    font-size: 15px; /* Tighter font size */
+    font-weight: 600;
+    margin-bottom: 2px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.track-artist {
+    font-size: 13px;
+    color: #b3b3b3;
+}
+
+.track-streams {
+    font-size: 12px;
+    color: #b3b3b3;
+    margin-right: 12px;
+    text-align: right;
+}
+
+.track-more {
+    color: #b3b3b3;
+    font-size: 18px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* === DOTS MODAL === */
+.dots-overlay { position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);z-index:1000;display:none; }
+.dots-modal { position:fixed;bottom:0;left:0;right:0;background:#282828;border-radius:16px 16px 0 0;padding:12px 20px 80px;z-index:1001;transform:translateY(100%);transition:transform 0.3s ease;max-height:80vh;overflow-y:auto; max-height:80vh;overflow-y:auto; }
+.dots-modal.open { transform:translateY(0); }
+.dots-modal-item { display:flex;align-items:center;gap:16px;padding:14px 0;font-size:15px;font-weight:600;cursor:pointer;border-bottom:1px solid #333; }
+.dots-modal-item:last-child { border-bottom:none; }
+.dots-modal-icon { width:28px;text-align:center;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+
+/* === ARTIST PICK === */
+.artist-pick-section { margin-bottom:32px; }
+.artist-pick-card { background:#181818;border-radius:12px;overflow:hidden;cursor:pointer;position:relative; }
+.artist-pick-bg { width:100%;height:170px;background:#282828;position:relative;overflow:hidden; }
+.artist-pick-bg img { width:100%;height:100%;object-fit:cover; }
+.artist-pick-overlay { position:absolute;bottom:0;left:0;right:0;height:65%;background:linear-gradient(transparent,rgba(0,0,0,0.85));pointer-events:none; }
+.artist-pick-label { position:absolute;top:10px;left:10px;background:rgba(0,0,0,0.65);color:#fff;font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px;backdrop-filter:blur(5px);z-index:2; }
+.artist-pick-info { display:flex;align-items:center;gap:12px;padding:14px; }
+.artist-pick-avatar { width:38px;height:38px;border-radius:50%;background:#333;overflow:hidden;flex-shrink:0; }
+.artist-pick-avatar img { width:100%;height:100%;object-fit:cover; }
+.artist-pick-text h4 { font-size:15px;font-weight:700;margin-bottom:2px; }
+.artist-pick-text p { font-size:12px;color:#b3b3b3; }
+
+/* === POPULAR RELEASES === */
+.popular-releases-section { margin-bottom:32px; }
+.pop-release-item { display:flex;align-items:center;gap:14px;padding:10px 0;cursor:pointer;transition:0.2s;border-radius:6px; }
+.pop-release-item:hover { background:#1a1a1a; }
+.pop-release-cover { width:64px;height:64px;border-radius:6px;background:#333;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#666;font-size:24px; }
+.pop-release-cover img { width:100%;height:100%;object-fit:cover; }
+.pop-release-badge { font-size:10px;color:#b3b3b3;font-weight:700;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.5px; }
+.pop-release-name { font-size:15px;font-weight:700;margin-bottom:2px; }
+.pop-release-meta { font-size:12px;color:#b3b3b3; }
+
+/* === ABOUT SECTION === */
+.about-section { margin-bottom:32px; }
+.about-card { background:#181818;border-radius:12px;overflow:hidden; }
+.about-img-wrap { width:100%;height:200px;background:#282828;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#555;font-size:48px; }
+.about-img-wrap img { width:100%;height:100%;object-fit:cover; }
+.about-info { padding:16px; }
+.about-world-rank { font-size:12px;color:#b3b3b3;margin-bottom:3px;font-weight:600; }
+.about-name-big { font-size:22px;font-weight:900;margin-bottom:3px; }
+.about-listeners-line { font-size:13px;color:#b3b3b3;margin-bottom:12px;font-weight:500; }
+.about-bio-p { color:#b3b3b3;font-size:13px;line-height:1.65; }
+.about-img-wrap { position:relative; }
+.about-verified-badge { position:absolute;bottom:10px;left:10px;background:rgba(0,0,0,0.65);color:#fff;font-size:10px;font-weight:700;padding:5px 9px;border-radius:4px;display:flex;align-items:center;gap:6px;backdrop-filter:blur(6px);letter-spacing:0.5px;z-index:2; }
+.about-rank-bubble { position:absolute;bottom:10px;right:10px;background:#fff;color:#000;width:60px;height:60px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;line-height:1.1;z-index:2;box-shadow:0 2px 8px rgba(0,0,0,0.4); }
+.about-rank-ord { font-size:17px; }
+.about-rank-sub { font-size:9px;font-weight:600;text-align:center;line-height:1.2; }
+
+    /* === BOTTOM SHEETS & TOAST === */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.72);z-index:1001;display:none;backdrop-filter:blur(6px)}
+.modal-overlay.open{display:block}
+.bottom-sheet{position:fixed;bottom:0;left:0;right:0;background:#181818;border-radius:22px 22px 0 0;z-index:1002;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.32,1.2,0.6,1);max-height:82vh;display:flex;flex-direction:column}
+.bottom-sheet.open{transform:translateY(0)}
+.sheet-handle{width:38px;height:4px;background:#3a3a3a;border-radius:2px;margin:14px auto 0;flex-shrink:0}
+.sheet-header{padding:14px 20px 12px;border-bottom:1px solid #282828;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sheet-title{font-size:17px;font-weight:800;color:#fff}
+.sheet-close{background:rgba(255,255,255,0.08);border:none;color:#fff;width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:0.2s}
+.sheet-close:hover{background:rgba(255,255,255,0.15)}
+.sheet-body{padding:16px 20px 30px;overflow-y:auto;flex:1;min-height:0;-webkit-overflow-scrolling:touch;overscroll-behavior:contain};min-height:0;-webkit-overflow-scrolling:touch};-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+
+    .sheet-textarea{width:100%;background:#222;border:1.5px solid #333;border-radius:12px;color:#fff;font-size:14px;font-family:inherit;font-weight:500;line-height:1.65;padding:14px;resize:none;height:130px;outline:none;transition:border 0.2s}
+.sheet-textarea:focus{border-color:#1ed760}
+.sheet-save-btn{width:100%;background:#1ed760;color:#000;border:none;border-radius:30px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;margin-top:14px;transition:0.2s;letter-spacing:0.3px}
+.sheet-save-btn:active{transform:scale(0.97)}
+.pick-item{display:flex;align-items:center;gap:14px;padding:12px 10px;border-radius:10px;cursor:pointer;transition:0.15s;margin-bottom:2px}
+.pick-item:hover{background:#222}
+.pick-item:active{background:#2a2a2a}
+.pick-item.selected{background:#0d2b14}
+.pick-cover{width:50px;height:50px;border-radius:8px;background:#2a2a2a;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#666}
+.pick-cover img{width:100%;height:100%;object-fit:cover}
+.pick-name{font-size:14px;font-weight:700;margin-bottom:2px}
+.pick-name.selected-name{color:#1ed760}
+.pick-sub{font-size:11px;color:#b3b3b3;font-weight:500}
+.pick-check{margin-left:auto;flex-shrink:0}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%) translateY(10px);background:#1ed760;color:#000;font-size:13px;font-weight:800;padding:11px 22px;border-radius:30px;z-index:900;opacity:0;transition:all 0.3s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(30,215,96,0.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+    </style></head><body>
+
+<div class="screen active" id="main-screen">
+<div class="header"><div id="artist-bg" style="width:100%;height:100%;background:linear-gradient(45deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;font-size:48px"></div><div class="overlay"></div><div class="back" onclick="goBack()">×</div><div class="artist-info"><h1 class="artist-name" id="artist-name">Artist Name</h1><p class="monthly-listeners" id="monthly-listeners">0 monthly listeners</p></div></div><div class="controls"><button class="shuffle-btn">▶</button><button class="follow-btn">Following</button><button class="more-btn" onclick="openDotsMenu()">⋯</button></div><div class="tabs"><div class="tab active" data-tab="music">Music</div><div class="tab" data-tab="merch">Merch</div><div class="tab" id="events-tab" data-tab="events" style="display:none">Events</div></div><div class="content"><div id="music-content">
+    
+    <div id="upcoming-releases" class="upcoming-section" style="display:none"></div>
+
+    <div class="section-title">Popular<button class="show-more-btn" id="show-more-songs" onclick="showMoreSongs()">Show more</button><button class="show-less-btn" id="show-less-songs" onclick="showLessSongs()" style="display:none">Show less</button></div><ul class="song-list" id="song-list"></ul><div id="album-grid" style="display:none"></div>
+
+<div class="artist-pick-section" id="artist-pick-section" style="display:none">
+    <h2 class="section-title">Artist Pick</h2>
+    <div class="artist-pick-card">
+        <div class="artist-pick-bg" id="artist-pick-bg">
+            <div class="artist-pick-label">🎵 Artist Pick</div>
+            <div class="artist-pick-overlay"></div>
+        </div>
+        <div class="artist-pick-info">
+            <div class="artist-pick-avatar" id="artist-pick-avatar"></div>
+            <div class="artist-pick-text">
+                <h4 id="artist-pick-title">No pick selected</h4>
+                <p id="artist-pick-sub">Upcoming album</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="popular-releases-section">
+    <h2 class="section-title">Popular releases <button class="see-all-btn" onclick="showDiscography()">Show all</button></h2>
+    <div id="popular-releases-list"></div>
+</div>
+
+<div class="about-section">
+    <h2 class="section-title">About</h2>
+    <div class="about-card">
+        <div class="about-img-wrap" id="about-img-wrap"><img id="about-bg-img" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:none"><svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg><div class="about-verified-badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="#4fc3f7"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg> VERIFIED ARTIST</div><div class="about-rank-bubble"><span class="about-rank-ord" id="about-rank-num">—</span><span class="about-rank-sub">in the world</span></div></div>
+        <div class="about-info">
+            <div class="about-world-rank" id="about-world-rank">#— in the world</div>
+            <div class="about-name-big" id="about-name-big">Artist Name</div>
+            <div class="about-listeners-line" id="about-listeners-line">0 monthly listeners</div>
+            <div class="about-bio-p" id="bio-text">Share your story with fans...</div>
+        </div>
+    </div>
+</div></div><div id="merch-content" style="display:none"><div class="merch-grid" id="merch-grid"><div class="merch-loading"><div class="spinner"></div><div class="spinner-text">Loading merch...</div></div></div></div>
+<div id="events-content" style="display:none;padding:0 0 30px 0;"></div>
+</div>
+</div>
+
+<div class="screen" id="album-screen">
+    <div class="full-header">
+        <div class="back" onclick="backToMain()">×</div>
+    </div>
+    
+    <div class="album-full-header">
+        <div class="album-full-cover" id="album-full-cover">
+            <img src="placeholder.jpg" alt="Cover" id="album-cover-img">
+        </div>
+        
+        <div class="album-details-text">
+            <h1 class="album-full-title" id="album-full-title">Album Title</h1>
+            
+            <div class="album-artist-row">
+                <div class="album-artist-avatar" id="album-artist-avatar">
+                    <img src="avatar.jpg" alt="Artist">
+                </div>
+                <span id="album-artist-small" class="artist-name">Artist</span>
+            </div>
+            
+            <div class="album-full-meta">
+                <span id="album-type-label">Album</span> • 
+                <span id="album-release-text">2026</span><span id="album-latest-badge"></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="album-controls">
+        <button class="album-add-btn">+</button>
+        <button class="album-play-btn">▶</button>
+    </div>
+
+    <ul class="track-list" id="album-track-list">
+        </ul>
+</div>
+
+<div class="screen" id="disco-screen">
+<div class="full-header"><div class="back" onclick="backToMain()">×</div><h1 class="full-title">Releases</h1></div><div class="disco-filters"><button class="filter-btn active" data-filter="all">All</button><button class="filter-btn" data-filter="albums">Albums</button><button class="filter-btn" data-filter="singles">Singles and EPs</button></div><div id="disco-list"></div>
+</div>
+
+<div class="screen" id="upcoming-screen">
+    <div class="back" onclick="backToMain()" style="top: 20px; left: 20px; z-index: 201;">←</div>
+    <div class="up-hero">
+        <div class="up-bg" id="up-bg"></div>
+        <div class="up-content">
+            <div class="up-art-small" id="up-art-small"></div>
+            <h1 class="up-title" id="up-title">Midnights</h1>
+            <div class="up-artist-row">
+                <div class="up-avatar" id="up-avatar"></div>
+                <span class="up-artist-name" id="up-artist-name">Artist Name</span>
+            </div>
+            <div class="up-date" id="up-date">Album • Coming October 21, 2022</div>
+            <button class="up-presave-btn">Pre-save</button>
+            <div class="up-timer-container">
+                <div class="up-timer-label">Time until release</div>
+                <div class="up-timer-grid" id="countdown-grid">
+                    <div class="up-time-box"><div class="up-time-val" id="cd-days">00</div><div class="up-time-lbl">Days</div></div>
+                    <div class="up-time-box"><div class="up-time-val" id="cd-hours">00</div><div class="up-time-lbl">Hours</div></div>
+                    <div class="up-time-box"><div class="up-time-val" id="cd-mins">00</div><div class="up-time-lbl">Minutes</div></div>
+                    <div class="up-time-box"><div class="up-time-val" id="cd-secs">00</div><div class="up-time-lbl">Seconds</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="up-tracklist">
+        <h3>Tracklist Preview</h3>
+        <div id="up-tracklist-container"></div>
+    </div>
+</div>
+
+<div class="screen" id="wrapped-screen">
+    <canvas id="wrapped-canvas"></canvas>
+    <div class="wrapped-progress-container">
+        <div class="progress-bar"><div class="progress-fill" id="fill-0"></div></div>
+        <div class="progress-bar"><div class="progress-fill" id="fill-1"></div></div>
+        <div class="progress-bar"><div class="progress-fill" id="fill-2"></div></div>
+        <div class="progress-bar"><div class="progress-fill" id="fill-3"></div></div>
+        <div class="progress-bar"><div class="progress-fill" id="fill-4"></div></div>
+        <button class="wrapped-close-btn" onclick="switchTab('main-screen')">&times;</button>
+    </div>
+    <div class="wrapped-slides">
+        <div class="bg-shape blob blob1"></div>
+        <div class="bg-shape blob blob2"></div>
+        
+        <svg class="bg-shape zigzag zigzag1" width="150" height="150" viewBox="0 0 100 100">
+            <polyline points="10,50 30,30 50,50 70,30 90,50" />
+        </svg>
+        <svg class="bg-shape zigzag zigzag2" width="200" height="200" viewBox="0 0 100 100">
+            <polyline points="10,10 30,90 50,10 70,90 90,10" />
+        </svg>
+        
+        <svg class="bg-shape squiggle squiggle1" width="300" height="100" viewBox="0 0 300 100">
+            <path d="M10,50 Q 47.5,0 85,50 T 160,50 T 235,50 T 310,50" />
+        </svg>
+        <svg class="bg-shape squiggle squiggle2" width="200" height="200" viewBox="0 0 200 200" style="transform: rotate(90deg);">
+             <path d="M10,100 C 60,10 140,190 190,100" />
+        </svg>
+
+        <div class="slide slide-1 active" id="slide-0">
+            <div class="slide-content">
+                <div style="font-size: 120px; margin-bottom: 20px; animation: pulse 2s infinite;">🎁</div>
+                <h1 class="wrapped-title metallic-text" id="wrapped-year-title">2024 WRAPPED</h1>
+                <p class="wrapped-subtitle">Ready to see your year in music?</p>
+            </div>
+        </div>
+        <div class="slide slide-2" id="slide-1">
+            <div class="slide-content">
+                <div id="growth-normal-content">
+                    <h2 class="wrapped-subtitle" id="growth-subtitle">You've been busy...</h2>
+                    <div class="wrapped-stat silver-text" id="growth-stat">+0%</div>
+                    <h1 class="wrapped-title metallic-text" id="growth-title">INCREASE</h1>
+                    <p class="wrapped-subtitle" id="growth-footer">Compared to last year</p>
+                </div>
+                
+                <div id="debut-marquee" class="theater-marquee">
+                    <div class="marquee-lights"></div>
+                    <h2 class="marquee-text">DEBUT YEAR</h2>
+                    <p style="margin-top: 15px; font-size: 14px; opacity: 0.8;">WELCOME TO THE INDUSTRY</p>
+                </div>
+            </div>
+        </div>
+        <div class="slide slide-3" id="slide-2">
+            <div class="slide-content">
+                <h2 class="wrapped-subtitle">The world listened for</h2>
+                <div class="wrapped-stat silver-text" id="minutes-stat">0</div>
+                <h1 class="wrapped-title metallic-text">MINUTES</h1>
+                <p class="wrapped-subtitle">That's a lot of music.</p>
+            </div>
+        </div>
+        <div class="slide slide-4" id="slide-3">
+            <div class="slide-content">
+                <h1 class="wrapped-title metallic-text">GLOBAL REACH</h1>
+                <div class="continent-list" id="continent-list">
+                    </div>
+            </div>
+        </div>
+        <div class="slide slide-5" id="slide-4">
+            <div class="slide-content" style="max-width: 400px;">
+                <h1 class="wrapped-title metallic-text" style="font-size: 40px; margin-bottom: 15px;">TOP SONGS</h1>
+                <div class="top-list" id="top-songs-list">
+                    </div>
+                <div class="top-album-display" id="top-album-display">
+                    <div class="top-album-art" id="top-album-art">💿</div>
+                    <div>
+                        <p style="opacity: 0.7; font-size: 12px; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase;">Top Album</p>
+                        <h3 id="top-album-name" style="font-size: 22px; line-height: 1.2;">-</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="bio-overlay" onclick="closeBioModal()"></div>
+<div class="bottom-sheet" id="bio-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+        <span class="sheet-title">Edit Bio</span>
+        <button class="sheet-close" onclick="closeBioModal()">✕</button>
+    </div>
+    <div class="sheet-body">
+        <textarea class="sheet-textarea" id="bio-textarea" placeholder="Tell your fans your story..."></textarea>
+        <button class="sheet-save-btn" onclick="saveBio()">Save</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="pick-overlay" onclick="closePickModal()"></div>
+<div class="bottom-sheet" id="pick-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+        <span class="sheet-title">Choose Artist Pick</span>
+        <button class="sheet-close" onclick="closePickModal()">✕</button>
+    </div>
+    <div class="sheet-body" id="pick-list"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+        
+<div class="dots-overlay" id="dots-overlay" onclick="closeDotsMenu()"></div>
+<div class="dots-modal" id="dots-modal">
+    <div class="dots-modal-item" onclick="editBio()">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#1ed760" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>Edit Bio
+    </div>
+    <div class="dots-modal-item" onclick="editAboutPhoto()">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></span>Change About Photo
+    </div>
+    <div class="dots-modal-item" onclick="editArtistPick()">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f472b6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Edit Artist Pick
+    </div>
+    <div class="dots-modal-item" onclick="editArtistPickBg()">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#fb923c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l4-5 4 6 3-3 4 5"/><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="2" y1="15" x2="22" y2="15"/></svg></span>Change Artist Pick BG
+    </div>
+    <div class="dots-modal-item" onclick="openReportErrorModal()">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#f87171" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>Report Error
+    </div>
+    <div class="dots-modal-item" onclick="closeDotsMenu()" style="color:#b3b3b3">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>Cancel
+    </div>
+</div>
+
+<div class="dots-overlay" id="report-error-overlay" onclick="closeReportErrorModal()"></div>
+<div class="dots-modal" id="report-error-modal" style="padding:20px 20px 40px;">
+    <h3 style="font-size:17px;margin-bottom:8px;">Report an Error</h3>
+    <p style="color:#b3b3b3;font-size:13px;margin-bottom:20px;line-height:1.4;">
+        Having an issue like frozen monthly listeners? Tap below to report it and attempt a fix.
+    </p>
+    <div class="dots-modal-item" id="frozen-listeners-btn" onclick="submitErrorReport('frozen_listeners')">
+        <span class="dots-modal-icon">🧊</span><span id="frozen-listeners-label">Frozen Monthly Listeners</span>
+    </div>
+    <div class="dots-modal-item" onclick="openOtherIssueForm()">
+        <span class="dots-modal-icon">⚠️</span>Something Else
+    </div>
+    <div class="dots-modal-item" onclick="closeReportErrorModal()" style="color:#b3b3b3">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>Cancel
+    </div>
+</div>
+
+<div class="dots-overlay" id="other-issue-overlay" onclick="closeOtherIssueForm()"></div>
+<div class="dots-modal" id="other-issue-modal" style="padding:20px 20px 40px;">
+    <h3 style="font-size:17px;margin-bottom:8px;">Describe the Issue</h3>
+    <p style="color:#b3b3b3;font-size:13px;margin-bottom:16px;line-height:1.4;">
+        Tell us what's going wrong. Be as specific as you can.
+    </p>
+    <textarea id="other-issue-text" placeholder="e.g. My album cover disappeared after editing the bio..."
+        style="width:100%;min-height:120px;background:#181818;border:1px solid #333;border-radius:8px;color:#fff;font-size:14px;font-weight:500;font-family:inherit;padding:12px;resize:vertical;margin-bottom:16px;"></textarea>
+    <div class="dots-modal-item" onclick="submitOtherIssue()" style="color:#1ed760;border-bottom:none;">
+        <span class="dots-modal-icon">✔️</span>Submit
+    </div>
+    <div class="dots-modal-item" onclick="closeOtherIssueForm()" style="color:#b3b3b3;border-bottom:none;">
+        <span class="dots-modal-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#6b7280" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></span>Cancel
+    </div>
+</div>
+<div class="bottom-nav">
+    <button class="nav-btn active" id="nav-home" onclick="switchTab('main-screen')">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Home</span>
+    </button>
+    <button class="nav-btn" id="nav-charts" onclick="window.location.href='musify-charts.html'">
+        <svg viewBox="0 0 24 24"><path d="M3.5 18.49l6-6.01 4 4L22 6.92l-1.41-1.41-7.09 7.97-4-4L2 16.99z"/></svg>
+        <span>Charts</span>
+    </button>
+    <button class="nav-btn" id="nav-wrapped" onclick="switchTab('wrapped-screen')" style="display: none;">
+        <svg viewBox="0 0 24 24"><path d="M20 6h-2.18c.11-.31.18-.65.18-1 0-1.66-1.34-3-3-3-1.05 0-1.96.54-2.5 1.35l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm11 15H4v-2h16v2zm0-5H4V8h5.08L7 10.83 8.62 12 11 8.76l1-1.36 1 1.36L15.38 12 17 10.83 14.92 8H20v6z"/></svg>
+        <span>Wrapped</span>
+    </button>
+</div>
+
+<script>
+        const photoDB = (function() {
+    const DB_NAME = 'MusicGameDB';
+    const STORE = 'photos';
+    const KEY = 'artistPhoto';
+    function open() {
+        return new Promise((resolve, reject) => {
+            const req = indexedDB.open(DB_NAME, 1);
+            req.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+            req.onsuccess = e => resolve(e.target.result);
+            req.onerror = e => reject(e.target.error);
+        });
+    }
+    return {
+        load() {
+            return open().then(db => new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE, 'readonly');
+                const req = tx.objectStore(STORE).get(KEY);
+                req.onsuccess = e => resolve(e.target.result || null);
+                req.onerror = e => reject(e.target.error);
+            }));
+        }
+    };
+})();
+
+function makePhotoStore(key) {
+    const DB='MusicGameDB', ST='photos';
+    function open(){ return new Promise((res,rej)=>{ const r=indexedDB.open(DB,1); r.onupgradeneeded=e=>{ if(!e.target.result.objectStoreNames.contains(ST)) e.target.result.createObjectStore(ST); }; r.onsuccess=e=>res(e.target.result); r.onerror=e=>rej(e.target.error); }); }
+    return {
+        load(){ return open().then(db=>new Promise((res,rej)=>{ const r=db.transaction(ST,'readonly').objectStore(ST).get(key); r.onsuccess=e=>res(e.target.result||null); r.onerror=e=>rej(e.target.error); })); },
+        save(data){ return open().then(db=>new Promise((res,rej)=>{ const r=db.transaction(ST,'readwrite').objectStore(ST).put(data,key); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); })); }
+    };
+}
+const aboutPhotoDB = makePhotoStore('aboutPhoto');
+const artistPickBgDB = makePhotoStore('artistPickBg');
+const $=id=>document.getElementById(id);
+
+  const defaultMerch=[];
+  let merchInventory=[],cachedMonthlyListeners=0,showingAllSongs=false,currentFilter='all';
+  let countdownInterval;
+
+function init(){
+if(!localStorage.getItem('artistDetails'))localStorage.setItem('artistDetails',JSON.stringify({name:'Artist Name'}));
+if(!localStorage.getItem('releasedSongs'))localStorage.setItem('releasedSongs',JSON.stringify([]));
+if(!localStorage.getItem('releasedAlbums'))localStorage.setItem('releasedAlbums',JSON.stringify([]));
+if(!localStorage.getItem('artistBio'))localStorage.setItem('artistBio','Share your story with fans...');
+if(!localStorage.getItem('merchInventory'))localStorage.setItem('merchInventory',JSON.stringify([]))
+if(!localStorage.getItem('cachedMonthlyListeners'))localStorage.setItem('cachedMonthlyListeners','0');
+if(!localStorage.getItem('listenerDecayData'))localStorage.setItem('listenerDecayData',JSON.stringify({baseListeners:0,peakListeners:0,lastUpdateDate:null,decayRate:0.03}));
+merchInventory=JSON.parse(localStorage.getItem('merchInventory')||'[]');
+cachedMonthlyListeners=parseInt(localStorage.getItem('cachedMonthlyListeners')||'0');
+checkWrappedAvailability(); 
+loadScheduled();
+}
+
+function showScreen(screenId){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+$(screenId).classList.add('active');
+}
+
+function switchTab(screenId) {
+    showScreen(screenId);
+    document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+    if (screenId === 'main-screen') $('nav-home').classList.add('active');
+    if (screenId === 'wrapped-screen') {
+        $('nav-wrapped').classList.add('active');
+        startWrappedSlideshow();
+    } else {
+        stopWrappedSlideshow();
+    }
+    if (screenId !== 'upcoming-screen') clearInterval(countdownInterval);
+}
+
+function backToMain(){switchTab('main-screen')}
+function goBack(){window.location.href='music.html'}
+
+function formatNumber(n){return Math.floor(n).toLocaleString();}
+function formatLargeNumber(n){return Math.floor(n).toLocaleString();}
+
+// NEW: Calculate Artist Ranking based on Monthly Listeners
+function calculateRanking(listeners) {
+    if(listeners >= 100000000) return 1; // 100M+ = #1
+    if(listeners < 25000000) return 200; // Below 25M = #200
+    
+    // Linear scale: #200 at 25M, #1 at 100M
+    const range = 100000000 - 25000000; // 75M range
+    const rankRange = 199; // #200 to #1
+    const position = (listeners - 25000000) / range;
+    const rank = 200 - Math.floor(position * rankRange);
+    return Math.max(1, Math.min(200, rank));
+}
+
+// NEW: Realistic Monthly Listeners with Decay System
+function calculateMonthlyListeners(){
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    const currentDate = new Date(localStorage.getItem('currentDate') || new Date());
+    let decayData = JSON.parse(localStorage.getItem('listenerDecayData')||'{}');
+    
+    if(!decayData.lastUpdateDate) decayData.lastUpdateDate = currentDate.toISOString();
+    
+    // Calculate potential from weekly streams + catalogue anchor
+    let totalWeeklyStreams = 0;
+    let totalStreams = 0;
+    songs.forEach(song => {
+        totalWeeklyStreams += (song.weeklyStreams || 0);
+        totalStreams += (song.streams || 0);
+    });
+    const totalSongs = songs.length || 1;
+    const divisor = 200 + (totalSongs * 50);
+    const weeklyPotential = Math.floor(totalWeeklyStreams * 0.6);
+    const catalogueAnchor = Math.floor(totalStreams / divisor);
+    const potentialListeners = Math.floor((weeklyPotential * 0.7) + (catalogueAnchor * 0.3));
+
+    // Check if there's a new release (stream boost)
+    const lastUpdate = new Date(decayData.lastUpdateDate);
+    const daysSinceUpdate = Math.floor((currentDate - lastUpdate) / (1000 * 60 * 60 * 24));
+
+    // Always take the higher of cached or potential first — never let stale cache suppress a real increase
+    if(potentialListeners > cachedMonthlyListeners) {
+        cachedMonthlyListeners = potentialListeners;
+        if(potentialListeners > (decayData.peakListeners || 0)) {
+            decayData.peakListeners = potentialListeners;
+        }
+    } else if(daysSinceUpdate >= 7) {
+        const weeksElapsed = Math.floor(daysSinceUpdate / 7);
+        for(let i = 0; i < weeksElapsed; i++) {
+            const maxDrop = Math.floor(cachedMonthlyListeners * 0.03);
+            const actualGap = Math.max(0, cachedMonthlyListeners - potentialListeners);
+            cachedMonthlyListeners -= Math.min(actualGap, maxDrop);
+            cachedMonthlyListeners = Math.max(0, cachedMonthlyListeners);
+        }
+    }
+
+    // After decay, check again — if potential is now above the decayed value, snap up
+    if(potentialListeners > cachedMonthlyListeners) {
+        cachedMonthlyListeners = potentialListeners;
+        if(potentialListeners > (decayData.peakListeners || 0)) {
+            decayData.peakListeners = potentialListeners;
+        }
+    }
+
+    // Floor: never below 5% of all-time peak
+    const floor = Math.floor((decayData.peakListeners || 0) * 0.05);
+    cachedMonthlyListeners = Math.max(floor, cachedMonthlyListeners);
+    
+    decayData.lastUpdateDate = currentDate.toISOString();
+    localStorage.setItem('listenerDecayData', JSON.stringify(decayData));
+    localStorage.setItem('cachedMonthlyListeners', cachedMonthlyListeners.toString());
+    
+    return cachedMonthlyListeners;
+}
+
+function loadArtist(){
+    const details = JSON.parse(localStorage.getItem('artistDetails')||'{}');
+    const listeners = calculateMonthlyListeners();
+    const ranking = calculateRanking(listeners);
+    
+    $('artist-name').textContent = details.name || 'Artist Name';
+    $('monthly-listeners').textContent = formatLargeNumber(listeners) + ' monthly listeners';
+    
+    photoDB.load().then(photo => {
+    if (photo) {
+        $('artist-bg').innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover">`;
+        $('up-avatar').innerHTML=`<img src="${photo}" style="width:100%;height:100%;object-fit:cover">`;
+        
+    }
+});
+}
+
+function loadScheduled() {
+    const container = $('upcoming-releases');
+    const scheduled = JSON.parse(localStorage.getItem('scheduledReleases') || '[]');
+    const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+    
+    container.innerHTML = '';
+    
+    if(scheduled.length === 0) {
+        container.style.display = 'none';
+        return;
+    }
+    
+    container.style.display = 'block';
+    
+    scheduled.forEach((item, index) => {
+        const releaseDate = new Date(item.releaseDate);
+        const diffTime = releaseDate - gameDate;
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        
+        if(diffDays > 0) { 
+            const data = item.data;
+            const name = data.name || data.songName || data.albumName || 'Untitled';
+            const cover = data.coverArt ? `<img src="${data.coverArt}">` : '🎵';
+            
+            const card = document.createElement('div');
+            card.className = 'upcoming-card';
+            card.onclick = () => showUpcomingFull(index);
+            card.innerHTML = `
+                <div class="upcoming-art">${cover}</div>
+                <div class="upcoming-info">
+                    <div class="upcoming-meta">${item.type === 'album' ? 'ALBUM' : 'SINGLE'}</div>
+                    <h3>${name}</h3>
+                    <div class="upcoming-meta" style="color:#1ed760; font-weight:600;">${diffDays} days to go</div>
+                </div>
+                <button class="presave-btn-small">Pre-save</button>
+            `;
+            container.appendChild(card);
+        }
+    });
+}
+
+function showUpcomingFull(index) {
+    const scheduled = JSON.parse(localStorage.getItem('scheduledReleases') || '[]');
+    const item = scheduled[index];
+    if(!item) return;
+    
+    const data = item.data;
+    const releaseDate = new Date(item.releaseDate);
+    const artistName = JSON.parse(localStorage.getItem('artistDetails') || '{}').name || 'Artist Name';
+    const photo = localStorage.getItem('artistPhoto');
+
+    $('up-title').textContent = data.name || data.songName || data.albumName || 'Untitled';
+    $('up-artist-name').textContent = artistName;
+    $('up-date').textContent = (item.type === 'album' ? 'Album' : 'Single') + ' • Coming ' + releaseDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    
+    if (photo) {
+        $('up-bg').innerHTML = `<img src="${photo}" style="width:100%;height:100%;object-fit:cover;">`;
+    }
+    
+    const trackContainer = $('up-tracklist-container');
+    trackContainer.innerHTML = '';
+    
+    if (item.type === 'album' && data.songs) {
+        data.songs.forEach((song, i) => {
+            const div = document.createElement('div');
+            div.className = 'up-track-item';
+            const isRevealed = i < 3; 
+            div.textContent = (i + 1) + '. ' + (isRevealed ? (song.songName || song.name || song) : 'Track ' + (i+1));
+            if(isRevealed) div.classList.add('revealed');
+            trackContainer.appendChild(div);
+        });
+    } else {
+         const div = document.createElement('div');
+         div.className = 'up-track-item revealed';
+         div.textContent = '1. ' + (data.songName || data.name || 'Untitled Track');
+         trackContainer.appendChild(div);
+    }
+
+    const gameDateStr = localStorage.getItem('currentDate');
+    const gameDate = gameDateStr ? new Date(gameDateStr) : new Date();
+    
+    let diffTime = releaseDate.getTime() - gameDate.getTime();
+    
+    clearInterval(countdownInterval);
+    
+    const updateTimer = () => {
+        diffTime -= 1000;
+        if (diffTime <= 0) {
+            clearInterval(countdownInterval);
+            return;
+        }
+        
+        const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
+        
+        $('cd-days').textContent = days;
+        $('cd-hours').textContent = hours.toString().padStart(2, '0');
+        $('cd-mins').textContent = minutes.toString().padStart(2, '0');
+        $('cd-secs').textContent = seconds.toString().padStart(2, '0');
+    };
+    
+    updateTimer();
+    countdownInterval = setInterval(updateTimer, 1000);
+
+    showScreen('upcoming-screen');
+}
+
+function loadSongs() {
+    // 1. Get your owned songs
+    const mySongs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+    
+    // 2. Get collaborations (Display only!)
+    const collabs = JSON.parse(localStorage.getItem('acceptedCollaborations') || '[]');
+    
+    // 3. Combine for the visual list
+    // We map collabs to look like normal songs for the list
+    const collabDisplay = collabs.map(c => ({
+        ...c,
+        name: c.songName, // Ensure naming matches
+        isCollab: true,   // Mark as collab
+        artistDisplay: `${c.npcArtist}`, // Show NPC name
+        weeklyStreams: c.weeklyStreams || 0, // For ranking
+        streams: c.streams || 0 // For display
+    }));
+
+    const allSongs = [...mySongs, ...collabDisplay];
+    const list = $('song-list');
+    list.innerHTML = '';
+
+    // 4. Sort by WEEKLY STREAMS (High to low) - for current popularity ranking
+    const sortedSongs = allSongs.sort((a, b) => (b.weeklyStreams || 0) - (a.weeklyStreams || 0));
+    
+    // Logic for "Show More" buttons
+    const songsToShow = showingAllSongs ? Math.min(sortedSongs.length, 10) : Math.min(sortedSongs.length, 5);
+
+    sortedSongs.slice(0, songsToShow).forEach((song, i) => {
+        const li = document.createElement('li');
+        li.className = 'song-item';
+        
+        // Handle cover art (Collabs use the SVG string, Songs use their normal art)
+        const artHtml = song.coverArt ? 
+            `<img src="${song.coverArt}" style="width:100%;height:100%;border-radius:3px;object-fit:cover;">` : 
+            '♪';
+
+        // SIMPLIFIED: All songs show the same way - just streams count
+        li.innerHTML = `
+            <div class="song-rank">${i + 1}</div>
+            <div class="song-cover">${artHtml}</div>
+            <div class="song-info">
+                <div class="song-title">${song.songName || song.name || 'Untitled'}</div>
+                <div class="song-streams">${formatNumber(song.streams || 0)}</div>
+            </div>
+        `;
+        list.appendChild(li);
+    });
+
+    updateSongButtons(sortedSongs.length);
+}
+
+function updateSongButtons(totalSongs){
+const showMore=$('show-more-songs'),showLess=$('show-less-songs');
+if(showingAllSongs||totalSongs<=5){
+showMore.style.display='none';
+}else{
+showMore.style.display='inline-block';
+}
+showLess.style.display=showingAllSongs?'inline-block':'none';
+}
+
+function showMoreSongs(){
+showingAllSongs=true;
+loadSongs();
+}
+
+function showLessSongs(){
+showingAllSongs=false;
+loadSongs();
+}
+
+function loadAlbums(){
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),albumGrid=$('album-grid');
+albumGrid.innerHTML='';
+albums.forEach((album,i)=>{
+const totalStreams=album.songs?album.songs.reduce((sum,song)=>{
+const releasedSong=JSON.parse(localStorage.getItem('releasedSongs')||'[]').find(s=>(s.songName||s.name)===(song.songName||song.name||song));
+return sum+(releasedSong?releasedSong.streams||0:0);
+},0):0;
+
+let dateDisplay = album.releaseYear || new Date().getFullYear();
+if(album.releaseDate) {
+    const date = new Date(album.releaseDate);
+    if(!isNaN(date.getTime())) {
+        dateDisplay = date.toLocaleDateString('en-US', { year: 'numeric' });
+    }
+}
+
+const div=document.createElement('div');
+div.className='release-item';
+div.onclick=()=>showAlbum(i);
+const albumLabel=album.type==='EP'?'EP':album.type==='SinglePack'?'Pack':'Album';
+div.innerHTML=`<div class="album-cover-container">${album.coverArt?`<img src="${album.coverArt}" style="width:100%;height:100%;object-fit:cover">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#666;font-size:32px">♪</div>'}</div><div class="album-info"><div class="album-title">${album.name||album.albumName||'Untitled'}</div><div class="album-meta">${dateDisplay} • ${albumLabel}</div></div>`;
+albumGrid.appendChild(div);
+});
+}
+        
+// ───── AFTER (fixed) ─────
+        function getImageColors(imageSrc, callback) {
+    const img = new Image();
+    img.crossOrigin = "Anonymous";
+    img.src = imageSrc;
+    img.onload = function() {
+        try {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = 50; canvas.height = 50;
+            ctx.drawImage(img, 0, 0, 50, 50);
+            const data = ctx.getImageData(0, 0, 50, 50).data;
+            // Average all saturated, non-dark, non-blown-out pixels instead of
+            // picking a single "most saturated" pixel — gives a true
+            // representative palette color instead of a random outlier.
+            let rSum=0, gSum=0, bSum=0, weightSum=0;
+            for (let i = 0; i < data.length; i += 4) {
+                const r=data[i], g=data[i+1], b=data[i+2];
+                const max=Math.max(r,g,b), min=Math.min(r,g,b);
+                const sat = max === 0 ? 0 : (max - min) / max;
+                const lum = (max + min) / 2;
+                if (lum < 15 || lum > 245) continue; // skip near-black / near-white pixels
+                const weight = 0.15 + sat; // saturated pixels count more, but every pixel contributes
+                rSum += r * weight; gSum += g * weight; bSum += b * weight;
+                weightSum += weight;
+            }
+            let vr = 74, vg = 95, vb = 122; // sensible fallback if nothing usable found
+            if (weightSum > 0) {
+                vr = rSum / weightSum;
+                vg = gSum / weightSum;
+                vb = bSum / weightSum;
+            }
+            const d = (x,f) => Math.max(0, Math.min(255, Math.floor(x * f)));
+            callback([
+                `rgb(${d(vr,1)},${d(vg,1)},${d(vb,1)})`,
+                `rgb(${d(vr,0.55)},${d(vg,0.55)},${d(vb,0.55)})`,
+                `rgb(${d(vr,0.22)},${d(vg,0.22)},${d(vb,0.22)})`
+            ]);
+        } catch(e) { callback(['#4a5f7a','#28344a','#0d1420']); }
+    };
+    img.onerror = () => callback(['#4a5f7a','#28344a','#0d1420']);
+}
+function getCopyrightLine(album, year, artistName){
+    if(!album.rightsSnapshot){
+        const deal = JSON.parse(localStorage.getItem('recordDeal')||'null');
+        album.rightsSnapshot = deal
+            ? { labelName: deal.name, ownsMasters: !!(deal.terms && deal.terms.ownsMasters) }
+            : { labelName: null, ownsMasters: true };
+        // save it permanently onto this album in localStorage
+        const allAlbums = JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+        const idx = allAlbums.findIndex(a => (a.name||a.albumName) === (album.name||album.albumName) && a.releaseDate === album.releaseDate);
+        if(idx > -1){ allAlbums[idx].rightsSnapshot = album.rightsSnapshot; localStorage.setItem('releasedAlbums', JSON.stringify(allAlbums)); }
+    }
+    const { labelName, ownsMasters } = album.rightsSnapshot;
+    if(!labelName) return `© ${year} ${artistName}`;
+    if(ownsMasters) return `© ${year} ${artistName}, under exclusive license to ${labelName}`;
+    return `© ${year} ${labelName}`;
+}
+function showAlbum(index){
+    const albums = JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+    const album = albums[index];
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    const artistDetails = JSON.parse(localStorage.getItem('artistDetails')||'{}');
+    
+    // Set album title
+    $('album-full-title').textContent = album.name || album.albumName || 'Untitled Album';
+    $('album-artist-small').textContent = artistDetails.name || 'Artist Name';
+const typeLabel = album.type==='EP'?'EP':album.type==='SinglePack'?'Pack':'Album';
+const typeLabelEl = $('album-type-label');
+if(typeLabelEl) typeLabelEl.textContent = typeLabel;
+    // Set album cover and extract colors for gradient
+    if(album.coverArt) {
+        $('album-full-cover').innerHTML = `<img src="${album.coverArt}">`;
+        
+      // ───── AFTER ─────
+        // Extract colors and apply gradient background
+        getImageColors(album.coverArt, (colors) => {
+            const albumScreen = $('album-screen');
+            albumScreen.style.background = `linear-gradient(180deg, ${colors[0]} 0px, ${colors[1]} 300px, ${colors[2]} 500px, #000 750px, #000 100%)`;
+        });
+    } else {
+        $('album-full-cover').innerHTML = '♪';
+        $('album-screen').style.background = 'linear-gradient(180deg, #4a5f7a 0px, #28344a 300px, #0d1420 500px, #000 750px, #000 100%)';
+    }
+    
+    // Update artist photo if element exists
+    const avatarEl = $('album-artist-avatar');
+    if(avatarEl) {
+        photoDB.load().then(photo => {
+            if(photo) avatarEl.innerHTML = `<img src="${photo}">`;
+        });
+    }
+
+    // Update monthly listeners if element exists
+    const listenersEl = $('album-monthly-listeners');
+    if(listenersEl) {
+        const listeners = calculateMonthlyListeners();
+        const listenersFormatted = listeners >= 1000000 ? (listeners/1000000).toFixed(1) + 'M' : formatNumber(listeners);
+        listenersEl.textContent = listenersFormatted;
+    }
+
+    // Update release date if element exists
+    const releaseTextEl = $('album-release-text');
+    if(releaseTextEl && album.releaseDate) {
+        const date = new Date(album.releaseDate);
+        releaseTextEl.textContent = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    }
+
+    // Mark as Latest Release if this album has the most recent releaseDate of all albums
+    const latestBadgeEl = $('album-latest-badge');
+    if(latestBadgeEl) {
+        let isLatest = false;
+        if(album.releaseDate) {
+            const thisTime = new Date(album.releaseDate).getTime();
+            isLatest = albums.every(a => !a.releaseDate || new Date(a.releaseDate).getTime() <= thisTime);
+        }
+        latestBadgeEl.textContent = isLatest ? ' • Latest Release' : '';
+    }
+    
+    // Build track list
+    const trackList = $('album-track-list');
+    trackList.innerHTML = '';
+    
+    let totalStreams = 0;
+    let trackCount = 0;
+
+    // Check for Disc split (deluxe editions)
+    const originalCount = album.originalTrackCount || (album.songs ? album.songs.length : 0);
+    const hasEditions = album.songs && album.songs.length > originalCount;
+
+    if(album.songs) {
+        album.songs.forEach((track, i) => {
+            // Insert Disc Headers for deluxe editions
+            if(hasEditions && i === 0) {
+                const h = document.createElement('div');
+                h.className = 'disc-header';
+                h.textContent = 'Disc 1';
+                trackList.appendChild(h);
+            }
+            if(hasEditions && i === originalCount) {
+                const h = document.createElement('div');
+                h.className = 'disc-header';
+                h.textContent = 'Disc 2';
+                trackList.appendChild(h);
+            }
+
+            // Find song streams
+            const releasedSong = songs.find(s => 
+                (s.songName || s.name) === (track.songName || track.name || track)
+            );
+            const streams = releasedSong ? releasedSong.streams || 0 : 0;
+            totalStreams += streams;
+            trackCount++;
+            
+            // Create track item
+            const li = document.createElement('li');
+            li.className = 'track-item';
+            li.innerHTML = `
+                <div class="track-num">${i+1}</div>
+                <div class="track-info">
+                    <div class="track-name">${track.songName || track.name || track || 'Untitled'}</div>
+                    <div class="track-artist">${artistDetails.name || 'Artist'}</div>
+                </div>
+                <div class="track-streams">${formatNumber(streams)}</div>
+                <div class="track-more">⋯</div>
+            `;
+            trackList.appendChild(li);
+        });
+    }
+
+    // Get release year
+    let dateDisplay = album.releaseYear || new Date().getFullYear();
+    if(album.releaseDate) {
+        const date = new Date(album.releaseDate);
+        if(!isNaN(date.getTime())) {
+            dateDisplay = date.getFullYear();
+        }
+    }
+
+    // Add footer stats
+    const footerStats = document.createElement('div');
+    footerStats.className = 'album-footer-stats';
+    const year = dateDisplay;
+    const copyright = getCopyrightLine(album, year, artistDetails.name);
+    footerStats.innerHTML = `
+        <div style="font-size:13px; font-weight:600; color:#fff; margin-bottom:5px;">Total Album Streams: ${formatNumber(totalStreams)}</div>
+        <div>${trackCount} songs</div>
+        <div>${album.releaseDate ? new Date(album.releaseDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : ''}</div>
+        <div style="font-size:10px;">${copyright}</div>
+    `;
+    trackList.appendChild(footerStats);
+
+    // More by artist
+    const artistN = artistDetails.name || 'Artist';
+    const otherAlbums = albums.filter((_,idx) => idx !== index);
+    const singleSongs = songs.filter(s => !albums.some(a => a.songs && a.songs.some(t => (t.songName||t.name||t)===(s.songName||s.name))));
+    const moreItems = [...otherAlbums, ...singleSongs];
+    if(moreItems.length > 0) {
+        const moreDiv = document.createElement('div');
+        moreDiv.style.cssText = 'padding:24px 0 10px;';
+        moreDiv.innerHTML = `<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:14px;">More by ${artistN}</div>`;
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;gap:14px;overflow-x:auto;padding-bottom:12px;scrollbar-width:none;-ms-overflow-style:none;';
+        moreItems.forEach(item => {
+            const isAlbum = !!item.songs;
+            const nm = item.name||item.albumName||item.songName||'Untitled';
+            const tp = !isAlbum?'Single':item.type==='EP'?'EP':item.type==='SinglePack'?'Pack':item.songs.length>=8?'Album':'EP';
+            let yr=''; if(item.releaseDate){const d=new Date(item.releaseDate);if(!isNaN(d.getTime()))yr=d.getFullYear();}
+            const card = document.createElement('div');
+            card.style.cssText = 'flex-shrink:0;width:120px;cursor:pointer;';
+            card.innerHTML = `<div style="width:120px;height:120px;border-radius:8px;background:#282828;overflow:hidden;margin-bottom:8px;">${item.coverArt?`<img src="${item.coverArt}" style="width:100%;height:100%;object-fit:cover">`:'<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#555;font-size:28px;">♪</div>'}</div><div style="font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${nm}</div><div style="font-size:11px;color:#b3b3b3;margin-top:2px;">${tp}${yr?' • '+yr:''}</div>`;
+            if(isAlbum){const ai=albums.findIndex(a=>(a.name||a.albumName)===(item.name||item.albumName));if(ai!==-1)card.onclick=()=>showAlbum(ai);}
+            row.appendChild(card);
+        });
+        moreDiv.appendChild(row);
+        trackList.appendChild(moreDiv);
+    }
+
+    // Show the album screen
+    showScreen('album-screen');
+}
+
+
+function getItemType(item){
+if(item.songs){
+if(item.type==='SinglePack') return 'packs';
+if(item.type==='EP') return 'eps';
+if(item.type==='Studio'||item.type==='Live') return 'albums';
+const trackCount=item.songs.length;
+if(trackCount>=8) return 'albums';
+if(trackCount>=2) return 'eps';
+}
+return 'singles';
+}
+
+function showDiscography(){
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+const singleSongs=songs.filter(s=>!albums.some(a=>a.songs&&a.songs.some(as=>(as.songName||as.name||as)===(s.songName||s.name))));
+const allReleases=[...albums,...singleSongs];
+loadDiscoList(allReleases);
+showScreen('disco-screen');
+}
+
+function getReleaseDate(release){
+if(release.releaseDate){
+    const d=new Date(release.releaseDate);
+    if(!isNaN(d.getTime())) return d;
+}
+return new Date(0);
+}
+
+function makeDiscoRow(release){
+const type=getItemType(release);
+let dateDisplay=release.releaseYear||new Date().getFullYear();
+if(release.releaseDate){
+    const date=new Date(release.releaseDate);
+    if(!isNaN(date.getTime())) dateDisplay=date.getFullYear();
+}
+const div=document.createElement('div');
+div.className='disco-row';
+if(release.songs){
+    const allAlbums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+    const albumIndex=allAlbums.findIndex(a=>(a.name||a.albumName)===(release.name||release.albumName));
+    if(albumIndex!==-1) div.onclick=()=>showAlbum(albumIndex);
+}
+div.innerHTML=`<div class="disco-row-cover">${release.coverArt?`<img src="${release.coverArt}" style="width:100%;height:100%;object-fit:cover;border-radius:6px">`:'♪'}</div><div class="disco-row-info"><div class="disco-row-title">${release.name||release.albumName||release.songName||'Untitled'}</div><div class="disco-row-meta">${dateDisplay}</div></div>`;
+return div;
+}
+
+function loadDiscoList(releases){
+const list=$('disco-list');
+list.innerHTML='';
+
+const sorted=[...releases].sort((a,b)=>getReleaseDate(b)-getReleaseDate(a));
+const filtered=currentFilter==='all'?sorted:sorted.filter(r=>{
+    const t=getItemType(r);
+    if(currentFilter==='albums') return t==='albums';
+    if(currentFilter==='singles') return t==='eps'||t==='singles'||t==='packs';
+    return true;
+});
+if(!filtered.length) return;
+
+// Latest release (only shown on the "All" filter)
+if(currentFilter==='all'){
+    const latestSection=document.createElement('div');
+    latestSection.className='disco-section';
+    latestSection.innerHTML='<div class="disco-section-title">Latest release</div>';
+    latestSection.appendChild(makeDiscoRow(filtered[0]));
+    list.appendChild(latestSection);
+}
+
+const albumsList=filtered.filter(r=>getItemType(r)==='albums');
+const singlesList=filtered.filter(r=>getItemType(r)==='eps'||getItemType(r)==='singles'||getItemType(r)==='packs');
+
+if(albumsList.length){
+    const section=document.createElement('div');
+    section.className='disco-section';
+    section.innerHTML='<div class="disco-section-title">Albums</div>';
+    albumsList.forEach(r=>section.appendChild(makeDiscoRow(r)));
+    list.appendChild(section);
+}
+
+if(singlesList.length){
+    const section=document.createElement('div');
+    section.className='disco-section';
+    section.innerHTML='<div class="disco-section-title">Singles and EPs</div>';
+    singlesList.forEach(r=>section.appendChild(makeDiscoRow(r)));
+    list.appendChild(section);
+}
+}
+
+function loadMerch(){
+const grid=$('merch-grid');
+setTimeout(()=>{
+if(!merchInventory||!merchInventory.length)merchInventory=JSON.parse(localStorage.getItem('merchInventory')||'[]');
+if(!merchInventory.length){grid.innerHTML='<div class="no-merch">--- no merch yet ---</div>';return}
+grid.innerHTML='';
+merchInventory.forEach(item=>{
+const isVinyl=item.type==='vinyl',stockClass=!item.stock?'stock-out':item.stock<10?'stock-low':'';
+const div=document.createElement('div');
+div.className='merch-item';
+div.innerHTML=`<div class="merch-visual">${isVinyl?createVinylSVG(item.image):createCDSVG(item.image)}</div><div class="merch-info"><h3>${item.releaseName}</h3><div class="merch-type">${item.type.toUpperCase()} • ${item.releaseType.toUpperCase()}</div><div class="merch-stats"><div class="merch-price">$${item.sellingPrice.toFixed(2)}</div><div class="merch-stock ${stockClass}">${!item.stock?'SOLD OUT':item.stock<10?`${item.stock} left`:`${item.stock} in stock`}</div></div><div class="merch-sold">${item.totalSales} sold</div></div>`;
+grid.appendChild(div);
+});
+},800);
+}
+
+function createVinylSVG(art){
+return`<div style="width:100%;height:100%;background:#0a0a0a;position:relative;border-radius:6px;overflow:hidden"><div style="position:absolute;left:10px;top:15px;width:70px;height:70px;background:#333;border-radius:2px;display:flex;align-items:center;justify-content:center;color:#999;font-size:8px;font-weight:900">${art?`<img src="${art}" style="width:100%;height:100%;border-radius:2px">`:'VINYL'}</div><div style="position:absolute;right:35px;top:25px;width:70px;height:70px;background:radial-gradient(circle,#ff6b6b 15px,#111 15px);border-radius:50%;display:flex;align-items:center;justify-content:center"><div style="width:4px;height:4px;background:#333;border-radius:50%"></div></div></div>`;
+}
+
+function createCDSVG(art){
+return`<div style="width:100%;height:100%;background:linear-gradient(45deg,#e8e8e8,#f5f5f5);border-radius:6px;display:flex;align-items:center;justify-content:center;position:relative"><div style="width:80px;height:80px;background:#ddd;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 20px rgba(0,0,0,.1)"><div style="width:40px;height:40px;background:#ff6b6b;border-radius:2px;display:flex;align-items:center;justify-content:center;color:#333;font-size:6px;font-weight:900">${art?`<img src="${art}" style="width:100%;height:100%;border-radius:2px">`:'CD'}</div></div><div style="position:absolute;width:12px;height:12px;background:#333;border-radius:50%"></div></div>`;
+}
+
+function loadBio(){
+    const bio = localStorage.getItem('artistBio') || 'Share your story with fans...';
+    const listeners = calculateMonthlyListeners();
+    const ranking = calculateRanking(listeners);
+    const details = JSON.parse(localStorage.getItem('artistDetails')||'{}');
+
+    if($('about-world-rank')) $('about-world-rank').textContent = `#${ranking} in the world`;
+    if($('about-name-big')) $('about-name-big').textContent = details.name || 'Artist Name';
+    if($('about-listeners-line')) $('about-listeners-line').textContent = formatLargeNumber(listeners) + ' monthly listeners';
+    if($('bio-text')) $('bio-text').textContent = bio;
+
+    aboutPhotoDB.load().then(photo => {
+        const bgImg = $('about-bg-img');
+        if(bgImg && photo) { bgImg.src = photo; bgImg.style.display = 'block'; }
+        const r = calculateRanking(calculateMonthlyListeners());
+        const ord = n => n+(n%100>=11&&n%100<=13?'th':n%10===1?'st':n%10===2?'nd':n%10===3?'rd':'th');
+        if($('about-rank-num')) $('about-rank-num').textContent = ord(r);
+    });
+}
+
+function editBio(){
+    closeDotsMenu();
+    $('bio-textarea').value = localStorage.getItem('artistBio') || '';
+    $('bio-overlay').classList.add('open');
+    $('bio-sheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => $('bio-textarea').focus(), 380);
+}
+function closeBioModal(){
+    $('bio-overlay').classList.remove('open');
+    $('bio-sheet').classList.remove('open');
+    document.body.style.overflow = '';
+}
+function saveBio(){
+    localStorage.setItem('artistBio', $('bio-textarea').value);
+    loadBio();
+    closeBioModal();
+    showToast('Bio saved!');
+}
+function showToast(msg){
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._timer);
+    t._timer = setTimeout(() => t.classList.remove('show'), 2600);
+}
+        function openDotsMenu(){ $('dots-modal').classList.add('open'); $('dots-overlay').style.display='block'; }
+function closeDotsMenu(){ $('dots-modal').classList.remove('open'); $('dots-overlay').style.display='none'; }
+
+function openReportErrorModal(){
+    closeDotsMenu();
+    $('report-error-modal').classList.add('open');
+    $('report-error-overlay').style.display='block';
+}
+function closeReportErrorModal(){
+    $('report-error-modal').classList.remove('open');
+    $('report-error-overlay').style.display='none';
+}
+
+// Re-syncs cachedMonthlyListeners so it can't get stuck below what current
+// weekly/catalogue streams actually justify. Does NOT touch song/stream data.
+function fixFrozenListeners(){
+    const songs = JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    let totalWeeklyStreams = 0, totalStreams = 0;
+    songs.forEach(song => {
+        totalWeeklyStreams += (song.weeklyStreams || 0);
+        totalStreams += (song.streams || 0);
+    });
+    const totalSongs = songs.length || 1;
+    const divisor = 200 + (totalSongs * 50);
+    const weeklyPotential = Math.floor(totalWeeklyStreams * 0.6);
+    const catalogueAnchor = Math.floor(totalStreams / divisor);
+    const potentialListeners = Math.floor((weeklyPotential * 0.7) + (catalogueAnchor * 0.3));
+
+    let decayData = JSON.parse(localStorage.getItem('listenerDecayData')||'{}');
+    let cached = parseInt(localStorage.getItem('cachedMonthlyListeners')||'0');
+
+    // Force-unstick: if potential is higher than cached, snap up regardless
+    // of the daysSinceUpdate gate that was keeping it flat.
+    if(potentialListeners > cached){
+        cached = potentialListeners;
+        if(potentialListeners > (decayData.peakListeners || 0)){
+            decayData.peakListeners = potentialListeners;
+        }
+    }
+    decayData.lastUpdateDate = new Date(localStorage.getItem('currentDate') || new Date()).toISOString();
+    localStorage.setItem('listenerDecayData', JSON.stringify(decayData));
+    localStorage.setItem('cachedMonthlyListeners', cached.toString());
+}
+
+function submitErrorReport(type){
+    if(type === 'frozen_listeners'){
+        const btn = $('frozen-listeners-btn');
+        const label = $('frozen-listeners-label');
+        btn.style.pointerEvents = 'none';
+        btn.style.opacity = '0.6';
+        label.innerHTML = '<span class="spinner" style="width:14px;height:14px;border-width:2px;display:inline-block;margin:0 8px 0 0;vertical-align:middle;"></span>Fixing...';
+
+        setTimeout(() => {
+            fixFrozenListeners();
+            closeReportErrorModal();
+            softRefreshCode();
+
+            // reset button state for next time the modal opens
+            btn.style.pointerEvents = '';
+            btn.style.opacity = '';
+            label.textContent = 'Frozen Monthly Listeners';
+        }, 1200);
+    }
+}
+
+function openOtherIssueForm(){
+    closeReportErrorModal();
+    $('other-issue-modal').classList.add('open');
+    $('other-issue-overlay').style.display='block';
+    setTimeout(()=>{ $('other-issue-text').focus(); }, 100);
+}
+function closeOtherIssueForm(){
+    $('other-issue-modal').classList.remove('open');
+    $('other-issue-overlay').style.display='none';
+    $('other-issue-text').value = '';
+}
+
+function submitOtherIssue(){
+    const text = $('other-issue-text').value.trim();
+    if(!text){
+        $('other-issue-text').focus();
+        return;
+    }
+    // Store the report locally so it's available for you to read/export.
+    const reports = JSON.parse(localStorage.getItem('errorReports')||'[]');
+    reports.push({
+        type: 'other',
+        message: text,
+        date: new Date().toISOString()
+    });
+    localStorage.setItem('errorReports', JSON.stringify(reports));
+
+    closeOtherIssueForm();
+    // No fix attempted here — just captured for review.
+}
+
+// Refreshes the running code/state without wiping localStorage data.
+function softRefreshCode(){
+    cachedMonthlyListeners = parseInt(localStorage.getItem('cachedMonthlyListeners')||'0');
+    init();
+    loadArtist();
+    loadSongs();
+    loadAlbums();
+    loadBio();
+    loadArtistPick();
+    loadPopularReleases();
+    checkAndShowEventsTab();
+}
+
+function editAboutPhoto(){
+    closeDotsMenu();
+    const input=document.createElement('input'); input.type='file'; input.accept='image/*';
+    input.onchange=e=>{
+        const file=e.target.files[0]; if(!file)return;
+        const reader=new FileReader();
+        reader.onload=ev=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); c.width=800;c.height=500; c.getContext('2d').drawImage(img,0,0,800,500); aboutPhotoDB.save(c.toDataURL('image/jpeg',0.8)).then(()=>loadBio()); }; img.src=ev.target.result; };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+}
+
+function editArtistPickBg(){
+    closeDotsMenu();
+    const input=document.createElement('input'); input.type='file'; input.accept='image/*';
+    input.onchange=e=>{
+        const file=e.target.files[0]; if(!file)return;
+        const reader=new FileReader();
+        reader.onload=ev=>{ const img=new Image(); img.onload=()=>{ const c=document.createElement('canvas'); c.width=800;c.height=500; c.getContext('2d').drawImage(img,0,0,800,500); artistPickBgDB.save(c.toDataURL('image/jpeg',0.8)).then(()=>loadArtistPick()); }; img.src=ev.target.result; };
+        reader.readAsDataURL(file);
+    };
+    input.click();
+}
+
+function editArtistPick(){
+    closeDotsMenu();
+    const albums = JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+    const songs  = JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    const current = JSON.parse(localStorage.getItem('artistPick')||'null');
+    const all = [
+        ...albums.map(a => ({type:'album', name:a.name||a.albumName||'Untitled', cover:a.coverArt, sub:'Album'})),
+        ...songs.map(s  => ({type:'song',  name:s.songName||s.name||'Untitled',   cover:s.coverArt, sub:'Single'}))
+    ];
+    const pickList = $('pick-list');
+    pickList.innerHTML = '';
+    if(!all.length){
+        pickList.innerHTML = '<div style="color:#b3b3b3;text-align:center;padding:50px 0;font-size:14px">Release some music first!</div>';
+    } else {
+        const noArt = `<svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
+        const check = `<svg class="pick-check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#1ed760" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+        all.forEach(item => {
+            const isSel = current && current.name === item.name;
+            const div = document.createElement('div');
+            div.className = 'pick-item' + (isSel ? ' selected' : '');
+            div.innerHTML = `
+                <div class="pick-cover">${item.cover ? `<img src="${item.cover}">` : noArt}</div>
+                <div style="flex:1;min-width:0">
+                    <div class="pick-name${isSel?' selected-name':''}">${item.name}</div>
+                    <div class="pick-sub">${item.sub}</div>
+                </div>
+                ${isSel ? check : ''}`;
+            div.onclick = () => {
+                localStorage.setItem('artistPick', JSON.stringify(item));
+                loadArtistPick();
+                closePickModal();
+                showToast('Artist Pick updated!');
+            };
+            pickList.appendChild(div);
+        });
+    }
+    $('pick-overlay').classList.add('open');
+    $('pick-sheet').classList.add('open');
+    document.body.style.overflow = 'hidden';
+}
+function closePickModal(){
+    $('pick-overlay').classList.remove('open');
+    $('pick-sheet').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function loadArtistPick(){
+    const pick=JSON.parse(localStorage.getItem('artistPick')||'null');
+    const section=$('artist-pick-section');
+    if(!pick){section.style.display='none';return;}
+    section.style.display='block';
+    $('artist-pick-title').textContent=pick.name||'No pick';
+    $('artist-pick-sub').textContent=pick.sub||'';
+    photoDB.load().then(p=>{ if(p&&$('artist-pick-avatar')) $('artist-pick-avatar').innerHTML=`<img src="${p}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`; });
+    artistPickBgDB.load().then(bg=>{
+        const bgEl=$('artist-pick-bg');
+        if(bg){ bgEl.innerHTML=`<img src="${bg}"><div class="artist-pick-label"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Artist Pick</div><div class="artist-pick-overlay"></div>`; }
+        else if(pick.cover){ bgEl.innerHTML=`<img src="${pick.cover}" style="filter:blur(8px);transform:scale(1.1)"><div class="artist-pick-label"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="vertical-align:middle;margin-right:4px"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>Artist Pick</div><div class="artist-pick-overlay"></div>`; }
+    });
+}
+
+        function checkAndShowEventsTab() {
+    const tours = JSON.parse(localStorage.getItem('tycoon_tours') || '[]');
+    const hasActive = tours.some(t => t.status !== 'completed');
+    const tab = $('events-tab');
+    if (tab) tab.style.display = hasActive ? 'block' : 'none';
+}
+
+function loadTourDates() {
+    const container = $('events-content');
+    if (!container) return;
+    const tours = JSON.parse(localStorage.getItem('tycoon_tours') || '[]');
+    const activeTours = tours.filter(t => t.status !== 'completed');
+    const gameDate = new Date(localStorage.getItem('currentDate') || new Date());
+
+    if (!activeTours.length) {
+        container.innerHTML = '<div style="text-align:center;color:#b3b3b3;font-size:14px;padding:60px 20px;">No upcoming shows</div>';
+        return;
+    }
+
+    let html = '';
+    activeTours.forEach(tour => {
+        const startWeeksOut = tour.status === 'selling' ? (tour.weeksUntilStart || 0) : 0;
+        const remainingStops = tour.route.slice(tour.currentStop || 0);
+        if (!remainingStops.length) return;
+
+        html += `<div style="padding:16px 20px 8px;font-size:11px;font-weight:800;color:#b3b3b3;text-transform:uppercase;letter-spacing:1.5px;">${tour.name}</div>`;
+
+        remainingStops.forEach((stop, i) => {
+            const stopDate = new Date(gameDate);
+            stopDate.setDate(stopDate.getDate() + (startWeeksOut + i) * 7);
+            const month = stopDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
+            const day = stopDate.getDate();
+            const year = stopDate.getFullYear();
+            const isNext = i === 0 && tour.status === 'live';
+
+            const venueName = stop.name || stop.venue || stop.n || 'Venue TBA';
+            const location = stop.location || stop.city || stop.l || '';
+            const continent = stop.continent || '';
+            const locationStr = [location, continent].filter(Boolean).join(' • ');
+
+            html += `
+            <div style="display:flex;align-items:center;padding:12px 20px;border-bottom:1px solid #1a1a1a;gap:14px;cursor:default;">
+                <div style="min-width:48px;text-align:center;background:#181818;border-radius:8px;padding:6px 4px;flex-shrink:0;">
+                    <div style="font-size:9px;color:#1ed760;text-transform:uppercase;letter-spacing:1px;font-weight:800;">${month}</div>
+                    <div style="font-size:22px;font-weight:900;line-height:1.1;color:#fff;">${day}</div>
+                    <div style="font-size:9px;color:#b3b3b3;font-weight:600;">${year}</div>
+                </div>
+                <div style="flex:1;min-width:0;">
+                    <div style="font-size:14px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${venueName}</div>
+                    <div style="font-size:12px;color:#b3b3b3;margin-top:2px;">${locationStr}</div>
+                </div>
+                ${isNext ? `<div style="font-size:10px;font-weight:800;color:#1ed760;background:rgba(30,215,96,0.1);padding:4px 10px;border-radius:20px;white-space:nowrap;flex-shrink:0;">NEXT SHOW</div>` : ''}
+            </div>`;
+        });
+    });
+
+    container.innerHTML = html || '<div style="text-align:center;color:#b3b3b3;font-size:14px;padding:60px 20px;">No upcoming shows</div>';
+}
+function loadPopularReleases(){
+    const albums = JSON.parse(localStorage.getItem('releasedAlbums')||'[]');
+    const songs  = JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+    const list   = $('popular-releases-list');
+    if(!list) return;
+    list.innerHTML = '';
+
+    let newestIdx=-1, newestDate=new Date(0);
+    albums.forEach((a,i)=>{const d=new Date(a.releaseDate||0);if(d>newestDate){newestDate=d;newestIdx=i;}});
+
+    const albumTrackNames=new Set();
+    albums.forEach(a=>(a.songs||[]).forEach(t=>albumTrackNames.add(t.songName||t.name||t)));
+
+    const pool=[];
+    albums.forEach((album,i)=>{
+        let total=0;
+        (album.songs||[]).forEach(t=>{const s=songs.find(x=>(x.songName||x.name)===(t.songName||t.name||t));if(s)total+=s.streams||0;});
+        pool.push({kind:'album',album,index:i,streams:total,isNewest:i===newestIdx});
+    });
+    songs.filter(s=>!albumTrackNames.has(s.songName||s.name)).forEach(song=>{
+        pool.push({kind:'song',song,streams:song.streams||0});
+    });
+    // Sort by current weekly streams for a "what's hot now" feel
+    pool.sort((a,b)=>{
+        const wA = a.kind==='album'
+            ? (a.album.songs||[]).reduce((s,t)=>{const r=songs.find(x=>(x.songName||x.name)===(t.songName||t.name||t));return s+(r?r.weeklyStreams||0:0);},0)
+            : (a.song.weeklyStreams||0);
+        const wB = b.kind==='album'
+            ? (b.album.songs||[]).reduce((s,t)=>{const r=songs.find(x=>(x.songName||x.name)===(t.songName||t.name||t));return s+(r?r.weeklyStreams||0:0);},0)
+            : (b.song.weeklyStreams||0);
+        return wB - wA;
+    });
+
+    const noArtA=`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><line x1="12" y1="3" x2="12" y2="9"/></svg>`;
+    const noArtS=`<svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="#555" stroke-width="1.5" stroke-linecap="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`;
+    const arrow=`<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="#555" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>`;
+
+    pool.slice(0,3).forEach(entry=>{
+        const div=document.createElement('div');
+        div.className='pop-release-item';
+        if(entry.kind==='album'){
+            const {album,index,isNewest}=entry;
+            let yr=album.releaseDate?new Date(album.releaseDate).getFullYear():(album.releaseYear||'');
+            div.onclick=()=>showAlbum(index);
+            const popLabel=album.type==='EP'?'EP':album.type==='SinglePack'?'Pack':'Album';
+div.innerHTML=`<div class="pop-release-cover">${album.coverArt?`<img src="${album.coverArt}">`:noArtA}</div><div style="flex:1;min-width:0"><div class="pop-release-badge">${isNewest?'Latest release':''}</div><div class="pop-release-name">${album.name||album.albumName||'Untitled'}</div><div class="pop-release-meta">${popLabel} • ${yr}</div></div>${arrow}`;
+        } else {
+            const {song}=entry;
+            div.innerHTML=`<div class="pop-release-cover">${song.coverArt?`<img src="${song.coverArt}">`:noArtS}</div><div style="flex:1;min-width:0"><div class="pop-release-badge">Single</div><div class="pop-release-name">${song.songName||song.name||'Untitled'}</div><div class="pop-release-meta">Single</div></div>${arrow}`;
+        }
+        list.appendChild(div);
+    });
+
+    if(list.children.length===0)
+        list.innerHTML='<div style="color:#b3b3b3;font-size:13px;padding:16px 0">No releases yet</div>';
+}
+    
+
+document.querySelectorAll('.tab').forEach(tab=>{
+tab.addEventListener('click',()=>{
+document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+tab.classList.add('active');
+const tabName=tab.dataset.tab;
+$('music-content').style.display='none';
+$('merch-content').style.display='none';
+$('events-content').style.display='none';
+if(tabName==='music'){$('music-content').style.display='block';}
+else if(tabName==='merch'){$('merch-content').style.display='block';loadMerch();}
+else if(tabName==='events'){$('events-content').style.display='block';loadTourDates();}
+});
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+btn.addEventListener('click',()=>{
+document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+btn.classList.add('active');
+currentFilter=btn.dataset.filter;
+const albums=JSON.parse(localStorage.getItem('releasedAlbums')||'[]'),songs=JSON.parse(localStorage.getItem('releasedSongs')||'[]');
+const singleSongs=songs.filter(s=>!albums.some(a=>a.songs&&a.songs.some(as=>(as.songName||as.name||as)===(s.songName||s.name))));
+const allReleases=[...albums,...singleSongs];
+loadDiscoList(allReleases);
+});
+});
+
+window.addEventListener('storage',e=>{
+if('releasedSongs'===e.key||'releasedAlbums'===e.key||'scheduledReleases'===e.key){
+cachedMonthlyListeners=0;
+localStorage.setItem('cachedMonthlyListeners','0');
+loadArtist();loadSongs();loadAlbums();loadScheduled();loadBio();loadArtistPick();loadPopularReleases();
+}
+});
+
+// WRAPPED LOGIC
+let wrappedTimer, currentSlide = 0;
+const SLIDE_DURATION = 8000;
+
+(function(){
+    const canvas=document.getElementById('wrapped-canvas');
+    if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    let W,H,pts=[];
+    const PALETTES=[
+        ['#9B35E8','#E040FB','#7B2FBE','#CE93D8'],
+        ['#00E5A0','#1DE9B6','#00BCD4','#80CBC4'],
+        ['#FF7043','#FF5722','#FFB300','#FFCC80'],
+        ['#5B8BFF','#3D5AFE','#00B0FF','#90CAF9'],
+        ['#00E676','#69F0AE','#1DE9B6','#B9F6CA']
+    ];
+    let pal=PALETTES[0];
+    function resize(){W=canvas.width=canvas.offsetWidth||window.innerWidth;H=canvas.height=canvas.offsetHeight||window.innerHeight;}
+    function mk(){return{x:Math.random()*W,y:Math.random()*H,r:Math.random()*140+80,vx:(Math.random()-.5)*.5,vy:(Math.random()-.5)*.5,ci:Math.floor(Math.random()*pal.length),a:Math.random()*.18+.05};}
+    function init(){resize();pts=Array.from({length:14},mk);}
+    function frame(){
+        ctx.clearRect(0,0,W,H);
+        pts.forEach(p=>{
+            p.x+=p.vx;p.y+=p.vy;
+            if(p.x<-p.r)p.x=W+p.r;if(p.x>W+p.r)p.x=-p.r;
+            if(p.y<-p.r)p.y=H+p.r;if(p.y>H+p.r)p.y=-p.r;
+            const g=ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+            const hex=Math.round(p.a*255).toString(16).padStart(2,'0');
+            g.addColorStop(0,pal[p.ci]+hex);g.addColorStop(1,'transparent');
+            ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill();
+        });
+        requestAnimationFrame(frame);
+    }
+    window.setWrappedPalette=i=>{pal=PALETTES[i]||PALETTES[0];pts.forEach(p=>p.ci=Math.floor(Math.random()*pal.length));};
+    init();frame();
+    window.addEventListener('resize',()=>{resize();});
+})();
+
+function checkWrappedAvailability() {
+    const gameDateStr = localStorage.getItem('currentDate');
+    const gameDate = gameDateStr ? new Date(gameDateStr) : new Date();
+    const month = gameDate.getMonth();
+    const day = gameDate.getDate();
+    
+    if (month === 11 && day >= 8) {
+        $('nav-wrapped').style.display = 'flex';
+        const year = gameDate.getFullYear();
+        $('wrapped-year-title').textContent = `${year} WRAPPED`;
+        prepareWrappedData(year);
+    } else {
+        $('nav-wrapped').style.display = 'none';
+        if ($('wrapped-screen').classList.contains('active')) {
+             switchTab('main-screen'); 
+        }
+    }
+}
+
+function prepareWrappedData(currentYear) {
+    const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+    const albums = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+    
+    let thisYearStreams = 0, lastYearStreams = 0;
+    let streamHistory = JSON.parse(localStorage.getItem('streamHistory') || '{}');
+    
+    thisYearStreams = songs.reduce((sum, s) => sum + (s.streams || 0), 0);
+    streamHistory[currentYear] = thisYearStreams;
+    localStorage.setItem('streamHistory', JSON.stringify(streamHistory));
+    
+    lastYearStreams = streamHistory[currentYear - 1] || 0;
+    
+    if (lastYearStreams > 0) {
+        $('growth-normal-content').style.display = 'block';
+        $('debut-marquee').style.display = 'none';
+        
+        const growth = ((thisYearStreams - lastYearStreams) / lastYearStreams) * 100;
+        $('growth-stat').textContent = (growth >= 0 ? '+' : '') + Math.round(growth) + '%';
+        $('growth-title').textContent = growth >= 0 ? 'INCREASE' : 'DECREASE';
+    } else {
+        $('growth-normal-content').style.display = 'none';
+        $('debut-marquee').style.display = 'block';
+    }
+    
+    const totalMinutes = Math.floor(thisYearStreams * 3.2);
+    $('minutes-stat').dataset.finalValue = totalMinutes; 
+    
+    let continentData = JSON.parse(localStorage.getItem(`continentData_${currentYear}`) || 'null');
+    
+    if (!continentData) {
+        const origins = ["North America", "South America", "Africa", "Asia", "Australia", "Europe"];
+        let remaining = 100;
+        continentData = origins.map((origin, i) => {
+            if (i === origins.length - 1) return { name: origin, val: remaining }; 
+            const val = Math.floor(Math.random() * (remaining - (origins.length - i - 1) * 5));
+            remaining -= val;
+            return { name: origin, val: Math.max(5, val) }; 
+        }).sort((a, b) => b.val - a.val);
+        localStorage.setItem(`continentData_${currentYear}`, JSON.stringify(continentData));
+    }
+
+    const continentList = $('continent-list');
+    continentList.innerHTML = '';
+    
+    continentData.slice(0, 5).forEach(d => {
+        continentList.innerHTML += `
+            <div class="continent-item">
+                <div class="continent-info">
+                    <h4>${d.name}</h4>
+                    <p>${d.val}%</p>
+                </div>
+                <div class="continent-bar-bg">
+                    <div class="continent-bar-fill" style="width:${d.val}%"></div>
+                </div>
+            </div>
+        `;
+    });
+    
+    const sortedSongs = [...songs].sort((a, b) => (b.streams || 0) - (a.streams || 0)).slice(0, 5);
+    const topList = $('top-songs-list');
+    topList.innerHTML = '';
+    
+    if (sortedSongs.length === 0) {topList.innerHTML = '<div style="opacity:0.6; padding:20px;">Release music to see it here!</div>';
+    } else {
+        sortedSongs.forEach((s, i) => {
+            const artHtml = s.coverArt ? `<img src="${s.coverArt}">` : '♪';
+            const delay = i * 0.15;
+            topList.innerHTML += `
+                <div class="top-item" style="animation-delay: ${delay}s">
+                    <div class="top-rank">${i+1}</div>
+                    <div class="top-cover">${artHtml}</div>
+                    <div class="top-info">
+                        <h4>${s.songName || s.name}</h4>
+                        <p>${formatLargeNumber(s.streams || 0)} streams</p>
+                    </div>
+                </div>
+            `;
+        });
+    }
+    
+    if (albums.length > 0) {
+         let bestAlbum = null, maxStreams = -1;
+         albums.forEach(album => {
+             if (!album.songs) return;
+             const albStreams = album.songs.reduce((sum, trackName) => {
+                 const s = songs.find(song => (song.songName || song.name) === (trackName.songName || trackName.name || trackName));
+                 return sum + (s ? (s.streams || 0) : 0);
+             }, 0);
+             if (albStreams > maxStreams) { maxStreams = albStreams; bestAlbum = album; }
+         });
+         
+         if (bestAlbum) {
+             $('top-album-name').textContent = bestAlbum.name || bestAlbum.albumName;
+             $('top-album-art').innerHTML = bestAlbum.coverArt ? `<img src="${bestAlbum.coverArt}">` : '💿';
+         } else {
+             resetTopAlbum();
+         }
+    } else {
+        resetTopAlbum();
+    }
+}
+
+function resetTopAlbum() {
+    $('top-album-name').textContent = 'No albums released yet';
+    $('top-album-art').innerHTML = '💿';
+}
+
+function startWrappedSlideshow() {
+    stopWrappedSlideshow();
+    currentSlide = 0;
+    showSlide(0);
+    wrappedTimer = setInterval(nextSlide, SLIDE_DURATION);
+}
+
+function stopWrappedSlideshow() {
+    if (wrappedTimer) clearInterval(wrappedTimer);
+}
+
+function showSlide(index) {
+    document.querySelectorAll('.slide').forEach((s, i) => {
+        s.classList.toggle('active', i === index);
+    });
+    updateProgressBars(index);
+    if (window.setWrappedPalette) setWrappedPalette(index);
+    
+    if (index === 2) { 
+        animateValue($('minutes-stat'), 0, parseInt($('minutes-stat').dataset.finalValue || 0), 2000);
+    }
+    if (index === 4) {
+        const topItems = document.querySelectorAll('.top-item');
+        topItems.forEach(item => {
+            item.style.animation = 'none';
+            item.offsetHeight; 
+            item.style.animation = null; 
+        });
+        const topAlbum = document.getElementById('top-album-display');
+        topAlbum.style.animation = 'none';
+        topAlbum.offsetHeight;
+        topAlbum.style.animation = null;
+    }
+}
+
+function animateValue(obj, start, end, duration) {
+    if (start === end) return;
+    let startTimestamp = null;
+    const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        obj.innerHTML = formatLargeNumber(Math.floor(progress * (end - start) + start));
+        if (progress < 1) {
+            window.requestAnimationFrame(step);
+        }
+    };
+    window.requestAnimationFrame(step);
+}
+
+function nextSlide() {
+    currentSlide++;
+    if (currentSlide >= 5) {
+        currentSlide = 0; 
+    }
+    showSlide(currentSlide);
+}
+
+function updateProgressBars(activeIndex) {
+    for (let i = 0; i < 5; i++) {
+        const fill = $(`fill-${i}`);
+        if (i < activeIndex) {
+            fill.style.transition = 'none';
+            fill.classList.add('completed');
+        } else if (i === activeIndex) {
+            fill.style.transition = 'none';
+            fill.classList.remove('completed');
+            fill.style.width = '0%';
+            void fill.offsetWidth;
+            fill.style.transition = `width ${SLIDE_DURATION}ms linear`;
+            fill.style.width = '100%';
+        } else {
+             fill.style.transition = 'none';
+             fill.classList.remove('completed');
+             fill.style.width = '0%';
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    loadArtist();
+    loadSongs();
+    loadAlbums();
+    loadBio();
+    loadArtistPick();
+    loadPopularReleases();
+    checkAndShowEventsTab();
+    
+    $('wrapped-slides').addEventListener('click', (e) => {
+        if (!$('wrapped-screen').classList.contains('active')) return;
+        
+        const clickX = e.clientX;
+        const screenWidth = window.innerWidth;
+        
+        if (clickX < screenWidth * 0.3) { 
+            currentSlide--;
+            if (currentSlide < 0) currentSlide = 4; 
+            stopWrappedSlideshow();
+            showSlide(currentSlide);
+            wrappedTimer = setInterval(nextSlide, SLIDE_DURATION);
+        } else if (clickX > screenWidth * 0.7) { 
+            stopWrappedSlideshow(); 
+            nextSlide(); 
+            wrappedTimer = setInterval(nextSlide, SLIDE_DURATION); 
+        }
+    });
+});
+
+    function getCurrentGameDate() {
+    const dateStr = localStorage.getItem('currentDate');
+    return dateStr ? new Date(dateStr) : new Date();
+}
+    
+    (function lockPastReleaseYears() {
+    const gameDate = getCurrentGameDate();
+    const gameYear = gameDate.getFullYear();
+
+    let albums = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+    let songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+
+    const normalizeDate = (dateStr) => {
+        const d = new Date(dateStr);
+        if (isNaN(d.getTime()) || d > gameDate) return gameDate.toISOString();
+        return d.toISOString();
+    };
+
+    albums = albums.map(album => {
+        if (!album.releaseDate) album.releaseDate = gameDate.toISOString();
+        else album.releaseDate = normalizeDate(album.releaseDate);
+
+        if (!album.releaseYear || album.releaseYear > gameYear) {
+            album.releaseYear = new Date(album.releaseDate).getFullYear();
+        }
+        return album;
+    });
+
+    songs = songs.map(song => {
+        if (!song.releaseDate) song.releaseDate = gameDate.toISOString();
+        else song.releaseDate = normalizeDate(song.releaseDate);
+        return song;
+    });
+
+    localStorage.setItem('releasedAlbums', JSON.stringify(albums));
+    localStorage.setItem('releasedSongs', JSON.stringify(songs));
+})();
+
+</script></body></html>

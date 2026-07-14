@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Snapify - Pro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --p: #1db954; 
+            --bg: #000000;
+            --surface: #121212; 
+            --text: #FFFFFF;
+            --text-gray: #b3b3b3;
+            --accent: #FF0055; 
+            --font-main: 'Inter', sans-serif;
+            --font-num: 'JetBrains Mono', monospace;
+            --nav-height: 60px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            height: calc(100vh - var(--nav-height));
+        }
+
+        .view-section {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            overflow-y: auto;
+            display: none;
+            padding-bottom: 20px;
+        }
+        .view-section.active { display: flex; flex-direction: column; }
+
+        #home-view {
+            background: linear-gradient(180deg, #1e1e1e 0%, #000000 100%);
+        }
+
+        .header {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #333;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            position: sticky; top: 0; z-index: 100;
+            flex-shrink: 0;
+        }
+        .logo { font-size: 1.2rem; font-weight: 900; letter-spacing: -1px; }
+        .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: var(--text);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 10px;
+            flex-shrink: 0;
+        }
+        .tab-btn {
+            background: transparent;
+            border: 1px solid #333;
+            color: var(--text-gray);
+            padding: 6px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+
+        .content-area {
+            flex: 1;
+            padding: 10px;
+        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .list-img {
+            width: 40px; height: 40px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+        .list-info { flex: 1; }
+        .list-title { font-weight: 700; font-size: 0.9rem; color: #fff; margin-bottom: 2px; }
+        .list-sub { font-size: 0.75rem; color: var(--text-gray); }
+
+        .simple-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        .simple-table th { text-align: left; color: var(--text-gray); padding: 8px; border-bottom: 1px solid #333; }
+        .simple-table td { padding: 10px 8px; border-bottom: 1px solid #222; }
+        .simple-table .num { font-family: var(--font-num); color: var(--accent); }
+
+        #stats-view {
+            background: #000;
+        }
+        
+        .stats-banner {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: #111;
+            display: flex;
+            align-items: flex-end;
+            padding: 20px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border-bottom: 1px solid #222;
+        }
+        .stats-bg-img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: cover;
+            opacity: 0.3;
+            filter: blur(15px);
+            z-index: 0;
+        }
+        .stats-banner-content {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            width: 100%;
+        }
+        .stats-pfp-container {
+            position: relative;
+            width: 80px; height: 80px;
+        }
+        .stats-pfp {
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            object-fit: cover;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.6);
+        }
+        .edit-pfp-btn {
+            position: absolute;
+            bottom: 0; right: 0;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+        .stats-artist-info {
+            flex: 1;
+        }
+        .stats-name {
+            font-size: 1.8rem;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 4px;
+            letter-spacing: -1px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            color: #fff;
+        }
+        .stats-date {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.7);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255,255,255,0.1);
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .stats-big-nums {
+            display: flex;
+            padding: 15px;
+            gap: 15px;
+            background: linear-gradient(180deg, #111 0%, #000 100%);
+        }
+        .s-num-box { 
+            flex: 1; 
+            background: #121212; 
+            padding: 10px; 
+            border-radius: 8px;
+            border: 1px solid #222;
+        }
+        .s-label { 
+            font-size: 0.6rem; color: var(--text-gray); 
+            font-weight: 700; text-transform: uppercase; 
+            letter-spacing: 0.5px; margin-bottom: 5px; 
+        }
+        .s-val { 
+            font-family: var(--font-num); font-size: 1.1rem; 
+            font-weight: 800; letter-spacing: -0.5px; color: #fff;
+        }
+        .s-growth { color: var(--accent); font-size: 0.7rem; margin-left: 5px; }
+
+        .stats-section-title {
+            padding: 20px 15px 10px 15px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: #fff;
+            text-transform: uppercase;
+            display: flex; 
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 1px solid #222;
+            margin-bottom: 5px;
+        }
+
+        .rank-list {
+            padding: 0 10px;
+        }
+        .rank-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            transition: background 0.2s;
+        }
+        .rank-item:active { background: #1a1a1a; }
+        
+        .rank-num {
+            font-family: var(--font-num);
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--accent);
+            width: 25px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        .rank-img {
+            width: 42px; height: 42px;
+            border-radius: 4px;
+            object-fit: cover;
+            margin-right: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .rank-info { flex: 1; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+        .rank-title { 
+            font-weight: 700; font-size: 0.85rem; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+            color: #fff; margin-bottom: 2px;
+        }
+        .rank-sub { font-size: 0.65rem; color: #666; font-weight: 600; }
+        
+        .rank-stats-box {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .rank-stat-main { 
+            font-family: var(--font-num); font-size: 0.85rem; 
+            font-weight: 700; color: #fff; 
+        }
+        .rank-stat-sub {
+            font-family: var(--font-num); font-size: 0.65rem; 
+            color: #555; margin-top: 1px;
+        }
+
+        .bottom-nav {
+            height: var(--nav-height);
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #222;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            z-index: 900;
+            flex-shrink: 0;
+        }
+        .nav-item {
+            background: none;
+            border: none;
+            color: #555;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            width: 50%;
+            height: 100%;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .nav-item i { font-size: 1.3rem; margin-bottom: 2px; }
+        .nav-item span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .nav-item.active { color: #fff; }
+        .nav-item.active i { color: var(--accent); transform: scale(1.1); }
+
+        #report-view {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000;
+            z-index: 1000;
+            flex-direction: column;
+            overflow: hidden; 
+        }
+
+        .rep-meta-bar {
+            padding: 8px 15px; 
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-gray);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #222;
+            flex-shrink: 0;
+        }
+        
+        #rep-artist { display: flex; align-items: center; gap: 6px; }
+
+        .diff-badge {
+            background: var(--accent);
+            color: #000;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-size: 0.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            vertical-align: middle;
+            display: inline-block;
+            letter-spacing: 0;
+            line-height: 1;
+        }
+
+        .rep-header {
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+        .rep-art {
+            width: 50px; height: 50px; 
+            border-radius: 4px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+            object-fit: cover;
+            border: 1px solid #333;
+        }
+        .rep-info { flex: 1; display: flex; flex-direction: column; }
+        .rep-type { font-size: 0.55rem; color: var(--accent); font-weight: 700; text-transform: uppercase; margin-bottom: 2px; }
+        .rep-title { 
+            font-size: 1.1rem; font-weight: 900; line-height: 1; 
+            margin-bottom: 2px; letter-spacing: -0.5px; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .rep-stats-row { display: flex; gap: 12px; color: var(--text-gray); font-size: 0.6rem; font-weight: 600; }
+
+        .stats-container { padding: 0 15px 5px 15px; flex-shrink: 0; }
+
+        .stat-bar {
+            background: var(--surface);
+            border: 1px solid #222;
+            color: #fff;
+            margin-bottom: 4px;
+            padding: 6px 12px; 
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .stat-bar.highlight { background: var(--accent); color: #000; border: none; }
+        
+        .sb-left { font-weight: 800; font-size: 0.65rem; text-transform: uppercase; }
+        .sb-right { font-family: var(--font-num); font-weight: 800; font-size: 0.9rem; letter-spacing: -0.5px; }
+
+        .table-container {
+            flex: 1;
+            margin: 0 10px 10px 10px;
+            overflow-y: auto; 
+            position: relative;
+        }
+
+        .rep-table { width: 100%; table-layout: fixed; border-collapse: collapse; }
+        .rep-table th {
+            text-align: right; color: var(--text-gray); font-size: 0.5rem; text-transform: uppercase;
+            padding: 0 2px 4px 2px; border-bottom: 1px solid #333; white-space: nowrap;
+            position: sticky; top: 0; background: #000; z-index: 10;
+        }
+        .rep-table th:first-child { text-align: left; padding-left: 0; }
+        .rep-table th:last-child { padding-right: 0; }
+
+        .rep-table td {
+            padding: 4px 2px; 
+            border-bottom: 1px solid #1a1a1a;
+            vertical-align: middle;
+            white-space: nowrap; overflow: hidden;
+        }
+        .rep-table td:first-child { padding-left: 0; }
+        .rep-table td:last-child { padding-right: 0; }
+
+        .td-name { 
+            font-weight: 700; font-size: 0.6rem; color: #fff; width: 100%;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;
+        }
+        .td-num {
+            text-align: right; font-family: var(--font-num); font-size: 0.55rem; 
+            font-weight: 700; color: #fff; letter-spacing: -0.5px;
+        }
+        .td-idx {
+            display: inline-block; width: 12px; color: #444; font-family: var(--font-num); 
+            font-size: 0.55rem; margin-right: 2px; vertical-align: middle;
+        }
+        .trend-up { color: #00ff6a; }
+        .trend-down { color: #ff3333; }
+        .trend-neutral { color: #444; }
+
+        .edition-row td {
+            background: #0a0a0a; color: var(--text-gray); font-weight: 800; font-size: 0.55rem;
+            letter-spacing: 1px; text-transform: uppercase; padding: 6px 10px;
+            text-align: center; border-bottom: 1px solid #222;
+        }
+
+        .controls {
+            position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 2000;
+        }
+        .c-btn {
+            width: 40px; height: 40px; border-radius: 50%; background: #fff; color: #000;
+            border: none; font-size: 1rem; cursor: pointer; box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+        
+        #pfp-input { display: none; }
+
+        /* --- SINGLE SNAPSHOT --- */
+        #single-snap-view {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.85); /* Dimmed background overlay */
+            z-index: 1100;
+            flex-direction: column;
+            justify-content: center; /* Centers the card vertically */
+            align-items: center; /* Centers the card horizontally */
+            padding: 15px; /* Margin from mobile screen edges */
+            box-sizing: border-box;
+        }
+        #single-snap-card {
+            display: flex; flex-direction: column;
+            background: #111; /* Dark background like reference image */
+            position: relative; 
+            width: 100%; 
+            max-width: 600px;
+            padding: 20px; /* Internal spacing so content doesn't hit corners */
+            border-radius: 4px;
+            box-sizing: border-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+        }
+        .snap-main-row { 
+            display: flex; flex-direction: row; 
+            align-items: center;
+            gap: 15px; /* Clean gap between image and text */
+            width: 100%;
+        }
+        .snap-cover-side { 
+            width: 40%; /* Gives text room to breathe */
+            position: relative; 
+            flex-shrink: 0; 
+            aspect-ratio: 1 / 1; /* Forces the image to be a perfect square */
+        }
+        .snap-cover-img { 
+            width: 100%; height: 100%; 
+            object-fit: cover; 
+            border-radius: 4px; 
+        }
+        .snap-corner {
+            position: absolute; width: 15px; height: 15px;
+            border-color: var(--snap-accent, #00BFFF); border-style: solid;
+        }
+        /* Corners now anchor flush to the edges of #single-snap-card */
+        .snap-corner.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .snap-corner.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+        .snap-corner.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+        .snap-corner.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+        .snap-info-side {
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; gap: 7px;
+            padding: 0;
+            overflow: hidden; /* Prevents long titles from breaking layout */
+        }
+        .snap-artists { font-size: 0.52rem; font-weight: 700; color: #777; text-transform: uppercase; letter-spacing: 1.5px; }
+        .snap-title {
+            font-size: 1rem; font-weight: 900; color: var(--snap-accent, #00BFFF);
+            text-transform: uppercase; letter-spacing: 0.5px; line-height: 1.1;
+        }
+        .snap-date-row {
+            font-size: 0.48rem; font-weight: 700; color: #555;
+            text-transform: uppercase; letter-spacing: 1px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .snap-date-sep { color: #2a2a2a; }
+        .snap-streams-box {
+            background: #1a1a1a; border-radius: 6px; padding: 8px 10px; margin-top: 2px;
+        }
+        .snap-streams-big {
+            font-family: var(--font-num); font-size: 1.4rem;
+            font-weight: 800; color: #fff; letter-spacing: -1px;
+        }
+        .snap-streams-label { font-size: 0.42rem; color: #444; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+        .snap-bottom-row { display: flex; gap: 6px; }
+        .snap-change-box { flex: 1; padding: 7px 9px; border-radius: 5px; background: #1a1a1a; }
+        .snap-change-num { font-family: var(--font-num); font-size: 0.9rem; font-weight: 800; color: #fff; }
+        .snap-change-num.neg { color: #ff4444; }
+        .snap-change-label { font-size: 0.4rem; color: #444; text-transform: uppercase; font-weight: 700; margin-top: 2px; }
+        .snap-pct-box {
+            flex: 1; padding: 7px 9px; border-radius: 5px;
+            background: var(--snap-accent, #00BFFF);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .snap-pct-num { font-family: var(--font-num); font-size: 1rem; font-weight: 800; color: #000; }
+        .snap-pct-label { font-size: 0.38rem; color: rgba(0,0,0,0.5); font-weight: 700; text-transform: uppercase; margin-top: 1px; }
+        .snap-total-label { font-family: var(--font-num); font-size: 0.45rem; color: #333; text-align: right; letter-spacing: 0.5px; }
+        .snap-watermark {
+            padding: 7px 14px; background: #000;
+            font-size: 0.45rem; color: #2a2a2a;
+            letter-spacing: 1.5px; text-align: right;
+            font-weight: 700; text-transform: uppercase; flex-shrink: 0;
+        }
+        .snap-controls { position: fixed; bottom: 20px; right: 20px; display: flex; gap: 10px; z-index: 2000; }
+    </style>
+</head>
+<body>
+
+    <div id="main-container">
+        
+        <div id="home-view" class="view-section active">
+            <div class="header">
+                <button class="back-btn" onclick="goBack()"><i class="fas fa-arrow-left"></i></button>
+                <div class="logo">SNAPIFY</div>
+            </div>
+            <div class="nav-tabs">
+                <button class="tab-btn active" onclick="switchTab('albums')">Albums</button>
+                <button class="tab-btn" onclick="switchTab('singles')">Singles</button>
+            </div>
+            <div class="content-area">
+                <div id="albums-tab" class="tab-content active"><div id="albums-list"></div></div>
+                <div id="singles-tab" class="tab-content">
+                    <div style="background: var(--surface); border-radius: 8px; padding: 10px;">
+                        <table class="simple-table">
+                            <thead><tr><th>Track</th><th style="text-align:right">Total</th><th style="text-align:right">Weekly</th></tr></thead>
+                            <tbody id="singles-list"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="stats-view" class="view-section">
+            <div class="stats-banner">
+                <img id="stats-bg" class="stats-bg-img" src="">
+                <div class="stats-banner-content">
+                    <div class="stats-pfp-container">
+                        <img id="stats-pfp" class="stats-pfp" src="">
+                        <button class="edit-pfp-btn" onclick="document.getElementById('pfp-input').click()">
+                            <i class="fas fa-camera" style="font-size:0.6rem"></i>
+                        </button>
+                        <input type="file" id="pfp-input" accept="image/*" onchange="uploadPfp(this)">
+                    </div>
+                    <div class="stats-artist-info">
+                        <div class="stats-name" id="stats-artist-name">Artist</div>
+                        <div class="stats-date" id="stats-current-date">Jan 21, 2026</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-big-nums">
+                <div class="s-num-box">
+                    <div class="s-label">Total Streams</div>
+                    <div class="s-val" id="stats-total-all">0</div>
+                </div>
+                <div class="s-num-box">
+                    <div class="s-label">Daily Estimates</div>
+                    <div class="s-val" id="stats-daily-est">0</div>
+                </div>
+            </div>
+
+            <div class="stats-section-title">
+                <span>Top Songs</span>
+                <span style="font-size:0.6rem; color:#666; font-weight:400;">WEEKLY</span>
+            </div>
+            <div class="rank-list" id="top-songs-list"></div>
+
+            <div class="stats-section-title">
+                <span>Top Albums</span>
+                <span style="font-size:0.6rem; color:#666; font-weight:400;">WEEKLY</span>
+            </div>
+            <div class="rank-list" id="top-albums-list"></div>
+        </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" id="nav-home" onclick="switchMainView('home')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </button>
+        <button class="nav-item" id="nav-stats" onclick="switchMainView('stats')">
+            <i class="fas fa-chart-line"></i>
+            <span>Stats</span>
+        </button>
+    </nav>
+
+    <div id="report-view">
+        <div class="rep-meta-bar">
+            <div id="rep-artist">Artist Name <span class="diff-badge">REALISTIC</span></div>
+            <div id="rep-date">Dec 2025</div>
+        </div>
+        <div class="rep-header">
+            <img src="" id="rep-img" class="rep-art" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMzMzIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9PSIxMDAiLz48L3N2Zz4='">
+            <div class="rep-info">
+                <div class="rep-type" id="rep-type">Album Report</div>
+                <div class="rep-title" id="rep-title-text">Album Name</div>
+                <div class="rep-stats-row"><span id="rep-track-count"></span> • <span id="rep-total-streams"></span></div>
+            </div>
+        </div>
+        <div class="stats-container">
+            <div class="stat-bar highlight" id="stat-bar-growth">
+                <div class="sb-left">Weekly Growth</div>
+                <div class="sb-right" id="rep-weekly-total">+0</div>
+            </div>
+            <div class="stat-bar" id="stat-bar-daily">
+                <div class="sb-left">Daily Estimates</div>
+                <div class="sb-right" id="rep-daily-total">0</div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table class="rep-table">
+                <thead>
+                    <tr>
+                        <th style="width: 26%">Track</th>
+                        <th style="width: 19%">Wkly</th>
+                        <th style="width: 15%">Daily</th>
+                        <th style="width: 14%">+/-</th>
+                        <th style="width: 26%">Total</th>
+                    </tr>
+                </thead>
+                <tbody id="rep-table-body"></tbody>
+                <tfoot id="rep-table-foot"></tfoot>
+            </table>
+        </div>
+        <div class="controls">
+            <button class="c-btn" onclick="closeReport()"><i class="fas fa-times"></i></button>
+            <button class="c-btn" onclick="shareReport()"><i class="fas fa-share-alt"></i></button>
+            <button class="c-btn" onclick="downloadReport()"><i class="fas fa-download"></i></button>
+        </div>
+    </div>
+
+    <!-- SINGLE SNAP — top level, never hidden by a parent -->
+    <div id="single-snap-view">
+        <div id="single-snap-card">
+            <div class="snap-corner tl"></div>
+            <div class="snap-corner tr"></div>
+            <div class="snap-corner bl"></div>
+            <div class="snap-corner br"></div>
+            <div class="snap-main-row">
+                <div class="snap-cover-side">
+                    <img id="snap-cover" class="snap-cover-img" src="">
+                </div>
+                <div class="snap-info-side">
+                    <div class="snap-artists" id="snap-artists">ARTIST</div>
+                    <div class="snap-title" id="snap-title">SONG TITLE</div>
+                    <div class="snap-date-row">
+                        <span id="snap-date">JAN 1, 2026</span>
+                        <span class="snap-date-sep">|</span>
+                        <span id="snap-day">MONDAY</span>
+                    </div>
+                    <div class="snap-streams-box">
+                        <div class="snap-streams-big" id="snap-weekly">0</div>
+                        <div class="snap-streams-label">Weekly Streams</div>
+                    </div>
+                    <div class="snap-bottom-row">
+                        <div class="snap-change-box">
+                            <div class="snap-change-num" id="snap-daily">0</div>
+                            <div class="snap-change-label">Daily Avg</div>
+                        </div>
+
+                        <div class="snap-pct-box">
+                            <div class="snap-pct-num" id="snap-pct">—</div>
+                            <div class="snap-pct-label">Change %</div>
+                        </div>
+                    </div>
+                    <div class="snap-total-label" id="snap-total">0 total streams</div>
+                </div>
+            </div>
+            <div class="snap-watermark">Designed By Music Excellence &amp; Jayson</div>
+        </div>
+        <div class="snap-controls">
+            <button class="c-btn" onclick="closeSingleSnap()"><i class="fas fa-times"></i></button>
+            <button class="c-btn" onclick="shareSingleSnap()"><i class="fas fa-share-alt"></i></button>
+            <button class="c-btn" onclick="downloadSingleSnap()"><i class="fas fa-download"></i></button>
+        </div>
+    </div>
+
+    <script>
+    const photoDB = (function() {
+        const DB_NAME = 'MusicGameDB', STORE = 'photos', KEY = 'artistPhoto';
+        function open() {
+            return new Promise((res, rej) => {
+                const r = indexedDB.open(DB_NAME, 1);
+                r.onupgradeneeded = e => e.target.result.createObjectStore(STORE);
+                r.onsuccess = e => res(e.target.result);
+                r.onerror = e => rej(e.target.error);
+            });
+        }
+        return {
+            load() { return open().then(db => new Promise((res,rej) => { const r=db.transaction(STORE,'readonly').objectStore(STORE).get(KEY); r.onsuccess=e=>res(e.target.result||null); r.onerror=e=>rej(e.target.error); })); },
+            save(v) { return open().then(db => new Promise((res,rej) => { const r=db.transaction(STORE,'readwrite').objectStore(STORE).put(v,KEY); r.onsuccess=()=>res(); r.onerror=e=>rej(e.target.error); })); }
+        };
+    })();
+
+    class Snapify {
+        constructor() {
+            this.db = {
+                albums: JSON.parse(localStorage.getItem('releasedAlbums') || '[]'),
+                songs: JSON.parse(localStorage.getItem('releasedSongs') || '[]'),
+                artist: JSON.parse(localStorage.getItem('artistDetails') || '{}')
+            };
+        }
+        getSong(name) {
+            return this.db.songs.find(s => (s.name || s.songName || '').trim() === (name || '').trim()) || { streams: 0, weeklyStreams: 0 };
+        }
+        getSingles() {
+            const albumSongs = new Set();
+            this.db.albums.forEach(alb => { if(alb.songs) alb.songs.forEach(s => albumSongs.add((typeof s === 'string' ? s : s.name).trim())); });
+            return this.db.songs.filter(s => !albumSongs.has((s.name || s.songName || '').trim()));
+        }
+        saveArtist() {
+            localStorage.setItem('artistDetails', JSON.stringify(this.db.artist));
+        }
+    }
+
+    const app = new Snapify();
+
+    function formatNum(num) {
+        if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+        if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+        if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+        return num;
+    }
+
+    async function init() {
+        renderAlbums();
+        renderSingles();
+        
+        const gameDateStr = localStorage.getItem('currentDate');
+        const d = gameDateStr ? new Date(gameDateStr) : new Date();
+        const dateStr = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        
+        document.getElementById('rep-date').innerText = dateStr;
+        document.getElementById('stats-current-date').innerText = dateStr;
+        
+        const diff = localStorage.getItem('gameDifficulty') || 'Realistic';
+        const artistEl = document.getElementById('rep-artist');
+        artistEl.innerHTML = `${app.db.artist.name || 'Artist'} <span class="diff-badge">${diff}</span>`;
+
+        document.getElementById('stats-artist-name').innerText = app.db.artist.name || 'Artist';
+        const defaultArt = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMzMzIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9PSIxMDAiLz48L3N2Zz4=';
+        let art = await photoDB.load().catch(() => null);
+        if (!art) art = app.db.artist.image || defaultArt;
+        document.getElementById('stats-pfp').src = art;
+        document.getElementById('stats-bg').src = art;
+    }
+
+    function switchMainView(viewName) {
+        document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewName + '-view').classList.add('active');
+        document.getElementById('nav-' + viewName).classList.add('active');
+        if(viewName === 'stats') renderStats();
+    }
+
+    function renderStats() {
+        let totalStreams = 0;
+        let totalWeekly = 0;
+        const allSongsData = [];
+        const processedNames = new Set();
+
+        const processSong = (name, art, source) => {
+            if (processedNames.has(name)) return;
+            processedNames.add(name);
+            const s = app.getSong(name);
+            const st = parseInt(s.streams) || 0;
+            const wk = parseInt(s.weeklyStreams) || 0;
+            totalStreams += st;
+            totalWeekly += wk;
+            allSongsData.push({ name, art, weekly: wk, total: st, source });
+        };
+
+        app.db.albums.forEach(alb => {
+            if(alb.songs) alb.songs.forEach(s => processSong(typeof s === 'string' ? s : s.name, alb.coverArt, 'Album'));
+        });
+
+        app.db.songs.forEach(s => {
+            const name = s.name || s.songName;
+            processSong(name, s.coverArt, 'Single');
+        });
+
+        document.getElementById('stats-total-all').innerText = totalStreams.toLocaleString();
+        document.getElementById('stats-daily-est').innerText = Math.floor(totalWeekly / 7).toLocaleString();
+
+        allSongsData.sort((a,b) => b.weekly - a.weekly);
+        const topSongs = allSongsData.slice(0, 5);
+        
+        const songsContainer = document.getElementById('top-songs-list');
+        if(topSongs.length === 0 || topSongs[0].weekly === 0) {
+            songsContainer.innerHTML = '<div style="color:#666; font-size:0.75rem; padding:10px; text-align:center;">No streams recorded yet.</div>';
+        } else {
+            songsContainer.innerHTML = topSongs.map((s, i) => `
+                <div class="rank-item">
+                    <div class="rank-num">${i+1}</div>
+                    <img src="${s.art || ''}" class="rank-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzIyMiI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiAvPjwvc3ZnPg=='">
+                    <div class="rank-info">
+                        <div class="rank-title">${s.name}</div>
+                        <div class="rank-sub">Total: ${formatNum(s.total)}</div>
+                    </div>
+                    <div class="rank-stats-box">
+                        <div class="rank-stat-main">${formatNum(s.weekly)}</div>
+                        <div class="rank-stat-sub">WEEKLY</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        const albumStats = app.db.albums.map(alb => {
+            let albWeekly = 0, albTotal = 0;
+            if(alb.songs) alb.songs.forEach(s => {
+                const sData = app.getSong(typeof s === 'string' ? s : s.name);
+                albWeekly += (parseInt(sData.weeklyStreams) || 0);
+                albTotal += (parseInt(sData.streams) || 0);
+            });
+            return { name: alb.name, art: alb.coverArt, weekly: albWeekly, total: albTotal };
+        });
+
+        albumStats.sort((a,b) => b.weekly - a.weekly);
+        const topAlbums = albumStats.slice(0, 5);
+
+        const albumsContainer = document.getElementById('top-albums-list');
+        if(topAlbums.length === 0) {
+            albumsContainer.innerHTML = '<div style="color:#666; font-size:0.75rem; padding:10px; text-align:center;">No albums released.</div>';
+        } else {
+            albumsContainer.innerHTML = topAlbums.map((a, i) => `
+                <div class="rank-item">
+                    <div class="rank-num">${i+1}</div>
+                    <img src="${a.art || ''}" class="rank-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzIyMiI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiAvPjwvc3ZnPg=='">
+                    <div class="rank-info">
+                        <div class="rank-title">${a.name}</div>
+                        <div class="rank-sub">Total: ${formatNum(a.total)}</div>
+                    </div>
+                    <div class="rank-stats-box">
+                        <div class="rank-stat-main">${formatNum(a.weekly)}</div>
+                        <div class="rank-stat-sub">WEEKLY</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    }
+
+    function uploadPfp(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                const res = e.target.result;
+                document.getElementById('stats-pfp').src = res;
+                document.getElementById('stats-bg').src = res;
+                photoDB.save(res).catch(() => {
+                    app.db.artist.image = res;
+                    app.saveArtist();
+                });
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function goBack() { window.history.back(); }
+
+    function switchTab(tab) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById(tab+'-tab').classList.add('active');
+    }
+
+    function renderAlbums() {
+        const list = document.getElementById('albums-list');
+        if (!app.db.albums.length) { list.innerHTML = '<div style="text-align:center; padding:20px; color:#666; font-size:0.8rem;">No albums.</div>'; return; }
+        list.innerHTML = app.db.albums.map((alb, idx) => {
+            const total = (alb.songs || []).reduce((acc, s) => acc + (parseInt(app.getSong(typeof s === 'string' ? s : s.name).streams) || 0), 0);
+            return `
+            <div class="list-item" onclick="openReport('album', ${idx})">
+                <img src="${alb.coverArt || ''}" class="list-img" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MCIgaGVpZ2h0PSI1MCIgZmlsbD0iIzMzMyI+PHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiAvPjwvc3ZnPg=='">
+                <div class="list-info">
+                    <div class="list-title">${alb.name}</div>
+                    <div class="list-sub">${(alb.songs||[]).length} Tracks • ${total.toLocaleString()} Streams</div>
+                </div>
+            </div>`;
+        }).join('');
+    }
+
+    function renderSingles() {
+        const list = document.getElementById('singles-list');
+        const singles = app.getSingles().sort((a,b) => (parseInt(b.weeklyStreams)||0) - (parseInt(a.weeklyStreams)||0));
+        if (!singles.length) { list.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; font-size:0.8rem;">No singles.</td></tr>'; return; }
+        list.innerHTML = singles.map(s => {
+            const name = s.name || s.songName;
+            return `<tr onclick='openSingleSnap(${JSON.stringify(name)})' style="cursor:pointer">
+                <td>${name}</td>
+                <td class="num" style="text-align:right; color:#fff;">${parseInt(s.streams||0).toLocaleString()}</td>
+                <td class="num" style="text-align:right;">${parseInt(s.weeklyStreams||0).toLocaleString()}</td>
+            </tr>`;
+        }).join('');
+    }
+
+    function openReport(type, index) {
+        let data = {};
+        let originalCount = 0;
+        if (type === 'album') {
+            const alb = app.db.albums[index];
+            data = { title: alb.name, art: alb.coverArt, songs: alb.songs || [] };
+            originalCount = alb.originalTrackCount || data.songs.length;
+            extractColor(alb.coverArt);
+        }
+
+        document.getElementById('rep-img').src = data.art || '';
+        document.getElementById('rep-title-text').innerText = data.title;
+        const tbody = document.getElementById('rep-table-body');
+        tbody.innerHTML = '';
+        
+        let totalWeekly = 0, totalStreams = 0, totalDaily = 0;
+        
+        data.songs.forEach((sName, idx) => {
+            const name = typeof sName === 'string' ? sName : sName.name;
+            const stats = app.getSong(name);
+            const streams = parseInt(stats.streams) || 0;
+            const weekly = parseInt(stats.weeklyStreams) || 0;
+            const prev = parseInt(stats.lastWeeklyStreams) || 0;
+            const daily = Math.floor(weekly / 7);
+            totalWeekly += weekly;
+            totalStreams += streams;
+            totalDaily += daily;
+
+            if (data.songs.length > originalCount && idx === originalCount) {
+                tbody.innerHTML += `<tr class="edition-row"><td colspan="5">Deluxe / Bonus</td></tr>`;
+            }
+
+            let trendHTML = '';
+            if (prev === 0 && weekly > 0) {
+                trendHTML = `<span style="background:var(--accent); color:#000; padding:1px 3px; border-radius:2px; font-size:0.5rem; font-weight:800;">NEW</span>`;
+            } else if (prev === 0 && weekly === 0) {
+                trendHTML = `<span class="trend-neutral">-</span>`;
+            } else {
+                const change = ((weekly - prev) / prev) * 100;
+                if (change > 0) trendHTML = `<span class="trend-up">↑${change.toFixed(2)}%</span>`;
+                else if (change < 0) trendHTML = `<span class="trend-down">↓${Math.abs(change).toFixed(2)}%</span>`;
+                else trendHTML = `<span class="trend-neutral">-</span>`;
+            }
+            
+            tbody.innerHTML += `
+                <tr>
+                    <td style="display:flex; align-items:center;">
+                        <span class="td-idx">${idx+1}</span>
+                        <span class="td-name">${name}</span>
+                    </td>
+                    <td class="td-num">${weekly.toLocaleString()}</td>
+                    <td class="td-num" style="color:#b3b3b3;">${daily.toLocaleString()}</td>
+                    <td class="td-num" style="font-size:0.5rem">${trendHTML}</td>
+                    <td class="td-num">${streams.toLocaleString()}</td>
+                </tr>`;
+        });
+
+        document.getElementById('rep-track-count').innerText = `${totalStreams === 0 || data.songs.length <= originalCount ? 'standard album' : 'deluxe album'}`;
+        document.getElementById('rep-total-streams').innerText = `${totalStreams.toLocaleString()} Total`;
+        document.getElementById('rep-weekly-total').innerText = `+${totalWeekly.toLocaleString()}`;
+        document.getElementById('rep-daily-total').innerText = `${totalDaily.toLocaleString()}`;
+
+        const foot = document.getElementById('rep-table-foot');
+        const totalChange = data.songs.reduce((acc, sName) => {
+            const name = typeof sName === 'string' ? sName : sName.name;
+            const stats = app.getSong(name);
+            const weekly = parseInt(stats.weeklyStreams) || 0;
+            const prev = parseInt(stats.lastWeeklyStreams) || 0;
+            return acc + (weekly - prev);
+        }, 0);
+        const totalChangePct = totalWeekly > 0 && (totalWeekly - totalChange) > 0
+            ? (((totalWeekly) / (totalWeekly - totalChange) - 1) * 100).toFixed(2)
+            : '0.00';
+        const pctClass = totalChange >= 0 ? 'trend-up' : 'trend-down';
+        const pctSign = totalChange >= 0 ? '+' : '';
+        foot.innerHTML = `<tr style="background:color-mix(in srgb, var(--accent) 15%, #000); border-top: 2px solid var(--accent);">
+            <td style="padding:6px 2px 6px 0; font-size:0.55rem; font-weight:800; color:#aaa; text-transform:uppercase; letter-spacing:0.5px;">
+                standard album
+            </td>
+            <td class="td-num" style="color:#fff;">${totalWeekly.toLocaleString()}</td>
+            <td class="td-num" style="color:#b3b3b3;">${totalDaily.toLocaleString()}</td>
+            <td class="td-num" style="font-size:0.5rem;">
+                <span class="${pctClass}">${pctSign}${totalChangePct}%</span>
+            </td>
+            <td class="td-num" style="color:#fff;">${totalStreams.toLocaleString()}</td>
+        </tr>`;
+
+        document.getElementById('report-view').style.display = 'flex';
+    }
+
+    function closeReport() { document.getElementById('report-view').style.display = 'none'; }
+
+    function openSingleSnap(songName) {
+        const s = app.getSong(songName);
+        const singleData = app.getSingles().find(x => (x.name||x.songName||'').trim() === songName.trim()) || {};
+        
+        const weekly = parseInt(s.weeklyStreams) || 0;
+        const prev   = parseInt(s.lastWeeklyStreams) || 0;
+        const total  = parseInt(s.streams) || 0;
+        const daily  = Math.floor(weekly / 7);
+        const diff   = weekly - prev;
+
+        let pctText = '—', changeText = '—', isNeg = false;
+        if (prev === 0 && weekly > 0) {
+            pctText = '↑ NEW'; changeText = '+' + daily.toLocaleString();
+        } else if (prev > 0) {
+            const pct = ((diff / prev) * 100).toFixed(2);
+            pctText = (diff >= 0 ? '↑' : '↓') + Math.abs(pct) + '%';
+            changeText = (diff >= 0 ? '+' : '') + diff.toLocaleString();
+            isNeg = diff < 0;
+        } else {
+            pctText = '—'; changeText = daily.toLocaleString();
+        }
+
+        const gameDateStr = localStorage.getItem('currentDate');
+        const d = gameDateStr ? new Date(gameDateStr) : new Date();
+        const dateStr = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).toUpperCase();
+        const dayStr  = d.toLocaleDateString('en-US', { weekday: 'long' }).toUpperCase();
+
+        const artistName = (app.db.artist.name || 'Artist').toUpperCase();
+        const feat = s.featuring ? ', ' + s.featuring.toUpperCase() : (singleData.featuring ? ', ' + singleData.featuring.toUpperCase() : '');
+        const coverSrc = singleData.coverArt || s.coverArt || '';
+
+        document.getElementById('snap-cover').src = coverSrc;
+        document.getElementById('snap-artists').innerText = artistName + feat;
+        document.getElementById('snap-title').innerText = songName.toUpperCase();
+        document.getElementById('snap-date').innerText = dateStr;
+        document.getElementById('snap-day').innerText = dayStr;
+        document.getElementById('snap-weekly').innerText = weekly.toLocaleString();
+        document.getElementById('snap-daily').innerText = daily.toLocaleString();
+
+        const changeEl = document.getElementById('snap-change');
+        if (changeEl) { changeEl.innerText = changeText; changeEl.className = 'snap-change-num' + (isNeg ? ' neg' : ''); }
+
+        document.getElementById('snap-pct').innerText = pctText;
+        document.getElementById('snap-total').innerText = total.toLocaleString() + ' total streams';
+
+        extractColor(coverSrc, (color) => {
+            document.documentElement.style.setProperty('--snap-accent', color);
+        });
+
+        const v = document.getElementById('single-snap-view');
+        v.style.display = 'flex';
+        v.style.flexDirection = 'column';
+    }
+
+    function closeSingleSnap() {
+        document.getElementById('single-snap-view').style.display = 'none';
+    }
+
+    function ensureDataURL(imgEl, callback) {
+        if (!imgEl.src || imgEl.src.startsWith('data:')) { callback(); return; }
+        const c = document.createElement('canvas');
+        c.width = imgEl.naturalWidth || 300;
+        c.height = imgEl.naturalHeight || 300;
+        const ctx = c.getContext('2d');
+        const tmp = new Image();
+        tmp.crossOrigin = 'anonymous';
+        tmp.onload = () => { ctx.drawImage(tmp, 0, 0); imgEl.src = c.toDataURL(); callback(); };
+        tmp.onerror = () => callback();
+        tmp.src = imgEl.src;
+    }
+
+    function shareSingleSnap() {
+        const card = document.getElementById('single-snap-card');
+        const controls = document.querySelector('#single-snap-view .snap-controls');
+        const coverImg = document.getElementById('snap-cover');
+        controls.style.display = 'none';
+        ensureDataURL(coverImg, () => {
+            html2canvas(card, { scale: 2, backgroundColor: '#0D0E10', useCORS: true, allowTaint: true }).then(canvas => {
+                controls.style.display = 'flex';
+                shareCanvas(canvas, 'Snapify_Single.png');
+            });
+        });
+    }
+
+    function downloadSingleSnap() {
+        const card = document.getElementById('single-snap-card');
+        const controls = document.querySelector('#single-snap-view .snap-controls');
+        const coverImg = document.getElementById('snap-cover');
+        controls.style.display = 'none';
+        ensureDataURL(coverImg, () => {
+            html2canvas(card, { scale: 2, backgroundColor: '#0D0E10', useCORS: true, allowTaint: true }).then(canvas => {
+                controls.style.display = 'flex';
+                saveCanvas(canvas, 'Snapify_Single.png');
+            });
+        });
+    }
+
+    function extractColor(imgSrc, callback) {
+        const fallbacks = ['#FF0055', '#00BFFF', '#00FF99', '#CC00FF', '#FFD700', '#FF6600'];
+        const pick = () => fallbacks[Math.floor(Math.random() * fallbacks.length)];
+        const apply = (color) => {
+            document.documentElement.style.setProperty('--accent', color);
+            if (callback) callback(color);
+        };
+        if (!imgSrc) return apply(pick());
+        const img = new Image();
+        img.onload = function() {
+            try {
+                const c = document.createElement('canvas');
+                c.width = 40; c.height = 40;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0, 40, 40);
+                const data = ctx.getImageData(0, 0, 40, 40).data;
+                let r = 0, g = 0, b = 0, n = 0;
+                for (let i = 0; i < data.length; i += 4) {
+                    const br = (data[i] + data[i+1] + data[i+2]) / 3;
+                    if (br > 40 && br < 210) { r += data[i]; g += data[i+1]; b += data[i+2]; n++; }
+                }
+                if (n > 0) {
+                    const f = 2.2;
+                    r = Math.min(255, Math.round(128 + (r/n - 128) * f));
+                    g = Math.min(255, Math.round(128 + (g/n - 128) * f));
+                    b = Math.min(255, Math.round(128 + (b/n - 128) * f));
+                    apply(`rgb(${r},${g},${b})`);
+                } else { apply(pick()); }
+            } catch(e) { apply(pick()); }
+        };
+        img.onerror = () => apply(pick());
+        img.src = imgSrc;
+    }
+
+    function shareReport() {
+        const el = document.getElementById('report-view');
+        const btns = document.querySelector('#report-view .controls');
+        const tbl = document.querySelector('.table-container');
+        const prevOverflow = tbl.style.overflowY;
+        tbl.style.overflowY = 'visible';
+        btns.style.display = 'none';
+        const repImg = document.getElementById('rep-img');
+        ensureDataURL(repImg, () => {
+            html2canvas(el, { scale: 2, backgroundColor: '#000000', windowHeight: el.scrollHeight, useCORS: true, allowTaint: true }).then(canvas => {
+                btns.style.display = 'flex';
+                tbl.style.overflowY = prevOverflow;
+                shareCanvas(canvas, 'Snapify_Report.png');
+            });
+        });
+    }
+
+    function downloadReport() {
+        const el = document.getElementById('report-view');
+        const btns = document.querySelector('#report-view .controls');
+        const tbl = document.querySelector('.table-container');
+        const prevOverflow = tbl.style.overflowY;
+        tbl.style.overflowY = 'visible';
+        btns.style.display = 'none';
+        const repImg = document.getElementById('rep-img');
+        ensureDataURL(repImg, () => {
+            html2canvas(el, { scale: 2, backgroundColor: '#000000', windowHeight: el.scrollHeight, useCORS: true, allowTaint: true }).then(canvas => {
+                btns.style.display = 'flex';
+                tbl.style.overflowY = prevOverflow;
+                saveCanvas(canvas, 'Snapify_Report.png');
+            });
+        });
+    }
+
+    function enterScreenshotMode() {
+        document.querySelectorAll('.snap-controls, .controls, #bottom-nav, .header, .back-btn').forEach(el => el.style.visibility = 'hidden');
+        let hint = document.getElementById('screenshot-hint');
+        if (!hint) {
+            hint = document.createElement('div');
+            hint.id = 'screenshot-hint';
+            hint.style.cssText = 'position:fixed;bottom:30px;left:0;right:0;text-align:center;z-index:9999;pointer-events:none;';
+            hint.innerHTML = `
+                <div style="display:inline-flex;flex-direction:column;align-items:center;gap:10px;">
+                    <div style="color:#fff;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;background:rgba(0,0,0,0.7);padding:6px 16px;border-radius:20px;">Take a screenshot now</div>
+                    <button id="screenshot-done-btn" onclick="exitScreenshotMode()" style="pointer-events:all;background:#fff;color:#000;border:none;padding:10px 30px;border-radius:20px;font-size:0.85rem;font-weight:800;cursor:pointer;letter-spacing:0.5px;">Done</button>
+                </div>
+            `;
+            document.body.appendChild(hint);
+        }
+        hint.style.display = 'block';
+    }
+
+    function exitScreenshotMode() {
+        document.querySelectorAll('.snap-controls, .controls, #bottom-nav, .header, .back-btn').forEach(el => el.style.visibility = '');
+        const hint = document.getElementById('screenshot-hint');
+        if (hint) hint.style.display = 'none';
+    }
+
+    async function uploadToImgBB(canvas) {
+        const base64 = canvas.toDataURL('image/png').split(',')[1];
+        const formData = new FormData();
+        formData.append('image', base64);
+        const res = await fetch('https://api.imgbb.com/1/upload?key=70139c5794f5e565e8ffbacba3621b04', {
+            method: 'POST', body: formData
+        });
+        const json = await res.json();
+        if (json.success) return json.data.url;
+        throw new Error('ImgBB upload failed');
+    }
+
+    function showLinkModal(url) {
+        let modal = document.getElementById('imgbb-modal');
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = 'imgbb-modal';
+            modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;';
+            modal.innerHTML = `
+                <div style="background:#111;border:1px solid #333;border-radius:12px;padding:24px;width:100%;max-width:380px;">
+                    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#aaa;margin-bottom:6px;">Image uploaded</div>
+                    <div style="font-size:0.75rem;color:#666;margin-bottom:16px;">Copy the link and open it in your browser to download.</div>
+                    <div style="display:flex;gap:8px;margin-bottom:16px;">
+                        <input id="imgbb-link-input" readonly style="flex:1;background:#1a1a1a;border:1px solid #333;color:#fff;padding:10px;border-radius:8px;font-size:0.75rem;outline:none;" />
+                        <button id="imgbb-copy-btn" onclick="copyImgBBLink()" style="background:var(--accent);color:#000;border:none;padding:10px 14px;border-radius:8px;font-weight:800;font-size:0.8rem;cursor:pointer;white-space:nowrap;">Copy</button>
+                    </div>
+                    <button onclick="document.getElementById('imgbb-modal').style.display='none'" style="width:100%;background:#222;border:1px solid #333;color:#aaa;padding:10px;border-radius:8px;font-size:0.8rem;font-weight:700;cursor:pointer;">Close</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+        document.getElementById('imgbb-link-input').value = url;
+        modal.style.display = 'flex';
+    }
+
+    function copyImgBBLink() {
+        const input = document.getElementById('imgbb-link-input');
+        input.select();
+        navigator.clipboard.writeText(input.value).catch(() => {
+            document.execCommand('copy');
+        });
+        const btn = document.getElementById('imgbb-copy-btn');
+        btn.innerText = 'Copied!';
+        setTimeout(() => btn.innerText = 'Copy', 2000);
+    }
+
+    function showUploadingToast() {
+        let toast = document.getElementById('uploading-toast');
+        if (!toast) {
+            toast = document.createElement('div');
+            toast.id = 'uploading-toast';
+            toast.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#222;border:1px solid #444;color:#fff;padding:10px 20px;border-radius:20px;font-size:0.75rem;font-weight:700;z-index:9999;display:none;white-space:nowrap;';
+            document.body.appendChild(toast);
+        }
+        toast.innerText = '⏳ Uploading...';
+        toast.style.display = 'block';
+        return toast;
+    }
+
+    async function handleCanvasSave(canvas) {
+        const toast = showUploadingToast();
+        try {
+            const url = await uploadToImgBB(canvas);
+            toast.style.display = 'none';
+            showLinkModal(url);
+        } catch(e) {
+            toast.innerText = '❌ Upload failed. Try again.';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+    }
+
+    async function shareCanvas(canvas, filename) {
+        canvas.toBlob(async (blob) => {
+            const file = new File([blob], filename, { type: 'image/png' });
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try { await navigator.share({ files: [file], title: 'Snapify' }); return; } catch(e) {}
+            }
+            await handleCanvasSave(canvas);
+        }, 'image/png');
+    }
+
+    function saveCanvas(canvas, filename) {
+        handleCanvasSave(canvas);
+    }
+
+    init();
+    </script>
+</body>
+</html>

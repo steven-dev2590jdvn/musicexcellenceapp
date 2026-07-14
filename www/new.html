@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>The Excellence Awards</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        /* --- 1. CORE THEME & VARIABLES --- */
+        :root {
+            --gold-primary: #D4AF37; /* Champagne Gold */
+            --gold-light: #F9E5AA;
+            --gold-dark: #8A6E18;
+            --bg-deep: #050505;
+            --bg-panel: rgba(20, 20, 20, 0.7);
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-main: #F0F0F0;
+            --text-muted: #888888;
+            --danger: #E74C3C;
+            --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+            --curtain-color: #590000;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(50, 20, 60, 0.15), transparent 25%), 
+                radial-gradient(circle at 85% 30%, rgba(60, 50, 20, 0.15), transparent 25%);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- 2. DASHBOARD LAYOUT --- */
+        .app-container {
+            max-width: 500px; margin: 0 auto; min-height: 100vh;
+            position: relative; padding-bottom: 80px;
+        }
+
+        .header-nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5, 5, 5, 0.95); 
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .nav-btn {
+            background: transparent; border: 1px solid var(--glass-border); color: white;
+            width: 40px; height: 40px; border-radius: 50%; cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .nav-btn:active { background: rgba(255,255,255,0.1); transform: scale(0.95); }
+
+        /* Hero and Stats */
+        .hero-wrapper {
+            margin-top: 70px; padding: 40px 0; position: relative;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        
+        .trophy-glow {
+            font-size: 72px; margin-bottom: 15px;
+            filter: drop-shadow(0 0 25px rgba(212, 175, 55, 0.3));
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+        .hero-status {
+            font-size: 10px; font-weight: 800; 
+            text-transform: uppercase; letter-spacing: 3px; color: var(--gold-primary);
+            background: rgba(212, 175, 55, 0.1); padding: 8px 18px; 
+            border-radius: 30px; border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        /* Stats Bar */
+        .stats-grid {
+            display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;
+            padding: 0 20px; margin-bottom: 30px;
+        }
+        .stat-card { 
+            background: var(--glass); border: 1px solid var(--glass-border);
+            border-radius: 12px; padding: 12px 5px; text-align: center;
+        }
+        .stat-val { 
+            font-family: 'Cinzel', serif; 
+            font-size: 22px; font-weight: 900; 
+            color: #fff;
+        }
+        .stat-label { 
+            font-size: 9px; text-transform: uppercase; 
+            color: var(--text-muted); letter-spacing: 1px; margin-top: 4px;
+        }
+
+        /* General Content */
+        .section-container { padding: 0 20px; }
+        .section-header { margin-bottom: 25px; }
+        .section-title { font-family: 'Cinzel', serif; font-size: 24px; color: white; margin-bottom: 5px; }
+        .section-subtitle { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+
+        /* Cards */
+        .category-card {
+            background: linear-gradient(145deg, rgba(30,30,30,0.8), rgba(10,10,10,0.8));
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px; padding: 20px; margin-bottom: 16px;
+            position: relative; overflow: hidden;
+            transition: transform 0.3s var(--ease-out);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .category-card::before {
+            content:''; position: absolute; top:0; left:0; width:3px; height:100%;
+            background: var(--gold-dark); opacity: 0.5;
+        }
+        
+        .cat-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .cat-name { 
+            font-family: 'Cinzel', serif; font-weight: 700; font-size: 16px; 
+            color: var(--gold-light); letter-spacing: 0.5px;
+        }
+
+        /* Nominations List */
+        .nomination-row {
+            display: flex; align-items: center; padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .nomination-row:last-child { border-bottom: none; }
+        
+        .nom-avatar {
+            width: 36px; height: 36px; border-radius: 8px;
+            background: #151515; border: 1px solid #333;
+            margin-right: 12px; display: flex;
+            align-items: center; justify-content: center; 
+            font-weight: 900; font-size: 14px; color: #555;
+        }
+        .nom-user-avatar { border-color: var(--gold-primary); color: var(--gold-primary); background: rgba(212,175,55,0.1); }
+
+        .nom-info { flex: 1; overflow: hidden; }
+        .nom-title { font-size: 14px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .nom-artist { font-size: 11px; color: var(--text-muted); }
+        
+        .status-tag {
+            font-size: 9px; font-weight: 700; padding: 4px 8px;
+            border-radius: 4px; letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        .tag-sub { background: rgba(76, 217, 100, 0.15); color: #4cd964; }
+        .tag-user { background: rgba(212, 175, 55, 0.2); color: var(--gold-primary); }
+
+        /* Inputs & Buttons */
+        .custom-select {
+            width: 100%; padding: 12px; background: rgba(0,0,0,0.5);
+            border: 1px solid #333; border-radius: 8px;
+            color: white; margin-bottom: 12px; outline: none;
+            font-family: 'Inter', sans-serif; font-size: 13px;
+        }
+        .submit-btn {
+            width: 100%; padding: 15px; 
+            background: linear-gradient(135deg, var(--gold-primary), var(--gold-dark));
+            color: #000; font-weight: 700; font-size: 13px; letter-spacing: 1px;
+            border: 1px solid var(--gold-light); border-radius: 8px; 
+            cursor: pointer; transition: 0.2s;
+            text-transform: uppercase; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+            font-family: 'Cinzel', serif;
+        }
+        .submit-btn:active { transform: scale(0.98); opacity: 0.9; }
+        .submit-btn:disabled { background: #333; color: #666; cursor: not-allowed; box-shadow: none; border-color: #444; }
+        .submit-btn.secondary {
+            background: transparent; border: 1px solid var(--glass-border); color: #fff; box-shadow: none;
+        }
+
+        /* --- 3. CEREMONY OVERLAY --- */
+        #ceremony-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 9999; display: none; overflow: hidden;
+        }
+
+        /* CURTAINS */
+        .curtain-container {
+            position: absolute; inset: 0; z-index: 2000; pointer-events: none;
+            display: flex;
+        }
+        .curtain {
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, #400000, #800000, #400000);
+            position: relative; transition: transform 2.5s cubic-bezier(0.6, 0.05, 0.2, 0.99);
+            box-shadow: inset -10px 0 50px rgba(0,0,0,0.7);
+        }
+        .curtain.left { transform-origin: left; }
+        .curtain.right { transform-origin: right; }
+        .curtain-opened .left { transform: translateX(-100%); }
+        .curtain-opened .right { transform: translateX(100%); }
+
+        .tv-bg {
+            position: absolute; inset: 0; opacity: 0.3;
+            background: radial-gradient(circle at 50% 50%, #2a1a40, #000);
+            z-index: 1;
+        }
+
+        .tv-content {
+            position: relative; z-index: 10; width: 100%; height: 100%;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+
+        .tv-title-lg {
+            font-family: 'Cinzel', serif;
+            font-size: 32px; font-weight: 900; text-align: center; margin: 0 20px;
+            background: linear-gradient(to bottom, #fff, var(--gold-light)); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            opacity: 0; transform: translateY(20px); transition: 1s var(--ease-out);
+            filter: drop-shadow(0 0 15px rgba(212,175,55,0.4));
+        }
+        .tv-sub {
+            font-size: 12px; color: var(--gold-primary); letter-spacing: 4px; text-transform: uppercase;
+            opacity: 0; transform: translateY(-10px); transition: 1s var(--ease-out); margin-bottom: 20px;
+        }
+
+        /* Broadcast Grid */
+        .broadcast-grid {
+            position: absolute; inset: 0; z-index: 5; background: #050505;
+            display: flex; flex-direction: column; opacity: 0; transition: opacity 0.5s;
+        }
+        .b-row {
+            flex: 1; display: flex; align-items: center; padding: 0 30px;
+            border-bottom: 1px solid #1a1a1a; position: relative;
+        }
+        .b-row.highlight {
+            background: linear-gradient(90deg, rgba(212,175,55,0.15), transparent);
+            border-left: 4px solid var(--gold-primary);
+        }
+        .b-name { font-family: 'Cinzel', serif; font-size: 20px; color: #444; transition: 0.2s; }
+        .b-row.highlight .b-name { color: #fff; font-size: 26px; text-shadow: 0 0 15px var(--gold-primary); }
+
+        /* Interaction Layers */
+        .interaction-layer {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.96); z-index: 50; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            padding: 30px; text-align: center;
+        }
+
+        /* Red Carpet Layer */
+        .red-carpet-bg {
+            position: absolute; inset: 0; z-index: -1;
+            background: radial-gradient(circle at 50% 70%, #590000, #1a0000);
+            overflow: hidden;
+        }
+        .flash-bulb {
+            position: absolute; width: 200px; height: 200px; border-radius: 50%;
+            background: white; opacity: 0; filter: blur(40px);
+            animation: flash 0.3s ease-out;
+        }
+        @keyframes flash { 0% { opacity: 0.8; transform: scale(0.5); } 100% { opacity: 0; transform: scale(1.5); } }
+
+        .envelope {
+            width: 280px; height: 180px; 
+            background: linear-gradient(135deg, #f0f0f0, #d0d0d0); 
+            border-radius: 4px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            position: relative; overflow: hidden;
+            transition: transform 0.5s var(--ease-out);
+            border: 1px solid #fff;
+        }
+        .envelope::after {
+            content:''; position: absolute; bottom:0; left:0; width:0; height:0;
+            border-style: solid; border-width: 0 140px 90px 140px;
+            border-color: transparent transparent #c0c0c0 transparent;
+        }
+        .wax-seal { 
+            width: 60px; height: 60px; background: #800000; border-radius: 50%; 
+            z-index: 5; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 2px solid rgba(255,255,255,0.2);
+            display: flex; align-items: center; justify-content: center;
+            color: rgba(255,255,255,0.3); font-size: 24px;
+        }
+
+        /* Animations */
+        .fade-in { opacity: 1 !important; transform: translateY(0) !important; }
+        .hidden { display: none !important; }
+        
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-top: 20px; }
+        .choice-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid #333; padding: 15px;
+            color: #ddd; border-radius: 8px; cursor: pointer; font-size: 12px;
+            transition: 0.2s;
+        }
+        .choice-btn:hover { border-color: var(--gold-primary); background: rgba(212,175,55,0.05); }
+
+        /* 3D VENUE */
+        #venue-canvas {
+            position: absolute; inset: 0; width: 100%; height: 100%; display: none; z-index: 1;
+        }
+        #black-transition {
+            position: absolute; inset: 0; background: #000; z-index: 20;
+            opacity: 0; pointer-events: none; transition: opacity 0.5s;
+        }
+        #black-transition.active { opacity: 1; pointer-events: all; }
+
+        /* Win overlay - semi-transparent over 3D */
+        #win-ui {
+            background: rgba(0,0,0,0.65) !important;
+            backdrop-filter: blur(4px);
+        }
+        #rivalry-ui {
+            background: rgba(0,0,0,0.7) !important;
+            backdrop-filter: blur(4px);
+        }
+
+        /* Force landscape prompt */
+        #rotate-prompt {
+            display: none; position: fixed; inset: 0; background: #000; z-index: 99999;
+            flex-direction: column; align-items: center; justify-content: center;
+            color: white; font-family: 'Cinzel', serif; text-align: center; padding: 30px;
+        }
+        #rotate-prompt.show { display: flex; }
+
+        @media (orientation: portrait) {
+            #rotate-prompt.show { display: flex; }
+        }
+        @media (orientation: landscape) {
+            #rotate-prompt.show { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-container" id="dashboard">
+        <nav class="header-nav">
+            <button class="nav-btn" onclick="history.back()">←</button>
+            <div style="font-family:'Cinzel', serif; font-weight:700; color:white; font-size: 14px;">EXCELLENCE AWARDS</div>
+            <button class="nav-btn">?</button>
+        </nav>
+
+        <div class="hero-wrapper">
+            <div class="trophy-glow">🏆</div>
+            <div class="hero-status" id="status-badge">Initializing...</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-val" id="stat-wins">0</div>
+                <div class="stat-label">Wins</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="stat-noms">0</div>
+                <div class="stat-label">Nods</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="stat-pop">0</div>
+                <div class="stat-label">Pop</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-val" id="stat-rep">0</div>
+                <div class="stat-label">Rep</div>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <div class="section-header">
+                <h2 class="section-title" id="phase-title">...</h2>
+                <div class="section-subtitle" id="phase-desc">...</div>
+            </div>
+            <div id="main-content"></div>
+        </div>
+    </div>
+
+    <!-- Rotate prompt for portrait -->
+    <div id="rotate-prompt">
+        <div style="font-size:60px; margin-bottom:20px;">📱</div>
+        <h2 style="font-size:22px; margin-bottom:10px; color:var(--gold-primary);">ROTATE YOUR DEVICE</h2>
+        <p style="font-size:14px; color:#888;">The ceremony requires landscape mode</p>
+    </div>
+
+    <div id="ceremony-overlay">
+        
+        <!-- 3D Venue Canvas -->
+        <canvas id="venue-canvas"></canvas>
+        
+        <!-- Black transition between categories -->
+        <div id="black-transition"></div>
+
+        <div id="red-carpet-ui" class="interaction-layer">
+            <div class="red-carpet-bg" id="rc-bg"></div>
+            <h2 style="font-family:'Cinzel', serif; color:white; font-size:28px; margin-bottom:10px; z-index:2;">THE RED CARPET</h2>
+            <p id="rc-desc" style="color:#ddd; margin-bottom:30px; font-size:14px; max-width:300px; z-index:2; line-height:1.5;">Cameras are flashing. The world is watching. How do you step out of the limousine?</p>
+            <div id="rc-options" class="choice-grid" style="z-index:2;"></div>
+        </div>
+
+        <div id="presenter-ui" class="interaction-layer">
+            <h2 style="color:var(--gold-primary); margin-bottom:30px; font-family:'Cinzel', serif;">PRESENT THE AWARD</h2>
+            <div class="envelope" onclick="Ceremony.openEnvelope()">
+                <div class="wax-seal">EA</div>
+            </div>
+        </div>
+
+        <div id="win-ui" class="interaction-layer" style="z-index:30;">
+            <div style="font-size:70px; margin-bottom:15px; filter:drop-shadow(0 0 20px var(--gold-primary));">🏆</div>
+            <h1 style="color:white; font-family:'Cinzel', serif; margin-bottom:6px; font-size:28px;">VICTORY</h1>
+            <p style="color:#aaa; font-size:13px; margin-bottom:16px;" id="win-category-label">The spotlight is yours.</p>
+            <textarea id="speech-input" placeholder="Type your acceptance speech..." rows="3" style="padding:15px; width:100%; max-width:380px; margin:0 0 14px; border-radius:8px; border:1px solid #555; background:rgba(0,0,0,0.6); color:white; font-family:inherit; resize:none; outline:none; font-size:14px;"></textarea>
+            <button class="submit-btn" style="max-width:380px;" onclick="Ceremony.submitSpeech()">Deliver Speech</button>
+        </div>
+
+        <div id="rivalry-ui" class="interaction-layer" style="z-index:30;">
+            <div id="npc-avatar" style="width:70px; height:70px; background:#222; border-radius:50%; margin-bottom:16px; border:2px solid var(--gold-primary); display:flex; align-items:center; justify-content:center; font-size:26px; color:#fff;"></div>
+            <h2 id="npc-name" style="color:white; font-family:'Cinzel', serif; margin-bottom:12px;">Artist Name</h2>
+            <p id="npc-quote" style="color:#999; font-style:italic; margin-bottom:24px; font-size:13px;">"..."</p>
+            <div id="rival-btns" style="width:100%; display:flex; gap:10px; justify-content:center;"></div>
+        </div>
+
+        <div id="summary-ui" class="interaction-layer" style="z-index:30; background:rgba(0,0,0,0.92) !important;">
+            <h1 style="font-family:'Cinzel', serif; color:var(--gold-primary);">GOODNIGHT</h1>
+            <p style="color:#888; margin-top:10px; margin-bottom:30px;">The afterparty awaits.</p>
+            <button class="submit-btn" onclick="location.reload()">Exit Venue</button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- CONFIGURATION ---
+        const DATA = {
+            categories: [
+                // === GENERAL FIELD (all genres eligible) ===
+                { id: 'recordYear',       name: 'Best Record of the Year',     type: 'song'   },
+                { id: 'songYear',         name: 'Best Song of the Year',        type: 'song'   },
+                { id: 'albumYear',        name: 'Best Album of the Year',       type: 'album'  },
+                { id: 'newArtist',        name: 'Best New Artist',              type: 'artist' },
+
+                // === CRAFT AWARDS (all genres eligible) ===
+                { id: 'engineeredAlbum',  name: 'Best Engineered Album',        type: 'album'  },
+                { id: 'writtenAlbum',     name: 'Best Written Album',           type: 'album'  },
+                { id: 'progressiveAlbum', name: 'Best Progressive Album',       type: 'album'  },
+
+                // === R&B ===
+                { id: 'rnbAlbum',         name: 'Best R&B Album',               type: 'album',  genre: 'R&B'   },
+                { id: 'rnbSong',          name: 'Best R&B Song',                type: 'song',   genre: 'R&B'   },
+                { id: 'rnbComposedSong',  name: 'Best R&B Composed Song',       type: 'song',   genre: 'R&B'   },
+                { id: 'rnbComposedAlbum', name: 'Best R&B Composed Album',      type: 'album',  genre: 'R&B'   },
+
+                // === RAP ===
+                { id: 'rapAlbum',         name: 'Best Rap Album',               type: 'album',  genre: 'Rap'   },
+                { id: 'rapPerf',          name: 'Best Rap Performance',         type: 'song',   genre: 'Rap'   },
+                { id: 'melodicPerf',      name: 'Best Melodic Performance',     type: 'song',   genre: 'Rap'   },
+                { id: 'rapProducedAlbum', name: 'Best Produced Album',          type: 'album',  genre: 'Rap'   },
+
+                // === POP ===
+                { id: 'popAlbum',         name: 'Best Pop Album',               type: 'album',  genre: 'Pop'   },
+                { id: 'popSong',          name: 'Best Pop Song',                type: 'song',   genre: 'Pop'   },
+                { id: 'popVocalAlbum',    name: 'Best Pop Vocal Album',         type: 'album',  genre: 'Pop'   },
+                { id: 'popPerf',          name: 'Best Pop Performance',         type: 'song',   genre: 'Pop'   },
+
+                // === DANCE ===
+                { id: 'danceAlbum',       name: 'Best Dance Album',             type: 'album',  genre: 'Dance' },
+                { id: 'danceSong',        name: 'Best Dance Song',              type: 'song',   genre: 'Dance' },
+                { id: 'danceVocalAlbum',  name: 'Best Dance Vocal Album',       type: 'album',  genre: 'Dance' },
+                { id: 'dancePerf',        name: 'Best Dance Performance',       type: 'song',   genre: 'Dance' },
+
+                // === K-POP ===
+                { id: 'kpopAlbum',        name: 'Best K-Pop Album',             type: 'album',  genre: 'K-Pop' },
+                { id: 'kpopSong',         name: 'Best K-Pop Song',              type: 'song',   genre: 'K-Pop' },
+                { id: 'kpopVocalAlbum',   name: 'Best K-Pop Vocal Album',       type: 'album',  genre: 'K-Pop' },
+                { id: 'kpopPerf',         name: 'Best K-Pop Performance',       type: 'song',   genre: 'K-Pop' },
+
+                // === ROCK ===
+                { id: 'rockAlbum',        name: 'Best Rock Album',              type: 'album',  genre: 'Rock'  },
+                { id: 'rockSong',         name: 'Best Rock Song',               type: 'song',   genre: 'Rock'  },
+                { id: 'rockVocalAlbum',   name: 'Best Rock Vocal Album',        type: 'album',  genre: 'Rock'  },
+                { id: 'rockPerf',         name: 'Best Rock Performance',        type: 'song',   genre: 'Rock'  },
+            ],
+            npcs: ["The Weeknd", "Taylor Swift", "Drake", "Beyoncé", "Kendrick Lamar", "Billie Eilish", "Bad Bunny", "SZA", "Travis Scott", "Doja Cat", "Frank Ocean", "Rihanna", "Ariana Grande", "Tyler, The Creator", "Kanye West", "Adele", "Bruno Mars", "Olivia Rodrigo"],
+            songTitles: ["Midnight", "Heartless", "Forever", "Blue", "Dreams", "Silence", "Gold", "Echoes", "Fire", "Rain", "Vibe", "Energy", "Secrets", "Lights", "Drama", "Toxic", "Heaven", "Gravity"],
+            albumTitles: ["Chronicles", "Dawn", "Dusk", "Chapter One", "Melodrama", "Futures", "Past Lives", "The End", "New World", "Odyssey", "The Score", "Gemini", "Eclipse", "Utopia"]
+        };
+
+        const RNG = {
+            song: () => `${DATA.songTitles[Math.floor(Math.random()*DATA.songTitles.length)]} ${['Love','Sky','High','Low','Life','Zone','World','Theory'][Math.floor(Math.random()*8)]}`,
+            album: () => `The ${DATA.albumTitles[Math.floor(Math.random()*DATA.albumTitles.length)]}`,
+            npc: () => DATA.npcs[Math.floor(Math.random() * DATA.npcs.length)]
+        };
+
+        // --- GLOBAL STATE ---
+        let Game = {
+            date: new Date(),
+            year: 2024,
+            phase: 0,
+            submissions: [],
+            nominations: {},
+            history: [], 
+            playerStats: { pop: 0, respect: 0 },
+            artistName: "You",
+            artistGenre: ""
+        };
+
+        // --- LIFECYCLE ---
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            checkPhase();
+        });
+
+        function loadState() {
+            const d = localStorage.getItem('currentDate');
+            Game.date = d ? new Date(d) : new Date();
+            Game.year = Game.date.getFullYear();
+            
+            Game.submissions = JSON.parse(localStorage.getItem('awardSubmissions') || '[]');
+            Game.nominations = JSON.parse(localStorage.getItem('yearlyNominations') || '{}');
+            Game.history = JSON.parse(localStorage.getItem('awardHistory') || '[]');
+            
+            Game.artistName = localStorage.getItem('artistName') || "You";
+            const artistDetails = JSON.parse(localStorage.getItem('artistDetails') || '{}');
+            Game.artistGenre = artistDetails.genre || localStorage.getItem('artistGenre') || '';
+
+            const pop = localStorage.getItem('popularity');
+            const respect = localStorage.getItem('respect');
+
+            Game.playerStats.pop = (pop && !isNaN(pop)) ? parseFloat(pop) : 0;
+            Game.playerStats.respect = (respect && !isNaN(respect)) ? parseFloat(respect) : 0;
+
+            updateStatDisplay();
+        }
+
+        function updateStatDisplay() {
+            document.getElementById('stat-pop').innerText = Math.floor(Game.playerStats.pop);
+            document.getElementById('stat-rep').innerText = Math.floor(Game.playerStats.respect);
+        }
+
+        function updateCareerStats() {
+            const winCount = Game.history.length;
+            let nomCount = 0;
+            Object.values(Game.nominations).forEach(yearCats => {
+                Object.values(yearCats).forEach(nomsList => {
+                    if (nomsList.some(n => n.isUser)) nomCount++;
+                });
+            });
+
+            document.getElementById('stat-wins').innerText = winCount;
+            document.getElementById('stat-noms').innerText = nomCount;
+            updateStatDisplay();
+        }
+
+        // --- PHASE LOGIC ---
+        function checkPhase() {
+            const month = Game.date.getMonth(); // 9 = Oct
+            const day = Game.date.getDate();
+            const status = document.getElementById('status-badge');
+            const title = document.getElementById('phase-title');
+            const desc = document.getElementById('phase-desc');
+
+            if (month !== 9) {
+                Game.phase = 0;
+                status.innerText = "OFF SEASON";
+                title.innerText = "Awards Closed";
+                desc.innerText = "The board is reviewing eligibility for next year.";
+                document.getElementById('main-content').innerHTML = "";
+            } else if (day <= 7) {
+                Game.phase = 1;
+                status.innerText = "PHASE I: CONSIDERATION";
+                title.innerText = "Submissions Open";
+                desc.innerText = "Select your strongest releases for academy consideration.";
+                renderSubmissions();
+            } else if (day <= 14) {
+                Game.phase = 2;
+                status.innerText = "PHASE II: REVEAL";
+                title.innerText = "The Nominations";
+                desc.innerText = "See who made the shortlist this year.";
+                ensureNominationsExist();
+                renderNominations();
+            } else if (day <= 21) {
+                Game.phase = 3;
+                status.innerText = "PHASE III: THE SHOW";
+                title.innerText = "The Ceremony";
+                desc.innerText = "The red carpet is active. Attendance is mandatory.";
+                ensureNominationsExist();
+                renderCeremonyEntry();
+            } else {
+                Game.phase = 4;
+                status.innerText = "POST SEASON";
+                title.innerText = "Winners Crowned";
+                desc.innerText = "Review the results. See you next October.";
+                document.getElementById('main-content').innerHTML = "";
+            }
+            
+            updateCareerStats(); 
+        }
+
+        // --- SUBMISSIONS LOGIC ---
+        function hasPreviouslySubmittedNewArtist() {
+            return Game.submissions.some(s => s.catId === 'newArtist');
+        }
+
+        function renderSubmissions() {
+            const container = document.getElementById('main-content');
+            container.innerHTML = '';
+            
+            const songs = JSON.parse(localStorage.getItem('releasedSongs') || '[]');
+            const albums = JSON.parse(localStorage.getItem('releasedAlbums') || '[]');
+            const playerGenre = Game.artistGenre;
+            
+            const isEligible = (d) => {
+                const dt = new Date(d);
+                return dt.getFullYear() === Game.year || (dt.getFullYear() === Game.year-1 && dt.getMonth() >= 9);
+            };
+
+            const validSongs = songs.filter(s => isEligible(s.releaseDate));
+            const validAlbums = albums.filter(a => isEligible(a.releaseDate || a.date));
+
+            // Group categories for display
+            const genreOrder = [null, playerGenre]; // general first, then player's genre
+            const sections = {
+                'General Field': DATA.categories.filter(c => !c.genre),
+                [`${playerGenre || 'Genre'} Categories`]: DATA.categories.filter(c => c.genre && c.genre === playerGenre)
+            };
+
+            Object.entries(sections).forEach(([sectionTitle, cats]) => {
+                if (cats.length === 0) return;
+
+                container.innerHTML += `
+                    <div style="margin: 24px 0 12px; display:flex; align-items:center; gap:10px;">
+                        <div style="flex:1; height:1px; background:var(--glass-border);"></div>
+                        <span style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">${sectionTitle}</span>
+                        <div style="flex:1; height:1px; background:var(--glass-border);"></div>
+                    </div>`;
+
+                cats.forEach(cat => {
+                    if (cat.id === 'newArtist' && hasPreviouslySubmittedNewArtist() && 
+                       !Game.submissions.find(s => s.catId === 'newArtist' && s.year === Game.year)) {
+                        return; 
+                    }
+
+                    const sub = Game.submissions.find(s => s.catId === cat.id && s.year === Game.year);
+                    
+                    let html = `
+                    <div class="category-card">
+                        <div class="cat-header">
+                            <span class="cat-name">${cat.name}</span>
+                            ${sub ? '<span class="status-tag tag-sub">Submitted</span>' : ''}
+                        </div>
+                    `;
+
+                    if (sub) {
+                        html += `<div style="font-size:13px; color:white; opacity:0.8;">${sub.entryName}</div>`;
+                    } else {
+                        if (cat.type === 'artist') {
+                            html += `<button class="submit-btn" onclick="doSubmit('${cat.id}', 'Self', 'artist')">Submit Candidacy</button>`;
+                        } else {
+                            const items = cat.type === 'album' ? validAlbums : validSongs;
+                            if (items.length === 0) {
+                                html += `<div style="color:var(--text-muted); font-size:12px; font-style:italic;">No eligible releases found.</div>`;
+                            } else {
+                                html += `<select id="sel-${cat.id}" class="custom-select">
+                                    <option value="" disabled selected>Select Release...</option>
+                                    ${items.map(i => `<option value="${i.name || i.songName || i.albumName}">${i.name || i.songName || i.albumName}</option>`).join('')}
+                                </select>
+                                <button class="submit-btn" onclick="submitSelect('${cat.id}')">Submit to Board</button>`;
+                            }
+                        }
+                    }
+                    html += `</div>`;
+                    container.innerHTML += html;
+                });
+            });
+
+            if (!playerGenre) {
+                container.innerHTML += `<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px; font-style:italic;">Set your artist genre to unlock genre-specific categories.</div>`;
+            }
+        }
+
+        window.submitSelect = (id) => {
+            const cat = DATA.categories.find(c => c.id === id);
+            const val = document.getElementById('sel-'+id).value;
+            if(val) doSubmit(id, val, cat.type);
+        }
+        window.doSubmit = (id, name, type) => {
+            Game.submissions.push({ catId: id, entryName: name, type: type, year: Game.year });
+            localStorage.setItem('awardSubmissions', JSON.stringify(Game.submissions));
+            renderSubmissions();
+        }
+
+        // --- NOMINATIONS LOGIC ---
+        function ensureNominationsExist() {
+            if (Game.nominations[Game.year]) return;
+
+            Game.nominations[Game.year] = {};
+
+            DATA.categories.forEach(cat => {
+                const nominees = [];
+                const playerSub = Game.submissions.find(s => s.catId === cat.id && s.year === Game.year);
+                
+                let chance = 0.3; 
+                if (playerSub) {
+                    chance += (Game.playerStats.pop / 250); 
+                    chance += (Game.playerStats.respect / 1250);
+                }
+
+                if (playerSub && Math.random() < chance) {
+                    nominees.push({ name: playerSub.entryName, artist: Game.artistName, isUser: true, type: cat.type });
+                }
+
+                const count = Math.floor(Math.random() * 2) + 5; 
+                const needed = count - nominees.length;
+                const usedNPCs = new Set();
+
+                for(let i=0; i<needed; i++) {
+                    let npc = RNG.npc();
+                    while(usedNPCs.has(npc)) npc = RNG.npc();
+                    usedNPCs.add(npc);
+
+                    let entryName = npc;
+                    if (cat.type === 'song') entryName = RNG.song();
+                    if (cat.type === 'album') entryName = RNG.album();
+
+                    nominees.push({ name: entryName, artist: npc, isUser: false, type: cat.type });
+                }
+
+                nominees.sort(() => 0.5 - Math.random());
+                Game.nominations[Game.year][cat.id] = nominees;
+            });
+
+            localStorage.setItem('yearlyNominations', JSON.stringify(Game.nominations));
+        }
+
+        function renderNominations() {
+            const container = document.getElementById('main-content');
+            container.innerHTML = '';
+            const yearNoms = Game.nominations[Game.year];
+            let totalUserNoms = 0;
+            
+            const sections = {
+                'General Field': DATA.categories.filter(c => !c.genre),
+                'Genre Categories': DATA.categories.filter(c => !!c.genre)
+            };
+
+            Object.entries(sections).forEach(([sectionTitle, cats]) => {
+                let sectionHtml = `
+                    <div style="margin: 24px 0 12px; display:flex; align-items:center; gap:10px;">
+                        <div style="flex:1; height:1px; background:var(--glass-border);"></div>
+                        <span style="font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-muted); font-weight:600;">${sectionTitle}</span>
+                        <div style="flex:1; height:1px; background:var(--glass-border);"></div>
+                    </div>`;
+                container.innerHTML += sectionHtml;
+
+                cats.forEach(cat => {
+                    const noms = yearNoms[cat.id];
+                    if (!noms) return;
+                    const hasUser = noms.some(n => n.isUser);
+                    if (hasUser) totalUserNoms++;
+
+                    let html = `<div class="category-card" style="${hasUser ? 'border-color:var(--gold-dark);' : ''}">
+                        <div class="cat-header">
+                            <span class="cat-name" style="${hasUser ? 'color:var(--gold-primary)' : ''}">${cat.name}</span>
+                            <div style="display:flex; gap:6px; align-items:center;">
+                                ${cat.genre ? `<span style="font-size:9px; padding:3px 7px; border-radius:4px; background:rgba(255,255,255,0.05); color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">${cat.genre}</span>` : ''}
+                                ${hasUser ? '<span class="status-tag tag-user">Nominated</span>' : ''}
+                            </div>
+                        </div>`;
+                    
+                    noms.forEach(nom => {
+                        const title = cat.type === 'artist' ? nom.artist : nom.name;
+                        const subtext = cat.type === 'artist' ? 'Artist' : nom.artist;
+                        html += `
+                        <div class="nomination-row">
+                            <div class="nom-avatar ${nom.isUser ? 'nom-user-avatar' : ''}">${nom.artist[0]}</div>
+                            <div class="nom-info">
+                                <div class="nom-title">${title}</div>
+                                <div class="nom-artist">${subtext}</div>
+                            </div>
+                        </div>`;
+                    });
+                    html += `</div>`;
+                    container.innerHTML += html;
+                });
+            });
+
+            if (totalUserNoms === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; color:#888;">The Academy did not select your submissions this year. Better luck next time.</div>` + container.innerHTML;
+            }
+        }
+
+        // --- CEREMONY LOGIC ---
+        function renderCeremonyEntry() {
+            const attendedKey = `ceremonyDone_${Game.year}`;
+            const hasAttended = localStorage.getItem(attendedKey);
+
+            if (hasAttended) {
+                document.getElementById('main-content').innerHTML = `
+                    <div class="category-card" style="text-align:center; padding:40px 20px;">
+                        <h3 style="color:white; margin-bottom:10px; font-family:'Cinzel', serif;">Season Concluded</h3>
+                        <p style="color:#666; margin-bottom:0;">You have already attended the ceremony for ${Game.year}.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let userNomCount = 0;
+            Object.values(Game.nominations[Game.year] || {}).forEach(list => {
+                if(list.some(n => n.isUser)) userNomCount++;
+            });
+
+            document.getElementById('main-content').innerHTML = `
+                <div class="category-card" style="text-align:center; padding:40px 20px;">
+                    <div style="font-size:50px; margin-bottom:20px;">🥂</div>
+                    <h3 style="color:white; margin-bottom:10px; font-family:'Cinzel', serif;">The Red Carpet</h3>
+                    <p style="color:#888; margin-bottom:30px;">
+                        ${userNomCount > 0 ? `You are nominated for <strong>${userNomCount}</strong> awards tonight.` : `You are not nominated, but your attendance is expected.`}
+                    </p>
+                    <button class="submit-btn" onclick="Ceremony.start(false)" style="margin-bottom:10px;">🎬 Watch Full Show</button>
+                    ${userNomCount > 0 ? `<button class="submit-btn secondary" onclick="Ceremony.start(true)" style="margin-top:4px;">⭐ My Nominations Only</button>` : ''}
+                </div>
+            `;
+        }
+        const Ceremony = {
+        queue: [], 
+        idx: 0, 
+        flashInterval: null,
+        
+        start: function(myNominationsOnly) {
+            // Safety: Check if nominations exist
+            if (!Game.nominations[Game.year]) {
+                alert("Nominations data missing. Please wait for Phase II.");
+                return;
+            }
+
+            this.myNominationsOnly = !!myNominationsOnly;
+            document.getElementById('ceremony-overlay').style.display = 'block';
+            this.sceneRedCarpet();
+        },
+
+        // --- 1. RED CARPET ---
+        sceneRedCarpet: function() {
+            const ui = document.getElementById('red-carpet-ui');
+            const bg = document.getElementById('rc-bg');
+            const opts = document.getElementById('rc-options');
+            const desc = document.getElementById('rc-desc');
+            
+            ui.style.display = 'flex';
+            
+            // Camera Flash Effect
+            if (this.flashInterval) clearInterval(this.flashInterval);
+            this.flashInterval = setInterval(() => {
+                const flash = document.createElement('div');
+                flash.className = 'flash-bulb';
+                flash.style.left = Math.random() * 100 + '%';
+                flash.style.top = Math.random() * 100 + '%';
+                bg.appendChild(flash);
+                setTimeout(() => flash.remove(), 500);
+            }, 400);
+
+            desc.innerText = "The limousine door opens. Hundreds of cameras turn your way. What look are you serving tonight?";
+
+            opts.innerHTML = `
+                <button class="choice-btn" onclick="Ceremony.handleOutfit('classic')">
+                    <strong style="color:white; display:block; margin-bottom:5px;">Classic Glamour</strong>
+                    Timeless. (+Respect)
+                </button>
+                <button class="choice-btn" onclick="Ceremony.handleOutfit('avant')">
+                    <strong style="color:white; display:block; margin-bottom:5px;">Avant Garde</strong>
+                    Bold statement. (+Pop)
+                </button>
+                <button class="choice-btn" onclick="Ceremony.handleOutfit('street')">
+                    <strong style="color:white; display:block; margin-bottom:5px;">Designer Streetwear</strong>
+                    Modern. (Balanced)
+                </button>
+            `;
+        },
+
+        handleOutfit: function(type) {
+            if(type === 'classic') this.updateStat('respect', 3);
+            if(type === 'avant') this.updateStat('popularity', 3);
+            if(type === 'street') { this.updateStat('popularity', 1); this.updateStat('respect', 1); }
+
+            const opts = document.getElementById('rc-options');
+            const desc = document.getElementById('rc-desc');
+            
+            desc.innerText = "A reporter asks: 'How are you feeling about your chances?'";
+            opts.innerHTML = `
+                <button class="choice-btn" onclick="Ceremony.handleInterview('humble')">"Just honored to be here."</button>
+                <button class="choice-btn" onclick="Ceremony.handleInterview('confident')">"We deserve it."</button>
+                <button class="choice-btn" onclick="Ceremony.handleInterview('mysterious')">"No comment."</button>
+            `;
+        },
+
+        handleInterview: function(type) {
+            if(type === 'humble') this.updateStat('respect', 2);
+            if(type === 'confident') this.updateStat('popularity', 2);
+            
+            clearInterval(this.flashInterval);
+            document.getElementById('red-carpet-ui').style.display = 'none';
+            this.beginShow();
+        },
+
+        // --- 2. FORCE LANDSCAPE + INIT 3D VENUE ---
+        beginShow: function() {
+            // Force landscape
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape-primary').catch(() => {});
+            }
+            try { document.documentElement.requestFullscreen && document.documentElement.requestFullscreen(); } catch(e) {}
+            document.getElementById('rotate-prompt').classList.add('show');
+
+            // Show canvas
+            document.getElementById('venue-canvas').style.display = 'block';
+
+            // Init Three.js
+            if (!window._venueReady) {
+                initVenue();
+                window._venueReady = true;
+            }
+
+            // Show intro on LED screen
+            updateLEDScreen('EXCELLENCE\nAWARDS', null, null, -1, false);
+
+            // Queue — filter to nominated categories only if requested
+            if (this.myNominationsOnly) {
+                this.queue = DATA.categories.filter(cat => {
+                    const noms = (Game.nominations[Game.year] || {})[cat.id] || [];
+                    return noms.some(n => n.isUser);
+                });
+                if (this.queue.length === 0) {
+                    // Fallback: no nominations found, show all
+                    this.queue = DATA.categories;
+                }
+            } else {
+                this.queue = DATA.categories;
+            }
+            this.idx = 0;
+
+            // Short pause then start
+            setTimeout(() => this.playCategory(), 2500);
+        },
+
+        // --- 3. MAIN LOOP ---
+        playCategory: function() {
+            if (this.idx >= this.queue.length) return this.end();
+
+            const cat = this.queue[this.idx];
+            let nominees = [];
+            try {
+                if (Game.nominations && Game.nominations[Game.year]) {
+                    nominees = Game.nominations[Game.year][cat.id] || [];
+                }
+            } catch(e) {}
+
+            if (!nominees || nominees.length === 0) {
+                setTimeout(() => this.next(), 50);
+                return;
+            }
+
+            this.hideLayers();
+
+            // Determine winner
+            const playerNom = nominees.find(n => n.isUser);
+            let winnerObj = null;
+            if (playerNom) {
+                const score = (Game.playerStats.pop * 0.6) + (Game.playerStats.respect * 0.4) + (Math.random() * 30);
+                if (score > 60 + (Math.random() * 50)) winnerObj = playerNom;
+            }
+            if (!winnerObj) {
+                const npcs = nominees.filter(n => !n.isUser);
+                winnerObj = npcs.length > 0 ? npcs[Math.floor(Math.random() * npcs.length)] : nominees[0];
+            }
+            this.currentOutcome = winnerObj;
+            this.currentCatName = cat.name;
+
+            // Show category on LED screen
+            updateLEDScreen(cat.name, 'THE NOMINEES', null, -1, false);
+
+            const canPresent = !playerNom && Game.playerStats.respect > 50 && Math.random() < 0.5;
+
+            setTimeout(() => {
+                if (canPresent) this.scenePresenter();
+                else this.sceneBroadcast(nominees);
+            }, 2200);
+        },
+
+        sceneBroadcast: function(nominees) {
+            let ticks = 0;
+            let current = 0;
+            const catName = this.currentCatName;
+
+            const interval = setInterval(() => {
+                updateLEDScreen(catName, 'THE NOMINEES', nominees, current, false);
+                current = (current + 1) % nominees.length;
+                ticks++;
+
+                if (ticks > nominees.length + 4) {
+                    clearInterval(interval);
+                    // Slow down to winner
+                    let slowTick = 0;
+                    const slowInterval = setInterval(() => {
+                        updateLEDScreen(catName, 'THE NOMINEES', nominees, current, false);
+                        current = (current + 1) % nominees.length;
+                        slowTick++;
+                        if (slowTick > 6) {
+                            clearInterval(slowInterval);
+                            setTimeout(() => this.sceneReveal(), 400);
+                        }
+                    }, 350);
+                }
+            }, 130);
+        },
+
+        scenePresenter: function() {
+            document.getElementById('presenter-ui').style.display = 'flex';
+        },
+
+        openEnvelope: function() {
+            const env = document.querySelector('.envelope');
+            env.style.transform = 'scale(1.2)';
+            env.style.opacity = 0;
+            setTimeout(() => {
+                document.getElementById('presenter-ui').style.display = 'none';
+                this.updateStat('respect', 1);
+                this.sceneReveal();
+            }, 500);
+        },
+
+        sceneReveal: function() {
+            const winner = this.currentOutcome;
+            const display = winner.type === 'artist' ? winner.artist : winner.name;
+
+            // Flash winner on screen
+            updateLEDScreen('AND THE\nWINNER IS', display, null, -1, true);
+            triggerCameraFlashes(3500);
+
+            setTimeout(() => {
+                if (winner.isUser) this.sceneWin();
+                else this.sceneRival(winner);
+            }, 2800);
+        },
+
+        sceneWin: function() {
+            Game.history.push({ year: Game.year, cat: this.currentCatName, entry: this.currentOutcome.name });
+            localStorage.setItem('awardHistory', JSON.stringify(Game.history));
+            updateCareerStats();
+
+            // Camera walks to stage
+            audienceCheering = true;
+            spawnConfetti();
+
+            // Walk down the aisle toward stage
+            animateCamera(
+                { x: 0, y: 2.0, z: -2 },
+                { x: 0, y: 3.5, z: -12 },
+                3200,
+                () => {
+                    // Arrive on stage - now face the audience
+                    animateCamera(
+                        { x: 0, y: 3.2, z: -5.5 },
+                        { x: 0, y: 1.8, z: 8 },
+                        1500,
+                        () => {
+                            // Now show win UI with faded crowd behind
+                            document.getElementById('win-category-label').innerText = `"${this.currentCatName}"`;
+                            document.getElementById('win-ui').style.display = 'flex';
+                        }
+                    );
+                }
+            );
+        },
+
+        submitSpeech: function() {
+            const txt = document.getElementById('speech-input').value.toLowerCase();
+            let popChange = 2; let repChange = 1;
+            if (txt.length > 5) {
+                if (txt.includes('thank')) { repChange += 3; popChange += 1; }
+                if (txt.includes('best') || txt.includes('me')) { repChange -= 1; popChange += 5; }
+            }
+            this.updateStat('popularity', popChange);
+            this.updateStat('respect', repChange);
+            document.getElementById('speech-input').value = '';
+            document.getElementById('win-ui').style.display = 'none';
+
+            // Walk back off stage, camera returns to seat
+            audienceCheering = false;
+            animateCamera(
+                { x: 0, y: 1.8, z: 7 },
+                { x: 0, y: 3.5, z: -10 },
+                2000,
+                () => this.next()
+            );
+        },
+
+        sceneRival: function(winner) {
+            const ui = document.getElementById('rivalry-ui');
+            document.getElementById('npc-name').innerText = winner.artist;
+            document.getElementById('npc-avatar').innerText = winner.artist.charAt(0);
+            document.getElementById('npc-quote').innerText = "The crowd goes wild.";
+
+            const btns = document.getElementById('rival-btns');
+            btns.innerHTML = `<button class="submit-btn" style="width:150px;" onclick="Ceremony.next()">Applaud</button>`;
+
+            let wasNominated = false;
+            try {
+                const catId = this.queue[this.idx].id;
+                if (Game.nominations[Game.year][catId]) {
+                    wasNominated = Game.nominations[Game.year][catId].some(n => n.isUser);
+                }
+            } catch(e) {}
+
+            if (wasNominated) {
+                btns.innerHTML += `<button class="submit-btn" style="width:150px; background:#333; margin-left:10px; border-color:#555;" onclick="Ceremony.reactSalty()">React Poorly</button>`;
+            }
+            ui.style.display = 'flex';
+        },
+
+        reactSalty: function() {
+            alert("The cameras caught your reaction. (+Pop, -Rep)");
+            this.updateStat('popularity', 5);
+            this.updateStat('respect', -3);
+            document.getElementById('rivalry-ui').style.display = 'none';
+            this.next();
+        },
+
+        next: function() {
+            this.hideLayers();
+            // Black screen 2 seconds between categories
+            const bt = document.getElementById('black-transition');
+            bt.classList.add('active');
+            setTimeout(() => {
+                bt.classList.remove('active');
+                this.idx++;
+                this.playCategory();
+            }, 2000);
+        },
+
+        end: function() {
+            this.hideLayers();
+            confettiActive = false;
+            flashingActive = false;
+            audienceCheering = false;
+            localStorage.setItem(`ceremonyDone_${Game.year}`, 'true');
+            document.getElementById('summary-ui').style.display = 'flex';
+            document.getElementById('rotate-prompt').classList.remove('show');
+            if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+        },
+
+        hideLayers: function() {
+            document.querySelectorAll('.interaction-layer').forEach(el => el.style.display = 'none');
+        },
+        updateStat: function(key, val) {
+            let current = (key.includes('pop')) ? Game.playerStats.pop : Game.playerStats.respect;
+            current = Math.max(0, Math.min(100, current + val));
+            if (key.includes('pop')) Game.playerStats.pop = current;
+            else Game.playerStats.respect = current;
+            localStorage.setItem('popularity', Game.playerStats.pop);
+            localStorage.setItem('respect', Game.playerStats.respect);
+            updateStatDisplay();
+        }
+    };
+
+    // ============================================================
+    // THREE.JS VENUE ENGINE
+    // ============================================================
+    let _venueScene, _venueCamera, _venueRenderer, _venueClock;
+    let _screenCanvas, _screenCtx, _screenTexture;
+    let _audienceHeads = [];
+    let _confettiPieces = [];
+    let _flashLights = [];
+    let _venueRafId = null;
+    let _camLook = { x: 0, y: 3.5, z: -10 };
+    let _camAnim = null;
+    window.audienceCheering = false;
+    window.flashingActive = false;
+    window.confettiActive = false;
+
+    function initVenue() {
+        const canvas = document.getElementById('venue-canvas');
+        _venueScene = new THREE.Scene();
+        _venueScene.background = new THREE.Color(0x020202);
+        _venueScene.fog = new THREE.FogExp2(0x020202, 0.032);
+
+        _venueCamera = new THREE.PerspectiveCamera(62, window.innerWidth / window.innerHeight, 0.1, 80);
+        _venueCamera.position.set(0, 1.8, 7);
+        _venueCamera.lookAt(0, 3.5, -10);
+
+        _venueRenderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'low-power' });
+        _venueRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+        _venueRenderer.setSize(window.innerWidth, window.innerHeight);
+        _venueClock = new THREE.Clock();
+
+        _buildVenueScene();
+        _venueLoop();
+
+        window.addEventListener('resize', () => {
+            if (!_venueRenderer) return;
+            _venueCamera.aspect = window.innerWidth / window.innerHeight;
+            _venueCamera.updateProjectionMatrix();
+            _venueRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    }
+
+    function _buildVenueScene() {
+        const s = _venueScene;
+
+        // Floor
+        const floorM = new THREE.MeshLambertMaterial({ color: 0x080808 });
+        const floor = new THREE.Mesh(new THREE.PlaneGeometry(50, 50), floorM);
+        floor.rotation.x = -Math.PI / 2; floor.position.y = -0.52; s.add(floor);
+
+        // Red carpet aisle
+        const carpetM = new THREE.MeshLambertMaterial({ color: 0x5a0000 });
+        const carpet = new THREE.Mesh(new THREE.PlaneGeometry(2.4, 24), carpetM);
+        carpet.rotation.x = -Math.PI / 2; carpet.position.set(0, -0.51, 0); s.add(carpet);
+
+        // Stage platform
+        const stageM = new THREE.MeshLambertMaterial({ color: 0x101010 });
+        const stage = new THREE.Mesh(new THREE.BoxGeometry(24, 0.7, 10), stageM);
+        stage.position.set(0, 0.05, -8.5); s.add(stage);
+
+        // Gold stage trim
+        const trimM = new THREE.MeshBasicMaterial({ color: 0xD4AF37 });
+        const trim = new THREE.Mesh(new THREE.BoxGeometry(24, 0.06, 0.06), trimM);
+        trim.position.set(0, 0.43, -3.6); s.add(trim);
+
+        // Podium
+        const podM = new THREE.MeshLambertMaterial({ color: 0x181818 });
+        const podium = new THREE.Mesh(new THREE.BoxGeometry(1, 1.4, 0.7), podM);
+        podium.position.set(0, 1.12, -7.2); s.add(podium);
+        const podTopM = new THREE.MeshBasicMaterial({ color: 0xD4AF37 });
+        const podTop = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.04, 0.75), podTopM);
+        podTop.position.set(0, 1.84, -7.2); s.add(podTop);
+
+        // Back wall
+        const wallM = new THREE.MeshLambertMaterial({ color: 0x060606 });
+        const wall = new THREE.Mesh(new THREE.PlaneGeometry(50, 25), wallM);
+        wall.position.set(0, 5, -14); s.add(wall);
+
+        // LED Screen canvas texture
+        _screenCanvas = document.createElement('canvas');
+        _screenCanvas.width = 1024; _screenCanvas.height = 512;
+        _screenCtx = _screenCanvas.getContext('2d');
+        _screenTexture = new THREE.CanvasTexture(_screenCanvas);
+
+        const screenMesh = new THREE.Mesh(
+            new THREE.PlaneGeometry(16, 8),
+            new THREE.MeshBasicMaterial({ map: _screenTexture })
+        );
+        screenMesh.position.set(0, 7.2, -13.8); s.add(screenMesh);
+
+        // Screen frame bezel
+        const bezelM = new THREE.MeshLambertMaterial({ color: 0x0d0d0d });
+        const bezel = new THREE.Mesh(new THREE.BoxGeometry(17.2, 9.2, 0.25), bezelM);
+        bezel.position.set(0, 7.2, -14.0); s.add(bezel);
+
+        // Audience rows
+        const rows = [
+            { count: 14, z: 5.2, yBase: -0.15, sp: 1.05 },
+            { count: 15, z: 3.8, yBase: -0.15, sp: 1.0  },
+            { count: 16, z: 2.4, yBase: -0.15, sp: 0.98 },
+            { count: 17, z: 1.0, yBase: -0.15, sp: 0.95 },
+            { count: 18, z:-0.3, yBase: -0.15, sp: 0.92 },
+            { count: 19, z:-1.5, yBase: -0.15, sp: 0.90 },
+        ];
+
+        rows.forEach((row, ri) => {
+            const startX = -(row.count - 1) * row.sp / 2;
+            for (let i = 0; i < row.count; i++) {
+                const xPos = startX + i * row.sp;
+                if (Math.abs(xPos) < 1.4) continue; // aisle gap
+
+                // Seat back
+                const seatM = new THREE.MeshLambertMaterial({ color: 0x1a0000 });
+                const seat = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.75, 0.1), seatM);
+                seat.position.set(xPos, row.yBase + 0.3, row.z + 0.2); s.add(seat);
+
+                // Body
+                const bodyCol = new THREE.Color(0x0a0a0a);
+                bodyCol.lerp(new THREE.Color(0x1e1e1e), Math.random() * 0.4);
+                const bodyM = new THREE.MeshLambertMaterial({ color: bodyCol });
+                const body = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.7, 0.35), bodyM);
+                body.position.set(xPos, row.yBase + 0.25, row.z); s.add(body);
+
+                // Head
+                const skinTones = [0x1a1008, 0x2a1e0e, 0x3a2e1e, 0x111111, 0x222222];
+                const headM = new THREE.MeshLambertMaterial({ 
+                    color: skinTones[Math.floor(Math.random() * skinTones.length)] 
+                });
+                const head = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.38, 0.3), headM);
+                head.position.set(xPos, row.yBase + 0.88, row.z);
+                head.userData = { baseY: row.yBase + 0.88, phase: Math.random() * Math.PI * 2 };
+                s.add(head);
+                _audienceHeads.push(head);
+            }
+        });
+
+        // Ambient + stage lights
+        s.add(new THREE.AmbientLight(0x0d0d18, 1.5));
+
+        const sl1 = new THREE.PointLight(0xffe8b0, 2.5, 28);
+        sl1.position.set(-6, 13, -8); s.add(sl1);
+        const sl2 = new THREE.PointLight(0xffe8b0, 2.5, 28);
+        sl2.position.set(6, 13, -8); s.add(sl2);
+        const sl3 = new THREE.PointLight(0x4466aa, 0.8, 22);
+        sl3.position.set(0, 10, -11); s.add(sl3); // screen glow
+
+        // Camera flash point lights (hidden, scattered in audience)
+        [[-7,2,4],[7,2,4],[-5,2,2],[5,2,2],[-8,2,0],[8,2,0],
+         [-4,2,5],[4,2,5],[-6,2,-1],[6,2,-1],[0,3,6]].forEach(p => {
+            const fl = new THREE.PointLight(0xffffff, 0, 10);
+            fl.position.set(...p); s.add(fl);
+            _flashLights.push(fl);
+        });
+
+        // Initial screen
+        updateLEDScreen('EXCELLENCE\nAWARDS', null, null, -1, false);
+    }
+
+    function updateLEDScreen(mainText, subText, nominees, highlightIdx, isWinner) {
+        const ctx = _screenCtx;
+        const W = 1024, H = 512;
+
+        ctx.fillStyle = '#000'; ctx.fillRect(0, 0, W, H);
+
+        // Scan-line texture for LED feel
+        for (let y = 0; y < H; y += 4) {
+            ctx.fillStyle = 'rgba(0,0,0,0.18)';
+            ctx.fillRect(0, y, W, 2);
+        }
+
+        // Border
+        ctx.strokeStyle = isWinner ? '#D4AF37' : '#222';
+        ctx.lineWidth = isWinner ? 10 : 4;
+        ctx.strokeRect(5, 5, W - 10, H - 10);
+
+        if (isWinner) {
+            const gr = ctx.createRadialGradient(W/2, H/2, 0, W/2, H/2, 450);
+            gr.addColorStop(0, 'rgba(212,175,55,0.25)');
+            gr.addColorStop(1, 'rgba(0,0,0,0)');
+            ctx.fillStyle = gr; ctx.fillRect(0, 0, W, H);
+        }
+
+        ctx.textAlign = 'center';
+
+        if (nominees && nominees.length > 0) {
+            // Category label top
+            ctx.fillStyle = '#D4AF37';
+            ctx.font = 'bold 30px Arial';
+            ctx.shadowColor = '#D4AF37'; ctx.shadowBlur = 8;
+            ctx.fillText(subText || '', W/2, 52);
+            ctx.shadowBlur = 0;
+
+            const max = Math.min(nominees.length, 6);
+            const rowH = (H - 78) / max;
+
+            for (let i = 0; i < max; i++) {
+                const n = nominees[i];
+                const displayName = n.type === 'artist' ? n.artist : `${n.name}  —  ${n.artist}`;
+                const yCenter = 78 + i * rowH + rowH * 0.58;
+                const isHL = i === highlightIdx;
+
+                if (isHL) {
+                    ctx.fillStyle = 'rgba(212,175,55,0.18)';
+                    ctx.fillRect(16, 78 + i * rowH + 4, W - 32, rowH - 8);
+                    ctx.fillStyle = '#FFD700';
+                    ctx.font = 'bold 34px Arial';
+                    ctx.shadowColor = '#D4AF37'; ctx.shadowBlur = 18;
+                } else {
+                    ctx.fillStyle = '#2a2a2a';
+                    ctx.font = '26px Arial';
+                    ctx.shadowBlur = 0;
+                }
+                ctx.fillText(displayName, W/2, yCenter);
+                ctx.shadowBlur = 0;
+            }
+        } else {
+            const lines = mainText.split('\n');
+            const spacing = 90;
+            const totalH = lines.length * spacing;
+            lines.forEach((line, i) => {
+                const y = H/2 - totalH/2 + i * spacing + 60;
+                const isLast = i === lines.length - 1;
+                ctx.font = (i === 0 && lines.length > 1) ? '34px Arial' : 'bold 78px Arial';
+                ctx.fillStyle = isWinner ? '#FFD700' : (isLast ? '#fff' : '#D4AF37');
+                ctx.shadowColor = isWinner ? '#D4AF37' : (isLast ? 'transparent' : '#D4AF37');
+                ctx.shadowBlur = isWinner ? 30 : (isLast ? 0 : 12);
+                ctx.fillText(line, W/2, y);
+                ctx.shadowBlur = 0;
+            });
+            if (subText) {
+                ctx.fillStyle = isWinner ? '#FFD700' : '#aaa';
+                ctx.font = isWinner ? 'bold 36px Arial' : '30px Arial';
+                ctx.shadowColor = isWinner ? '#D4AF37' : 'transparent';
+                ctx.shadowBlur = isWinner ? 20 : 0;
+                ctx.fillText(subText, W/2, H - 44);
+                ctx.shadowBlur = 0;
+            }
+        }
+        _screenTexture.needsUpdate = true;
+    }
+
+    function triggerCameraFlashes(duration) {
+        window.flashingActive = true;
+        setTimeout(() => { 
+            window.flashingActive = false; 
+            _flashLights.forEach(l => l.intensity = 0); 
+        }, duration || 3000);
+    }
+
+    function spawnConfetti() {
+        window.confettiActive = true;
+        _confettiPieces.forEach(p => _venueScene.remove(p));
+        _confettiPieces = [];
+        const cols = [0xD4AF37, 0xFFFFFF, 0xFF3333, 0x33FF88, 0x3399FF, 0xFF33FF, 0xFF9900];
+        for (let i = 0; i < 100; i++) {
+            const mat = new THREE.MeshBasicMaterial({ 
+                color: cols[Math.floor(Math.random() * cols.length)], 
+                side: THREE.DoubleSide 
+            });
+            const piece = new THREE.Mesh(new THREE.PlaneGeometry(0.09, 0.18), mat);
+            piece.position.set((Math.random()-0.5)*22, 7+Math.random()*6, (Math.random()-0.5)*16);
+            piece.userData = { 
+                vy: -(0.018 + Math.random()*0.025), 
+                vx: (Math.random()-0.5)*0.015,
+                rz: (Math.random()-0.5)*0.09 
+            };
+            _venueScene.add(piece);
+            _confettiPieces.push(piece);
+        }
+    }
+
+    function animateCamera(toPos, toLook, dur, onDone) {
+        const sp = { x: _venueCamera.position.x, y: _venueCamera.position.y, z: _venueCamera.position.z };
+        const sl = { ...(_camLook) };
+        const t0 = Date.now();
+        _camAnim = { toPos, toLook, sp, sl, t0, dur, onDone };
+    }
+
+    function _venueLoop() {
+        _venueRafId = requestAnimationFrame(_venueLoop);
+        const t = _venueClock.getElapsedTime();
+
+        // Audience bob
+        _audienceHeads.forEach(h => {
+            const cheer = window.audienceCheering ? 0.14 : 0.025;
+            const spd = window.audienceCheering ? 3.5 : 0.9;
+            h.position.y = h.userData.baseY + Math.sin(t * spd + h.userData.phase) * cheer;
+        });
+
+        // Camera flashes
+        if (window.flashingActive) {
+            _flashLights.forEach(l => {
+                if (Math.random() < 0.05) {
+                    l.intensity = 4 + Math.random() * 5;
+                    setTimeout(() => { l.intensity = 0; }, 60 + Math.random()*100);
+                }
+            });
+        }
+
+        // Confetti
+        if (window.confettiActive) {
+            _confettiPieces.forEach(p => {
+                p.position.y += p.userData.vy;
+                p.position.x += p.userData.vx;
+                p.rotation.z += p.userData.rz;
+                if (p.position.y < -1.5) p.position.y = 10;
+            });
+        }
+
+        // Camera tween
+        if (_camAnim) {
+            const prog = Math.min((Date.now() - _camAnim.t0) / _camAnim.dur, 1);
+            const e = 1 - Math.pow(1 - prog, 3); // ease-out cubic
+            _venueCamera.position.x = _camAnim.sp.x + (_camAnim.toPos.x - _camAnim.sp.x) * e;
+            _venueCamera.position.y = _camAnim.sp.y + (_camAnim.toPos.y - _camAnim.sp.y) * e;
+            _venueCamera.position.z = _camAnim.sp.z + (_camAnim.toPos.z - _camAnim.sp.z) * e;
+            _camLook.x = _camAnim.sl.x + (_camAnim.toLook.x - _camAnim.sl.x) * e;
+            _camLook.y = _camAnim.sl.y + (_camAnim.toLook.y - _camAnim.sl.y) * e;
+            _camLook.z = _camAnim.sl.z + (_camAnim.toLook.z - _camAnim.sl.z) * e;
+            if (prog >= 1) { const cb = _camAnim.onDone; _camAnim = null; if (cb) cb(); }
+        }
+
+        _venueCamera.lookAt(_camLook.x, _camLook.y, _camLook.z);
+        _venueRenderer.render(_venueScene, _venueCamera);
+    }
+
+    window.Ceremony = Ceremony;
+    </script>
+</body>
+</html>

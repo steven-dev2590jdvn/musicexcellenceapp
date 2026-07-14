@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Collaboration Studio Ultra</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@400;500;600;700;800;900&family=Cinzel:wght@700&family=Monoton&family=Press+Start+2P&family=Permanent+Marker&family=Righteous&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-light: #a78bfa;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --dark: #020617;
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-bg: rgba(15, 23, 42, 0.65);
+            --glass-highlight: rgba(255, 255, 255, 0.05);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            /* Dynamic Aurora Background */
+            background: radial-gradient(circle at 0% 0%, #1e1b4b 0%, #020617 50%), 
+                        radial-gradient(circle at 100% 100%, #312e81 0%, #020617 50%);
+        }
+
+        /* Animated Background Blobs */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: 
+                radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15), transparent 30%);
+            animation: pulseBg 15s ease-in-out infinite alternate;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        @keyframes pulseBg {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+        
+        .container {
+            max-width: 550px; /* Tighter width for better mobile aesthetic */
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            perspective: 1000px;
+        }
+        
+        /* Navigation */
+        .nav-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            width: 44px; 
+            height: 44px;
+            border-radius: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+        }
+        
+        /* Main Glass Card */
+        .studio-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 32px;
+            padding: 32px;
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.6),
+                inset 0 0 0 1px rgba(255,255,255,0.05);
+            animation: cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes cardEntrance {
+            from { opacity: 0; transform: translateY(40px) rotateX(10deg); }
+            to { opacity: 1; transform: translateY(0) rotateX(0); }
+        }
+        
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .artist-badge {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--primary-light);
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+
+        /* ALBUM ART CONTAINER */
+        .art-wrapper {
+            position: relative;
+            margin-bottom: 24px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .cover-preview {
+            width: 100%;
+            height: 0;
+            padding-bottom: 100%; /* Square aspect ratio */
+            position: relative;
+            background: #000;
+        }
+
+        .cover-preview svg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+        }
+
+        /* Controls floating on top of art */
+        .art-controls {
+            position: absolute;
+            bottom: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .icon-btn {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .icon-btn:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.2);
+        }
+
+        .style-badge {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            color: rgba(255,255,255,0.9);
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
+        }
+
+        /* FORM STYLING */
+        .input-group {
+            position: relative;
+            margin-bottom: 24px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 18px 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            color: white;
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            background: rgba(0, 0, 0, 0.4);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .input-group label {
+            position: absolute;
+            left: 16px;
+            top: -10px;
+            background: #141b2d; /* Matches assumed bg behind it somewhat */
+            padding: 0 6px;
+            font-size: 11px;
+            color: var(--primary-light);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+        }
+
+        /* PAYMENT & SLIDER */
+        .payment-card {
+            background: linear-gradient(160deg, rgba(6, 182, 212, 0.1), rgba(59, 130, 246, 0.05));
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+        }
+
+        .payment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+        }
+
+        .payment-amount {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+            text-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+        }
+
+        .payment-label {
+            font-size: 12px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+        }
+
+        input[type=range] {
+            -webkit-appearance: none; 
+            width: 100%; 
+            background: transparent; 
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px;
+            width: 24px;
+            border-radius: 50%;
+            background: white;
+            cursor: pointer;
+            margin-top: -10px; 
+            box-shadow: 0 0 15px rgba(255,255,255,0.5);
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:active {
+            transform: scale(1.2);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+
+        .risk-meter {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        /* MAIN BUTTON */
+        .btn-main {
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            border: none;
+            border-radius: 18px;
+            color: white;
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 10px 30px -5px rgba(236, 72, 153, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-main::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .btn-main:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px -5px rgba(236, 72, 153, 0.5);
+        }
+        
+        .btn-main:hover::after { opacity: 1; }
+
+        .btn-main:active {
+            transform: scale(0.98);
+        }
+
+        /* SVG FILTERS HIDDEN */
+        .filters {
+            position: absolute;
+            width: 0; height: 0;
+            pointer-events: none;
+        }
+
+        /* Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(16, 185, 129, 0.9);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(5px);
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Advanced SVG Filters for Art Generation -->
+    <svg class="filters">
+        <filter id="grain">
+            <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" stitchTiles="stitch"/>
+            <feColorMatrix type="saturate" values="0"/>
+            <feComponentTransfer><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+            <feComposite operator="in" in2="SourceGraphic"/>
+        </filter>
+        <filter id="glitch-displacement">
+            <feTurbulence type="turbulence" baseFrequency="0.05 0.004" numOctaves="2" result="turbulence"/>
+            <feDisplacementMap in2="turbulence" in="SourceGraphic" scale="10" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+        <filter id="neon-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="5" result="coloredBlur"/>
+            <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+        </filter>
+    </svg>
+
+    <div class="container">
+        <div class="nav-header">
+            <button class="back-btn" onclick="window.location.href='music.html'" title="Cancel">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+            </button>
+            <div style="font-size:12px; font-weight:700; color:rgba(255,255,255,0.3); letter-spacing:1px;">STUDIO SESSIONS</div>
+            <div style="width:44px"></div> <!-- Spacer for balance -->
+        </div>
+        
+        <div class="studio-card">
+            <h1>NEW RELEASE</h1>
+            <div class="subtitle">
+                <span>ft.</span>
+                <span id="artist-badge" class="artist-badge">Loading...</span>
+            </div>
+            
+            <div class="art-wrapper">
+                <div class="style-badge" id="current-style-badge">Liquid Chrome</div>
+                <div class="cover-preview" id="preview-container">
+                    <svg id="cover-art" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMid slice"></svg>
+                </div>
+                
+                <div class="art-controls">
+                    <button class="icon-btn" onclick="cycleArtStyle()" title="Change Aesthetic">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </button>
+                    <button class="icon-btn" onclick="regenerateArt()" title="Remix Design">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="input-group">
+                <label>Track Title</label>
+                <input type="text" id="song-title" placeholder="Untitled Track" autocomplete="off" oninput="regenerateArt(false)">
+            </div>
+            
+            <div class="payment-card">
+                <div class="payment-header">
+                    <span class="payment-label">Signing Bonus</span>
+                    <span class="payment-amount" id="payment-display">$0</span>
+                </div>
+                <input type="range" id="payment-slider" min="80" max="120" value="100" oninput="updatePayment(this.value)">
+                <div class="risk-meter">
+                    <span>Safe Deal (80%)</span>
+                    <span>Greedy (120%)</span>
+                </div>
+            </div>
+            
+            <button class="btn-main" onclick="confirmRelease()">
+                Drop Release
+            </button>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <span>Deal Signed!</span>
+    </div>
+    
+    <script>
+        // State
+        let currentOffer = null;
+        let basePayment = 0;
+        let currentStyleIndex = 0;
+        let artSeed = Math.random();
+        
+        const ART_STYLES = [
+            'liquid', 'neon', 'minimal', 'retro', 'glitch', 'typographic'
+        ];
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSessionData();
+            setupEventListeners();
+        });
+
+        function loadSessionData() {
+            try {
+                // Try to get real data
+                currentOffer = JSON.parse(localStorage.getItem('currentCollabOffer'));
+            } catch(e) {}
+
+            // Mock data for preview if no localStorage (Dev Mode)
+            if (!currentOffer) {
+                currentOffer = {
+                    npcArtist: "The Weeknd",
+                    songName: "Midnight City",
+                    payment: 500000
+                };
+            }
+
+            // Populate UI
+            basePayment = currentOffer.payment;
+            document.getElementById('artist-badge').textContent = currentOffer.npcArtist;
+            document.getElementById('song-title').value = currentOffer.songName;
+            
+            updatePayment(100);
+            regenerateArt(true);
+        }
+
+        function setupEventListeners() {
+            // Nothing special needed here beyond inline handlers
+        }
+
+        // --- ART GENERATION ENGINE V3.0 ---
+        
+        function cycleArtStyle() {
+            currentStyleIndex = (currentStyleIndex + 1) % ART_STYLES.length;
+            regenerateArt(true);
+        }
+
+        function regenerateArt(newSeed = true) {
+            if (newSeed) artSeed = Math.random();
+            
+            const svg = document.getElementById('cover-art');
+            const style = ART_STYLES[currentStyleIndex];
+            const songTitle = document.getElementById('song-title').value || "UNTITLED";
+            const npcName = currentOffer.npcArtist.toUpperCase();
+            
+            // Update UI Badge
+            document.getElementById('current-style-badge').textContent = style.replace('-', ' ');
+
+            // Artist Name Logic
+            let yourName = "YOU";
+            try { yourName = JSON.parse(localStorage.getItem('artistDetails')).name.toUpperCase(); } catch(e){}
+            
+            // Seeded Random Helper
+            let localSeed = artSeed;
+            const rand = () => {
+                let x = Math.sin(localSeed++) * 10000;
+                return x - Math.floor(x);
+            };
+
+            const pick = (arr) => arr[Math.floor(rand() * arr.length)];
+            const randomColor = () => `hsl(${Math.floor(rand() * 360)}, ${70 + rand() * 30}%, ${50 + rand() * 10}%)`;
+
+            // --- GENERATORS ---
+            
+            let content = '';
+            
+            // 1. BACKGROUNDS
+            if (style === 'liquid') {
+                content += `<rect width="100%" height="100%" fill="#000"/>`;
+                // Create gradients
+                content += `<defs><linearGradient id="lq" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="${randomColor()}"/><stop offset="100%" stop-color="${randomColor()}"/></linearGradient></defs>`;
+                content += `<rect width="100%" height="100%" fill="url(#lq)"/>`;
+                
+                // Blobs
+                for(let i=0; i<3; i++) {
+                    const d = `M ${rand()*1000} ${rand()*1000} Q ${rand()*1000} ${rand()*1000} ${rand()*1000} ${rand()*1000} T ${rand()*1000} ${rand()*1000}`;
+                    content += `<path d="${d}" fill="${randomColor()}" opacity="0.6" filter="url(#neon-glow)" style="mix-blend-mode: screen"/>`;
+                }
+            } 
+            else if (style === 'retro') {
+                content += `<rect width="100%" height="100%" fill="#1a0b2e"/>`;
+                // Sun
+                content += `<circle cx="500" cy="500" r="300" fill="url(#sun-grad)" />`;
+                content += `<defs><linearGradient id="sun-grad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffcc00"/><stop offset="100%" stop-color="#ff0055"/></linearGradient></defs>`;
+                // Grid
+                content += `<path d="M0 600 L1000 600 M100 600 L-200 1000 M900 600 L1200 1000 M500 600 L500 1000" stroke="#ff00cc" stroke-width="2" opacity="0.5"/>`;
+                for(let i=0; i<10; i++) {
+                    let y = 600 + (i * 40);
+                    content += `<line x1="0" y1="${y}" x2="1000" y2="${y}" stroke="#ff00cc" stroke-width="1" opacity="${0.2 + (i/20)}"/>`;
+                }
+            }
+            else if (style === 'minimal') {
+                const bg = pick(['#f8fafc', '#1e293b', '#e2e8f0']);
+                const fg = bg === '#f8fafc' || bg === '#e2e8f0' ? '#0f172a' : '#f8fafc';
+                content += `<rect width="100%" height="100%" fill="${bg}"/>`;
+                content += `<circle cx="${rand()*1000}" cy="${rand()*1000}" r="${200+rand()*300}" fill="${fg}" opacity="0.1"/>`;
+            }
+            else if (style === 'glitch') {
+                content += `<rect width="100%" height="100%" fill="#000"/>`;
+                // Glitch Strips
+                for(let i=0; i<20; i++) {
+                    content += `<rect x="${rand()*800}" y="${rand()*1000}" width="${rand()*400}" height="${rand()*20}" fill="${pick(['#f00', '#0f0', '#00f', '#fff'])}" opacity="${rand()*0.3}"/>`;
+                }
+            }
+            else if (style === 'typographic') {
+                const color = pick(['#ef4444', '#eab308', '#3b82f6', '#000000']);
+                content += `<rect width="100%" height="100%" fill="${color}"/>`;
+                content += `<text x="50" y="500" font-family="Inter" font-weight="900" font-size="600" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="20" style="writing-mode: vertical-rl;">${songTitle.substring(0,1)}</text>`;
+            }
+            else { // Neon
+                content += `<rect width="100%" height="100%" fill="#050505"/>`;
+                content += `<rect x="100" y="100" width="800" height="800" fill="none" stroke="${pick(['#0ff', '#f0f'])}" stroke-width="10" filter="url(#neon-glow)"/>`;
+                content += `<circle cx="500" cy="500" r="200" fill="none" stroke="${pick(['#ff0', '#0f0'])}" stroke-width="5"/>`;
+            }
+
+            // 2. TYPOGRAPHY
+            const fonts = {
+                liquid: 'Space Grotesk',
+                retro: 'Righteous',
+                minimal: 'Inter',
+                glitch: 'Rubik Glitch',
+                neon: 'Monoton',
+                typographic: 'Inter'
+            };
+            
+            const font = fonts[style] || 'Inter';
+            let textColor = (style === 'minimal' && content.includes('#f8fafc')) ? '#000' : '#fff';
+            if (style === 'typographic' && content.includes('#000000')) textColor = '#fff';
+            
+            // Title
+            if (style === 'typographic') {
+                // Big Centered Block
+                 content += `<text x="500" y="450" text-anchor="middle" font-family="${font}" font-weight="900" font-size="120" fill="${textColor}" letter-spacing="-5">${songTitle.toUpperCase()}</text>`;
+                 content += `<text x="500" y="550" text-anchor="middle" font-family="${font}" font-weight="900" font-size="50" fill="${textColor}" opacity="0.8">FEAT. ${yourName}</text>`;
+            } else if (style === 'glitch') {
+                // Offset Layers
+                content += `<text x="505" y="500" text-anchor="middle" font-family="System-UI" font-weight="bold" font-size="80" fill="#f00" opacity="0.7">${songTitle.toUpperCase()}</text>`;
+                content += `<text x="495" y="500" text-anchor="middle" font-family="System-UI" font-weight="bold" font-size="80" fill="#0ff" opacity="0.7">${songTitle.toUpperCase()}</text>`;
+                content += `<text x="500" y="500" text-anchor="middle" font-family="System-UI" font-weight="bold" font-size="80" fill="#fff">${songTitle.toUpperCase()}</text>`;
+            } else {
+                // Standard Clean
+                const yPos = style === 'retro' ? 300 : 500;
+                content += `<text x="500" y="${yPos}" text-anchor="middle" font-family="${font}" font-weight="bold" font-size="80" fill="${textColor}" filter="${style==='neon'?'url(#neon-glow)':''}">${songTitle.toUpperCase()}</text>`;
+                content += `<text x="500" y="${yPos+80}" text-anchor="middle" font-family="Inter" font-weight="500" font-size="30" fill="${textColor}" opacity="0.8" letter-spacing="5">${npcName} X ${yourName}</text>`;
+            }
+
+            // 3. TEXTURE OVERLAY
+            content += `<rect width="100%" height="100%" filter="url(#grain)" opacity="0.3" style="mix-blend-mode: overlay"/>`;
+
+            // Parental Advisory
+            if (rand() > 0.3) {
+                content += `<rect x="880" y="920" width="100" height="60" fill="white" stroke="black" stroke-width="2"/>`;
+                content += `<rect x="885" y="925" width="90" height="50" fill="black"/>`;
+                content += `<text x="930" y="945" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">PARENTAL</text>`;
+                content += `<text x="930" y="965" text-anchor="middle" fill="white" font-family="Arial" font-size="12" font-weight="bold">ADVISORY</text>`;
+            }
+
+            svg.innerHTML = content;
+        }
+
+        // --- PAYMENT LOGIC ---
+
+        function updatePayment(percent) {
+            const amount = Math.floor(basePayment * (percent / 100));
+            document.getElementById('payment-display').textContent = formatMoney(amount);
+            
+            // Color change based on risk
+            const display = document.getElementById('payment-display');
+            if (percent > 110) display.style.color = '#ef4444'; // Red (Risky)
+            else if (percent < 90) display.style.color = '#10b981'; // Green (Safe)
+            else display.style.color = '#06b6d4'; // Blue (Normal)
+        }
+
+        function formatMoney(n) {
+            if (n >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+            if (n >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+            if (n >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+            return '$' + n.toLocaleString();
+        }
+
+        function confirmRelease() {
+            const btn = document.querySelector('.btn-main');
+            btn.innerHTML = `<span style="display:inline-block; animation:spin 1s linear infinite">⏳</span> Processing...`;
+            
+            // 1. Data Prep
+            const songTitle = document.getElementById('song-title').value || "Untitled";
+            const percent = parseInt(document.getElementById('payment-slider').value);
+            const finalPay = Math.floor(basePayment * (percent / 100));
+            
+            // 2. Cover Art Capture
+            const svg = document.getElementById('cover-art');
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const b64 = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData)));
+            
+            // 3. Save Logic
+            const record = {
+                id: 'collab_' + Date.now(),
+                songName: songTitle,
+                npcArtist: currentOffer.npcArtist,
+                coverArt: b64,
+                payment: finalPay,
+              releaseDate: new Date().toISOString(),
+streams: 0,
+isCollab: true
+            };
+            
+            // Persist
+            const collabs = JSON.parse(localStorage.getItem('acceptedCollaborations') || '[]');
+            collabs.push(record);
+            localStorage.setItem('acceptedCollaborations', JSON.stringify(collabs));
+            
+            // Update Money
+            let money = parseFloat(localStorage.getItem('money') || 0);
+            localStorage.setItem('money', (money + finalPay).toString());
+            
+            // Cleanup
+            localStorage.removeItem('currentCollabOffer');
+            localStorage.setItem('lastCollabOfferDate', new Date().toISOString().split('T')[0]);
+
+            // 4. Success UI
+            setTimeout(() => {
+                showToast();
+                setTimeout(() => {
+                    window.location.href = 'music.html';
+                }, 1500);
+            }, 800);
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>
+
+

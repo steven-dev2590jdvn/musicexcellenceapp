@@ -1,47 +1,79 @@
-name: Build iOS Device IPA
+name: Build iOS IPA
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: 20
 
       - name: Install Cordova
         run: npm install -g cordova
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: npm install
 
       - name: Add iOS Platform
-        run: cordova platform add ios
+        run: |
+          if [ ! -d "platforms/ios" ]; then
+            cordova platform add ios
+          fi
 
-      - name: Build Cordova Project
+      - name: Prepare Cordova
         run: cordova prepare ios
 
-      - name: Build for iPhone Device
+      - name: Locate Workspace
         run: |
-          cd platforms/ios
+          WORKSPACE=$(find platforms/ios -name "*.xcworkspace" | head -n 1)
 
+          if [ -z "$WORKSPACE" ]; then
+            echo "No workspace found!"
+            exit 1
+          fi
+
+          echo "WORKSPACE=$WORKSPACE" >> $GITHUB_ENV
+          echo "Workspace: $WORKSPACE"
+
+      - name: Detect Scheme
+        run: |
+          SCHEME=$(xcodebuild -list -json -workspace "$WORKSPACE" | \
+          python3 -c "import sys,json;print(json.load(sys.stdin)['workspace']['schemes'][0])")
+
+          echo "SCHEME=$SCHEME" >> $GITHUB_ENV
+          echo "Scheme: $SCHEME"
+
+      - name: Build Device App
+        run: |
           xcodebuild \
-            -workspace "Music Excellence.xcworkspace" \
-            -scheme "Music Excellence" \
-            -configuration Release \
-            -destination generic/platform=iOS \
-            CODE_SIGNING_ALLOWED=NO \
-            clean build
+          -workspace "$WORKSPACE" \
+          -scheme "$SCHEME" \
+          -configuration Release \
+          -destination generic/platform=iOS \
+          CODE_SIGNING_ALLOWED=NO \
+          clean build
 
-      - name: Package IPA
+      - name: Find .app
+        run: |
+          APP=$(find platforms/ios/build -name "*.app" | grep Release-iphoneos | head -n 1)
+
+          echo "APP=$APP" >> $GITHUB_ENV
+
+          echo "Found:"
+          echo "$APP"
+
+      - name: Create IPA
         run: |
           mkdir Payload
-          cp -R "platforms/ios/build/Release-iphoneos/Music Excellence.app" Payload/
+          cp -R "$APP" Payload/
           cd Payload
           zip -r ../MusicExcellence.ipa .
 

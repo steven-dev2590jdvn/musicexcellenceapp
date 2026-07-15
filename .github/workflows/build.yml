@@ -89,11 +89,19 @@ jobs:
           echo "Using app:"
           echo "$APP"
 
+          rm -rf Payload MusicExcellence.ipa
+
           mkdir Payload
           cp -R "$APP" Payload/
 
-          cd Payload
-          zip -qry ../MusicExcellence.ipa .
+          echo "===== IPA Contents ====="
+          find Payload
+
+          zip -r MusicExcellence.ipa Payload
+
+      - name: Verify IPA
+        run: |
+          unzip -l MusicExcellence.ipa
 
       - name: Upload IPA
         uses: actions/upload-artifact@v4
